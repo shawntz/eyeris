@@ -454,10 +454,15 @@ slice_epochs_no_limits <- function(x_raw, all_ts) {
 }
 
 slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
-  s_time <- cur_ts + (lims[1] * hz)
-  e_time <- cur_ts + (lims[2] * hz)
+  s_time <- cur_ts + (lims[1] * 1000)
+  e_time <- cur_ts + (lims[2] * 1000)
+  epoch_df <- slice_epoch(x_raw, s_time, e_time)
 
-  return(slice_epoch(x_raw, s_time, e_time))
+  duration <- sum(abs(lims[1]), abs(lims[2]))
+  n_samples <- duration / (1 / hz)
+
+  epoch_df <- epoch_df[1:n_samples, ]
+  return(epoch_df)
 }
 
 epoch_manually <- function(eyeris, ts_list, hz) {
