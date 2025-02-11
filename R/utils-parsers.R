@@ -21,6 +21,34 @@ format_call_stack <- function(callstack) {
   return(params_parsed)
 }
 
+get_block_numbers <- function(x) {
+  if (is.character(x)) {
+    block_nums <- as.numeric(gsub("block_", "", x))
+  } else if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+    # extract numbers from names like "block_4"
+    block_nums <- as.numeric(gsub("block_", "", names(x$timeseries)))
+  } else {
+    return(NULL)
+  }
+  return(block_nums)
+}
+
+# keep letters, numbers and spaces
+clean_string <- function(str) {
+  gsub("[^[:alnum:]\\s]", "", str)
+}
+
+convert_nested_dt <- function(nested_dt) {
+  lapply(nested_dt, function(outer_list) {
+    lapply(outer_list, function(dt) {
+      if (data.table::is.data.table(dt)) {
+        dplyr::as_tibble(dt)
+      } else {
+        NULL
+      }
+    })
+  })
+}
 
 filter_epochs <- function(eyeris, epochs) {
   return(names(eyeris)[grepl("^epoch_", names(eyeris))])
