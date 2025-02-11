@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,22 +58,56 @@
 <p><small><code>February 11th, 2025</code></small></p>
 <div class="section level4">
 <h4 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h4>
-<ul><li>
-</li></ul></div>
+<ul><li>NF: add support for <code>.asc</code> files containing multiple recording segments within the same file (<a href="https://github.com/shawntz/eyeris/issues/10" class="external-link">#10</a>).
+<ul><li>There is a new <code>block</code> argument added to the <code><a href="../reference/load_asc.html">load_asc()</a></code> function.</li>
+<li>The default setting is “auto”, which aims to automatically handle multiple recording segments within the same <code>.asc</code> file. We recommend using this default as this is likely the <em>safer choice</em> rather than assuming a single-block recording. <strong>Furthermore, add downstream functions are intentionally designed to support any <em>N</em> number of blocks; using the “auto” setting automatically enables this support for <code>.asc</code> files containing single recording blocks by labeling the single recording session as <code>block_1</code>.</strong>
+</li>
+<li>You can also manually specify a different block value (numeric) instead of “auto”, which can be helpful for multi-block experiments where each block/run was recorded to a separate <code>.asc</code> file. This is especially important to consider when running the downstream <code><a href="../reference/epoch.html">epoch()</a></code> and <code><a href="../reference/bidsify.html">bidsify()</a></code> functions so that derived files and summary reports are properly labeled with the correction block/run number.</li>
+<li>Currently, there is also a <code>NULL</code> option; however, this is likely going to just be a part of <code>beta</code> testing and will probably be removed in a future version given the foregoing 2 options should cover most (if not all) use cases.</li>
+</ul></li>
+</ul></div>
 <div class="section level4">
 <h4 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h4>
-<ul><li>
-</li></ul></div>
+<ul><li>NF: robust HTML and PDF output summary sidecar reports within <code><a href="../reference/bidsify.html">bidsify()</a></code>.
+<ul><li>Here, reports are well-organized both by block/run and any specific event message epochs that have been processed using the <code><a href="../reference/epoch.html">epoch()</a></code> function.</li>
+<li>For epoched data, we now provide a useful <em>interactive utility</em> within the epoch-specific HTML reports: you can now use your mouse and/or keyboard to swiftly navigate through an interactive gallery of pupil plot segments from every single trial from any given subject, right out-of-the-box! We hope this alleviates some of the complexities/roadblocks users might face when needing to perform manual inspections of their data for quality assurance and/or diagnostic purposes.</li>
+</ul></li>
+</ul></div>
 <div class="section level4">
 <h4 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h4>
-<ul><li>
-</li></ul></div>
+<ul><li>FF: resolved a minor bug in the EyeLink EDF header <code>model</code> and <code>version</code> fields for data collected on newer EyeLink hardware/software (<a href="https://github.com/shawntz/eyeris/issues/118" class="external-link">#118</a>).</li>
+<li>ENH: event epoching is now both <strong>more robust</strong> and <strong>super fast</strong>
+<ul><li>We have implemented more efficient data structures to swiftly handle large sets of pupil samples in rapid time.</li>
+<li>We have also added in better visual feedback within the console regarding epoching progress.</li>
+<li>Similarly, these added benefits coincide nicely with the new multi-block support (<a href="https://github.com/shawntz/eyeris/issues/10" class="external-link">#10</a>).</li>
+</ul></li>
+<li>General bug fixes and enhancements to codebase and front-end UX.</li>
+</ul></div>
 </div>
 <div class="section level3">
 <h3 id="eyeris-development-version-2">eyeris 0.0.0.9000<a class="anchor" aria-label="anchor" href="#eyeris-development-version-2"></a></h3>
 <p><small><code>November 23rd, 2024</code></small></p>
 <ul><li>Initial beta release</li>
+</ul><hr><div class="section level5">
+<h5 id="commit-message-tags-development-version">Commit message tags<a class="anchor" aria-label="anchor" href="#commit-message-tags-development-version"></a></h5>
+<ul><li>
+<strong>BF:</strong> bug fix (in the <em>release</em> branch)</li>
+<li>
+<strong>FF:</strong> feature fix (bug fixes in the <em>dev</em> branch)</li>
+<li>
+<strong>RF:</strong> refactoring</li>
+<li>
+<strong>NF:</strong> new feature</li>
+<li>
+<strong>ENH:</strong> enhancement</li>
+<li>
+<strong>DOC:</strong> for documentation-related updates and changes</li>
+<li>
+<strong>TEST:</strong> for commits that add or change unit tests</li>
+<li>
+<strong>CHORE:</strong> like <strong>RF</strong> but usually less important changes</li>
 </ul></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
