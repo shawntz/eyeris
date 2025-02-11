@@ -23,7 +23,8 @@
 #'
 #' @export
 interpolate <- function(eyeris) {
-  return(pipeline_handler(eyeris, interpolate_pupil, "interpolate"))
+  eyeris |>
+    pipeline_handler(interpolate_pupil, "interpolate")
 }
 
 interpolate_pupil <- function(x, prev_op) {

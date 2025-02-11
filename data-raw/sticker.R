@@ -8,16 +8,6 @@ imgurl <- file.path("data-raw", "noun-eye-7147281.png")
 img <- png::readPNG(imgurl)
 img_grob <- grid::rasterGrob(img, interpolate = TRUE)
 
-sine_wave <- ggplot2::ggplot(data = data.frame(
-  x = seq(0, 4 * pi, length.out = 500)
-), ggplot2::aes(x = x)) +
-  ggplot2::geom_line(ggplot2::aes(y = sin(x / 2)),
-    size = 4, linetype = 1,
-    color = "white", alpha = 0
-  ) +
-  ggplot2::theme_void() +
-  ggimage::theme_transparent()
-
 combined_plot <- cowplot::ggdraw() +
   cowplot::draw_plot(sine_wave, 0, 0.75, 1, 1, scale = 4) +
   cowplot::draw_grob(img_grob, 0, -0.1, 1, 1, 2.75)

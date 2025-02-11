@@ -31,12 +31,18 @@ that manually specify start/end event timestamp-message pairs to pull out of
 the raw timeseries data -- here, it is required that each raw timestamp and
 event message be provided in the following format:
 
-\verb{list(data.frame(time = c(...), msg = c(...)),}
-\verb{data.frame(time = c(...), msg = c(...)))}
+list(
+data.frame(time = c(...), msg = c(...)), # start events
+data.frame(time = c(...), msg = c(...)), # end events
+1                                        # block number
+)
 
 where the first data.frame indicates the \code{start} event timestamp and message
 string pairs, and the second data.frame indicates the \code{end} event timestamp
-and message string pairs.
+and message string pairs. Additionally, manual epoching only words with
+1 block at a time for event-modes \code{2} and \code{3}; thus, please be sure to
+explicitly indicate the block number in your input list (for examples,
+see above as well as example #9 below for more details).
 
 For event-modes \code{1} and \code{2}, the way in which you pass in the event message
 string must conform to a standardized protocol so that \code{eyeris} knows how to
@@ -60,7 +66,13 @@ the resulting \code{eyeris} class object containing the epoched data frame. If
 left as \code{NULL} (default), then list item will be called \code{epoch_xyz}, where
 \code{xyz} will be a sanitized version of the original \code{start} event string you
 provided for matching. If you choose to specify a \code{label} here, then the
-resulting list object name will take the form: \code{epoch_label}.}
+resulting list object name will take the form: \code{epoch_label}. \strong{Warning:
+if no \code{label} is specified and there are no event message strings to
+sanitize, then you may obtain a strange-looking epoch list element in
+your output object (e.g., \verb{$epoch_}, or \verb{$epoch_nana}, etc.). The data
+should still be accessible within this nested lists, however, to avoid
+ambiguous list objects, we recommend you provide an \code{epoch} label here
+to be safe.}}
 
 \item{calc_baseline}{A flag indicated whether to perform baseline correction.
 Note, setting \code{calc_baseline} to TRUE alone will only compute the baseline
@@ -147,8 +159,10 @@ eye_preproc |>
   eyeris::epoch(
     events = list(
       data.frame(time = c(11334491), msg = c("TRIALID 22")), # start events
-      data.frame(time = c(11337158), msg = c("RESPONSE_22")) # end events
-    )
+      data.frame(time = c(11337158), msg = c("RESPONSE_22")), # end events
+      1 # block number
+    ),
+    label = "example5"
   )
 
 # example 6: manual start/end event pairs
@@ -157,8 +171,10 @@ eye_preproc |>
   eyeris::epoch(
     events = list(
       data.frame(time = c(11334491), msg = NA), # start events
-      data.frame(time = c(11337158), msg = NA) # end events
-    )
+      data.frame(time = c(11337158), msg = NA), # end events
+      1 # block number
+    ),
+    label = "example6"
   )
 
 ## examples with baseline arguments enabled
@@ -189,17 +205,28 @@ eye_preproc |>
     calc_baseline = TRUE,
     apply_baseline = TRUE,
     baseline_type = "sub", # "sub"tractive baseline calculation is default
-    baseline_events = c("DELAY_START_*",
-                        "DELAY_STOP_*")
+    baseline_events = c(
+      "DELAY_START_*",
+      "DELAY_STOP_*"
+    )
   )
 
 # example 9: additional (potentially helpful) example
-start_events <- data.frame(time = c(11334491, 11338691),
-                           msg = c("TRIALID 22", "TRIALID 23"))
-end_events <- data.frame(time = c(11337158, 11341292),
-                         msg = c("RESPONSE_22", "RESPONSE_23"))
+start_events <- data.frame(
+  time = c(11334491, 11338691),
+  msg = c("TRIALID 22", "TRIALID 23")
+)
+end_events <- data.frame(
+  time = c(11337158, 11341292),
+  msg = c("RESPONSE_22", "RESPONSE_23")
+)
+block_number <- 1
+
 eye_preproc |>
-  eyeris::epoch(events = list(start_events, end_events))
+  eyeris::epoch(
+    events = list(start_events, end_events, block_number),
+    label  = "example9"
+  )
 }
 
 }
