@@ -6,6 +6,8 @@
 \alias{eyeris-package}
 \title{eyeris: eyeris}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Create and Run Flexible and Reproducible Pupillometry Preprocessing Pipelines More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
 }
 \seealso{

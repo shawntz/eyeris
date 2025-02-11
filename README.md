@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" height="139" alt="eyeris website" /></a>
+# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="139" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
