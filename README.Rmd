@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="139" alt="eyeris website" /></a>
+# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 <a href="LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
