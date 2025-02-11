@@ -15,7 +15,7 @@ on the constant n, which defaults to the value 16.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ on the constant <code>n</code>, which defaults to the value <code>16</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">detransient</span><span class="op">(</span><span class="va">eyeris</span>, n <span class="op">=</span> <span class="fl">16</span>, mad_override <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">detransient</span><span class="op">(</span><span class="va">eyeris</span>, n <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,60 +85,12 @@ on the constant <code>n</code>, which defaults to the value <code>16</code>.</p>
 <dd><p>A constant used to compute the median absolute deviation (MAD)
 threshold.</p></dd>
 
-
-<dt id="arg-mad-override">mad_override<a class="anchor" aria-label="anchor" href="#arg-mad-override"></a></dt>
-<dd><p>Default <code>NULL</code>. This parameter provides
-alternative options for handling edge cases where the computed
-properties here within <code>detransient()</code>  \(\text{mad\_val}\)
-and \(\text{median\_speed}\) are very small. For example, if
-$$\text{mad\_val} = 0 \quad \text{and} \quad \text{median\_speed} = 1,$$
-then, with the default multiplier \(n = 16\),
-$$\text{mad\_thresh} = \text{median\_speed} +
-(n \times \text{mad\_val}) = 1 + (16 \times 0) = 1.$$
-In this situation, any speed \(p_i \ge 1\) would be flagged as a
-transient, which might be overly sensitive. To reduce this sensitivity,
-two possible adjustments are available:</p><ol><li><p>If \(\text{mad\_thresh} = 1\), the transient detection criterion is
-modified from
-$$p_i \ge \text{mad\_thresh}$$
-to
-$$p_i &gt; \text{mad\_thresh}.$$</p></li>
-<li><p>If \(\text{mad\_thresh}\) is very small, the user may manually
-adjust the sensitivity by providing an alternative threshold value
-via the <code>mad_override</code> parameter.</p></li>
-</ol></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An <code>eyeris</code> object with a new column in <code>timeseries</code>:
 <code>pupil_raw_{...}_detransient</code>.</p>
     </div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><strong>Computed properties:</strong></p><ul><li><p><strong><code>pupil_speed</code>:</strong> Compute speed of pupil by approximating the derivative
-of <code>x</code> (pupil) with respect to <code>y</code> (time) using finite differences.</p><ul><li><p>Let \(x = (x_1, x_2, \dots, x_n)\) and
-\(y = (y_1, y_2, \dots, y_n)\) be two numeric vectors with
-\(n \ge 2\); then, the finite differences are computed as:
-$$\delta_i = \frac{x_{i+1} - x_i}{y_{i+1} - y_i},
-     \quad i = 1, 2, \dots, n-1.$$</p></li>
-<li><p>This produces an output vector \(p = (p_1, p_2, \dots, p_n)\)
-defined by:</p><ul><li><p>For the first element:
-$$p_1 = |\delta_1|,$$</p></li>
-<li><p>For the last element:
-$$p_n = |\delta_{n-1}|,$$</p></li>
-<li><p>For the intermediate elements (\(i = 2, 3, \dots, n-1\)):
-$$p_i = \max\{|\delta_{i-1}|,\,|\delta_i|\}.$$</p></li>
-</ul></li>
-</ul></li>
-<li><p><strong><code>median_speed</code>:</strong> The median of the computed <code>pupil_speed</code>:
-$$median\_speed = median(p)$$</p></li>
-<li><p><strong><code>mad_val</code>:</strong> The median absolute deviation (MAD) of <code>pupil_speed</code>
-from the median:
-$$mad\_val = median(|p - median\_speed|)$$</p></li>
-<li><p><strong><code>mad_thresh</code>:</strong> A threshold computed from the median speed and the MAD,
-using a constant multiplier \(n\) (default value: 16):
-$$mad\_thresh = median\_speed + (n \times mad\_val)$$</p></li>
-</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
