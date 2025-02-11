@@ -2,7 +2,7 @@
 
 ---
 
-## eyeris 0.1.0.9000
+## eyeris 0.1.0.9000 (PR #120)
 <small>`February 11th, 2025`</small>
 
 ### Breaking changes
