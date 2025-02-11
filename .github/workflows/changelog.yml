@@ -1,0 +1,103 @@
+# .github/workflows/changelog.yml
+name: Changelog Management
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check for changelog entry
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const newsContent = fs.readFileSync('NEWS.md', 'utf8');
+            const prNumber = context.payload.pull_request.number;
+
+            if (!newsContent.includes(`(#${prNumber})`)) {
+              core.setFailed('No changelog entry found for this PR. Please add one to NEWS.md');
+            }
+
+      - name: Verify version bump
+        if: contains(github.event.pull_request.labels.*.name, 'breaking-change')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const descContent = fs.readFileSync('DESCRIPTION', 'utf8');
+            const versionMatch = descContent.match(/Version: (.+)/);
+            if (!versionMatch) {
+              core.setFailed('Could not find version in DESCRIPTION');
+              return;
+            }
+            const version = versionMatch[1];
+            if (version.endsWith('.9000')) {
+              // Verify middle number increased for breaking changes
+              const [major, minor] = version.split('.');
+              if (minor === '0') {
+                core.setFailed('Breaking changes require version bump in middle number');
+              }
+            }
+
+  update-changelog:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target' && github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update NEWS.md
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const pr = context.payload.pull_request;
+
+            // Read current NEWS.md
+            let news = fs.readFileSync('NEWS.md', 'utf8');
+
+            // Determine section based on PR labels
+            let section = '## Minor improvements and fixes';
+            if (pr.labels.some(l => l.name === 'breaking-change')) {
+              section = '## Breaking changes';
+            } else if (pr.labels.some(l => l.name === 'enhancement')) {
+              section = '## New features';
+            }
+
+            // Add entry under development section
+            const entry = `* ${pr.title} (#${pr.number})\n`;
+            const devIndex = news.indexOf('# mypackage (development version)');
+            const sectionIndex = news.indexOf(section, devIndex);
+
+            if (sectionIndex === -1) {
+              // Section doesn't exist yet, add it
+              const insertPoint = news.indexOf('\n', devIndex) + 1;
+              news = news.slice(0, insertPoint) +
+                    `\n${section}\n${entry}\n` +
+                    news.slice(insertPoint);
+            } else {
+              // Add to existing section
+              const insertPoint = news.indexOf('\n', sectionIndex) + 1;
+              news = news.slice(0, insertPoint) +
+                    entry +
+                    news.slice(insertPoint);
+            }
+
+            fs.writeFileSync('NEWS.md', news);
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: 'docs: Update changelog for #${{ github.event.pull_request.number }}'
+          commit-message: 'docs: Update changelog for #${{ github.event.pull_request.number }}'
+          branch: 'auto-changelog-update'
+          delete-branch: true
+          body: |
+            Automated changelog update for PR #${{ github.event.pull_request.number }}
