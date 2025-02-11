@@ -61,29 +61,32 @@ eyeris_preproc <- glassbox(
 #> ✔ [  OK  ] - Running eyeris::detransient()
 #> ✔ [  OK  ] - Running eyeris::interpolate()
 #> ✔ [  OK  ] - Running eyeris::lpfilt()
-#> ✔ [  OK  ] - Skipping eyeris::detrend()
-#> ✔ [  OK  ] - Running eyeris::zscore()
 ```
 
 <img src="man/figures/README-glassbox-example-1.png" width="100%" />
+
+    #> ✔ [  OK  ] - Skipping eyeris::detrend()
+    #> ✔ [  OK  ] - Running eyeris::zscore()
 
 ### step-wise correction of pupillary signal
 
 ``` r
 plot(eyeris_preproc)
+#> ℹ Plotting block 1 from possible blocks: 1
 ```
 
-<img src="man/figures/README-glassbox-plot-1.png" width="100%" /><img src="man/figures/README-glassbox-plot-2.png" width="100%" /><img src="man/figures/README-glassbox-plot-3.png" width="100%" /><img src="man/figures/README-glassbox-plot-4.png" width="100%" /><img src="man/figures/README-glassbox-plot-5.png" width="100%" /><img src="man/figures/README-glassbox-plot-6.png" width="100%" />
+<img src="man/figures/README-glassbox-plot-1.png" width="100%" /><img src="man/figures/README-glassbox-plot-2.png" width="100%" /><img src="man/figures/README-glassbox-plot-3.png" width="100%" /><img src="man/figures/README-glassbox-plot-4.png" width="100%" /><img src="man/figures/README-glassbox-plot-5.png" width="100%" /><img src="man/figures/README-glassbox-plot-6.png" width="100%" /><img src="man/figures/README-glassbox-plot-7.png" width="100%" /><img src="man/figures/README-glassbox-plot-8.png" width="100%" /><img src="man/figures/README-glassbox-plot-9.png" width="100%" /><img src="man/figures/README-glassbox-plot-10.png" width="100%" /><img src="man/figures/README-glassbox-plot-11.png" width="100%" /><img src="man/figures/README-glassbox-plot-12.png" width="100%" />
 
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
 
 ``` r
 plot(eyeris_preproc,
      steps = c(1, 5),
-     preview_window = c(0, nrow(eyeris_preproc$timeseries)))
+     preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
+#> ℹ Plotting block 1 from possible blocks: 1
 ```
 
-<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
 
 ------------------------------------------------------------------------
 

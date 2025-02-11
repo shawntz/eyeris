@@ -68,7 +68,7 @@ eyeris_preproc <- glassbox(
 ```
 
 ### step-wise correction of pupillary signal
-```{r glassbox-plot, echo=TRUE, fig.width=12, fig.height=5, fig.dpi=300}
+```{r glassbox-plot, echo=TRUE, fig.width=12, fig.height=7, fig.dpi=300}
 plot(eyeris_preproc)
 ```
 
@@ -76,7 +76,7 @@ plot(eyeris_preproc)
 ```{r timeseries-plot, echo=TRUE, fig.width=8, fig.height=5, fig.dpi=300}
 plot(eyeris_preproc,
      steps = c(1, 5),
-     preview_window = c(0, nrow(eyeris_preproc$timeseries)))
+     preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
 ```
 
 ---
