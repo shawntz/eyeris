@@ -40,7 +40,8 @@ Suggests:
     testthat (>= 3.0.0),
     hexSticker,
     ggimage,
-    cowplot
+    cowplot,
+    png
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
