@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   preproc-workflow: preproc-workflow.html
-last_built: 2025-02-11T14:01Z
+last_built: 2025-02-11T14:04Z
 urls:
   reference: http://shawnschwartz.com/eyeris/reference
   article: http://shawnschwartz.com/eyeris/articles
