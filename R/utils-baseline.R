@@ -1,15 +1,13 @@
 make_baseline_label <- function(baselined_data, epoch_id) {
   return(paste0(
-    "baseline_", baselined_data$baseline_corrected_col_name,
+    "baseline_", baselined_data$baseline_cor_col_name,
     "_", epoch_id
   ))
 }
 
-extract_baseline_epochs <- function(x, evs, time_range, matched_epochs, hz) {
+extract_baseline_epochs <- function(x, df, evs, time_range,
+                                    matched_epochs, hz) {
   check_baseline_inputs(evs, time_range)
-
-  df <- x |>
-    purrr::pluck("timeseries")
 
   time_col <- "time_orig"
   pupil_col <- x$latest
@@ -48,12 +46,14 @@ extract_baseline_epochs <- function(x, evs, time_range, matched_epochs, hz) {
 }
 
 compute_baseline <- function(x, epochs, baseline_epochs, mode) {
-  pupil_col <- x$latest
-  new_col <- paste0(x$latest, "_", mode, "_bl_corr")
+  # compute baseline on pre z-scored data
+  pupil_col <- gsub("_z", "", x$latest)
+  new_col <- paste0(pupil_col, "_", mode, "_bline")
 
   # pre-alloc output data structs
   baseline_data <- vector(mode = "list", length = length(baseline_epochs))
   baseline_means <- rep(NA, length(baseline_epochs))
+  method <- "none... skipped"
 
   for (i in seq_len(length(baseline_epochs))) {
     baseline_window_pupil <- baseline_epochs[[i]][[pupil_col]]
@@ -73,12 +73,10 @@ compute_baseline <- function(x, epochs, baseline_epochs, mode) {
     baseline_means[i] <- baseline_avg
   }
 
-  output_list <- list(
-    baseline_corrected_epochs = baseline_data,
+  return(list(
+    baseline_cor_epochs = baseline_data,
     baseline_means_by_epoch = baseline_means,
     baseline_correction_method = method,
-    baseline_corrected_col_name = new_col
-  )
-
-  return(output_list)
+    baseline_cor_col_name = new_col
+  ))
 }

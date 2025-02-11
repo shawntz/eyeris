@@ -20,3 +20,8 @@ format_call_stack <- function(callstack) {
 
   return(params_parsed)
 }
+
+
+filter_epochs <- function(eyeris, epochs) {
+  return(names(eyeris)[grepl("^epoch_", names(eyeris))])
+}

@@ -13,7 +13,7 @@ check_and_create_dir <- function(basedir, dir = NULL) {
     cli::cli_alert_info(
       sprintf("'%s' does not exist. Creating...", dir)
     )
-    dir.create(dir)
+    dir.create(dir, recursive = TRUE)
     cli::cli_alert_success(
       sprintf("BIDS directory successfully created at: '%s'", dir)
     )
@@ -99,8 +99,27 @@ check_pupil_cols <- function(eyeris, fun) {
   ), fun)
   err_c <- "missing_pupil_raw_error"
 
-  if (!"pupil_raw" %in% colnames(eyeris$timeseries)) {
-    stop(structure(list(message = err_m, call = match.call()), class = err_c))
+  # check if timeseries is a list of blocks
+  if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+    # now check each block for compliance
+    for (block_num in seq_along(eyeris$timeseries)) {
+      if (!"pupil_raw" %in% colnames(eyeris$timeseries[[block_num]])) {
+        err_m <- sprintf(paste(
+          "Block %d in the provided object to `eyeris::%s()` doesn't",
+          "include the expected `pupil_raw` column.\t"
+        ), block_num, fun)
+        stop(structure(list(message = err_m, call = match.call()),
+          class = err_c
+        ))
+      }
+    }
+  } else {
+    # original check for single df fallback method
+    if (!"pupil_raw" %in% colnames(eyeris$timeseries)) {
+      stop(structure(list(message = err_m, call = match.call()),
+        class = err_c
+      ))
+    }
   }
 }
 
