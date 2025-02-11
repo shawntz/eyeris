@@ -25,3 +25,20 @@ format_call_stack <- function(callstack) {
 filter_epochs <- function(eyeris, epochs) {
   return(names(eyeris)[grepl("^epoch_", names(eyeris))])
 }
+
+parse_eyelink_info <- function(version_str, model = NA) {
+  # edge case: if model is NA & version string contains model info
+  if (is.na(model) && grepl("EyeLink", version_str)) {
+    model_match <- regexpr("\\(EyeLink[^\\(\\)]*", version_str)
+    if (model_match > 0) {
+      model_text <- regmatches(version_str, model_match)[[1]]
+      model <- trimws(gsub("^\\(", "", model_text))
+      version_str <- trimws(sub("\\(EyeLink[^\\(]*$", "", version_str))
+    }
+  }
+
+  return(list(
+    version = version_str,
+    model = model
+  ))
+}

@@ -145,6 +145,11 @@ load_asc <- function(file, block = "auto") {
     list_out$blinks <- x$blinks
   }
 
+  # fix metadata (info) for newer versions of eyelink
+  fixed_info <- parse_eyelink_info(x$info$version, x$info$model)
+  x$info$version <- fixed_info$version
+  x$info$model <- fixed_info$model
+
   list_out$file <- file
   list_out$info <- x$info
   list_out$latest <- "pupil_raw"
