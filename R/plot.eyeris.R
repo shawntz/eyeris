@@ -31,17 +31,42 @@
 #' [base::set.seed()], and you will be able to continue re-plotting the same
 #' random example pupil epochs each time -- which is helpful when adjusting
 #' parameters within and across `eyeris` workflow steps.
+#' @param block For multi-block recordings, specifies which block to plot.
+#' Defaults to 1. When a single `.asc` data file contains multiple
+#' recording blocks, this parameter determines which block's timeseries to
+#' visualize. Must be a positive integer not exceeding the total number of
+#' blocks in the recording.
+#' @param plot_distributions Logical flag to indicate whether to plot both
+#' diagnostic pupil timeseries *and* accompanying histograms of the pupil
+#' samples at each processing step. Defaults to `TRUE`.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
 #' from each preprocessing step run.
 #'
 #' @examples
 #' \dontrun{
-#' # example 1: using the default 10000 to 20000 ms time subset
+#' # controlling the timeseries range (i.e., preview window) in your plots:
+#'
+#' ## example 1: using the default 10000 to 20000 ms time subset
 #' plot(your_eyeris_data_output_here)
 #'
-#' # example 2: using a custom time subset (i.e., 1 to 500 ms)
+#' ## example 2: using a custom time subset (i.e., 1 to 500 ms)
 #' plot(your_eyeris_data_output_here, preview_window = c(1, 500))
+#'
+#' # controlling which block of data you would like to plot:
+#'
+#' ## example 1: plots first block (default)
+#' plot(your_eyeris_data_output_here)
+#'
+#' ## example 2: plots a specific block
+#' plot(your_eyeris_data_output_here, block = 2)
+#'
+#' ## example 3: plots a specific block along with a custom preview window
+#' plot(
+#'   your_eyeris_data_output_here,
+#'   block = 2,
+#'   preview_window = c(1000, 2000)
+#' )
 #' }
 #'
 #' @rdname plot.eyeris
@@ -49,7 +74,7 @@
 #' @export
 plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
                         preview_duration = NULL, preview_window = NULL,
-                        seed = NULL) {
+                        seed = NULL, block = 1, plot_distributions = TRUE) {
   # tests
   tryCatch(
     {
@@ -121,9 +146,32 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
     # nolint end
   }
 
-  pupil_data <- x$timeseries
+  # blocks handler
+  if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+    available_blocks <- get_block_numbers(x)
+
+    if (block %in% available_blocks) {
+      pupil_data <- x$timeseries[[paste0("block_", block)]]
+      cli::cli_alert_info(sprintf(
+        "Plotting block %d from possible blocks: %s",
+        block,
+        toString(available_blocks)
+      ))
+    } else {
+      cli::cli_abort(sprintf(
+        "Block %d does not exist. Available blocks: %d",
+        block, toString(available_blocks)
+      ))
+    }
+  } else {
+    pupil_data <- x$timeseries
+  }
+
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
   colors <- c("black", rainbow(length(pupil_steps) - 1))
+  transparent_colors <- sapply(colors, function(x) {
+    grDevices::adjustcolor(x, alpha.f = 0.5)
+  })
 
   if (length(steps) == 1) {
     if (steps[1] == "all") {
@@ -154,7 +202,14 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         st <- min(random_epochs[[n]]$time_orig)
         et <- max(random_epochs[[n]]$time_orig)
         title <- paste0("\n[", st, " - ", et, "]")
-        header <- paste0(pupil_steps[i])
+        header <- paste0(
+          gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+          if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+            sprintf(" (Run %d)", block)
+          } else {
+            ""
+          }
+        )
 
         if (grepl("z", pupil_steps[i])) {
           y_units <- "(z)"
@@ -174,7 +229,13 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
             par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
             robust_plot(pupil_data$time_orig, pupil_data[[pupil_steps[i - 1]]],
               type = "l", col = "black", lwd = 2,
-              main = paste0("detrend:\n", pupil_steps[i - 1]),
+              main = paste0(
+                "detrend:\n",
+                gsub(
+                  "_", "\u2192",
+                  gsub("pupil_", "", pupil_steps[i - 1])
+                )
+              ),
               xlab = "raw tracker time (ms)", ylab = "pupil size (a.u.)"
             )
             lines(pupil_data$time_orig, pupil_data$detrend_fitted_values,
@@ -213,29 +274,49 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
           }
         }
 
+  # nolint start
+  # nolint end
+
         if (!is.null(params$next_step)) {
+          plot_data <- random_epochs[[n]][[
+            params$next_step[length(params$next_step)]
+          ]]
           robust_plot(
-            random_epochs[[n]][[params$next_step[length(params$next_step)]]],
+            plot_data,
             type = "l", col = colors[i], lwd = 2,
             main = title, xlab = "time (ms)", ylab = y_label
           )
         } else {
+          plot_data <- random_epochs[[n]][[pupil_steps[i]]]
           robust_plot(
-            random_epochs[[n]][[pupil_steps[i]]],
+            plot_data,
             type = "l", col = colors[i], lwd = 2,
             main = title, xlab = "time (ms)", ylab = y_label
           )
         }
-        graphics::mtext(header, outer = TRUE, cex = 1.25, font = 2)
+      }
+
+      graphics::mtext(paste("\u2605", header),
+        outer = TRUE, cex = 1.25, font = 2
+      )
+
+      if (plot_distributions) {
+        plot_pupil_distribution(
+          data = pupil_data[[pupil_steps[i]]],
+          color = colors[i],
+          main = paste("\u2605", header),
+          xlab = y_label
+        )
+
+        par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
       }
     }
-
     par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
   } else {
     start_index <- preview_window[1]
     end_index <- min(preview_window[2], nrow(pupil_data))
     sliced_pupil_data <- pupil_data[start_index:end_index, ]
-    par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
+
     for (i in seq_along(pupil_steps)) {
       st <- min(sliced_pupil_data$time_orig)
       et <- max(sliced_pupil_data$time_orig)
@@ -250,12 +331,35 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
       robust_plot(sliced_pupil_data[[pupil_steps[i]]],
         type = "l", col = colors[i], lwd = 2,
-        main = paste0(
-          pupil_steps[i], "\n[", st, " - ", et, "] | ",
+        main = paste("\u2605", paste0(
+          gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+          if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+            sprintf(" (Run %d)", block)
+          } else {
+            ""
+          },
+          "\n[", st, " - ", et, "] | ",
           "[", preview_window[1], " - ", preview_window[2], "]"
-        ),
+        )),
         xlab = "time (s)", ylab = y_label
       )
+
+      if (plot_distributions) {
+        plot_pupil_distribution(
+          data = pupil_data[[pupil_steps[i]]],
+          color = colors[i],
+          main = paste("\u2605", paste0(
+            gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+            if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+              sprintf(" (Run %d)", block)
+            } else {
+              ""
+            }
+          )),
+          xlab = y_label
+        )
+        par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
+      }
     }
 
     par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
@@ -291,11 +395,16 @@ robust_plot <- function(x, ...) {
       valid <- is.finite(x) # filter out non-finite values
 
       if (all(!valid)) {
-        cli::cli_alert_warning("All values are non-finite... Skipping!")
-        return(NULL)
+        cli::cli_alert_warning(
+          paste0(
+            "All values are non-finite in random segment, try running",
+            "again with a different seed to avoid empty plots!"
+          )
+        )
+        x <- rep(0, length(x)) # create empty placeholder plot
+      } else {
+        x <- x[valid]
       }
-
-      x <- x[valid]
 
       plot(x, ...)
     },
@@ -309,5 +418,19 @@ robust_plot <- function(x, ...) {
         paste("A warning occurred during plotting:", w$message)
       )
     }
+  )
+}
+
+plot_pupil_distribution <- function(data, color, main, xlab) {
+  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
+
+  hist(
+    data,
+    main = main,
+    xlab = xlab,
+    ylab = "frequency (count)",
+    col = color,
+    border = "white",
+    breaks = "FD"
   )
 }
