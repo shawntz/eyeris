@@ -14,6 +14,7 @@ bidsify(
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
+  merge_runs = FALSE,
   save_raw = TRUE,
   html_report = TRUE,
   pdf_report = FALSE,
@@ -40,7 +41,19 @@ as one file or as separate files. Defaults to FLASE (no merge).}
 
 \item{task_name}{BIDS task ID.}
 
-\item{run_num}{BIDS run ID.}
+\item{run_num}{BIDS run ID. For single files without blocks (i.e., runs),
+\code{run_num} specifies which run this file represents. However, for files
+with multiple recording blocks embedded within the \strong{same} \code{.asc} file,
+this parameter is ignored and blocks are automatically numbered as runs
+(block 1 = run-01, block 2 = run-02, etc.) in the order they appeared/were
+recorded.}
+
+\item{merge_runs}{Logical flag indicating whether multiple runs (either
+from multiple recording blocks existing within the \strong{same} \code{.asc} file
+(see above), or manually specified) should be combined into a single
+output file. When TRUE, adds a 'run' column to identify the source run.
+Defaults to FALSE (i.e., separate files per block/run -- the standard
+BIDS-like-behavior).}
 
 \item{save_raw}{Logical flag indicating whether to save_raw pupil data in
 addition to epoched data. Defaults to TRUE.}
@@ -91,7 +104,7 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
     label = "prePostProbe" # custom epoch label name
   ) |>
   eyeris::bidsify(
-    bids_dir = ".", # make bids dir in current directory
+    bids_dir = "~/Documents", # e.g., make bids deriv dir in documents
     participant_id = "001",
     session_num = "01",
     task_name = "assocret",

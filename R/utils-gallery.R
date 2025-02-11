@@ -5,7 +5,6 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
   rmd_f <- file.path(out, paste0(
     "sub-", params$sub, "_",
-    "run-", params$run, "_",
     epoch_name_corrected, ".Rmd"
   ))
 
@@ -51,7 +50,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     "lightbox.min.js'></script>\n<script>document.addEventListener(",
     "'DOMContentLoaded', function() {lightbox.option({'imageFadeDuration' : 0,",
     "'resizeDuration': 25,'wrapAround': false});});</script>\n\n\n",
-    "\n# Preprocessed Data Preview\n\n",
+    "\n## Preprocessed Data Preview\n\n",
     "\n## ", epoch_name, "\n\n",
     epoch_lightbox_html,
     "\n",
