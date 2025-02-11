@@ -4,13 +4,35 @@
 \alias{detransient}
 \title{Remove pupil samples that are physiologically unlikely}
 \usage{
-detransient(eyeris, n = 16)
+detransient(eyeris, n = 16, mad_override = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
 
 \item{n}{A constant used to compute the median absolute deviation (MAD)
 threshold.}
+
+\item{mad_override}{Default \code{NULL}. This parameter provides
+alternative options for handling edge cases where the computed
+properties here within \code{\link[=detransient]{detransient()}}  \eqn{\text{mad\_val}}
+and \eqn{\text{median\_speed}} are very small. For example, if
+\deqn{\text{mad\_val} = 0 \quad \text{and} \quad \text{median\_speed} = 1,}
+then, with the default multiplier \eqn{n = 16},
+\deqn{\text{mad\_thresh} = \text{median\_speed} +
+(n \times \text{mad\_val}) = 1 + (16 \times 0) = 1.}
+In this situation, any speed \eqn{p_i \ge 1} would be flagged as a
+transient, which might be overly sensitive. To reduce this sensitivity,
+two possible adjustments are available:
+\enumerate{
+\item If \eqn{\text{mad\_thresh} = 1}, the transient detection criterion is
+modified from
+\deqn{p_i \ge \text{mad\_thresh}}
+to
+\deqn{p_i > \text{mad\_thresh}.}
+\item If \eqn{\text{mad\_thresh}} is very small, the user may manually
+adjust the sensitivity by providing an alternative threshold value
+via the \code{mad_override} parameter.
+}}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:
@@ -22,6 +44,38 @@ more quickly than would be physiologically expected. This is accomplished by
 rejecting samples that exceed a "speed"-based threshold (i.e., median
 absolute deviation from sample-to-sample). This threshold is computed based
 on the constant \code{n}, which defaults to the value \code{16}.
+}
+\details{
+\strong{Computed properties:}
+\itemize{
+\item \strong{\code{pupil_speed}:} Compute speed of pupil by approximating the derivative
+of \code{x} (pupil) with respect to \code{y} (time) using finite differences.
+\itemize{
+\item Let \eqn{x = (x_1, x_2, \dots, x_n)} and
+\eqn{y = (y_1, y_2, \dots, y_n)} be two numeric vectors with
+\eqn{n \ge 2}; then, the finite differences are computed as:
+\deqn{\delta_i = \frac{x_{i+1} - x_i}{y_{i+1} - y_i},
+     \quad i = 1, 2, \dots, n-1.}
+\item This produces an output vector \eqn{p = (p_1, p_2, \dots, p_n)}
+defined by:
+\itemize{
+\item For the first element:
+\deqn{p_1 = |\delta_1|,}
+\item For the last element:
+\deqn{p_n = |\delta_{n-1}|,}
+\item For the intermediate elements (\eqn{i = 2, 3, \dots, n-1}):
+\deqn{p_i = \max\{|\delta_{i-1}|,\,|\delta_i|\}.}
+}
+}
+\item \strong{\code{median_speed}:} The median of the computed \code{pupil_speed}:
+\deqn{median\_speed = median(p)}
+\item \strong{\code{mad_val}:} The median absolute deviation (MAD) of \code{pupil_speed}
+from the median:
+\deqn{mad\_val = median(|p - median\_speed|)}
+\item \strong{\code{mad_thresh}:} A threshold computed from the median speed and the MAD,
+using a constant multiplier \eqn{n} (default value: 16):
+\deqn{mad\_thresh = median\_speed + (n \times mad\_val)}
+}
 }
 \examples{
 system.file("extdata", "memory.asc", package = "eyeris") |>
