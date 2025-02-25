@@ -1,5 +1,13 @@
 url: http://shawnschwartz.com/eyeris/
 
+news:
+    cran_dates: false # update to true once published to CRAN
+    releases:
+    - text: "Version 0.1.0.9000"
+      href: news/index.html#eyeris-0109000
+    - text: "Version 0.0.0.9000"
+      href: news/index.html#eyeris-0009000
+
 home:
   sidebar:
     structure: [authors, citation, links, license, dev]

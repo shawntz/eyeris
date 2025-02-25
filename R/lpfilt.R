@@ -27,10 +27,9 @@
 lpfilt <- function(eyeris, wp = 4, ws = 8,
                    rp = 1, rs = 35, plot_freqz = FALSE) {
   fs <- eyeris$info$sample.rate
-  return(pipeline_handler(
-    eyeris, lpfilt_pupil, "lpfilt",
-    wp, ws, rp, rs, fs, plot_freqz
-  ))
+
+  eyeris |>
+    pipeline_handler(lpfilt_pupil, "lpfilt", wp, ws, rp, rs, fs, plot_freqz)
 }
 
 lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {

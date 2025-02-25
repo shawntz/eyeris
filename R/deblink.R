@@ -28,7 +28,8 @@
 #'
 #' @export
 deblink <- function(eyeris, extend = 40) {
-  return(pipeline_handler(eyeris, deblink_pupil, "deblink", extend))
+  eyeris |>
+    pipeline_handler(deblink_pupil, "deblink", extend)
 }
 
 # based on https://github.com/dr-JT/pupillometry/blob/main/R/pupil_deblink.R

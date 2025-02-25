@@ -87,7 +87,7 @@ output <- eyeris::glassbox(demo_data)
 plot(
   output,
   steps = c(1, 5),
-  preview_window = c(0, nrow(output$timeseries)),
+  preview_window = c(0, nrow(output$timeseries$block_1)),
   seed = 0
 )
 

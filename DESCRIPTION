@@ -1,7 +1,7 @@
 Package: eyeris
 Type: Package
 Title: eyeris
-Version: 0.0.0.9000
+Version: 0.1.0.9000
 Authors@R:
   person(
     given = "Shawn",
@@ -29,7 +29,9 @@ Imports:
     stats,
     graphics,
     grDevices,
-    tidyr
+    tidyr,
+    progress,
+    data.table
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
@@ -38,7 +40,8 @@ Suggests:
     testthat (>= 3.0.0),
     hexSticker,
     ggimage,
-    cowplot
+    cowplot,
+    png
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3

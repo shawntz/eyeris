@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" height="139" alt="eyeris website" /></a>
+# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 <a href="LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
@@ -68,7 +68,7 @@ eyeris_preproc <- glassbox(
 ```
 
 ### step-wise correction of pupillary signal
-```{r glassbox-plot, echo=TRUE, fig.width=12, fig.height=5, fig.dpi=300}
+```{r glassbox-plot, echo=TRUE, fig.width=12, fig.height=7, fig.dpi=300}
 plot(eyeris_preproc)
 ```
 
@@ -76,7 +76,7 @@ plot(eyeris_preproc)
 ```{r timeseries-plot, echo=TRUE, fig.width=8, fig.height=5, fig.dpi=300}
 plot(eyeris_preproc,
      steps = c(1, 5),
-     preview_window = c(0, nrow(eyeris_preproc$timeseries)))
+     preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
 ```
 
 ---

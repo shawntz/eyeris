@@ -51,18 +51,18 @@
 #'
 #' @export
 zscore <- function(eyeris) {
-  return(pipeline_handler(eyeris, zscore_pupil, "z"))
+  eyeris |>
+    pipeline_handler(zscore_pupil, "z")
 }
 
 zscore_pupil <- function(x, prev_op) {
   pupil_col <- dplyr::sym(prev_op)
 
-  z <- x |>
-    dplyr::mutate(zscore = get_zscores(!!pupil_col)) |>
-    dplyr::ungroup() |>
+  x |>
+    dplyr::mutate(
+      zscore = get_zscores(!!pupil_col)
+    ) |>
     dplyr::pull(zscore)
-
-  return(z)
 }
 
 get_zscores <- function(x) {

@@ -64,7 +64,7 @@
 #' plot(
 #'   output,
 #'   steps = c(1, 5),
-#'   preview_window = c(0, nrow(output$timeseries)),
+#'   preview_window = c(0, nrow(output$timeseries$block_1)),
 #'   seed = 0
 #' )
 #'
@@ -88,6 +88,7 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
                      preview_window = NULL, ...) {
   # the default parameters
   params <- list(
+    load_asc = list(block = "auto"),
     deblink = list(extend = 50),
     detransient = list(n = 16),
     lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE)
@@ -99,7 +100,7 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
   # eyeris workflow data structure
   pipeline <- list(
     load_asc = function(data, params) {
-      return(eyeris::load_asc(data))
+      return(eyeris::load_asc(data, block = params$load_asc$block))
     },
     deblink = function(data, params) {
       return(eyeris::deblink(data, extend = params$deblink$extend))
@@ -175,7 +176,10 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
       }
     )
 
-    pupil_steps <- grep("^pupil_", colnames(file$timeseries), value = TRUE)
+    pupil_steps <- grep("^pupil_",
+      colnames(file$timeseries$block_1),
+      value = TRUE
+    )
 
     if (confirm) {
       if (!err_thrown) {
@@ -186,12 +190,20 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
             next_step <- NULL
           }
 
-          plot(file,
-            steps = step_counter, num_previews = num_previews, seed = seed,
-            preview_duration = preview_duration,
-            preview_window = preview_window,
-            only_linear_trend = only_linear_trend, next_step = next_step
-          )
+          for (block_name in names(file$timeseries)) {
+            bn <- get_block_numbers(block_name)
+            plot(
+              file,
+              steps = step_counter,
+              num_previews = num_previews,
+              seed = seed,
+              preview_duration = preview_duration,
+              preview_window = preview_window,
+              only_linear_trend = only_linear_trend,
+              next_step = next_step,
+              block = bn
+            )
+          }
 
           if (step_name == "detrend") {
             # reset linear trend flags

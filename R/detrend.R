@@ -20,7 +20,8 @@
 #'
 #' @export
 detrend <- function(eyeris) {
-  return(pipeline_handler(eyeris, detrend_pupil, "detrend"))
+  eyeris |>
+    pipeline_handler(detrend_pupil, "detrend")
 }
 
 detrend_pupil <- function(x, prev_op) {
