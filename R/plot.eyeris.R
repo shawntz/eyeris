@@ -296,7 +296,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         }
       }
 
-      graphics::mtext(paste("\u2605", header),
+      graphics::mtext(header,
         outer = TRUE, cex = 1.25, font = 2
       )
 
@@ -304,7 +304,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         plot_pupil_distribution(
           data = pupil_data[[pupil_steps[i]]],
           color = colors[i],
-          main = paste("\u2605", header),
+          main = header,
           xlab = y_label
         )
 
@@ -331,7 +331,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
       robust_plot(sliced_pupil_data[[pupil_steps[i]]],
         type = "l", col = colors[i], lwd = 2,
-        main = paste("\u2605", paste0(
+        main = paste(paste0(
           gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
           if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
             sprintf(" (Run %d)", block)
@@ -348,7 +348,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         plot_pupil_distribution(
           data = pupil_data[[pupil_steps[i]]],
           color = colors[i],
-          main = paste("\u2605", paste0(
+          main = paste(paste0(
             gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
             if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
               sprintf(" (Run %d)", block)
