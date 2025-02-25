@@ -43,7 +43,7 @@
 #' @param n A constant used to compute the median absolute deviation (MAD)
 #' threshold.
 #'
-#' @param mad_override Default `NULL`. This parameter provides
+#' @param mad_thresh Default `NULL`. This parameter provides
 #' alternative options for handling edge cases where the computed
 #' properties here within [eyeris::detransient()]  \eqn{\text{mad\_val}}
 #' and \eqn{\text{median\_speed}} are very small. For example, if
@@ -62,8 +62,8 @@
 #'    \deqn{p_i > \text{mad\_thresh}.}
 #'
 #' 2. If \eqn{\text{mad\_thresh}} is very small, the user may manually
-#'    adjust the sensitivity by providing an alternative threshold value
-#'    via the `mad_override` parameter.
+#'    adjust the sensitivity by supplying an alternative threshold value
+#'    here directly via this `mad_thresh` parameter.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_detransient`.
@@ -76,36 +76,75 @@
 #'   plot(seed = 0)
 #'
 #' @export
-detransient <- function(eyeris, n = 16, mad_override = NULL) {
+detransient <- function(eyeris, n = 16, mad_thresh = NULL) {
   eyeris |>
-    pipeline_handler(detransient_pupil, "detransient", n, mad_override)
+    pipeline_handler(detransient_pupil, "detransient", n, mad_thresh)
 }
 
 # adapted from:
 # https://github.com/dr-JT/pupillometry/blob/main/R/pupil_artifact.R
-detransient_pupil <- function(x, prev_op, n, mad_override) {
+detransient_pupil <- function(x, prev_op, n, mad_thresh) {
   pupil <- x[[prev_op]]
   timeseries <- x[["time_orig"]]
 
-  # note: `pupil_speed` calculated with the helper function below
+  # note: `pupil_speed` is calculated using the helper function below
   pupil_speed <- speed(pupil, timeseries)
 
-  median_speed <- median(pupil_speed, na.rm = TRUE)
-  mad_val <- median(abs(pupil_speed - median_speed), na.rm = TRUE)
-  mad_thresh <- median_speed + (n * mad_val)
-
-  if (is.null(mad_override)) {
-    if (mad_thresh == 1) {
-      comparison <- pupil_speed > mad_thresh
-    } else {
-      comparison <- pupil_speed >= mad_thresh
-    }
+  if (!is.null(mad_thresh)) {
+    using_mad_thresh_override <- TRUE
   } else {
-    if (is.numeric(mad_override)) {
-      comparison <- pupil_speed >= mad_override
-    } else {
-      stop("`mad_override` must either be `NULL` or numeric.")
-    }
+    using_mad_thresh_override <- FALSE
+  }
+
+  if (!using_mad_thresh_override) {
+    median_speed <- median(pupil_speed, na.rm = TRUE)
+    mad_val <- median(abs(pupil_speed - median_speed), na.rm = TRUE)
+    mad_thresh <- median_speed + (n * mad_val)
+  } else if (is.numeric(mad_thresh)) {
+    alert("warning", "Using user supplied `mad_thresh`... skipping calculation")
+    mad_val <- 0
+  } else {
+    stop("`mad_thresh` must either be `NULL` or numeric.")
+  }
+
+  # validate `mad_val` != 0: unrealistic outcome for real data
+  # likely means filtering has already been applied to the data
+  # (i.e., if online filtering is enabled on the EyeLink Host PC)
+  if (!using_mad_thresh_override && mad_val == 0) {
+    message(paste(
+      "\n ***WARNING: SOMETHING OUTRAGEOUS IS HAPPENING WITH YOUR PUPIL DATA!***",
+      "\n\nThe median absolute deviation (MAD) of your pupil speed is 0.\n",
+      "This indicates a potential setup / hardware issue which has likely",
+      "propogated into your pupil recording.\n",
+      "Most often, this is due to online filtering being applied directly",
+      "to your pupil data via the EyeLink Host PC.\n\n",
+      "WE DO NOT RECOMMEND USING ANY ONLINE AUTO FILTERING",
+      "DURING YOUR DATA RECORDING.\n\n",
+      "***ADDITIONAL INFO***\nThe default setting for communicating with the EyeLink\n",
+      "machine is to have filtering enabled on either live-streamed data or",
+      "saved data in EDF files.\n\n We do not want these filters because:\n (1)",
+      "it is unclear how the EyeLink machine is specifying their low-pass filter,",
+      "and\n (2) it conflicts with an assumption here in `eyeris::detransient()`",
+      "to use one-step \ndifference to compute a threshold for detecting large",
+      "jumps in pupil data\n (suggesting blinking or other artifacts).\n\n",
+      "***GENERAL TIP***\n You should aim to have your data as raw as possible so you",
+      "can 'cook' it fresh!\n\n",
+      "***WHAT TO DO NEXT***\n If you would like to continue preprocessing your current",
+      "pupil data file,\n you should consider skipping the `eyeris::detransient()`",
+      "step of the pipeline altogether.\n Advanced users might consider additional",
+      "testing by manually passing in different `mad_thresh` override values\n",
+      "into `eyeris::detransient()` and then carefully assessing the consequences",
+      "of any given override value on the pupil data;\n however, this step is not",
+      "recommended for most users.\n\n PLEASE CONTINUE AT YOUR OWN RISK.\n\n\n"
+    ))
+
+    stop("Computed property `mad_val` == 0!")
+  }
+
+  if (mad_thresh == 1) {
+    comparison <- pupil_speed > mad_thresh
+  } else {
+    comparison <- pupil_speed >= mad_thresh
   }
 
   pupil <- ifelse(comparison, as.numeric(NA), pupil)

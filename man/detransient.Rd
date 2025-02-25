@@ -4,7 +4,7 @@
 \alias{detransient}
 \title{Remove pupil samples that are physiologically unlikely}
 \usage{
-detransient(eyeris, n = 16, mad_override = NULL)
+detransient(eyeris, n = 16, mad_thresh = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
@@ -12,7 +12,7 @@ detransient(eyeris, n = 16, mad_override = NULL)
 \item{n}{A constant used to compute the median absolute deviation (MAD)
 threshold.}
 
-\item{mad_override}{Default \code{NULL}. This parameter provides
+\item{mad_thresh}{Default \code{NULL}. This parameter provides
 alternative options for handling edge cases where the computed
 properties here within \code{\link[=detransient]{detransient()}}  \eqn{\text{mad\_val}}
 and \eqn{\text{median\_speed}} are very small. For example, if
@@ -30,8 +30,8 @@ modified from
 to
 \deqn{p_i > \text{mad\_thresh}.}
 \item If \eqn{\text{mad\_thresh}} is very small, the user may manually
-adjust the sensitivity by providing an alternative threshold value
-via the \code{mad_override} parameter.
+adjust the sensitivity by supplying an alternative threshold value
+here directly via this \code{mad_thresh} parameter.
 }}
 }
 \value{
