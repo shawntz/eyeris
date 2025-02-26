@@ -3,13 +3,14 @@
 ---
 
 ## eyeris 0.1.1.9000
-<small>`February 25th, 2025`</small>
+<small>`February 26th, 2025`</small>
 
 ### Minor improvements and fixes
 * FF (#115): add more aggressive handling of edge cases in `eyeris::detransient()` (#121)
   * Specifically, situations where pupil data appear to have already undergone some type of online filtering directly from the EyeLink Host PC machine.
   * There is now detailed instructions on what to do if this exception is raised.
   * Furthermore, a new `mad_thresh` override parameter has been added to `eyeris::detransient()` for advanced users to override the `mad_thresh` computed property. *Note:* this new `mad_thresh` parameter defaults to `NULL` (and should pretty much always stay as such).
+* FF (#122): fixed issue with incompatible unicode character in plot titles (#123)
 
 ## eyeris 0.1.0.9000
 <small>`February 11th, 2025`</small>
