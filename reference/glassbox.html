@@ -53,7 +53,7 @@ from eyeris separately.'><meta property="og:image" content="http://shawnschwartz
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>A "glassbox" pipeline wrapper for <code>eyeris</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/122-bug/R/glassbox.R" class="external-link"><code>R/glassbox.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/issue-115-fixed/R/glassbox.R" class="external-link"><code>R/glassbox.R</code></a></small>
       <div class="d-none name"><code>glassbox.Rd</code></div>
     </div>
 
@@ -73,6 +73,7 @@ from <code>eyeris</code> separately.</p>
 <span>  num_previews <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  preview_duration <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  preview_window <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  skip_detransient <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -123,6 +124,13 @@ relate to the raw index position of each pupil sample from 1 to n (which
 will need to be specified manually by the user depending on the sampling rate
 of the recording; i.e., 5000-6000 for the epoch positioned from 5-6 seconds
 after the start of the timeseries, sampled at 1000 Hz).</p></dd>
+
+
+<dt id="arg-skip-detransient">skip_detransient<a class="anchor" aria-label="anchor" href="#arg-skip-detransient"></a></dt>
+<dd><p>A flag to indicate whether to skip the <code>detransient</code>
+step (set to <code>FALSE</code> by default). In most cases, this should remain <code>FALSE</code>.
+For a more detailed description about likely edge cases that would prompt
+you to set this to <code>TRUE</code>, see the docs for <code><a href="detransient.html">detransient()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
