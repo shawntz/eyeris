@@ -51,7 +51,7 @@ deblink_pupil <- function(x, prev_op, extend) {
     )
   }
 
-  data <- x |>
+  x |>
     dplyr::select(
       time = time_orig,
       pupil = !!column
@@ -77,6 +77,4 @@ deblink_pupil <- function(x, prev_op, extend) {
       pupil_deblink = ifelse(pupil == 0 | blink == 1, as.numeric(NA), pupil)
     ) |>
     dplyr::pull(pupil_deblink)
-
-  return(data)
 }
