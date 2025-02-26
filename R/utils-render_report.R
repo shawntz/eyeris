@@ -92,7 +92,7 @@ make_report <- function(eyeris, out, plots, ...) {
 
   writeLines(content, con = rmd_f)
 
-  return(rmd_f)
+  rmd_f
 }
 
 # parse eyelink `info` metadata into a markdown table
@@ -110,7 +110,7 @@ make_md_table <- function(df) {
     )
   }
 
-  return(md_table)
+  md_table
 }
 
 print_plots <- function(plots) {
@@ -187,6 +187,6 @@ print_plots <- function(plots) {
         }
       }
     }
-    return(md_plots)
+    md_plots
   }
 }
