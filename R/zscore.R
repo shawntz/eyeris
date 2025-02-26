@@ -68,6 +68,6 @@ zscore_pupil <- function(x, prev_op) {
 get_zscores <- function(x) {
   means <- mean(x, na.rm = TRUE)
   sds <- sd(x, na.rm = TRUE)
-  zscores <- (x - means) / sds
-  return(zscores)
+
+  (x - means) / sds
 }
