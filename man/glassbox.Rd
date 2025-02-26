@@ -11,6 +11,7 @@ glassbox(
   num_previews = 3,
   preview_duration = 5,
   preview_window = NULL,
+  skip_detransient = FALSE,
   ...
 )
 }
@@ -46,6 +47,11 @@ relate to the raw index position of each pupil sample from 1 to n (which
 will need to be specified manually by the user depending on the sampling rate
 of the recording; i.e., 5000-6000 for the epoch positioned from 5-6 seconds
 after the start of the timeseries, sampled at 1000 Hz).}
+
+\item{skip_detransient}{A flag to indicate whether to skip the \code{detransient}
+step (set to \code{FALSE} by default). In most cases, this should remain \code{FALSE}.
+For a more detailed description about likely edge cases that would prompt
+you to set this to \code{TRUE}, see the docs for \code{\link[=detransient]{detransient()}}.}
 
 \item{...}{Additional arguments to override the default, prescribed settings.}
 }

@@ -92,5 +92,5 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
   }
 
-  return(eyeris)
+  eyeris
 }

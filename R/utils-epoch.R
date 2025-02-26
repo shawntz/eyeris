@@ -50,7 +50,7 @@ slice_epoch <- function(x_raw, s, e) {
     epoch_df$block <- unique(x_raw$block)[1]
   }
 
-  return(epoch_df)
+  epoch_df
 }
 
 #' Slice epochs with no explicit limits (using adjacent timestamps)
@@ -74,7 +74,7 @@ slice_epochs_no_limits <- function(x_raw, all_ts) {
     epochs[[i]] <- slice_epoch(x_raw, current_time, next_time)
   }
 
-  return(epochs)
+  epochs
 }
 
 #' Slice epochs with explicit limits
@@ -88,7 +88,6 @@ slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
   n_samples <- duration / (1 / hz)
 
   epoch_df <- epoch_df[1:n_samples, ]
-  return(epoch_df)
 }
 
 #' Obtain timestamps from the events data

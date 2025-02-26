@@ -386,7 +386,7 @@ draw_random_epochs <- function(x, n, d, hz) {
       dplyr::filter(time_orig >= rand_start & time_orig < rand_end)
   }
 
-  return(drawn_epochs)
+  drawn_epochs
 }
 
 robust_plot <- function(x, ...) {

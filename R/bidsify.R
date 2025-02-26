@@ -184,7 +184,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             rbind, lapply(names(eyeris$timeseries), function(i) {
               run_epochs <- epochs_to_save[[epoch_id]][[i]]
               run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              return(run_epochs)
+              run_epochs
             })
           )
 
@@ -275,10 +275,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               run_epochs <- epochs_to_save[[epoch_id]][[i]]
               run_epochs$run <- sprintf("%02d", get_block_numbers(i))
               run_epochs$epoch_type <- epoch_id
-              return(run_epochs)
+              run_epochs
             })
           )
-          return(epochs_with_runs)
+          epochs_with_runs
         })
       )
 
@@ -291,7 +291,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         rbind, lapply(names(epochs_to_save), function(epoch_id) {
           epochs <- epochs_to_save[[epoch_id]]
           epochs$epoch_type <- epoch_id
-          return(epochs)
+          epochs
         })
       )
 
@@ -327,7 +327,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               run_data <- eyeris$timeseries
             }
             run_data$run <- sprintf("%02d", i)
-            return(run_data)
+            run_data
           })
         )
 
