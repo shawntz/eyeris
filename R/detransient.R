@@ -160,9 +160,7 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
     comparison <- pupil_speed >= mad_thresh
   }
 
-  pupil <- ifelse(comparison, as.numeric(NA), pupil)
-
-  return(pupil)
+  ifelse(comparison, as.numeric(NA), pupil)
 }
 
 speed <- function(x, y) {
@@ -170,11 +168,10 @@ speed <- function(x, y) {
   pupil <- abs(cbind(c(NA, delta), c(delta, NA))) # matrix of differences
   pupil <- apply(pupil, 1, function(row) {
     if (all(is.na(row))) {
-      return(NA) # return NA for all-NA rows
+      NA # return NA for all-NA rows
     } else {
-      return(max(row, na.rm = TRUE)) # only compute max for valid rows
+      max(row, na.rm = TRUE) # only compute max for valid rows
     }
   })
-
-  return(pupil)
+  pupil
 }
