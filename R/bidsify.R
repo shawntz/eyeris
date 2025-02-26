@@ -184,7 +184,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             rbind, lapply(names(eyeris$timeseries), function(i) {
               run_epochs <- epochs_to_save[[epoch_id]][[i]]
               run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              return(run_epochs)
+              run_epochs
             })
           )
 
