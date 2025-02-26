@@ -79,5 +79,5 @@ print_lightbox_img_html <- function(images) {
     )
   }
 
-  return(html_out)
+  html_out
 }
