@@ -69,7 +69,5 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
   }
 
   # filter twice (forward and backward) to preserve phase information
-  pupil <- gsignal::filtfilt(filt, prev_pupil)
-
-  return(pupil)
+  gsignal::filtfilt(filt, prev_pupil)
 }
