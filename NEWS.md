@@ -2,7 +2,7 @@
 
 ---
 
-## eyeris 0.1.1.9000
+## eyeris 0.1.0.9001
 <small>`February 26th, 2025`</small>
 
 ### Minor improvements and fixes
