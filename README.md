@@ -76,13 +76,13 @@ plot(eyeris_preproc)
 
 <div>
 
-<img src="inst/figures/ts_coalesced.gif" width="400" alt="glassbox timeseries animation">
+<img src="inst/figures/ts_coalesced.gif" width="100%" alt="glassbox timeseries animation">
 
 </div>
 
 <div>
 
-<img src="inst/figures/hists_coalesced.gif" width="400" alt="glassbox histograms animation">
+<img src="inst/figures/hists_coalesced.gif" width="100%" alt="glassbox histograms animation">
 
 </div>
 
