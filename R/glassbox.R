@@ -52,6 +52,10 @@
 #' will need to be specified manually by the user depending on the sampling rate
 #' of the recording; i.e., 5000-6000 for the epoch positioned from 5-6 seconds
 #' after the start of the timeseries, sampled at 1000 Hz).
+#' @param skip_detransient A flag to indicate whether to skip the `detransient`
+#' step (set to `FALSE` by default). In most cases, this should remain `FALSE`.
+#' For a more detailed description about likely edge cases that would prompt
+#' you to set this to `TRUE`, see the docs for [eyeris::detransient()].
 #' @param ... Additional arguments to override the default, prescribed settings.
 #'
 #' @examples
@@ -85,12 +89,12 @@
 #' @export
 glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
                      num_previews = 3, preview_duration = 5,
-                     preview_window = NULL, ...) {
+                     preview_window = NULL, skip_detransient = FALSE, ...) {
   # the default parameters
   params <- list(
     load_asc = list(block = "auto"),
     deblink = list(extend = 50),
-    detransient = list(n = 16),
+    detransient = list(n = 16, mad_thresh = NULL),
     lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE)
   )
 
@@ -106,6 +110,11 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
       eyeris::deblink(data, extend = params$deblink$extend)
     },
     detransient = function(data, params) {
+      if (skip_detransient) {
+        data
+      } else {
+        eyeris::detransient(data, n = params$detransient$n)
+      }
     },
     interpolate = function(data, params) {
       eyeris::interpolate(data)
