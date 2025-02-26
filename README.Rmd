@@ -53,7 +53,7 @@ to flexibly construct and compare different pipelines.
 
 We hope you enjoy! -shawn
 
-```{r glassbox-example, fig.dpi=300}
+```{r glassbox-example, echo=TRUE, results='hide', fig.show='hide', fig.dpi=300}
 set.seed(32)
 
 library(eyeris)
@@ -68,15 +68,31 @@ eyeris_preproc <- glassbox(
 ```
 
 ### step-wise correction of pupillary signal
-```{r glassbox-plot, echo=TRUE, fig.width=12, fig.height=7, fig.dpi=300}
+```{r glassbox-plot, echo=TRUE, results='hide', fig.show='hide', warning=TRUE, message=TRUE, fig.width=12, fig.height=7, fig.dpi=300}
 plot(eyeris_preproc)
 ```
+
+```{r echo=FALSE}
+knitr::include_graphics("inst/figures/eyeris_glassbox_ts_demo.gif")
+knitr::include_graphics("inst/figures/eyeris_glassbox_hists_demo.gif")
+```
+
 
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
 ```{r timeseries-plot, echo=TRUE, fig.width=8, fig.height=5, fig.dpi=300}
 plot(eyeris_preproc,
      steps = c(1, 5),
      preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
+```
+
+## `eyeris` dependency graph
+```{r, echo=FALSE, fig.width=12, fig.height=9, fig.dpi=300}
+depgraph::plot_dependency_graph(
+    pkg = "."
+    , suggests = FALSE
+    , option = "cividis"
+    , ggrepel_opts = list(max.overlaps = 20)
+)
 ```
 
 ---
