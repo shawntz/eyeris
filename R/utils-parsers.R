@@ -1,6 +1,6 @@
 parse_call_stack <- function(call_str) {
   func <- sub("\\(.*", "", call_str)
-  return(list(Function = func, Arguments = call_str))
+  list(Function = func, Arguments = call_str)
 }
 
 format_call_stack <- function(callstack) {
@@ -18,7 +18,7 @@ format_call_stack <- function(callstack) {
 
   rownames(params_parsed) <- NULL
 
-  return(params_parsed)
+  params_parsed
 }
 
 get_block_numbers <- function(x) {
@@ -30,7 +30,7 @@ get_block_numbers <- function(x) {
   } else {
     return(NULL)
   }
-  return(block_nums)
+  block_nums
 }
 
 # keep letters, numbers and spaces
@@ -51,7 +51,7 @@ convert_nested_dt <- function(nested_dt) {
 }
 
 filter_epochs <- function(eyeris, epochs) {
-  return(names(eyeris)[grepl("^epoch_", names(eyeris))])
+  names(eyeris)[grepl("^epoch_", names(eyeris))]
 }
 
 parse_eyelink_info <- function(version_str, model = NA) {
