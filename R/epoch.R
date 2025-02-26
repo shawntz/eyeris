@@ -453,10 +453,10 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
       dplyr::mutate(!!bline_z_col_name := get_zscores(!!bline_col_name))
   }
 
-  return(list(
+  list(
     epoch = list(id = epoch_id, res = epoch_df),
     baseline = list(id = baseline_id, res = computed_baselines)
-  ))
+  )
 }
 
 #' Epoch and baseline processor
@@ -502,7 +502,7 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
 
   alert("success", "Done!")
 
-  return(epochs)
+  epochs
 }
 
 #' Manually epoch using provided start/end dataframes of timestamps
@@ -556,7 +556,7 @@ epoch_manually <- function(eyeris, ts_list, hz) {
     tick(pb, by = 1)
   }
 
-  return(epochs)
+  epochs
 }
 
 #' Epoch based on a single event message (without explicit limits)
@@ -586,7 +586,7 @@ epoch_only_start_msg <- function(eyeris, start, hz) {
     tick(pb, by = 1)
   }
 
-  return(epochs)
+  epochs
 }
 
 #' Epoch using a start message with fixed limits around it
@@ -618,7 +618,7 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz) {
     tick(pb, by = 1)
   }
 
-  return(epochs)
+  epochs
 }
 
 #' Epoch using a start and an end message (explicit timestamps)
@@ -661,5 +661,5 @@ epoch_start_end_msg <- function(eyeris, start, end, hz) {
     tick(pb, by = 1)
   }
 
-  return(epochs)
+  epochs
 }
