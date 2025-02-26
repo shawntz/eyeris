@@ -91,6 +91,8 @@ plot(eyeris_preproc,
 
 ## `eyeris` dependency graph
 
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
 ------------------------------------------------------------------------
 
 # Comments, suggestions, questions, issues?

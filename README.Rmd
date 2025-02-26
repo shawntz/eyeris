@@ -82,7 +82,7 @@ plot(eyeris_preproc,
 ```
 
 ## `eyeris` dependency graph
-```{r, eval=FALSE, echo=FALSE, fig.width=12, fig.height=9, fig.dpi=300}
+```{r, eval=TRUE, echo=FALSE, fig.width=12, fig.height=9, fig.dpi=300}
 depgraph::plot_dependency_graph(
     pkg = "."
     , suggests = FALSE
