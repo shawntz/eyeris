@@ -81,7 +81,7 @@ plot(eyeris_preproc,
      preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
 ```
 
-## `eyeris` dependency graph
+## `eyeris` dependency graph :see_no_evil:
 ```{r, eval=TRUE, echo=FALSE, fig.width=12, fig.height=9, fig.dpi=300}
 depgraph::plot_dependency_graph(
     pkg = "."

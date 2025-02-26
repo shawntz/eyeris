@@ -89,7 +89,7 @@ plot(eyeris_preproc,
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
 
-## `eyeris` dependency graph
+## `eyeris` dependency graph :see_no_evil:
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
