@@ -72,7 +72,21 @@ plot(eyeris_preproc)
 #> ℹ Plotting block 1 from possible blocks: 1
 ```
 
-<img src="inst/figures/eyeris_glassbox_ts_demo.gif" width="100%" /><img src="inst/figures/eyeris_glassbox_hists_demo.gif" width="100%" />
+<div style="display: flex; justify-content: center; gap: 20px;">
+
+<div>
+
+<img src="inst/figures/ts_coalesced.gif" width="400" alt="glassbox timeseries animation">
+
+</div>
+
+<div>
+
+<img src="inst/figures/hists_coalesced.gif" width="400" alt="glassbox histograms animation">
+
+</div>
+
+</div>
 
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
 
@@ -86,8 +100,6 @@ plot(eyeris_preproc,
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
 
 ## `eyeris` dependency graph
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ------------------------------------------------------------------------
 
