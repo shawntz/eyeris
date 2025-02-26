@@ -100,35 +100,34 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
   # eyeris workflow data structure
   pipeline <- list(
     load_asc = function(data, params) {
-      return(eyeris::load_asc(data, block = params$load_asc$block))
+      eyeris::load_asc(data, block = params$load_asc$block)
     },
     deblink = function(data, params) {
-      return(eyeris::deblink(data, extend = params$deblink$extend))
+      eyeris::deblink(data, extend = params$deblink$extend)
     },
     detransient = function(data, params) {
-      return(eyeris::detransient(data, n = params$detransient$n))
     },
     interpolate = function(data, params) {
-      return(eyeris::interpolate(data))
+      eyeris::interpolate(data)
     },
     lpfilt = function(data, params) {
-      return(eyeris::lpfilt(data,
+      eyeris::lpfilt(data,
         wp = params$lpfilt$wp,
         ws = params$lpfilt$ws,
         rp = params$lpfilt$rp,
         rs = params$lpfilt$rs,
         plot_freqz = params$lpfilt$plot_freqz
-      ))
+      )
     },
     detrend = function(data, params) {
       if (detrend_data) {
-        return(eyeris::detrend(data))
+        eyeris::detrend(data)
       } else {
-        return(data)
+        data
       }
     },
     zscore = function(data, params) {
-      return(eyeris::zscore(data))
+      eyeris::zscore(data)
     }
   )
 
@@ -172,7 +171,7 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
         )
         err_thrown <<- TRUE
         step_counter <<- step_counter - 1
-        return(file)
+        file
       }
     )
 
@@ -235,5 +234,5 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
 
 prompt_user <- function() {
   resp <- readline(prompt = "Continue? [Yes/No]: ")
-  return(tolower(resp) == "yes" | tolower(resp) == "y")
+  tolower(resp) == "yes" | tolower(resp) == "y"
 }
