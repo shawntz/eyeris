@@ -1,8 +1,8 @@
 make_baseline_label <- function(baselined_data, epoch_id) {
-  return(paste0(
+  paste0(
     "baseline_", baselined_data$baseline_cor_col_name,
     "_", epoch_id
-  ))
+  )
 }
 
 extract_baseline_epochs <- function(x, df, evs, time_range,
@@ -42,7 +42,7 @@ extract_baseline_epochs <- function(x, df, evs, time_range,
     }
   }
 
-  return(baselines)
+  baselines
 }
 
 compute_baseline <- function(x, epochs, baseline_epochs, mode) {
@@ -73,10 +73,10 @@ compute_baseline <- function(x, epochs, baseline_epochs, mode) {
     baseline_means[i] <- baseline_avg
   }
 
-  return(list(
+  list(
     baseline_cor_epochs = baseline_data,
     baseline_means_by_epoch = baseline_means,
     baseline_correction_method = method,
     baseline_cor_col_name = new_col
-  ))
+  )
 }
