@@ -14,22 +14,26 @@
 
 ## Motivation
 
-> Despite decades of pupillometry research, many established packages
-> and workflows unfortunately lack design principles based on
-> (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR)
-> principles. `eyeris`, on the other hand follows a thoughtful design
-> philosophy that results in an intuitive, modular, performant, and
-> extensible pupillometry data preprocessing framework. Much of these
-> design principles were heavily inspired by `Nipype`. `eyeris` also
-> provides a highly opinionated pipeline for tonic and phasic
-> pupillometry preprocessing (inspired by `fMRIPrep`). These opinions
-> are the product of many hours of discussions from core members and
-> signal processing experts from the Stanford Memory Lab (Shawn
-> Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).
-> `eyeris` also introduces a `BIDS`-like structure for organizing
-> derivative (preprocessed) pupillometry data, as well as an intuitive
-> workflow for inspecting preprocessed pupillometry epochs within
-> beautiful, interactive HTML report files.
+Despite decades of pupillometry research, many established packages and
+workflows unfortunately lack design principles based on (F)indability
+(A)ccessbility (I)nteroperability (R)eusability (FAIR) principles.
+`eyeris`, on the other hand follows a thoughtful design philosophy that
+results in an intuitive, modular, performant, and extensible
+pupillometry data preprocessing framework. Much of these design
+principles were heavily inspired by `Nipype`.
+
+`eyeris` also provides a highly opinionated pipeline for tonic and
+phasic pupillometry preprocessing (inspired by `fMRIPrep`). These
+opinions are the product of many hours of discussions from core members
+and signal processing experts from the Stanford Memory Lab (Shawn
+Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).
+
+`eyeris` also introduces a `BIDS`-like structure for organizing
+derivative (preprocessed) pupillometry data, as well as an intuitive
+workflow for inspecting preprocessed pupillometry epochs within
+beautiful, interactive HTML report files (see demonstration below ⬇️)!
+
+<img src="man/figures/interactive-reports-demo.gif" width="100%" />
 
 ## Installation
 
@@ -109,9 +113,11 @@ plot(eyeris_preproc,
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
 
+------------------------------------------------------------------------
+
 ## `eyeris` dependency graph :see_no_evil:
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ------------------------------------------------------------------------
 
@@ -120,3 +126,37 @@ plot(eyeris_preproc,
 Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
 to make note of any bugs, comments, suggestions, feedback, etc… all are
 welcomed and appreciated, thanks!
+
+------------------------------------------------------------------------
+
+### 📚 Citing `eyeris`
+
+<div class="alert alert-light">
+
+If you use the `eyeris` package in your research, please cite it!
+
+Run the following in R to get the citation:
+
+</div>
+
+``` r
+citation("eyeris")
+#> Warning in citation("eyeris"): could not determine year for 'eyeris' from
+#> package DESCRIPTION file
+#> To cite package 'eyeris' in publications use:
+#> 
+#>   Schwartz S (????). _eyeris: A flexible, extensible, and reproducible
+#>   pupillometry preprocessing framework in R_. R package version
+#>   0.1.0.9001, https://github.com/shawntz/eyeris,
+#>   <https://shawnschwartz.com/eyeris>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing
+#> framework in R},
+#>     author = {Shawn Schwartz},
+#>     note = {R package version 0.1.0.9001, https://github.com/shawntz/eyeris},
+#>     url = {https://shawnschwartz.com/eyeris},
+#>   }
+```
