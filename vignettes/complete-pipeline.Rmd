@@ -1,11 +1,17 @@
 ---
-title: "eyeris: An Complete (Opinionated) Pupillometry Pipeline"
+title: "Complete Pupillometry Pipeline Walkthrough"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Complete Pupillometry Pipeline}
+  %\VignetteIndexEntry{Complete Pupillometry Pipeline Walkthrough}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<style>
+img:not(.logo) {
+  background-color: white;
+}
+</style>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -17,7 +23,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
+## Introduction
 
 This vignette will walk you through the basics of getting started with the
 `eyeris` package to preprocess your (eyelink) pupillometry data from start to finish.
@@ -39,9 +45,9 @@ parameters we (computational neuroscientists and signal processing experts at
 the Stanford Memory Lab) strongly believe any pupillometry researcher should use
 as their default starting point when preprocessing any set of pupillometry data.
 
-We recommend starting out with the `glassbox` function to (ideally) reduce the
-probability of accidental mishaps when "reimplementing" the individual steps
-that make up the preprocessing pipeline both within _and_ across projects. 
+**We recommend starting out with the `glassbox` function to (ideally) reduce the**
+**probability of accidental mishaps when "reimplementing" the individual steps**
+**that make up the preprocessing pipeline both within _and_ across projects.**
 
 Moreover, the `glassbox` function provides an "interactive" framework where you 
 can evaluate the consequences of the parameters used within each step on your data in real time, therefore facilitating a fairly easy-to-use workflow for parameter optimization
@@ -52,11 +58,11 @@ opinionated step and allows you to see both pre and post timeseries plots so you
 can adjust parameters stepwise until you are satisfied with your choices (and
 their consequences on your pupil timeseries data).
 
-# Installation
+### Installing `eyeris`
 
 If you haven't already installed the `eyeris` package:
 
-```{r setup}
+```{r setup, eval=FALSE}
 # Install from CRAN (coming soon)
 # install.packages("eyeris")
 
@@ -65,11 +71,23 @@ If you haven't already installed the `eyeris` package:
 # pak::pak("shawntz/eyeris")
 
 # Or install the development version from GitHub
+# install.packages("devtools")
+# devtools::install_github("shawntz/eyeris")
+```
+
+```{r pkgs, echo=FALSE, message=FALSE, warning=FALSE}
 install.packages("devtools")
 devtools::install_github("shawntz/eyeris")
 ```
 
-# Loading Your Raw Data
+### Loading `eyeris` Package
+
+```{r}
+library(eyeris)
+```
+
+
+### Loading Your Raw Data
 
 For this demo, we'll use our built in demo dataset, which contains a handful of
 trials from an associative memory task recorded in our lab.
@@ -78,12 +96,12 @@ trials from an associative memory task recorded in our lab.
 demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
 ```
 
-# Running the Fully-Automated Pipeline
+### Running the Fully-Automated Pipeline
 
 Here, we use the example data along with the default prescribed parameters 
 and pipeline recipe:
 
-```{r}
+```{r out.width='100%'}
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
 
@@ -96,19 +114,19 @@ plot(
 )
 ```
 
-# Running the Pipeline Interactively
+### Running the Pipeline Interactively
 
-```{r eval=FALSE}
+```{r eval=FALSE, out.width='100%'}
 output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
 ```
 
-# Overriding the Default Parameters
+### Overriding the Default Parameters
 
 To override the default `glassbox` parameters directly within the `glassbox()`
 function call, you need to pass in the appropriate parameter(s) for each pipeline
 step to `glassbox()`.
 
-## Example
+#### Example
 
 ```{r}
 output <- eyeris::glassbox(
@@ -119,23 +137,23 @@ output <- eyeris::glassbox(
 )
 ```
 
-### Pipeline Steps with Overridable Parameters
+##### Pipeline Steps with Overridable Parameters
 
 1. `eyeris::load_asc()`: `block`
 2. `eyeris::deblink()`: `extend`
 3. `eyeris::detransient()`: `n`; `mad_thresh`
 4. `eyeris::lpfilt()`: `wp`; `ws`; `rp`; `rs`; `plot_freqz`
 
-# Caveats
+## Caveats
 
-## Detrending Step
+### Detrending Step
 
 `detrend_data` is set to `FALSE` by default. Detrending your pupil timeseries can 
 have unintended consequences; we thus recommend that users understand the 
 implications of detrending – in addition to whether detrending is appropriate 
 for the research design and question(s) – before using this function.
 
-## _I received this message... what does it mean and what should I do?_
+### _I received this message... what does it mean and what should I do?_
 
 You (hopefully) shouldn't encounter this, but if you do, let us explain:
 
@@ -187,7 +205,7 @@ You **do not** want these filters because
 To skip the `detransient` step, pass `skip_detransient = TRUE` into your 
 `glassbox()` call.
 
-### Some additional notes about preventing live filtering in future recordings...
+#### Some additional notes about preventing live filtering in future recordings...
 
 Unfortunately the `Live Sample Filter` and `Saved Sample Filter` are two common 
 settings when experiment softwares communicate with EyeLink. For example, 
@@ -232,6 +250,6 @@ and in the Wagner lab under the Department of Psychology, and
 _co-author of_ `eyeris`.
 
 ```{r, echo=FALSE, out.width='80%', fig.align='center'}
-"~/Downloads/psychopy-eyetracker-sr-research-plug-in.png" |>
+"psychopy-eyetracker-sr-research-plug-in.png" |>
   knitr::include_graphics()
 ```
