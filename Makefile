@@ -58,6 +58,7 @@ website:
 # pkgdown github pages website (jekyll)
 ghpages:
 	@echo "[ INFO ] - building eyeris pkgdown docs website for github pages..."
+	Rscript -e "devtools::install('.')"
 	Rscript -e "pkgdown::build_site_github_pages(clean = TRUE, install = FALSE, new_process = FALSE)"
 	@echo "[  OK  ] - pkgdown website build for github pages completed!\n"
 
