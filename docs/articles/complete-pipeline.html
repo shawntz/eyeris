@@ -45,6 +45,14 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Start Here</h6></li>
     <li><a class="dropdown-item" href="../articles/complete-pipeline.html">Complete Pupillometry Pipeline Walkthrough</a></li>
+    <li><a class="dropdown-item" href="../articles/epoching-bids-reports.html">Extracting Data Epochs and Exporting Pupil Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Pupil Data Quality Control</h6></li>
+    <li><a class="dropdown-item" href="../articles/reports.html">QC with Interactive Reports</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced Topics</h6></li>
+    <li><a class="dropdown-item" href="../articles/anatomy.html">Anatomy of an eyeris Object</a></li>
+    <li><a class="dropdown-item" href="../articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -98,7 +106,7 @@ img:not(.logo) {
 }
 </style>
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="introduction">📦 Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>This vignette will walk you through the basics of getting started
 with the <code>eyeris</code> package to preprocess your (eyelink)
@@ -113,7 +121,7 @@ assess the quality of those data while simultaneously running a full
 preprocessing pipeline in <em>1/2-ish</em> lines of code.</p>
 </div>
 <div class="section level2">
-<h2 id="the-glass-box-function">The Glass Box Function<a class="anchor" aria-label="anchor" href="#the-glass-box-function"></a>
+<h2 id="the-glass-box-function">🔎 The Glass Box Function<a class="anchor" aria-label="anchor" href="#the-glass-box-function"></a>
 </h2>
 <p>Our <code>glassbox</code> function – in contrast to a “black box”
 function where you run it and obtain a result with little-to-no idea as
@@ -251,7 +259,7 @@ the appropriate parameter(s) for each pipeline step to
 </div>
 </div>
 <div class="section level2">
-<h2 id="caveats">Caveats<a class="anchor" aria-label="anchor" href="#caveats"></a>
+<h2 id="caveats">💬 Caveats<a class="anchor" aria-label="anchor" href="#caveats"></a>
 </h2>
 <div class="section level3">
 <h3 id="detrending-step">Detrending Step<a class="anchor" aria-label="anchor" href="#detrending-step"></a>
@@ -375,8 +383,38 @@ Anesthesiology and in the Wagner lab under the Department of Psychology,
 and <em>co-author of</em> <code>eyeris</code>.</p></li>
 </ul>
 <p><img src="psychopy-eyetracker-sr-research-plug-in.png" width="80%" style="display: block; margin: auto;"></p>
+<hr>
 </div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="citing-eyeris">📚 Citing <code>eyeris</code><a class="anchor" aria-label="anchor" href="#citing-eyeris"></a>
+</h2>
+<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<p>If you use the <code>eyeris</code> package in your research, please
+cite it!</p>
+<p>Run the following in R to get the citation:</p>
+</div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Schwartz S (2025). _eyeris: A flexible, extensible, and reproducible</span></span>
+<span><span class="co">#&gt;   pupillometry preprocessing framework in R_. R package version</span></span>
+<span><span class="co">#&gt;   0.1.0.9001, https://github.com/shawntz/eyeris,</span></span>
+<span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Manual{,</span></span>
+<span><span class="co">#&gt;     title = {eyeris: A flexible, extensible, and reproducible pupillometry</span></span>
+<span><span class="co">#&gt; preprocessing framework in R},</span></span>
+<span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
+<span><span class="co">#&gt;     year = {2025},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.1.0.9001, </span></span>
+<span><span class="co">#&gt; https://github.com/shawntz/eyeris},</span></span>
+<span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

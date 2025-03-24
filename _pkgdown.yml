@@ -74,3 +74,13 @@ articles:
     navbar: Start Here
     contents:
     - complete-pipeline
+    - epoching-bids-reports
+  - title: Pupil Data Quality Control
+    navbar: Pupil Data Quality Control
+    contents:
+    - reports
+  - title: Advanced Topics
+    navbar: Advanced Topics
+    contents:
+    - anatomy
+    - custom-extensions
