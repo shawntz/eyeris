@@ -45,23 +45,23 @@
 #'
 #' @param mad_thresh Default `NULL`. This parameter provides
 #' alternative options for handling edge cases where the computed
-#' properties here within [eyeris::detransient()]  \eqn{\text{mad\_val}}
-#' and \eqn{\text{median\_speed}} are very small. For example, if
-#' \deqn{\text{mad\_val} = 0 \quad \text{and} \quad \text{median\_speed} = 1,}
+#' properties here within [eyeris::detransient()]  \eqn{mad\_val}
+#' and \eqn{median\_speed} are very small. For example, if
+#' \deqn{mad\_val = 0 \quad \text{and} \quad median\_speed = 1,}
 #' then, with the default multiplier \eqn{n = 16},
-#' \deqn{\text{mad\_thresh} = \text{median\_speed} +
-#' (n \times \text{mad\_val}) = 1 + (16 \times 0) = 1.}
+#' \deqn{mad\_thresh = median\_speed +
+#' (n \times mad\_val) = 1 + (16 \times 0) = 1.}
 #' In this situation, any speed \eqn{p_i \ge 1} would be flagged as a
 #' transient, which might be overly sensitive. To reduce this sensitivity,
 #' two possible adjustments are available:
 #'
-#' 1. If \eqn{\text{mad\_thresh} = 1}, the transient detection criterion is
+#' 1. If \eqn{mad\_thresh = 1}, the transient detection criterion is
 #'    modified from
-#'    \deqn{p_i \ge \text{mad\_thresh}}
+#'    \deqn{p_i \ge mad\_thresh}
 #'    to
-#'    \deqn{p_i > \text{mad\_thresh}.}
+#'    \deqn{p_i > mad\_thresh .}
 #'
-#' 2. If \eqn{\text{mad\_thresh}} is very small, the user may manually
+#' 2. If \eqn{mad\_thresh} is very small, the user may manually
 #'    adjust the sensitivity by supplying an alternative threshold value
 #'    here directly via this `mad_thresh` parameter.
 #'
