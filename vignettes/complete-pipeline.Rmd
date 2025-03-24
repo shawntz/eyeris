@@ -62,6 +62,7 @@ their consequences on your pupil timeseries data).
 
 If you haven't already installed the `eyeris` package:
 
+<!-- # nolint start -->
 ```{r setup, eval=FALSE}
 # Install from CRAN (coming soon)
 # install.packages("eyeris")
@@ -76,9 +77,10 @@ If you haven't already installed the `eyeris` package:
 ```
 
 ```{r pkgs, echo=FALSE, message=FALSE, warning=FALSE}
-install.packages("devtools")
-devtools::install_github("shawntz/eyeris")
+# install.packages("devtools")
+# devtools::install_github("shawntz/eyeris")
 ```
+<!-- # nolint end -->
 
 ### Loading `eyeris` Package
 
