@@ -22,7 +22,7 @@ template:
   light-switch: true
   theme: breeze-light
   theme-dark: gruvbox-dark
-  math-rendering: katex
+  math-rendering: mathjax
   bslib:
       bootswatch: united
       base_font: {google: "Raleway"}
