@@ -48,6 +48,14 @@
 <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Start Here</h6></li>
     <li><a class="dropdown-item" href="articles/complete-pipeline.html">Complete Pupillometry Pipeline Walkthrough</a></li>
+    <li><a class="dropdown-item" href="articles/epoching-bids-reports.html">Extracting Data Epochs and Exporting Pupil Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Pupil Data Quality Control</h6></li>
+    <li><a class="dropdown-item" href="articles/reports.html">QC with Interactive Reports</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced Topics</h6></li>
+    <li><a class="dropdown-item" href="articles/anatomy.html">Anatomy of an eyeris Object</a></li>
+    <li><a class="dropdown-item" href="articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -94,9 +102,10 @@
 <div class="section level2">
 <h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
-<blockquote>
-<p>Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. <code>eyeris</code>, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by <code>Nipype</code>. <code>eyeris</code> also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by <code>fMRIPrep</code>). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner). <code>eyeris</code> also introduces a <code>BIDS</code>-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.</p>
-</blockquote>
+<p>Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. <code>eyeris</code>, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by <code>Nipype</code>.</p>
+<p><code>eyeris</code> also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by <code>fMRIPrep</code>). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).</p>
+<p><code>eyeris</code> also introduces a <code>BIDS</code>-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files (see demonstration below ⬇️)!</p>
+<p><img src="reference/figures/interactive-reports-demo.gif" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -158,6 +167,7 @@
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ℹ Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"></p>
+<hr>
 </div>
 </div>
 <div class="section level2">
@@ -165,7 +175,7 @@
 <code>eyeris</code> dependency graph <span class="emoji" data-emoji="see_no_evil">🙈</span>
 <a class="anchor" aria-label="anchor" href="#eyeris-dependency-graph-see_no_evil"></a>
 </h2>
-<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <hr>
 </div>
 </div>
@@ -173,6 +183,36 @@
 <h1 id="suggestions-questions-issues">Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#suggestions-questions-issues"></a>
 </h1>
 <p>Please use the issues tab (<a href="https://github.com/shawntz/eyeris/issues" class="external-link uri">https://github.com/shawntz/eyeris/issues</a>) to make note of any bugs, comments, suggestions, feedback, etc… all are welcomed and appreciated, thanks!</p>
+<hr>
+<div class="section level3">
+<h3 id="id_-citing-eyeris">📚 Citing <code>eyeris</code>
+<a class="anchor" aria-label="anchor" href="#id_-citing-eyeris"></a>
+</h3>
+<div class="alert alert-light">
+<p>If you use the <code>eyeris</code> package in your research, please cite it!</p>
+<p>Run the following in R to get the citation:</p>
+</div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in citation("eyeris"): could not determine year for 'eyeris' from</span></span>
+<span><span class="co">#&gt; package DESCRIPTION file</span></span>
+<span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Schwartz S (????). _eyeris: A flexible, extensible, and reproducible</span></span>
+<span><span class="co">#&gt;   pupillometry preprocessing framework in R_. R package version</span></span>
+<span><span class="co">#&gt;   0.1.0.9001, https://github.com/shawntz/eyeris,</span></span>
+<span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Manual{,</span></span>
+<span><span class="co">#&gt;     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing</span></span>
+<span><span class="co">#&gt; framework in R},</span></span>
+<span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.1.0.9001, https://github.com/shawntz/eyeris},</span></span>
+<span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="developers">

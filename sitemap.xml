@@ -2,8 +2,12 @@
 <url><loc>http://shawnschwartz.com/eyeris/404.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/LICENSE-text.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/LICENSE.html</loc></url>
+<url><loc>http://shawnschwartz.com/eyeris/articles/anatomy.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/articles/complete-pipeline.html</loc></url>
+<url><loc>http://shawnschwartz.com/eyeris/articles/custom-extensions.html</loc></url>
+<url><loc>http://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/articles/index.html</loc></url>
+<url><loc>http://shawnschwartz.com/eyeris/articles/reports.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/authors.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/index.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/news/index.html</loc></url>
@@ -34,7 +38,6 @@
 <url><loc>http://shawnschwartz.com/eyeris/reference/slice_epoch.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/reference/slice_epochs_no_limits.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/reference/slice_epochs_with_limits.html</loc></url>
-<url><loc>http://shawnschwartz.com/eyeris/reference/sticker.html</loc></url>
 <url><loc>http://shawnschwartz.com/eyeris/reference/zscore.html</loc></url>
 </urlset>
 
