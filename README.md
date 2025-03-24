@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: flexible reproducible pupil preprocessing pipelines in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: flexible and extensible pupillometry preprocessing framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
@@ -74,7 +74,7 @@ plot(eyeris_preproc)
 
 <div style="display: flex; justify-content: center; gap: 20px;">
 
-<img src="inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
+<img src="man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
 
 </div>
 
@@ -82,8 +82,9 @@ plot(eyeris_preproc)
 
 ``` r
 plot(eyeris_preproc,
-     steps = c(1, 5),
-     preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1)))
+  steps = c(1, 5),
+  preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1))
+)
 #> ℹ Plotting block 1 from possible blocks: 1
 ```
 
@@ -95,7 +96,7 @@ plot(eyeris_preproc,
 
 ------------------------------------------------------------------------
 
-# Comments, suggestions, questions, issues?
+# Suggestions, questions, issues?
 
 Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
 to make note of any bugs, comments, suggestions, feedback, etc… all are
