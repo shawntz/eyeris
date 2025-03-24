@@ -20,14 +20,22 @@ navbar:
 template:
   bootstrap: 5
   light-switch: true
+  theme: breeze-light
+  theme-dark: gruvbox-dark
+  math-rendering: katex
   bslib:
-      bootswatch: pulse
+      bootswatch: united
+      base_font: {google: "Raleway"}
+      heading_font: {google: "Open Sans"}
+      code_font: {google: "JetBrains Mono"}
       pkgdown-nav-height: 100px
 
 footer:
   structure:
     left: developed_by
-    right: built_with
+    right: [built_with, legal]
+  components:
+    legal: Provided without **any warranty**.
 
 authors:
   Shawn Schwartz:
@@ -62,7 +70,7 @@ reference:
     - plot.eyeris
 
 articles:
-  - title: template
-    navbar: template
+  - title: Start Here
+    navbar: Start Here
     contents:
-    - preproc-workflow
+    - complete-pipeline
