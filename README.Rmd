@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `eyeris`: flexible and extensible pupillometry preprocessing framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: A flexible, extensible, and reproducible pupillometry preprocessing framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 <a href="LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
@@ -22,6 +22,23 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 <!-- The goal of eyeris is to ... -->
+## Motivation
+
+> Despite decades of pupillometry research, many established packages 
+and workflows unfortunately lack design principles based on 
+(F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) 
+principles. `eyeris`, on the other hand follows a thoughtful design 
+philosophy that results in an intuitive, modular, performant, and extensible 
+pupillometry data preprocessing framework. 
+Much of these design principles were heavily inspired by `Nipype`. `eyeris` 
+also provides a highly opinionated pipeline for tonic and phasic pupillometry 
+preprocessing (inspired by `fMRIPrep`). These opinions are the product of 
+many hours of discussions from core members and signal processing experts 
+from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, 
+Alice Xue, and Anthony Wagner). `eyeris` also introduces a `BIDS`-like 
+structure for organizing derivative (preprocessed) pupillometry data, as 
+well as an intuitive workflow for inspecting preprocessed pupillometry epochs 
+within beautiful, interactive HTML report files.
 
 ## Installation
 
