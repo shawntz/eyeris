@@ -5,20 +5,24 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>eyeris • eyeris</title>
+<title>Flexible and extensible pupillometry preprocessing framework in R • eyeris</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="lightswitch.js"></script><script src="katex-auto.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Raleway-0.4.9/font.css" rel="stylesheet">
+<link href="deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet">
+<link href="deps/Open_Sans-0.4.9/font.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="eyeris">
-<meta name="description" content="Create and Run Flexible and Reproducible Pupillometry Preprocessing Pipelines More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.">
-<meta property="og:description" content="Create and Run Flexible and Reproducible Pupillometry Preprocessing Pipelines More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><link href="deps/KaTex-0.16.10/katex.min.css" rel="stylesheet">
+<script src="deps/KaTex-0.16.10/katex.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Flexible and extensible pupillometry preprocessing framework in R">
+<meta name="description" content="Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. eyeris follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible framework. Much of these design principles were heavily inspired by Nipype and Snakemake. eyeris also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by fMRIPrep). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Haopei Yang, Mingjian He, Alice Xue, and Anthony Wagner). eyeris also introduces a BIDS-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.">
+<meta property="og:description" content="Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. eyeris follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible framework. Much of these design principles were heavily inspired by Nipype and Snakemake. eyeris also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by fMRIPrep). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Haopei Yang, Mingjian He, Alice Xue, and Anthony Wagner). eyeris also introduces a BIDS-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.">
 <meta property="og:image" content="http://shawnschwartz.com/eyeris/logo.png">
 </head>
 <body>
@@ -43,8 +47,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>template</h6></li>
-    <li><a class="dropdown-item" href="articles/preproc-workflow.html">preproc-workflow</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Start Here</h6></li>
+    <li><a class="dropdown-item" href="articles/complete-pipeline.html">Complete Pupillometry Pipeline Walkthrough</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -80,9 +84,9 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="eyeris-flexible-reproducible-pupil-preprocessing-pipelines-in-r-">
-<code>eyeris</code>: flexible reproducible pupil preprocessing pipelines in R 
-<a class="anchor" aria-label="anchor" href="#eyeris-flexible-reproducible-pupil-preprocessing-pipelines-in-r-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="eyeris-flexible-and-extensible-pupillometry-preprocessing-framework-in-r-">
+<code>eyeris</code>: flexible and extensible pupillometry preprocessing framework in R 
+<a class="anchor" aria-label="anchor" href="#eyeris-flexible-and-extensible-pupillometry-preprocessing-framework-in-r-"></a>
 </h1>
 </div>
 <!-- badges: start -->
@@ -135,7 +139,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ℹ Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
 <div style="display: flex; justify-content: center; gap: 20px;">
-<p><img src="inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
+<p><img src="reference/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="reference/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
 </div>
 </div>
 <div class="section level3">
@@ -143,8 +147,9 @@
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span>,</span>
-<span>     steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>     preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt; ℹ Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"></p>
 </div>
@@ -159,7 +164,7 @@
 </div>
 </div>
 <div class="section level1">
-<h1 id="comments-suggestions-questions-issues">Comments, suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#comments-suggestions-questions-issues"></a>
+<h1 id="suggestions-questions-issues">Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#suggestions-questions-issues"></a>
 </h1>
 <p>Please use the issues tab (<a href="https://github.com/shawntz/eyeris/issues" class="external-link uri">https://github.com/shawntz/eyeris/issues</a>) to make note of any bugs, comments, suggestions, feedback, etc… all are welcomed and appreciated, thanks!</p>
 </div>
@@ -213,7 +218,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1. Provided without <strong>any warranty</strong>.</p>
 </div>
 
     </footer>

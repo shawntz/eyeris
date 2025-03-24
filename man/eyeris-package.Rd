@@ -4,11 +4,11 @@
 \name{eyeris-package}
 \alias{eyeris}
 \alias{eyeris-package}
-\title{eyeris: eyeris}
+\title{eyeris: Flexible and extensible pupillometry preprocessing framework in R}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Create and Run Flexible and Reproducible Pupillometry Preprocessing Pipelines More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. eyeris follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible framework. Much of these design principles were heavily inspired by Nipype and Snakemake. eyeris also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by fMRIPrep). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Haopei Yang, Mingjian He, Alice Xue, and Anthony Wagner). eyeris also introduces a BIDS-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.
 }
 \seealso{
 Useful links:
