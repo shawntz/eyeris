@@ -1,0 +1,255 @@
+---
+title: "Extracting Data Epochs and Exporting Pupil Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extracting Data Epochs and Exporting Pupil Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`eyeris` was intentionally designed for intuitive, flexible preprocessing of 
+pupillometry data, with support for event-based epoching and BIDS-style 
+organization for reproducible workflows. 
+
+In this vignette, we’ll walk through a typical use case: 
+
+1. loading raw data, 
+2. preprocessing it, 
+3. extracting trial-based epochs, 
+4. and exporting everything in a clean, analysis-ready format.
+
+We'll also demonstrate a unique feature we designed to maximize both your
+productivity as well as data quality: `interactive HTML reports`, which include
+a record of the steps used to preprocess / epoch any given dataset -- and, for
+epoched data -- an interactive "gallery" view to quickly skim through trial-level
+data from each step of the preprocessing pipeline to make quality control and
+assurance intuitive and accessible for any dataset (without needing to write any
+additional code)!
+
+## 1️⃣ Load and Preprocess Your Data
+
+```{r setup, fig.show='hide'}
+# Load eyeris
+library(eyeris)
+
+# Load the example memory task file and run default glassbox preproc workflow
+eye <- system.file("extdata", "memory.asc", package = "eyeris") |>
+  glassbox()
+```
+
+## 2️⃣ Extract Data Epochs
+
+`epoch()` enables flexible extraction of trials using:
+
+- start/stop events, 
+- string-based patterns, 
+- and even embedded trial metadata.
+
+### Example A: Fixed Time Epochs Around a Matched Event
+
+> Extract a 2-second window centered around each "PROBE" event.
+
+```{r}
+eye_1a <- eye |>
+  epoch(events = "PROBE*", limits = c(-1, 1))
+```
+
+Now, if you take a look at `eye`, you'll notice there's a new list element
+within this `eyeris` object: `epoch_probe`.
+
+```{r}
+eye_1a$epoch_probe
+```
+
+By default, the resulting `eyeris` object will contain the epoched data frame
+within a list element called `epoch_xyz` where `xyz` will be a sanitized version
+of the original `start` event string you supplied for the pattern matching
+procedure. 
+
+However, you have the ability to customize this label, by passing a value to the
+`label` argument within `epoch()`.
+
+<div class="alert alert-warning">
+  ⚠️ Warning: if no label is specified and there are no event message strings
+  provided for sanitization, then you may obtain a strange-looking epoch list
+  element in your output `eyeris` object (e.g., `epoch_`, or perhaps even
+  `$epoch_nana`, etc.). The extracted data epochs should still be accessible here,
+  however, to avoid ambiguous list objects, **we highly recommend you explicitly**
+  **supply sensible epoch labels here within your `epoch()` calls to be safe.**
+</div>
+
+### Example B: Metadata Parsing with Custom Labels
+
+> Extract the 1-second window after "PROBE_START" and apply a custom label to 
+the resulting epoch set.
+
+```{r}
+eye_1b <- eye |>
+  epoch(
+    events = "PROBE_START_{trial}",
+    limits = c(0, 1),
+    label = "probeAfter"
+  )
+
+eye_1b |>
+  purrr::pluck("epoch_probeAfter") |>
+  head()
+```
+
+<div class="alert alert-light">
+  💡 <strong>Note:</strong> You can customize `epoch()` with trial-level 
+  metadata!
+  
+  For instance, here, `{trial}` will not only extract data but also add a 
+  `trial` column parsed from the event string, which originally took the form of
+  `PROBE_START_22` (where `22` was the trial number embedded within the event 
+  message string we had originally programmed to be sent as event messages at
+  the start of each probe trial on our `PsychoPy` / `EyeLink` experiment.
+</div>
+
+```{r echo=FALSE}
+eye_1b |>
+  purrr::pluck("epoch_probeAfter") |>
+  purrr::pluck("block_1") |>
+  dplyr::select(template:trial) |>
+  head(5)
+```
+
+### Example C: Epoch with Subtractive Baselining
+
+> Use the 1-second window before `"DELAY_STOP"` as a baseline and apply it to 
+the epoch data.
+
+```{r eval=FALSE}
+eye_1c <- eye |>
+  epoch(
+    events = "PROBE_START_{trial}",
+    limits = c(0, 1),
+    label = "probeEpochs",
+    calc_baseline = TRUE,
+    apply_baseline = TRUE,
+    baseline_type = "sub",
+    baseline_events = "DELAY_STOP_*",
+    baseline_period = c(-1, 0)
+  )
+```
+
+In this example, we're extracting 1-second epochs following each `"PROBE_START"`
+event and applying **subtractive baseline correction**. The baseline is computed
+from the **1-second window before** each corresponding `"DELAY_STOP"` event.
+
+In other words, this means each pupil trace is normalized by subtracting the 
+average pupil size from the pre-probe delay period (i.e., the baseline period).
+
+### Example D: Start/End Event Pair Epoching
+
+> Manually define start and end times for two trials:
+
+```{r eval=FALSE}
+start_events <- data.frame(
+  time = c(11334491, 11338691),
+  msg = c("TRIALID 22", "TRIALID 23")
+)
+
+end_events <- data.frame(
+  time = c(11337158, 11341292),
+  msg = c("RESPONSE_22", "RESPONSE_23")
+)
+
+eye_1d <- eye |>
+  epoch(
+    events = list(start_events, end_events, 1), # 1 = block number
+    label = "manualTrials"
+  )
+```
+
+## 3️⃣ Export to a BIDS-like Format
+
+Once epoched, your data is ready to be exported with `bidsify()`, which saves 
+the raw and epoched data in a structured, `BIDS`-inspired format.
+
+```{r eval=FALSE}
+bidsify(
+  eyeris = eye_1c,
+  bids_dir = "~/Documents/eyeris",
+  participant_id = "001",
+  session_num = "01",
+  task_name = "assocmem",
+  run_num = "01",
+  save_raw = TRUE, # Also save raw timeseries
+  html_report = TRUE # Generate a preprocessing summary
+)
+```
+
+Which will create a directory structure like this:
+
+```
+eyeris
+└── derivatives
+    └── sub-001
+        └── ses-01
+            ├── eye
+            │   ├── sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv
+            │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
+            ├── source
+            │   └── figures
+            │       └── run-01
+            │           ├── epoch_prePostProbe
+            │           │   ├── run-01_PROBE_START_22_1.png
+            │           │   ├── run-01_PROBE_START_22_2.png
+            │           │   ├── run-01_PROBE_START_22_3.png
+            │           │   ├── run-01_PROBE_START_22_4.png
+            │           │   ├── run-01_PROBE_START_22_5.png
+            │           │   ├── run-01_PROBE_START_22_6.png
+            │           │   ├── ...
+            │           │   ├── run-01_PROBE_STOP_22_1.png
+            │           │   ├── run-01_PROBE_STOP_22_2.png
+            │           │   ├── run-01_PROBE_STOP_22_3.png
+            │           │   ├── run-01_PROBE_STOP_22_4.png
+            │           │   ├── run-01_PROBE_STOP_22_5.png
+            │           │   ├── run-01_PROBE_STOP_22_6.png
+            │           │   ├── ...
+            │           ├── run-01_fig-1_desc-histogram.jpg
+            │           ├── run-01_fig-1_desc-timeseries.jpg
+            ├── sub-001_epoch-prePostProbe_run-01.html
+            └── sub-001.html
+
+9 directories, 80 files
+```
+
+## 💡 Data Previews and QC with Interactive Reports
+
+See the [🔎 QC with Interactive Reports vignette](reports.html) for more details.
+
+## ✨ Summary
+
+This vignette demonstrated how to:
+
+- Load and preprocess raw `.asc` (EyeLink) pupil data files using `eyeris`.
+- Extract event-based epochs using both pattern matching and manual timestamps.
+- Flexibly apply baseline correction.
+- Save out the results in a clean, reproducible, BIDS-like folder structure.
+
+Check out the function documentation for `epoch()` and `bidsify()` to learn more
+about other customization options that may be useful for your specific workflow.
+
+---
+
+## 📚 Citing `eyeris`
+
+<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+  If you use the `eyeris` package in your research, please cite it!
+  
+  Run the following in R to get the citation:
+</div>
+
+```{r}
+citation("eyeris")
+```
