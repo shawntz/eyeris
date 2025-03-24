@@ -11,3 +11,6 @@
 ^\.Rproj\.user$
 ^docs$
 ^derivatives$
+^data-raw/sticker\.R$
+^data/sticker\.rda$
+^R/sticker\.data\.R$

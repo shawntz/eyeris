@@ -50,11 +50,7 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0),
-    hexSticker,
-    ggimage,
-    cowplot,
-    png
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
