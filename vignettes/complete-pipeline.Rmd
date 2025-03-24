@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+## 📦 Introduction
 
 This vignette will walk you through the basics of getting started with the
 `eyeris` package to preprocess your (eyelink) pupillometry data from start to finish.
@@ -36,7 +36,7 @@ of collecting and preprocessing any freshly collected **raw** pupillometry datas
 within minutes to assess the quality of those data while simultaneously running
 a full preprocessing pipeline in _1/2-ish_ lines of code.
 
-## The Glass Box Function
+## 🔎 The Glass Box Function
 
 Our `glassbox` function -- in contrast to a "black box" function where you run it
 and obtain a result with little-to-no idea as to how you got from raw input to
@@ -146,7 +146,7 @@ output <- eyeris::glassbox(
 3. `eyeris::detransient()`: `n`; `mad_thresh`
 4. `eyeris::lpfilt()`: `wp`; `ws`; `rp`; `rs`; `plot_freqz`
 
-## Caveats
+## 💬 Caveats
 
 ### Detrending Step
 
@@ -254,4 +254,18 @@ _co-author of_ `eyeris`.
 ```{r, echo=FALSE, out.width='80%', fig.align='center'}
 "psychopy-eyetracker-sr-research-plug-in.png" |>
   knitr::include_graphics()
+```
+
+---
+
+## 📚 Citing `eyeris`
+
+<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+  If you use the `eyeris` package in your research, please cite it!
+  
+  Run the following in R to get the citation:
+</div>
+
+```{r}
+citation("eyeris")
 ```
