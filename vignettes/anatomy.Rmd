@@ -1,0 +1,96 @@
+---
+title: "Anatomy of an eyeris Object"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Anatomy of an eyeris Object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## 📦 Key Components
+
+When preprocessing `.asc` EyeLink files with `eyeris`, returned objects will be
+of the class `eyeris`, and will contain key components used throughout the
+package's backend.
+
+The key components are:
+
+- `file`: the original file path of the source `.asc` file
+- `timeseries`: a list of data frames (1 df per identified recording block per file) which contains the following columns:
+  - `block`: block number
+  - `time_orig`: raw tracker time (ms)
+  - `eye_x`: eye position x-coordinate
+  - `eye_y`: eye position y-coordinate
+  - `eye`: which eye (Left or Right) the recorded data are sourced from
+  - `hz`: tracker sampling rate (hz)
+  - `type`: whether source data were recorded using the `diameter` or `area` method
+  - `pupil_raw`: raw recorded pupil source data in arbitrary units (a.u.) 
+
+You'll notice that for each preprocessing step run, a new column will be added after
+the `pupil_raw` column; these new columns follow a structure where each subsequent
+step is appended to the previous columns name 
+(i.e., `pupil_raw_{previous steps}_{current_step}`). To illustrate:
+
+  - `pupil_raw` -> `pupil_raw_deblink` -> `pupil_raw_deblink_detransient` -> and so on...
+  
+- `events`: a list of data frames containing trial event messages and timestamps
+- `blinks`: a list of data frames containing start/stop/durations for blinks
+- `info`: EyeLink EDF header data parsed into a data frame
+- `latest`: internal tracker used for assessing which steps have been run so far
+- `params`: detailed list of steps run and parameters passed to each step
+- `epoch_{name}`: list of data frames for any given epoched timeseries
+
+Now that we've explained what you can expect to see after running the `eyeris`
+`glassbox()` function, we'll demonstrate what the `glassbox()` wrapper is
+generally comprised of in terms of the steps and defaults that are implemented.
+
+## 🧱 Building Blocks Under the Hood
+
+While we strongly recommend against manually constructing the pipeline as will
+be shown below (given that using the `glassbox()` will provide maximum
+opportunities for reproducibility and reduction of accidental errors), more
+advanced users may want to see how the individual steps can be used like
+building blocks to iteratively test out parameters, switch steps around / remove
+steps
+(**_again, we strongly recommend against doing this unless you know what_**
+**_you're doing_**), etc.
+
+### The Default `glassbox()` Steps and Parameters, Deconstructed:
+
+```{r, eval=FALSE}
+system.file("extdata", "memory.asc", package = "eyeris") |>
+  eyeris::load_asc(block = "auto") |>
+  eyeris::deblink(extend = 50) |>
+  eyeris::detransient(n = 16) |>
+  eyeris::interpolate() |>
+  eyeris::lpfilt(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE) |>
+  eyeris::zscore()
+```
+
+<div class="alert alert-light">
+  💡 **For more detailed information on the implementation of functions within**
+     **the `glassbox()` and thus how to create your own custom pipeline**
+     **extensions that conform to the `eyeris` protocol, see the:**
+     [🧩 Building your own Custom Pipeline Extensions vignette](custom-extensions.html).
+</div>
+
+---
+
+## 📚 Citing `eyeris`
+
+<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+  If you use the `eyeris` package in your research, please cite it!
+  
+  Run the following in R to get the citation:
+</div>
+
+```{r}
+citation("eyeris")
+```
