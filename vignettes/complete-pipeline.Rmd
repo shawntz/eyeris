@@ -2,7 +2,7 @@
 title: "eyeris: An Complete (Opinionated) Pupillometry Pipeline"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Complete Pupillometry Pipeline Walkthrough}
+  %\VignetteIndexEntry{Complete Pupillometry Pipeline}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,7 +10,10 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  fig.dpi = 300
 )
 ```
 
@@ -80,7 +83,7 @@ demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
 Here, we use the example data along with the default prescribed parameters 
 and pipeline recipe:
 
-```{r, fig.width='100%'}
+```{r}
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
 
