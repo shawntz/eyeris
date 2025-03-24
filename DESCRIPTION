@@ -1,6 +1,7 @@
 Package: eyeris
 Type: Package
-Title: Flexible and extensible pupillometry preprocessing framework in R
+Title: A flexible, extensible, and reproducible pupillometry preprocessing 
+    framework in R
 Version: 0.1.0.9001
 Authors@R:
   person(
@@ -13,17 +14,18 @@ Authors@R:
 Description: Despite decades of pupillometry research, many established packages 
     and workflows unfortunately lack design principles based on 
     (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) 
-    principles. eyeris follows a thoughtful design philosophy that results in an 
-    intuitive, modular, performant, and extensible framework. Much of these 
-    design principles were heavily inspired by Nipype and Snakemake. eyeris also
-    provides a highly opinionated pipeline for tonic and phasic pupillometry 
-    preprocessing (inspired by fMRIPrep). These opinions are the product of many
-    hours of discussions from core members and signal processing experts from
-    the Stanford Memory Lab (Shawn Schwartz, Haopei Yang, Mingjian He, 
-    Alice Xue, and Anthony Wagner). eyeris also introduces a BIDS-like structure 
-    for organizing derivative (preprocessed) pupillometry data, as well as an
-    intuitive workflow for inspecting preprocessed pupillometry epochs within
-    beautiful, interactive HTML report files.
+    principles. `eyeris`, on the other hand follows a thoughtful design 
+    philosophy that results in an intuitive, modular, performant, and extensible 
+    pupillometry data preprocessing framework. 
+    Much of these design principles were heavily inspired by `Nipype`. `eyeris` 
+    also provides a highly opinionated pipeline for tonic and phasic pupillometry 
+    preprocessing (inspired by `fMRIPrep`). These opinions are the product of 
+    many hours of discussions from core members and signal processing experts 
+    from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, 
+    Alice Xue, and Anthony Wagner). `eyeris` also introduces a `BIDS`-like 
+    structure for organizing derivative (preprocessed) pupillometry data, as 
+    well as an intuitive workflow for inspecting preprocessed pupillometry epochs 
+    within beautiful, interactive HTML report files.
 Encoding: UTF-8
 Depends:
   R (>= 4.1)
@@ -57,5 +59,5 @@ VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
 LazyData: true
-URL: http://shawnschwartz.com/eyeris
+URL: https://shawnschwartz.com/eyeris, https://github.com/shawntz/eyeris
 BugReports: https://github.com/shawntz/eyeris/issues
