@@ -4,11 +4,11 @@
 \name{eyeris-package}
 \alias{eyeris}
 \alias{eyeris-package}
-\title{eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R}
+\title{eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. `eyeris`, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by `Nipype`. `eyeris` also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by `fMRIPrep`). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner). `eyeris` also introduces a `BIDS`-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.
+Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. 'eyeris', on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. 'eyeris' introduces a (B)rain (I)maging (D)ata (S)tructure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.
 }
 \seealso{
 Useful links:
@@ -20,7 +20,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Shawn Schwartz \email{stschwartz@stanford.edu} (\href{https://orcid.org/0000-0001-6444-8451}{ORCID})
+\strong{Maintainer}: Shawn Schwartz \email{stschwartz@stanford.edu} (\href{https://orcid.org/0000-0001-6444-8451}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}
