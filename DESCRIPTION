@@ -48,5 +48,5 @@ VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
 LazyData: true
-URL: https://shawnschwartz.com/eyeris, https://github.com/shawntz/eyeris
+URL: https://shawnschwartz.com/eyeris/, https://github.com/shawntz/eyeris/
 BugReports: https://github.com/shawntz/eyeris/issues

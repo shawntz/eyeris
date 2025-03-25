@@ -13,8 +13,8 @@ Despite decades of pupillometry research, many established packages and workflow
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://shawnschwartz.com/eyeris}
-  \item \url{https://github.com/shawntz/eyeris}
+  \item \url{https://shawnschwartz.com/eyeris/}
+  \item \url{https://github.com/shawntz/eyeris/}
   \item Report bugs at \url{https://github.com/shawntz/eyeris/issues}
 }
 
