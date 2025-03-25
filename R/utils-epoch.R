@@ -1,11 +1,9 @@
-#' Index metadata
-#' @keywords internal
+# Index metadata
 index_metadata <- function(x, i) {
   x[i, ]
 }
 
-#' Generate list label for any given epoch
-#' @keywords internal
+# Generate list label for any given epoch
 make_epoch_label <- function(evs, label, epoched_data) {
   if (is.null(label) && !is.list(evs)) {
     sanitize_event_tag(evs[1])
@@ -23,8 +21,7 @@ make_epoch_label <- function(evs, label, epoched_data) {
   }
 }
 
-#' Sanitize event tag string into a canonical epoch label
-#' @keywords internal
+# Sanitize event tag string into a canonical epoch label
 sanitize_event_tag <- function(string) {
   sanitized <- string |>
     stringr::str_to_lower() |>
@@ -41,8 +38,7 @@ sanitize_event_tag <- function(string) {
   paste0("epoch_", gsub("\\d", "", camel_case_str))
 }
 
-#' Slice epoch from the raw timeseries data based on start and end times
-#' @keywords internal
+# Slice epoch from the raw timeseries data based on start and end times
 slice_epoch <- function(x_raw, s, e) {
   epoch_df <- dplyr::filter(x_raw, time_orig >= s, time_orig < e)
 
@@ -53,8 +49,7 @@ slice_epoch <- function(x_raw, s, e) {
   epoch_df
 }
 
-#' Slice epochs with no explicit limits (using adjacent timestamps)
-#' @keywords internal
+# Slice epochs with no explicit limits (using adjacent timestamps)
 slice_epochs_no_limits <- function(x_raw, all_ts) {
   epochs <- vector("list", length(all_ts$time))
 
@@ -77,8 +72,7 @@ slice_epochs_no_limits <- function(x_raw, all_ts) {
   epochs
 }
 
-#' Slice epochs with explicit limits
-#' @keywords internal
+# Slice epochs with explicit limits
 slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
   s_time <- cur_ts + (lims[1] * 1000)
   e_time <- cur_ts + (lims[2] * 1000)
@@ -90,8 +84,7 @@ slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
   epoch_df <- epoch_df[1:n_samples, ]
 }
 
-#' Obtain timestamps from the events data
-#' @keywords internal
+# Obtain timestamps from the events data
 get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits,
                            baseline_mode = FALSE) {
   start_ts <- NULL
@@ -128,8 +121,7 @@ get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits,
   ))
 }
 
-#' Process event messages, extract metadata, and merge with timeseries
-#' @keywords internal
+# Process event messages, extract metadata, and merge with timeseries
 merge_events_with_timeseries <- function(events, metadata_template,
                                          merge = TRUE) {
   special_chars <- c(
