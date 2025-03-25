@@ -555,10 +555,12 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
             check_and_create_dir(epochs_out)
 
+            # nolint start
             epoch_groups <- as.vector(
               unique(epochs_to_save[[i]][[bn]]
               [report_epoch_grouping_var_col])[[1]]
             )
+            # nolint end
 
             for (group in epoch_groups) {
               group_df <- epochs_to_save[[i]][[bn]]

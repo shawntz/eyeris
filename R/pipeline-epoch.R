@@ -485,6 +485,7 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       epoch_manually(evs, hz)
   }
 
+  # nolint start
   if (!is.null(n_timestamps) &&
     length(epochs) > 0 &&
     length(epochs) != n_timestamps) {
@@ -496,6 +497,7 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       )
     ))
   }
+  # nolint end
 
   alert("success", "Done!")
 
