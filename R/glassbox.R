@@ -1,6 +1,6 @@
-#' A "glassbox" pipeline wrapper for `eyeris`
+#' A "glass box" pipeline wrapper for `eyeris`
 #'
-#' This `glassbox` function (in contrast to a "blackbox" function where you run
+#' This `glassbox` function (in contrast to a "black box" function where you run
 #' it and get a result but have no (or little) idea as to how you got from input
 #' to output) has a few primary benefits over calling each exported function
 #' from `eyeris` separately.
