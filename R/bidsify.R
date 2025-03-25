@@ -49,6 +49,8 @@
 #' which all epoched dataframes have as a valid column name. To disable these
 #' epoch-level diagnostic plots, set to `NULL`.
 #'
+#' @return Invisibly returns `NULL`. Called for its side effects.
+#'
 #' @examples
 #' # Bleed around blink periods just long enough to remove majority of
 #' #  deflections due to eyelid movements
@@ -555,7 +557,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
 
             epoch_groups <- as.vector(
               unique(epochs_to_save[[i]][[bn]]
-                     [report_epoch_grouping_var_col])[[1]]
+              [report_epoch_grouping_var_col])[[1]]
             )
 
             for (group in epoch_groups) {
@@ -634,6 +636,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
 
     render_report(report_output, html = html_report, pdf = pdf_report)
   }
+
+  invisible(NULL)
 }
 
 make_bids_fname <- function(sub = sub, task = task, run = run,

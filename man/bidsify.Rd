@@ -75,6 +75,9 @@ the metadata template of your \code{epoch()} call). Defaults to \code{"matched_e
 which all epoched dataframes have as a valid column name. To disable these
 epoch-level diagnostic plots, set to \code{NULL}.}
 }
+\value{
+Invisibly returns \code{NULL}. Called for its side effects.
+}
 \description{
 This method provides a structured way to save out pupil data in a BIDS-like
 structure. The method saves out epoched data as well as the raw pupil

@@ -55,6 +55,9 @@ you to set this to \code{TRUE}, see the docs for \code{\link[=detransient]{detra
 
 \item{...}{Additional arguments to override the default, prescribed settings.}
 }
+\value{
+Preprocessed pupil data contained within an object of class \code{eyeris}.
+}
 \description{
 This \code{glassbox} function (in contrast to a "black box" function where you run
 it and get a result but have no (or little) idea as to how you got from input
@@ -90,6 +93,7 @@ demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
 
 ## (a) run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
+
 plot(
   output,
   steps = c(1, 5),
