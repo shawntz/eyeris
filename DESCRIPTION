@@ -7,7 +7,7 @@ Authors@R:
   person(
     given = "Shawn",
     family = "Schwartz",
-    role = c("aut", "cre"),
+    role = c("aut", "cre", "cph"),
     email = "stschwartz@stanford.edu", 
     comment = c(ORCID = "0000-0001-6444-8451")
   )
