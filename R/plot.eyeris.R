@@ -203,7 +203,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         et <- max(random_epochs[[n]]$time_orig)
         title <- paste0("\n[", st, " - ", et, "]")
         header <- paste0(
-          gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+          gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
           if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
             sprintf(" (Run %d)", block)
           } else {
@@ -232,7 +232,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
               main = paste0(
                 "detrend:\n",
                 gsub(
-                  "_", "\u2192",
+                  "_", " > ",
                   gsub("pupil_", "", pupil_steps[i - 1])
                 )
               ),
@@ -274,8 +274,8 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
           }
         }
 
-  # nolint start
-  # nolint end
+        # nolint start
+        # nolint end
 
         if (!is.null(params$next_step)) {
           plot_data <- random_epochs[[n]][[
@@ -332,7 +332,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
       robust_plot(sliced_pupil_data[[pupil_steps[i]]],
         type = "l", col = colors[i], lwd = 2,
         main = paste(paste0(
-          gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+          gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
           if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
             sprintf(" (Run %d)", block)
           } else {
@@ -349,7 +349,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
           data = pupil_data[[pupil_steps[i]]],
           color = colors[i],
           main = paste(paste0(
-            gsub("_", "\u2192", gsub("pupil_", "", pupil_steps[i])),
+            gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
             if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
               sprintf(" (Run %d)", block)
             } else {
