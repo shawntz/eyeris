@@ -1,4 +1,4 @@
-# eyeris
+# eyeris 1.0.0
 
 ---
 
