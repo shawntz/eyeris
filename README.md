@@ -127,6 +127,12 @@ Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
 to make note of any bugs, comments, suggestions, feedback, etc… all are
 welcomed and appreciated, thanks!
 
+# Code of Conduct
+
+Please note that the eyeris project is released with a [Contributor Code
+of Conduct](https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.
+
 ------------------------------------------------------------------------
 
 ### 📚 Citing `eyeris`
