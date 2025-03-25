@@ -2,7 +2,7 @@
 % Please edit documentation in R/zscore.R
 \name{zscore}
 \alias{zscore}
-\title{z-score pupil timeseries data}
+\title{Z-score pupil timeseries data}
 \usage{
 zscore(eyeris)
 }

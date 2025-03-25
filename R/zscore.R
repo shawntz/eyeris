@@ -1,4 +1,4 @@
-#' z-score pupil timeseries data
+#' Z-score pupil timeseries data
 #'
 #' The intended use of this method is to scale the arbitrary units of the pupil
 #' size timeseries to have a mean of `0` and a standard deviation of `1`. This
