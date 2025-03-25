@@ -15,3 +15,4 @@
 ^data/sticker\.rda$
 ^R/sticker\.data\.R$
 ^CODE_OF_CONDUCT\.md$
+^CRAN-SUBMISSION$
