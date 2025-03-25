@@ -97,11 +97,8 @@ Here, notice specifically these two files:
 
 > `sub-001.html` will look something like this:
 
-```{r echo=FALSE, out.width='40%'}
+```{r echo=FALSE, out.width='75%'}
 knitr::include_graphics("../man/figures/report_example_annotated-1.png")
-knitr::include_graphics("../man/figures/report_example_annotated-2.png")
-knitr::include_graphics("../man/figures/report_example_annotated-3.png")
-knitr::include_graphics("../man/figures/report_example_annotated-4.png")
 ```
 
 ## 4️⃣ Data QC of Extracted Pupil Epochs with Interactive Reports

@@ -16,3 +16,5 @@
 ^R/sticker\.data\.R$
 ^CODE_OF_CONDUCT\.md$
 ^CRAN-SUBMISSION$
+^inst/figures$
+^man/figures/(?!logo\.png$|report_example_annotated-1\.png$|interactive-reports-demo\.gif$).+$
