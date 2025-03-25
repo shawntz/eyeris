@@ -1,6 +1,6 @@
-#' A "glassbox" pipeline wrapper for `eyeris`
+#' A "glass box" pipeline wrapper for `eyeris`
 #'
-#' This `glassbox` function (in contrast to a "blackbox" function where you run
+#' This `glassbox` function (in contrast to a "black box" function where you run
 #' it and get a result but have no (or little) idea as to how you got from input
 #' to output) has a few primary benefits over calling each exported function
 #' from `eyeris` separately.
@@ -58,6 +58,8 @@
 #' you to set this to `TRUE`, see the docs for [eyeris::detransient()].
 #' @param ... Additional arguments to override the default, prescribed settings.
 #'
+#' @return Preprocessed pupil data contained within an object of class `eyeris`.
+#'
 #' @examples
 #' demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
 #'
@@ -65,6 +67,7 @@
 #'
 #' ## (a) run an automated pipeline with no real-time inspection of parameters
 #' output <- eyeris::glassbox(demo_data)
+#'
 #' plot(
 #'   output,
 #'   steps = c(1, 5),

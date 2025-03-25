@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `eyeris`: A flexible, extensible, and reproducible pupillometry preprocessing framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 <a href="LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
@@ -123,6 +123,11 @@ depgraph::plot_dependency_graph(
 # Suggestions, questions, issues?
 
 Please use the issues tab (https://github.com/shawntz/eyeris/issues) to make note of any bugs, comments, suggestions, feedback, etc... all are welcomed and appreciated, thanks!
+
+# Code of Conduct
+
+Please note that the eyeris project is released with a [Contributor Code of Conduct](https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html). By contributing
+to this project, you agree to abide by its terms.
 
 ---
 

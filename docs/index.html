@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>A flexible, extensible, and reproducible pupillometry preprocessing framework in R • eyeris</title>
+<title>Flexible, Extensible, &amp; Reproducible Processing of Pupil Data • eyeris</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -19,9 +19,9 @@
 <link href="deps/Open_Sans-0.4.9/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><script src="deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A flexible, extensible, and reproducible pupillometry preprocessing framework in R">
-<meta name="description" content="Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. `eyeris`, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by `Nipype`. `eyeris` also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by `fMRIPrep`). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner). `eyeris` also introduces a `BIDS`-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.">
-<meta property="og:description" content="Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. `eyeris`, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by `Nipype`. `eyeris` also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by `fMRIPrep`). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner). `eyeris` also introduces a `BIDS`-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><script src="deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Flexible, Extensible, &amp; Reproducible Processing of Pupil Data">
+<meta name="description" content="Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a (B)rain (I)maging (D)ata (S)tructure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.">
+<meta property="og:description" content="Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a (B)rain (I)maging (D)ata (S)tructure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.">
 <meta property="og:image" content="http://shawnschwartz.com/eyeris/logo.png">
 </head>
 <body>
@@ -92,7 +92,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
 <img src="logo.png" class="logo" alt=""><h1 id="eyeris-a-flexible-extensible-and-reproducible-pupillometry-preprocessing-framework-in-r-">
-<code>eyeris</code>: A flexible, extensible, and reproducible pupillometry preprocessing framework in R 
+<code>eyeris</code>: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R 
 <a class="anchor" aria-label="anchor" href="#eyeris-a-flexible-extensible-and-reproducible-pupillometry-preprocessing-framework-in-r-"></a>
 </h1>
 </div>
@@ -183,6 +183,11 @@
 <h1 id="suggestions-questions-issues">Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#suggestions-questions-issues"></a>
 </h1>
 <p>Please use the issues tab (<a href="https://github.com/shawntz/eyeris/issues" class="external-link uri">https://github.com/shawntz/eyeris/issues</a>) to make note of any bugs, comments, suggestions, feedback, etc… all are welcomed and appreciated, thanks!</p>
+</div>
+<div class="section level1">
+<h1 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h1>
+<p>Please note that the eyeris project is released with a <a href="https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 <hr>
 <div class="section level3">
 <h3 id="id_-citing-eyeris">📚 Citing <code>eyeris</code>
@@ -198,16 +203,15 @@
 <span><span class="co">#&gt; package DESCRIPTION file</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Schwartz S (????). _eyeris: A flexible, extensible, and reproducible</span></span>
-<span><span class="co">#&gt;   pupillometry preprocessing framework in R_. R package version</span></span>
-<span><span class="co">#&gt;   0.1.0.9001, https://github.com/shawntz/eyeris,</span></span>
+<span><span class="co">#&gt;   Schwartz S (????). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
+<span><span class="co">#&gt;   Processing of Pupil Data_. R package version 0.1.0.9001,</span></span>
+<span><span class="co">#&gt;   https://github.com/shawntz/eyeris,</span></span>
 <span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Manual{,</span></span>
-<span><span class="co">#&gt;     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing</span></span>
-<span><span class="co">#&gt; framework in R},</span></span>
+<span><span class="co">#&gt;     title = {eyeris: Flexible, Extensible, &amp; Reproducible Processing of Pupil Data},</span></span>
 <span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
 <span><span class="co">#&gt;     note = {R package version 0.1.0.9001, https://github.com/shawntz/eyeris},</span></span>
 <span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris},</span></span>
@@ -219,7 +223,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="http://shawnschwartz.com" class="external-link">Shawn Schwartz</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-6444-8451" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<a href="http://shawnschwartz.com" class="external-link">Shawn Schwartz</a> <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0001-6444-8451" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 

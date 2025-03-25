@@ -42,7 +42,6 @@
 #' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
 #' @param n A constant used to compute the median absolute deviation (MAD)
 #' threshold.
-#'
 #' @param mad_thresh Default `NULL`. This parameter provides
 #' alternative options for handling edge cases where the computed
 #' properties here within [eyeris::detransient()]  \eqn{mad\_val}

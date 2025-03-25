@@ -212,8 +212,7 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
     )
 }
 
-#' Main epoching + baselining logic
-#' @keywords internal
+# Main epoching + baselining logic
 epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
                         bline_type = c("sub", "div"), bline_evs, bline_per,
                         hz) {
@@ -350,8 +349,7 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
   return(x)
 }
 
-#' Block-by-block epoch and baseline handler
-#' @keywords internal
+# Block-by-block epoch and baseline handler
 epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
                                      c_bline, a_bline, bline_type,
                                      bline_evs, bline_per, hz) {
@@ -459,8 +457,7 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
   )
 }
 
-#' Epoch and baseline processor
-#' @keywords internal
+# Epoch and baseline processor
 process_epoch_and_baselines <- function(eyeris, timestamps, evs,
                                         lims, hz) {
   n_timestamps <- nrow(timestamps$start)
@@ -488,9 +485,10 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       epoch_manually(evs, hz)
   }
 
+  # nolint start
   if (!is.null(n_timestamps) &&
-        length(epochs) > 0 &&
-        length(epochs) != n_timestamps) {
+    length(epochs) > 0 &&
+    length(epochs) != n_timestamps) {
     stop(sprintf(
       paste0(
         "Expected %d samples but got %d samples.",
@@ -499,14 +497,14 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       )
     ))
   }
+  # nolint end
 
   alert("success", "Done!")
 
   epochs
 }
 
-#' Manually epoch using provided start/end dataframes of timestamps
-#' @keywords internal
+# Manually epoch using provided start/end dataframes of timestamps
 epoch_manually <- function(eyeris, ts_list, hz) {
   s_df <- ts_list[[1]]
   e_df <- ts_list[[2]]
@@ -559,8 +557,7 @@ epoch_manually <- function(eyeris, ts_list, hz) {
   epochs
 }
 
-#' Epoch based on a single event message (without explicit limits)
-#' @keywords internal
+# Epoch based on a single event message (without explicit limits)
 epoch_only_start_msg <- function(eyeris, start, hz) {
   all_epochs <- slice_epochs_no_limits(eyeris$timeseries, start)
 
@@ -589,8 +586,7 @@ epoch_only_start_msg <- function(eyeris, start, hz) {
   epochs
 }
 
-#' Epoch using a start message with fixed limits around it
-#' @keywords internal
+# Epoch using a start message with fixed limits around it
 epoch_start_msg_and_limits <- function(eyeris, start, lims, hz) {
   duration <- sum(abs(lims[1]), abs(lims[2]))
   n_samples <- duration / (1 / hz)
@@ -621,8 +617,7 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz) {
   epochs
 }
 
-#' Epoch using a start and an end message (explicit timestamps)
-#' @keywords internal
+# Epoch using a start and an end message (explicit timestamps)
 epoch_start_end_msg <- function(eyeris, start, end, hz) {
   if (nrow(start) != nrow(end)) {
     stop("Start and end timestamps must have the same number of rows")
