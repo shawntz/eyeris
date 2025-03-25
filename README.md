@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: A flexible, extensible, and reproducible pupillometry preprocessing framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
@@ -151,16 +151,15 @@ citation("eyeris")
 #> package DESCRIPTION file
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz S (????). _eyeris: A flexible, extensible, and reproducible
-#>   pupillometry preprocessing framework in R_. R package version
-#>   0.1.0.9001, https://github.com/shawntz/eyeris,
+#>   Schwartz S (????). _eyeris: Flexible, Extensible, & Reproducible
+#>   Processing of Pupil Data_. R package version 0.1.0.9001,
+#>   https://github.com/shawntz/eyeris,
 #>   <https://shawnschwartz.com/eyeris>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing
-#> framework in R},
+#>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
 #>     note = {R package version 0.1.0.9001, https://github.com/shawntz/eyeris},
 #>     url = {https://shawnschwartz.com/eyeris},
