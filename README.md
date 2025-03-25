@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-<a href="LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
+<a href="https://github.com/shawntz/eyeris/blob/dev/LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
 <a href="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="R Package Build Status"><img src="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="Package Build Status Badge" /></a>
 <a href="https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg" alt="R Package Linter Status"><img src="https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg" alt="Package Linter Status Badge" /></a>
 <!-- badges: end -->
