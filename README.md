@@ -152,7 +152,7 @@ citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
 #>   Schwartz S (????). _eyeris: Flexible, Extensible, & Reproducible
-#>   Processing of Pupil Data_. R package version 0.1.0.9001,
+#>   Processing of Pupil Data_. R package version 1.0.0,
 #>   https://github.com/shawntz/eyeris/,
 #>   <https://shawnschwartz.com/eyeris/>.
 #> 
@@ -161,7 +161,7 @@ citation("eyeris")
 #>   @Manual{,
 #>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
-#>     note = {R package version 0.1.0.9001, https://github.com/shawntz/eyeris/},
+#>     note = {R package version 1.0.0, https://github.com/shawntz/eyeris/},
 #>     url = {https://shawnschwartz.com/eyeris/},
 #>   }
 ```
