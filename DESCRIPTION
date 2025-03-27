@@ -10,15 +10,7 @@ Authors@R:
     email = "stschwartz@stanford.edu", 
     comment = c(ORCID = "0000-0001-6444-8451")
   )
-Description: Despite decades of pupillometry research, many established packages 
-    and workflows to date unfortunately lack design patterns based on 
-    Findability, Accessibility, Interoperability, and Reusability (FAIR) 
-    principles. 'eyeris', on the other hand, follows a design philosophy that 
-    provides users with an intuitive, modular, performant, and extensible 
-    pupillometry data preprocessing framework out-of-the-box. 'eyeris' introduces
-    a Brain Imaging Data Structure (BIDS)-like organization for derivative 
-    (i.e., preprocessed) pupillometry data as well as an intuitive workflow for 
-    inspecting preprocessed pupil epochs using interactive output report files.
+Description: Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles. 'eyeris', on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. 'eyeris' introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.
 Encoding: UTF-8
 Depends:
   R (>= 4.1)
