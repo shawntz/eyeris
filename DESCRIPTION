@@ -37,7 +37,8 @@ Imports:
     grDevices,
     tidyr,
     progress,
-    data.table
+    data.table,
+    withr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
