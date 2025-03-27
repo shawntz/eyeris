@@ -36,7 +36,7 @@
 #' @param save_raw Logical flag indicating whether to save_raw pupil data in
 #' addition to epoched data. Defaults to TRUE.
 #' @param html_report Logical flag indicating whether to save out the `eyeris`
-#' preprocessing summary report as an HTML file. Defaults to TRUE.
+#' preprocessing summary report as an HTML file. Defaults to FALSE.
 #' @param pdf_report Logical flag indicating whether to save out the `eyeris`
 #' preprocessing summary report as a PDF file. Note, a valid TeX distribution
 #' must already be installed. Defaults to FALSE.
@@ -68,11 +68,14 @@
 #'     label = "prePostProbe" # custom epoch label name
 #'   ) |>
 #'   eyeris::bidsify(
-#'     bids_dir = "~/Documents", # e.g., make bids deriv dir in documents
+#'     bids_dir = tempdir(),
 #'     participant_id = "001",
 #'     session_num = "01",
 #'     task_name = "assocret",
-#'     run_num = "01"
+#'     run_num = "01",
+#'     save_raw = TRUE, # save out raw timeseries
+#'     html_report = TRUE, # generate interactive report document
+#'     report_seed = 0 # make randomly selected plot epochs reproducible across runs
 #'   )
 #' }
 #'
@@ -81,7 +84,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                     merge_epochs = FALSE, bids_dir = NULL,
                     participant_id = NULL, session_num = NULL,
                     task_name = NULL, run_num = NULL, merge_runs = FALSE,
-                    save_raw = TRUE, html_report = TRUE,
+                    save_raw = TRUE, html_report = FALSE,
                     pdf_report = FALSE, report_seed = 0,
                     report_epoch_grouping_var_col = "matched_event") {
   # setup
