@@ -42,13 +42,14 @@ When running `bidsify` on the previously epoched data, be sure to set
 ```{r eval=FALSE}
 bidsify(
   eyeris = eye_1c,
-  bids_dir = "~/Documents/eyeris",
+  bids_dir = tempdir(), # Replace with your preferred path, such as "~/Documents/eyeris"
   participant_id = "001",
   session_num = "01",
   task_name = "assocmem",
   run_num = "01",
   save_raw = TRUE, # Also save raw timeseries
-  html_report = TRUE # Generate an interactive preprocessing summary report
+  html_report = TRUE, # Generate an interactive preprocessing summary report document
+  report_seed = 0 # Make randomly selected plot epochs reproducible across runs
 )
 ```
 
