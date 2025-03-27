@@ -75,7 +75,7 @@
 #'     run_num = "01",
 #'     save_raw = TRUE, # save out raw timeseries
 #'     html_report = TRUE, # generate interactive report document
-#'     report_seed = 0 # make randomly selected plot epochs reproducible across runs
+#'     report_seed = 0 # make randomly selected plot epochs reproducible
 #'   )
 #' }
 #'
