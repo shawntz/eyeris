@@ -123,8 +123,7 @@ Please fix and resubmit.
 ---
 
 ## R CMD check results
-
-Duration: 51.1s
+Duration: 54.6s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
