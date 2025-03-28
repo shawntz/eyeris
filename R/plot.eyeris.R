@@ -148,7 +148,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
     if (block %in% available_blocks) {
       pupil_data <- x$timeseries[[paste0("block_", block)]]
-      cli::cli_alert_info(sprintf(
+      cli::cli_alert_warning(sprintf(
         "Plotting block %d from possible blocks: %s",
         block,
         toString(available_blocks)
