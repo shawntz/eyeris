@@ -54,6 +54,5 @@ jobs:
         uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          _R_CHECK_CRAN_INCOMING_: false
-          TMPDIR: ${{ runner.temp }}
+          working_directory: ${{ runner.temp }}
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
