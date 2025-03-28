@@ -52,7 +52,7 @@
 #'   eyeris::interpolate() |>
 #'   eyeris::lpfilt(plot_freqz = TRUE) |>
 #'   eyeris::zscore()
-#' 
+#'
 #' # controlling the timeseries range (i.e., preview window) in your plots:
 #'
 #' ## example 1: using the default 10000 to 20000 ms time subset
@@ -67,12 +67,12 @@
 #' plot(my_eyeris_data, seed = 0)
 #'
 #' ## example 2: plots a specific block
-#' plot(my_eyeris_data, block = 2, seed = 0)
+#' plot(my_eyeris_data, block = 1, seed = 0)
 #'
 #' ## example 3: plots a specific block along with a custom preview window
 #' plot(
 #'   my_eyeris_data,
-#'   block = 2,
+#'   block = 1,
 #'   preview_window = c(1000, 2000),
 #'   seed = 0
 #' )
