@@ -142,22 +142,6 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
     seed <- sample.int(.Machine$integer.max, 1)
   }
 
-  # nolint start
-  current_seed <- .Random.seed
-  # nolint end
-
-  set.seed(seed)
-
-  if (!is.null(current_seed)) { # restore global seed
-    # nolint start
-    .Random.seed <- current_seed
-    # nolint end
-  } else {
-    # nolint start
-    rm(.Random.seed)
-    # nolint end
-  }
-
   # blocks handler
   if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
     available_blocks <- get_block_numbers(x)
@@ -203,10 +187,14 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
   if (is.null(preview_window)) {
     hz <- x$info$sample.rate
-    random_epochs <- draw_random_epochs(
-      pupil_data, num_previews,
-      preview_duration, hz
-    )
+
+    withr::with_seed(seed, {
+      random_epochs <- draw_random_epochs(
+        pupil_data, num_previews,
+        preview_duration, hz
+      )
+    })
+
     par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
     detrend_plotted <- FALSE
     for (i in seq_along(pupil_steps)) {

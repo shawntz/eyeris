@@ -19,5 +19,6 @@
 #' @importFrom stats sd
 #' @importFrom stats setNames
 #' @importFrom utils write.csv
+#' @importFrom withr with_seed
 ## usethis namespace: end
 NULL
