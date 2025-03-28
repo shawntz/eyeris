@@ -2,7 +2,7 @@ Package: eyeris
 Type: Package
 Title: Flexible, Extensible, & Reproducible Processing of Pupil Data
 Version: 1.0.0
-Date: 2025-03-27
+Date: 2025-03-28
 Authors@R:
   person(
     given = "Shawn",
