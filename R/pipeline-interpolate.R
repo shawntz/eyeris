@@ -34,7 +34,7 @@ interpolate_pupil <- function(x, prev_op, verbose) {
   if (!any(is.na(x[[prev_op]]))) {
     if (verbose) {
       cli::cli_alert_warning(
-        "[ INFO ] - No NAs detected in pupil data for interpolation... Skipping!"
+        "[ INFO ] - No NAs detected in pupil data... Skipping interpolation!"
       )
     }
     return(x[[prev_op]])
