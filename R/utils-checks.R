@@ -1,4 +1,4 @@
-check_and_create_dir <- function(basedir, dir = NULL) {
+check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
   if (!is.null(dir)) {
     dir <- file.path(basedir, dir)
   } else {
@@ -6,17 +6,25 @@ check_and_create_dir <- function(basedir, dir = NULL) {
   }
 
   if (dir.exists(dir)) {
-    cli::cli_alert_warning(
-      sprintf("'%s' already exists. Skipping creation...", dir)
-    )
+    if (verbose) {
+      cli::cli_alert_warning(
+        sprintf("'%s' already exists. Skipping creation...", dir)
+      )
+    }
   } else {
-    cli::cli_alert_info(
-      sprintf("'%s' does not exist. Creating...", dir)
-    )
+    if (verbose) {
+      cli::cli_alert_info(
+        sprintf("'%s' does not exist. Creating...", dir)
+      )
+    }
+
     dir.create(dir, recursive = TRUE)
-    cli::cli_alert_success(
-      sprintf("BIDS directory successfully created at: '%s'", dir)
-    )
+
+    if (verbose) {
+      cli::cli_alert_success(
+        sprintf("BIDS directory successfully created at: '%s'", dir)
+      )
+    }
   }
 }
 
