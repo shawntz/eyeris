@@ -124,7 +124,7 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
       }
     },
     interpolate = function(data, params) {
-      eyeris::interpolate(data)
+      eyeris::interpolate(data, verbose = verbose)
     },
     lpfilt = function(data, params) {
       eyeris::lpfilt(data,
