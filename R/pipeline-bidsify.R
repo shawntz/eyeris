@@ -174,8 +174,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   }
 
   # normalize report_path
-  report_path <- normalizePath(path.expand(p), mustWork = FALSE)
-  report_path <- file.path(bids_dir, report_path)
+  report_path <- file.path(bids_dir, p)
+  report_path <- normalizePath(report_path, winslash = "/", mustWork = FALSE)
 
   p <- file.path(p, "eye")
   check_and_create_dir(dir, p, verbose = verbose)
