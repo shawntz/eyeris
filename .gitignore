@@ -58,3 +58,5 @@ derivatives
 # draft files
 .bak
 
+/doc/
+/Meta/
