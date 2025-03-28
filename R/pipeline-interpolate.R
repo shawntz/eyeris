@@ -9,6 +9,9 @@
 #' `approx()` function.
 #'
 #' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
+#' @param verbose A flag to indicate whether to print detailed logging messages.
+#' Defaults to `TRUE`. Set to `False` to suppress messages about the current
+#' processing step and run silently.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_interpolate`.
@@ -22,16 +25,18 @@
 #'   plot(seed = 0)
 #'
 #' @export
-interpolate <- function(eyeris) {
+interpolate <- function(eyeris, verbose = TRUE) {
   eyeris |>
-    pipeline_handler(interpolate_pupil, "interpolate")
+    pipeline_handler(interpolate_pupil, "interpolate", verbose)
 }
 
-interpolate_pupil <- function(x, prev_op) {
+interpolate_pupil <- function(x, prev_op, verbose) {
   if (!any(is.na(x[[prev_op]]))) {
-    cli::cli_alert_warning(
-      "[ INFO ] - No NAs detected in pupil data for interpolation... Skipping!"
-    )
+    if (verbose) {
+      cli::cli_alert_warning(
+        "[ INFO ] - No NAs detected in pupil data for interpolation... Skipping!"
+      )
+    }
     return(x[[prev_op]])
   } else {
     prev_pupil <- x[[prev_op]]
