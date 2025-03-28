@@ -212,19 +212,22 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
 
           for (block_name in names(file$timeseries)) {
             bn <- get_block_numbers(block_name)
-            withr::with_seed(seed %||% sample.int(.Machine$integer.max, 1), {
-              plot(
-                file,
-                steps = step_counter,
-                num_previews = num_previews,
-                seed = seed,
-                preview_duration = preview_duration,
-                preview_window = preview_window,
-                only_linear_trend = only_linear_trend,
-                next_step = next_step,
-                block = bn
-              )
-            })
+            withr::with_seed(
+              rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1)),
+              {
+                plot(
+                  file,
+                  steps = step_counter,
+                  num_previews = num_previews,
+                  seed = seed,
+                  preview_duration = preview_duration,
+                  preview_window = preview_window,
+                  only_linear_trend = only_linear_trend,
+                  next_step = next_step,
+                  block = bn
+                )
+              }
+            )
           }
 
           if (step_name == "detrend") {
