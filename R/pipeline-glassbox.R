@@ -1,4 +1,4 @@
-#' A "glass box" pipeline wrapper for `eyeris`
+#' The opinionated "glass box" `eyeris` pipeline
 #'
 #' This `glassbox` function (in contrast to a "black box" function where you run
 #' it and get a result but have no (or little) idea as to how you got from input
