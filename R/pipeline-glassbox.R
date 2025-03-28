@@ -76,8 +76,9 @@
 #' )
 #'
 #' ## (b) run a interactive workflow (with confirmation prompts after each step)
-#' # output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
-#'
+#' \donttest{
+#' output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
+#' }
 #'
 #' # (2) examples overriding the default parameters
 #' output <- eyeris::glassbox(
