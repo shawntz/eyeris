@@ -56,6 +56,9 @@
 #' step (set to `FALSE` by default). In most cases, this should remain `FALSE`.
 #' For a more detailed description about likely edge cases that would prompt
 #' you to set this to `TRUE`, see the docs for [eyeris::detransient()].
+#' @param verbose A flag to indicate whether to print detailed logging messages.
+#' Defaults to `TRUE`. Set to `False` to suppress messages about the current
+#' processing step and run silently.
 #' @param ... Additional arguments to override the default, prescribed settings.
 #'
 #' @return Preprocessed pupil data contained within an object of class `eyeris`.
@@ -92,7 +95,8 @@
 #' @export
 glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
                      num_previews = 3, preview_duration = 5,
-                     preview_window = NULL, skip_detransient = FALSE, ...) {
+                     preview_window = NULL, skip_detransient = FALSE,
+                     verbose = TRUE, ...) {
   # the default parameters
   params <- list(
     load_asc = list(block = "auto"),
@@ -164,9 +168,11 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
       }
     }
 
-    cli::cli_alert_success(
-      paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
-    )
+    if (verbose) {
+      cli::cli_alert_success(
+        paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
+      )
+    }
 
     step_to_run <- pipeline[[step_name]]
     err_thrown <- FALSE
@@ -175,12 +181,14 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
         step_to_run(file, params)
       },
       error = function(e) {
-        cli::cli_alert_info(
-          paste0(
-            "[ INFO ] - ", "Skipping eyeris::", step_name, "(): ",
-            e$message
+        if (verbose) {
+          cli::cli_alert_info(
+            paste0(
+              "[ INFO ] - ", "Skipping eyeris::", step_name, "(): ",
+              e$message
+            )
           )
-        )
+        }
         err_thrown <<- TRUE
         step_counter <<- step_counter - 1
         file
@@ -223,17 +231,17 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
         }
         if (step_name != "zscore") {
           if (!prompt_user()) {
-            cli::cli_alert_info(
-              paste(
-                "Process cancelled after running the", step_name, "step.",
-                "Adjust your parameters and re-run!"
+            if (verbose) {
+              cli::cli_alert_info(
+                paste(
+                  "Process cancelled after running the", step_name, "step.",
+                  "Adjust your parameters and re-run!\n"
+                )
               )
-            )
+            }
 
             break
           }
-
-          cat("\n")
         }
       }
     }
