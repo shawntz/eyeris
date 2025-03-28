@@ -92,7 +92,7 @@ eyeris_preproc <- glassbox(
 
 ``` r
 plot(eyeris_preproc)
-#> ℹ Plotting block 1 from possible blocks: 1
+#> ! Plotting block 1 from possible blocks: 1
 ```
 
 <div style="display: flex; justify-content: center; gap: 20px;">
@@ -108,7 +108,7 @@ plot(eyeris_preproc,
   steps = c(1, 5),
   preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1))
 )
-#> ℹ Plotting block 1 from possible blocks: 1
+#> ! Plotting block 1 from possible blocks: 1
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
@@ -147,11 +147,9 @@ Run the following in R to get the citation:
 
 ``` r
 citation("eyeris")
-#> Warning in citation("eyeris"): could not determine year for 'eyeris' from
-#> package DESCRIPTION file
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz S (????). _eyeris: Flexible, Extensible, & Reproducible
+#>   Schwartz S (2025). _eyeris: Flexible, Extensible, & Reproducible
 #>   Processing of Pupil Data_. R package version 1.0.0,
 #>   https://github.com/shawntz/eyeris/,
 #>   <https://shawnschwartz.com/eyeris/>.
@@ -161,6 +159,7 @@ citation("eyeris")
 #>   @Manual{,
 #>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
+#>     year = {2025},
 #>     note = {R package version 1.0.0, https://github.com/shawntz/eyeris/},
 #>     url = {https://shawnschwartz.com/eyeris/},
 #>   }
