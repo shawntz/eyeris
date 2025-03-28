@@ -95,7 +95,6 @@
 #' (`epoch_`).
 #'
 #' @examples
-#' \dontrun{
 #' eye_preproc <- system.file("extdata", "memory.asc", package = "eyeris") |>
 #'   eyeris::load_asc() |>
 #'   eyeris::deblink(extend = 50) |>
@@ -201,7 +200,6 @@
 #'     events = list(start_events, end_events, block_number),
 #'     label  = "example9"
 #'   )
-#' }
 #'
 #' @export
 epoch <- function(eyeris, events, limits = NULL, label = NULL,
