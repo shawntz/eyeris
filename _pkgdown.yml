@@ -49,27 +49,28 @@ authors:
       roles: [aut, ctb]
 
 reference:
-  - title: "`eyeris` \"glassbox\" all-in-one wrapper"
+  - title: "[start here] \"glassbox\" all-in-one wrapper"
     contents:
     - glassbox
-  - title: "load eyelink `.asc` file"
+  - title: "[next] extract trial epochs"
+    contents:
+    - epoch
+  - title: "[and finally] exporting your preprocessed data + visualize with interactive HTML reports"
+    contents:
+    - bidsify
+    - plot.eyeris
+  - title: "[helper functions] core preprocessing operations"
     contents:
     - load_asc
-  - title: core preprocessing operations
-    contents:
     - deblink
     - detransient
     - interpolate
     - lpfilt
     - detrend
     - zscore
-  - title: trial epoching and exporting of preprocessed data
+  - title: "[advanced] building custom extensions"
     contents:
-    - epoch
-    - bidsify
-  - title: data visualization
-    contents:
-    - plot.eyeris
+    - pipeline_handler
 
 articles:
   - title: Start Here
