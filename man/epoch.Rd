@@ -14,7 +14,8 @@ epoch(
   baseline_type = c("sub", "div"),
   baseline_events = NULL,
   baseline_period = NULL,
-  hz = NULL
+  hz = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -108,6 +109,10 @@ ignored if both a "start" \strong{and} "end" message string are provided to the
 
 \item{hz}{Data sampling rate. If not specified, will use the value contained
 within the tracker's metadata.}
+
+\item{verbose}{A flag to indicate whether to print detailed logging messages.
+Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
+processing step and run silently.}
 }
 \value{
 Updated \code{eyeris} object with dataframes containing the epoched data
@@ -121,7 +126,6 @@ feature where additional trial data embedded within event messages can easily
 be identified and joined into the resulting epoched data frames.
 }
 \examples{
-\dontrun{
 eye_preproc <- system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc() |>
   eyeris::deblink(extend = 50) |>
@@ -227,6 +231,5 @@ eye_preproc |>
     events = list(start_events, end_events, block_number),
     label  = "example9"
   )
-}
 
 }

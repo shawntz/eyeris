@@ -4,10 +4,14 @@
 \alias{interpolate}
 \title{Interpolate missing pupil samples}
 \usage{
-interpolate(eyeris)
+interpolate(eyeris, verbose = TRUE)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
+
+\item{verbose}{A flag to indicate whether to print detailed logging messages.
+Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
+processing step and run silently.}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:

@@ -20,8 +20,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><script src="deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Flexible, Extensible, &amp; Reproducible Processing of Pupil Data">
-<meta name="description" content="Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.">
-<meta property="og:description" content="Despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files.">
+<meta name="description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states (see Clewett et al., 2020 &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie, 2018 &lt;doi:0.3758/s13428-018-1075-y&gt;; Strauch, 2024 &lt;doi:10.1016/j.tins.2024.06.002&gt;). Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles (see Wilkinson et al., 2016 &lt;doi:10.1038/sdata.2016.18&gt; for more information). eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files (Esteban et al., 2019 &lt;doi:0.1038/s41592-018-0235-4&gt;; Gorgolewski et al., 2016 &lt;doi:10.1038/sdata.2016.44&gt;).">
+<meta property="og:description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states (see Clewett et al., 2020 &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie, 2018 &lt;doi:0.3758/s13428-018-1075-y&gt;; Strauch, 2024 &lt;doi:10.1016/j.tins.2024.06.002&gt;). Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles (see Wilkinson et al., 2016 &lt;doi:10.1038/sdata.2016.18&gt; for more information). eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files (Esteban et al., 2019 &lt;doi:0.1038/s41592-018-0235-4&gt;; Gorgolewski et al., 2016 &lt;doi:10.1038/sdata.2016.44&gt;).">
 <meta property="og:image" content="http://shawnschwartz.com/eyeris/logo.png">
 </head>
 <body>
@@ -153,7 +153,7 @@
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ℹ Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
+<span><span class="co">#&gt; ! Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
 <div style="display: flex; justify-content: center; gap: 20px;">
 <p><img src="reference/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="reference/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
 </div>
@@ -166,7 +166,7 @@
 <span>  steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ℹ Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
+<span><span class="co">#&gt; ! Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"></p>
 <hr>
 </div>
@@ -200,11 +200,9 @@
 </div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in citation("eyeris"): could not determine year for 'eyeris' from</span></span>
-<span><span class="co">#&gt; package DESCRIPTION file</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Schwartz S (????). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
+<span><span class="co">#&gt;   Schwartz S (2025). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
 <span><span class="co">#&gt;   Processing of Pupil Data_. R package version 1.0.0,</span></span>
 <span><span class="co">#&gt;   https://github.com/shawntz/eyeris/,</span></span>
 <span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris/&gt;.</span></span>
@@ -214,6 +212,7 @@
 <span><span class="co">#&gt;   @Manual{,</span></span>
 <span><span class="co">#&gt;     title = {eyeris: Flexible, Extensible, &amp; Reproducible Processing of Pupil Data},</span></span>
 <span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
+<span><span class="co">#&gt;     year = {2025},</span></span>
 <span><span class="co">#&gt;     note = {R package version 1.0.0, https://github.com/shawntz/eyeris/},</span></span>
 <span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>

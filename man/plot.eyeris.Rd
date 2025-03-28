@@ -71,29 +71,37 @@ qualitatively assessing the consequences of the preprocessing recipe and
 parameters on the raw pupillary signal.
 }
 \examples{
-\dontrun{
+# first, generate the preprocessed pupil data
+my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
+  eyeris::load_asc() |>
+  eyeris::deblink(extend = 50) |>
+  eyeris::detransient() |>
+  eyeris::interpolate() |>
+  eyeris::lpfilt(plot_freqz = TRUE) |>
+  eyeris::zscore()
+
 # controlling the timeseries range (i.e., preview window) in your plots:
 
 ## example 1: using the default 10000 to 20000 ms time subset
-plot(your_eyeris_data_output_here)
+plot(my_eyeris_data, seed = 0)
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
-plot(your_eyeris_data_output_here, preview_window = c(1, 500))
+plot(my_eyeris_data, preview_window = c(1, 500), seed = 0)
 
 # controlling which block of data you would like to plot:
 
 ## example 1: plots first block (default)
-plot(your_eyeris_data_output_here)
+plot(my_eyeris_data, seed = 0)
 
 ## example 2: plots a specific block
-plot(your_eyeris_data_output_here, block = 2)
+plot(my_eyeris_data, block = 1, seed = 0)
 
 ## example 3: plots a specific block along with a custom preview window
 plot(
-  your_eyeris_data_output_here,
-  block = 2,
-  preview_window = c(1000, 2000)
+  my_eyeris_data,
+  block = 1,
+  preview_window = c(1000, 2000),
+  seed = 0
 )
-}
 
 }

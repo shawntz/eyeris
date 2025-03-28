@@ -16,10 +16,11 @@ bidsify(
   run_num = NULL,
   merge_runs = FALSE,
   save_raw = TRUE,
-  html_report = TRUE,
+  html_report = FALSE,
   pdf_report = FALSE,
   report_seed = 0,
-  report_epoch_grouping_var_col = "matched_event"
+  report_epoch_grouping_var_col = "matched_event",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -59,7 +60,7 @@ BIDS-like-behavior).}
 addition to epoched data. Defaults to TRUE.}
 
 \item{html_report}{Logical flag indicating whether to save out the \code{eyeris}
-preprocessing summary report as an HTML file. Defaults to TRUE.}
+preprocessing summary report as an HTML file. Defaults to FALSE.}
 
 \item{pdf_report}{Logical flag indicating whether to save out the \code{eyeris}
 preprocessing summary report as a PDF file. Note, a valid TeX distribution
@@ -74,6 +75,10 @@ Column name must exist (i.e., be a custom grouping variable name set within
 the metadata template of your \code{epoch()} call). Defaults to \code{"matched_event"},
 which all epoched dataframes have as a valid column name. To disable these
 epoch-level diagnostic plots, set to \code{NULL}.}
+
+\item{verbose}{A flag to indicate whether to print detailed logging messages.
+Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
+processing step and run silently.}
 }
 \value{
 Invisibly returns \code{NULL}. Called for its side effects.
@@ -93,7 +98,7 @@ approach to organizing the output files for preprocessed pupil data.
 \examples{
 # Bleed around blink periods just long enough to remove majority of
 #  deflections due to eyelid movements
-\dontrun{
+\donttest{
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc() |>
   eyeris::deblink(extend = 50) |>
@@ -107,11 +112,14 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
     label = "prePostProbe" # custom epoch label name
   ) |>
   eyeris::bidsify(
-    bids_dir = "~/Documents", # e.g., make bids deriv dir in documents
+    bids_dir = tempdir(),
     participant_id = "001",
     session_num = "01",
     task_name = "assocret",
-    run_num = "01"
+    run_num = "01",
+    save_raw = TRUE, # save out raw timeseries
+    html_report = TRUE, # generate interactive report document
+    report_seed = 0 # make randomly selected plot epochs reproducible
   )
 }
 

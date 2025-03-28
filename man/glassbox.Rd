@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline-glassbox.R
 \name{glassbox}
 \alias{glassbox}
-\title{A "glass box" pipeline wrapper for \code{eyeris}}
+\title{The opinionated "glass box" \code{eyeris} pipeline}
 \usage{
 glassbox(
   file,
@@ -12,6 +12,7 @@ glassbox(
   preview_duration = 5,
   preview_window = NULL,
   skip_detransient = FALSE,
+  verbose = TRUE,
   ...
 )
 }
@@ -52,6 +53,10 @@ after the start of the timeseries, sampled at 1000 Hz).}
 step (set to \code{FALSE} by default). In most cases, this should remain \code{FALSE}.
 For a more detailed description about likely edge cases that would prompt
 you to set this to \code{TRUE}, see the docs for \code{\link[=detransient]{detransient()}}.}
+
+\item{verbose}{A flag to indicate whether to print detailed logging messages.
+Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
+processing step and run silently.}
 
 \item{...}{Additional arguments to override the default, prescribed settings.}
 }
@@ -102,8 +107,9 @@ plot(
 )
 
 ## (b) run a interactive workflow (with confirmation prompts after each step)
-# output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
-
+\donttest{
+output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
+}
 
 # (2) examples overriding the default parameters
 output <- eyeris::glassbox(

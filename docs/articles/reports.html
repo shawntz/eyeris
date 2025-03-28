@@ -131,13 +131,14 @@ below).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>  eyeris <span class="op">=</span> <span class="va">eye_1c</span>,</span>
-<span>  bids_dir <span class="op">=</span> <span class="st">"~/Documents/eyeris"</span>,</span>
+<span>  bids_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># Replace with preferred path, like "~/Documents/eyeris"</span></span>
 <span>  participant_id <span class="op">=</span> <span class="st">"001"</span>,</span>
 <span>  session_num <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>  task_name <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
 <span>  run_num <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>  save_raw <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Also save raw timeseries</span></span>
-<span>  html_report <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Generate an interactive preprocessing summary report</span></span>
+<span>  html_report <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Generate an interactive preproc summary report document</span></span>
+<span>  report_seed <span class="op">=</span> <span class="fl">0</span> <span class="co"># Make randomly selected plot epochs reproducible across runs</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Which will create a directory structure like this:</p>
 <pre><code>eyeris

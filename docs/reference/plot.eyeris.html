@@ -164,30 +164,104 @@ from each preprocessing step run.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># first, generate the preprocessed pupil data</span></span></span>
+<span class="r-in"><span><span class="va">my_eyeris_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"memory.asc"</span>, package <span class="op">=</span> <span class="st">"eyeris"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="load_asc.html">load_asc</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="deblink.html">deblink</a></span><span class="op">(</span>extend <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="detransient.html">detransient</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="interpolate.html">interpolate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="lpfilt.html">lpfilt</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="zscore.html">zscore</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.eyeris-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># controlling the timeseries range (i.e., preview window) in your plots:</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 1: using the default 10000 to 20000 ms time subset</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">your_eyeris_data_output_here</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-plt img"><img src="plot.eyeris-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-5.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-6.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-7.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-8.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-9.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-10.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-11.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-12.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-13.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 2: using a custom time subset (i.e., 1 to 500 ms)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">your_eyeris_data_output_here</span>, preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">500</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-plt img"><img src="plot.eyeris-14.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-15.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-16.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-17.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-18.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-19.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-20.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-21.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-22.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-23.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-24.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-25.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># controlling which block of data you would like to plot:</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 1: plots first block (default)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">your_eyeris_data_output_here</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-plt img"><img src="plot.eyeris-26.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-27.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-28.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-29.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-30.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-31.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-32.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-33.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-34.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-35.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-36.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-37.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 2: plots a specific block</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">your_eyeris_data_output_here</span>, block <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, block <span class="op">=</span> <span class="fl">1</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-plt img"><img src="plot.eyeris-38.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-39.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-40.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-41.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-42.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-43.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-44.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-45.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-46.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-47.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-48.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-49.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 3: plots a specific block along with a custom preview window</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">your_eyeris_data_output_here</span>,</span></span>
-<span class="r-in"><span>  block <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">2000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">my_eyeris_data</span>,</span></span>
+<span class="r-in"><span>  block <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">2000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-plt img"><img src="plot.eyeris-50.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-51.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-52.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-53.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-54.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-55.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-56.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-57.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-58.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-59.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-60.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.eyeris-61.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
