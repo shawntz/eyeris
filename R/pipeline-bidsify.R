@@ -156,18 +156,18 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     stop("Either save_all must be TRUE or epochs_list must be specified.")
   }
 
-  check_and_create_dir(dir)
+  check_and_create_dir(dir, verbose = verbose)
   p <- file.path("derivatives")
-  check_and_create_dir(dir, p)
+  check_and_create_dir(dir, p, verbose = verbose)
 
   if (!is.null(sub)) {
     p <- file.path(p, paste0("sub-", sub))
-    check_and_create_dir(dir, p)
+    check_and_create_dir(dir, p, verbose = verbose)
   }
 
   if (!is.null(ses)) {
     p <- file.path(p, paste0("ses-", ses))
-    check_and_create_dir(dir, p)
+    check_and_create_dir(dir, p, verbose = verbose)
   }
 
   # normalize report_path
@@ -175,7 +175,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   report_path <- file.path(bids_dir, report_path)
 
   p <- file.path(p, "eye")
-  check_and_create_dir(dir, p)
+  check_and_create_dir(dir, p, verbose = verbose)
 
   block_numbers <- get_block_numbers(eyeris)
 
@@ -447,7 +447,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     figs_out <- file.path(report_path, "source", "figures")
 
     # create directories with normalized path
-    check_and_create_dir(figs_out)
+    check_and_create_dir(figs_out, verbose = verbose)
 
     fig_paths <- c()
 
@@ -471,7 +471,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       run_fig_paths <- rep(NA, length(pupil_steps) * 2)
 
       run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
-      check_and_create_dir(run_dir)
+      check_and_create_dir(run_dir, verbose = verbose)
 
       # make step-by-step plots
       plot_types <- c("timeseries", "histogram")
@@ -583,9 +583,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                 get_block_numbers(bn)
               )
             )
-            check_and_create_dir(run_dir)
+            check_and_create_dir(run_dir, verbose = verbose)
             epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
-            check_and_create_dir(epochs_out)
+            check_and_create_dir(epochs_out, verbose = verbose)
 
             # nolint start
             epoch_groups <- as.vector(
