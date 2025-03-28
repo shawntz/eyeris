@@ -83,6 +83,10 @@
 plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
                         preview_duration = NULL, preview_window = NULL,
                         seed = NULL, block = 1, plot_distributions = TRUE) {
+  # safely handle user's current options
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+
   # tests
   tryCatch(
     {
@@ -430,6 +434,10 @@ robust_plot <- function(x, ...) {
 }
 
 plot_pupil_distribution <- function(data, color, main, xlab) {
+  # safely handle user's current options
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
   hist(
