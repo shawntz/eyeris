@@ -110,7 +110,7 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
   # likely means filtering has already been applied to the data
   # (i.e., if online filtering is enabled on the EyeLink Host PC)
   if (!using_mad_thresh_override && mad_val == 0) {
-    message(paste(
+    warning(paste(
       "\n ***WARNING: SOMETHING OUTRAGEOUS IS HAPPENING WITH YOUR PUPIL",
       "DATA!***",
       "\n\nThe median absolute deviation (MAD) of your pupil speed is 0.\n",
