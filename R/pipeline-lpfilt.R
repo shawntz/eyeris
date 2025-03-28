@@ -26,6 +26,10 @@
 #' @export
 lpfilt <- function(eyeris, wp = 4, ws = 8,
                    rp = 1, rs = 35, plot_freqz = FALSE) {
+  # safely handle user's current options
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+
   fs <- eyeris$info$sample.rate
 
   eyeris |>
