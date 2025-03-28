@@ -76,8 +76,9 @@
 #' )
 #'
 #' ## (b) run a interactive workflow (with confirmation prompts after each step)
-#' # output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
-#'
+#' \donttest{
+#' output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
+#' }
 #'
 #' # (2) examples overriding the default parameters
 #' output <- eyeris::glassbox(
@@ -143,7 +144,7 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
     }
   )
 
-  seed <- sample.int(.Machine$integer.max, 1)
+  seed <- NULL
   step_counter <- 1
   only_linear_trend <- FALSE
   next_step <- c()
@@ -203,17 +204,19 @@ glassbox <- function(file, confirm = FALSE, detrend_data = FALSE,
 
           for (block_name in names(file$timeseries)) {
             bn <- get_block_numbers(block_name)
-            plot(
-              file,
-              steps = step_counter,
-              num_previews = num_previews,
-              seed = seed,
-              preview_duration = preview_duration,
-              preview_window = preview_window,
-              only_linear_trend = only_linear_trend,
-              next_step = next_step,
-              block = bn
-            )
+            withr::with_seed(seed %||% sample.int(.Machine$integer.max, 1), {
+              plot(
+                file,
+                steps = step_counter,
+                num_previews = num_previews,
+                seed = seed,
+                preview_duration = preview_duration,
+                preview_window = preview_window,
+                only_linear_trend = only_linear_trend,
+                next_step = next_step,
+                block = bn
+              )
+            })
           }
 
           if (step_name == "detrend") {
