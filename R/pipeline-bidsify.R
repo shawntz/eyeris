@@ -48,6 +48,9 @@
 #' the metadata template of your `epoch()` call). Defaults to `"matched_event"`,
 #' which all epoched dataframes have as a valid column name. To disable these
 #' epoch-level diagnostic plots, set to `NULL`.
+#' @param verbose A flag to indicate whether to print detailed logging messages.
+#' Defaults to `TRUE`. Set to `False` to suppress messages about the current
+#' processing step and run silently.
 #'
 #' @return Invisibly returns `NULL`. Called for its side effects.
 #'
@@ -86,7 +89,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                     task_name = NULL, run_num = NULL, merge_runs = FALSE,
                     save_raw = TRUE, html_report = FALSE,
                     pdf_report = FALSE, report_seed = 0,
-                    report_epoch_grouping_var_col = "matched_event") {
+                    report_epoch_grouping_var_col = "matched_event",
+                    verbose = TRUE) {
   # setup
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     if (!is.null(run_num)) {
@@ -155,18 +159,18 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     stop("Either save_all must be TRUE or epochs_list must be specified.")
   }
 
-  check_and_create_dir(dir)
+  check_and_create_dir(dir, verbose = verbose)
   p <- file.path("derivatives")
-  check_and_create_dir(dir, p)
+  check_and_create_dir(dir, p, verbose = verbose)
 
   if (!is.null(sub)) {
     p <- file.path(p, paste0("sub-", sub))
-    check_and_create_dir(dir, p)
+    check_and_create_dir(dir, p, verbose = verbose)
   }
 
   if (!is.null(ses)) {
     p <- file.path(p, paste0("ses-", ses))
-    check_and_create_dir(dir, p)
+    check_and_create_dir(dir, p, verbose = verbose)
   }
 
   # normalize report_path
@@ -174,7 +178,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   report_path <- file.path(bids_dir, report_path)
 
   p <- file.path(p, "eye")
-  check_and_create_dir(dir, p)
+  check_and_create_dir(dir, p, verbose = verbose)
 
   block_numbers <- get_block_numbers(eyeris)
 
@@ -198,22 +202,26 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             epoch = current_label, desc = "preproc_pupil_allruns"
           )
 
-          alert(
-            "info",
-            "Writing combined runs epoched data to '%s'...",
-            file.path(dir, p, f)
-          )
+          if (verbose) {
+            alert(
+              "info",
+              "Writing combined runs epoched data to '%s'...",
+              file.path(dir, p, f)
+            )
+          }
 
           write.csv(epochs_with_runs,
             file = file.path(bids_dir, p, f),
             row.names = FALSE
           )
 
-          alert(
-            "success",
-            "Combined runs epoched data written to: '%s'",
-            file.path(dir, p, f)
-          )
+          if (verbose) {
+            alert(
+              "success",
+              "Combined runs epoched data written to: '%s'",
+              file.path(dir, p, f)
+            )
+          }
         } else {
           lapply(names(eyeris$timeseries), function(i) {
             run_epochs <- epochs_to_save[[epoch_id]][[i]]
@@ -224,22 +232,26 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               epoch = current_label, desc = "preproc_pupil"
             )
 
-            alert(
-              "info",
-              "Writing run %02d epoched data to '%s'...",
-              get_block_numbers(i), file.path(dir, p, f)
-            )
+            if (verbose) {
+              alert(
+                "info",
+                "Writing run %02d epoched data to '%s'...",
+                get_block_numbers(i), file.path(dir, p, f)
+              )
+            }
 
             write.csv(run_epochs,
               file = file.path(bids_dir, p, f),
               row.names = FALSE
             )
 
-            alert(
-              "success",
-              "Run %02d epoched data written to: '%s'",
-              get_block_numbers(i), file.path(dir, p, f)
-            )
+            if (verbose) {
+              alert(
+                "success",
+                "Run %02d epoched data written to: '%s'",
+                get_block_numbers(i), file.path(dir, p, f)
+              )
+            }
           })
         }
       })
@@ -254,20 +266,24 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           epoch = current_label, desc = "preproc_pupil"
         )
 
-        alert(
-          "info",
-          "Writing epoched data to '%s'...", file.path(dir, p, f)
-        )
+        if (verbose) {
+          alert(
+            "info",
+            "Writing epoched data to '%s'...", file.path(dir, p, f)
+          )
+        }
 
         write.csv(epochs_to_save[[epoch_id]],
           file = file.path(bids_dir, p, f),
           row.names = FALSE
         )
 
-        alert(
-          "success", "Epoched data written to: '%s'",
-          file.path(dir, p, f)
-        )
+        if (verbose) {
+          alert(
+            "success", "Epoched data written to: '%s'",
+            file.path(dir, p, f)
+          )
+        }
       })
     }
   } else {
@@ -307,17 +323,21 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       )
     }
 
-    alert("info", "Writing merged epochs to '%s'...", file.path(dir, p, f))
+    if (verbose) {
+      alert("info", "Writing merged epochs to '%s'...", file.path(dir, p, f))
+    }
 
     write.csv(merged_epochs,
       file = file.path(bids_dir, p, f),
       row.names = FALSE
     )
 
-    alert(
-      "success", "Merged epochs written to: '%s'",
-      file.path(dir, p, f)
-    )
+    if (verbose) {
+      alert(
+        "success", "Merged epochs written to: '%s'",
+        file.path(dir, p, f)
+      )
+    }
   }
 
   if (save_raw) {
@@ -341,21 +361,25 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           desc = "timeseries_pupil_allruns"
         )
 
-        alert(
-          "info", "Writing combined raw pupil timeseries to '%s'...",
-          file.path(dir, p, f)
-        )
+        if (verbose) {
+          alert(
+            "info", "Writing combined raw pupil timeseries to '%s'...",
+            file.path(dir, p, f)
+          )
+        }
 
         write.csv(combined_timeseries,
           file.path(dir, p, f),
           row.names = FALSE
         )
 
-        alert(
-          "success",
-          "Combined raw pupil timeseries written to: '%s'",
-          file.path(dir, p, f)
-        )
+        if (verbose) {
+          alert(
+            "success",
+            "Combined raw pupil timeseries written to: '%s'",
+            file.path(dir, p, f)
+          )
+        }
       } else {
         # save each run separately
         lapply(seq_len(num_runs), function(i) {
@@ -371,19 +395,23 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             desc = "timeseries_pupil"
           )
 
-          alert(
-            "info",
-            "Writing run %02d raw pupil timeseries to '%s'...",
-            i, file.path(dir, p, f)
-          )
+          if (verbose) {
+            alert(
+              "info",
+              "Writing run %02d raw pupil timeseries to '%s'...",
+              i, file.path(dir, p, f)
+            )
+          }
 
           write.csv(run_data, file.path(dir, p, f), row.names = FALSE)
 
-          alert(
-            "success",
-            "Run %02d raw pupil timeseries written to: '%s'",
-            i, file.path(dir, p, f)
-          )
+          if (verbose) {
+            alert(
+              "success",
+              "Run %02d raw pupil timeseries written to: '%s'",
+              i, file.path(dir, p, f)
+            )
+          }
         })
       }
     } else {
@@ -394,17 +422,21 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         desc = "timeseries_pupil"
       )
 
-      alert(
-        "info", "Writing single raw pupil timeseries to '%s'...",
-        file.path(dir, p, f)
-      )
+      if (verbose) {
+        alert(
+          "info", "Writing single raw pupil timeseries to '%s'...",
+          file.path(dir, p, f)
+        )
+      }
 
       write.csv(eyeris$timeseries, file.path(dir, p, f), row.names = FALSE)
 
-      alert(
-        "success", "Single raw pupil timeseries written to: '%s'",
-        file.path(dir, p, f)
-      )
+      if (verbose) {
+        alert(
+          "success", "Single raw pupil timeseries written to: '%s'",
+          file.path(dir, p, f)
+        )
+      }
     }
   }
 
@@ -418,7 +450,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     figs_out <- file.path(report_path, "source", "figures")
 
     # create directories with normalized path
-    check_and_create_dir(figs_out)
+    check_and_create_dir(figs_out, verbose = verbose)
 
     fig_paths <- c()
 
@@ -442,7 +474,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       run_fig_paths <- rep(NA, length(pupil_steps) * 2)
 
       run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
-      check_and_create_dir(run_dir)
+      check_and_create_dir(run_dir, verbose = verbose)
 
       # make step-by-step plots
       plot_types <- c("timeseries", "histogram")
@@ -554,9 +586,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                 get_block_numbers(bn)
               )
             )
-            check_and_create_dir(run_dir)
+            check_and_create_dir(run_dir, verbose = verbose)
             epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
-            check_and_create_dir(epochs_out)
+            check_and_create_dir(epochs_out, verbose = verbose)
 
             # nolint start
             epoch_groups <- as.vector(
@@ -629,7 +661,6 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
       }
     }
-
 
     # make final report
     report_output <- make_report(
