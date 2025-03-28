@@ -114,7 +114,7 @@ own <code>eyeris</code>-compatible preprocessing functions.</p>
 </h2>
 <p>Under the hood, each preprocessing function in <code>eyeris</code> is
 a wrapper around a core operation that gets tracked, versioned, and
-stored using the <code>pipeline_handler()</code>.</p>
+stored using the <code><a href="../reference/pipeline_handler.html">pipeline_handler()</a></code>.</p>
 <p>Custom pipeline steps must conform to the <code>eyeris</code>
 protocol for maximum compatibility with the downstream functions we
 provide.</p>
@@ -157,7 +157,7 @@ any custom parameters.</p>
 <h3 id="create-the-wrapper-using-the-eyerispipeline_handler">2) Create the wrapper using the
 <code>eyeris::pipeline_handler()</code><a class="anchor" aria-label="anchor" href="#create-the-wrapper-using-the-eyerispipeline_handler"></a>
 </h3>
-<p>The <code>pipeline_handler()</code> enables your function to
+<p>The <code><a href="../reference/pipeline_handler.html">pipeline_handler()</a></code> enables your function to
 automatically:</p>
 <ul>
 <li>track your function within the <code>eyeris</code> list object’s
@@ -180,7 +180,7 @@ list of data frames, and</li>
 <span><span class="co">#'</span></span>
 <span><span class="co">#' @return Updated `eyeris` object with new winsorized pupil column.</span></span>
 <span><span class="va">winsorize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">lower</span> <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">upper</span> <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">pipeline_handler</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
 <span>    <span class="va">eyeris</span>,</span>
 <span>    <span class="va">winsorize_pupil</span>,</span>
 <span>    <span class="st">"winsorize"</span>,</span>
@@ -243,7 +243,7 @@ column names</em></strong>!</li>
 <li>
 <strong>Return the expected data type:</strong> Be sure that you
 private function always returns a modified vector type, as the
-underlying <code>pipeline_handler()</code> is looking out for a vector
+underlying <code><a href="../reference/pipeline_handler.html">pipeline_handler()</a></code> is looking out for a vector
 it can transpose into the new column that will be added to the
 <code>timeseries</code> data frame within the resulting
 <code>eyeris</code> object.</li>

@@ -59,7 +59,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="-eyeris-glassbox-all-in-one-wrapper"><code>eyeris</code> “glassbox” all-in-one wrapper<a class="anchor" aria-label="anchor" href="#-eyeris-glassbox-all-in-one-wrapper"></a></h2>
+      <h2 id="-start-here-glassbox-all-in-one-wrapper">[start here] “glassbox” all-in-one wrapper<a class="anchor" aria-label="anchor" href="#-start-here-glassbox-all-in-one-wrapper"></a></h2>
 
 
 
@@ -74,9 +74,49 @@
           <code><a href="glassbox.html">glassbox()</a></code>
 
         </dt>
-        <dd>A "glass box" pipeline wrapper for <code>eyeris</code></dd>
+        <dd>The opinionated "glass box" <code>eyeris</code> pipeline</dd>
       </dl></div><div class="section level2">
-      <h2 id="load-eyelink-asc-file">load eyelink <code>.asc</code> file<a class="anchor" aria-label="anchor" href="#load-eyelink-asc-file"></a></h2>
+      <h2 id="-next-extract-trial-epochs">[next] extract trial epochs<a class="anchor" aria-label="anchor" href="#-next-extract-trial-epochs"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epoch.html">epoch()</a></code>
+
+        </dt>
+        <dd>Epoch (and baseline) pupil data based on custom event message structure</dd>
+      </dl></div><div class="section level2">
+      <h2 id="-and-finally-exporting-your-preprocessed-data-visualize-with-interactive-html-reports">[and finally] exporting your preprocessed data + visualize with interactive HTML reports<a class="anchor" aria-label="anchor" href="#-and-finally-exporting-your-preprocessed-data-visualize-with-interactive-html-reports"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="bidsify.html">bidsify()</a></code>
+
+        </dt>
+        <dd>Save out pupil timeseries data in a BIDS-like structure</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot.eyeris.html">plot(<i>&lt;eyeris&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot pre-processed pupil data from <code>eyeris</code></dd>
+      </dl></div><div class="section level2">
+      <h2 id="-helper-functions-core-preprocessing-operations">[helper functions] core preprocessing operations<a class="anchor" aria-label="anchor" href="#-helper-functions-core-preprocessing-operations"></a></h2>
 
 
 
@@ -92,18 +132,7 @@
 
         </dt>
         <dd>Load and parse SR Research EyeLink <code>.asc</code> files</dd>
-      </dl></div><div class="section level2">
-      <h2 id="core-preprocessing-operations">core preprocessing operations<a class="anchor" aria-label="anchor" href="#core-preprocessing-operations"></a></h2>
-
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
+      </dl><dl><dt>
 
           <code><a href="deblink.html">deblink()</a></code>
 
@@ -140,7 +169,7 @@
         </dt>
         <dd>Z-score pupil timeseries data</dd>
       </dl></div><div class="section level2">
-      <h2 id="trial-epoching-and-exporting-of-preprocessed-data">trial epoching and exporting of preprocessed data<a class="anchor" aria-label="anchor" href="#trial-epoching-and-exporting-of-preprocessed-data"></a></h2>
+      <h2 id="-advanced-building-custom-extensions">[advanced] building custom extensions<a class="anchor" aria-label="anchor" href="#-advanced-building-custom-extensions"></a></h2>
 
 
 
@@ -152,33 +181,10 @@
 
       <dl><dt>
 
-          <code><a href="epoch.html">epoch()</a></code>
+          <code><a href="pipeline_handler.html">pipeline_handler()</a></code>
 
         </dt>
-        <dd>Epoch (and baseline) pupil data based on custom event message structure</dd>
-      </dl><dl><dt>
-
-          <code><a href="bidsify.html">bidsify()</a></code>
-
-        </dt>
-        <dd>Save out pupil timeseries data in a BIDS-like structure</dd>
-      </dl></div><div class="section level2">
-      <h2 id="data-visualization">data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"></a></h2>
-
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="plot.eyeris.html">plot(<i>&lt;eyeris&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Plot pre-processed pupil data from <code>eyeris</code></dd>
+        <dd>Build a generic operation (extension) for the <code>eyeris</code> pipeline</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
