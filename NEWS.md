@@ -3,7 +3,7 @@
 ---
 
 # eyeris v1.0.0
-<small>`Pending Review`</small>
+<small>`March 31st, 2025`</small>
 
 🎉 **First CRAN release!**
 
