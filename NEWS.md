@@ -1,10 +1,6 @@
 # eyeris 1.0.1
 
-# eyeris v1.0.0
-
----
-
-<small>`March 31st, 2025`</small>
+# eyeris 1.0.0
 
 🎉 **First CRAN release!** (#144)
 
@@ -23,8 +19,7 @@ This version marks the official launch of the `eyeris` package on CRAN.
 
 Thanks for checking out `eyeris`! 🧠👁️
 
-# eyeris v0.1.0.9001
-<small>`February 26th, 2025`</small>
+# eyeris 0.1.0.9001
 
 ## Minor improvements and fixes
 * FF (#115): add more aggressive handling of edge cases in `eyeris::detransient()` (#121)
@@ -33,8 +28,7 @@ Thanks for checking out `eyeris`! 🧠👁️
   * Furthermore, a new `mad_thresh` override parameter has been added to `eyeris::detransient()` for advanced users to override the `mad_thresh` computed property. *Note:* this new `mad_thresh` parameter defaults to `NULL` (and should pretty much always stay as such).
 * FF (#122): fixed issue with incompatible unicode character in plot titles (#123)
 
-# eyeris v0.1.0.9000
-<small>`February 11th, 2025`</small>
+# eyeris 0.1.0.9000
 
 ## Breaking changes
 * NF (#10): add support for `.asc` files containing multiple recording segments within the same file (#120)
@@ -56,8 +50,7 @@ Thanks for checking out `eyeris`! 🧠👁️
   * Similarly, these added benefits coincide nicely with the new multi-block support (#10)
 * General bug fixes and enhancements to codebase and front-end UX (#120)
 
-# eyeris v0.0.0.9000
-<small>`November 23rd, 2024`</small>
+# eyeris 0.0.0.9000
 
 * Initial beta release
 
