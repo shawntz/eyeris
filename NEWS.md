@@ -1,11 +1,10 @@
-# eyeris 1.0.0
+# eyeris v1.0.0
 
 ---
 
-# eyeris v1.0.0
 <small>`March 31st, 2025`</small>
 
-🎉 **First CRAN release!**
+🎉 **First CRAN release!** (#144)
 
 This version marks the official launch of the `eyeris` package on CRAN.
 
