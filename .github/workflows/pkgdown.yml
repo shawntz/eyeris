@@ -6,7 +6,8 @@ permissions: read-all
 
 on:
   push:
-    branches: [dev, main]
+    branches:
+        - release/**
     paths:
         - 'NEWS.md'
         - 'README.md'
