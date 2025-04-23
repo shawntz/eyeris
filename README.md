@@ -112,7 +112,7 @@ plot(eyeris_preproc)
 
 <div style="display: flex; justify-content: center; gap: 20px;">
 
-<img src="man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
+<img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
 
 </div>
 
