@@ -41,19 +41,30 @@ beautiful, interactive HTML report files (see demonstration below ⬇️)!
 
 ## Installation
 
-You can install the development version of eyeris from
-[GitHub](https://github.com/) with:
+### stable release from CRAN
+
+You can install the stable release of [`eyeris` from
+CRAN](https://cran.r-project.org/package=eyeris) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("shawntz/eyeris")
+install.packages("eyeris")
 ```
 
 or
 
 ``` r
 # install.packages("pak")
-pak::pak("shawntz/eyeris")
+pak::pak("eyeris")
+```
+
+### development version from GitHub
+
+You can install the development version of [`eyeris` from
+GitHub](https://github.com/shawntz/eyeris) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
 ## Example
