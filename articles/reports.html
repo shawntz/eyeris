@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Open_Sans-0.4.9/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="../deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="QC with Interactive Reports">
@@ -59,9 +59,11 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-v100">Version 1.0.0</a></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-v0109000">Version 0.1.0.9000</a></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-v0009000">Version 0.0.0.9000</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-100">v1.0.0 (CRAN)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-0109001">v0.1.0.9001 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-0109000">v0.1.0.9000 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-0009000">v0.0.0.9000 (devel)</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -95,7 +97,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>QC with Interactive Reports</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/vignettes/reports.Rmd" class="external-link"><code>vignettes/reports.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/patch/v1.0.1/vignettes/reports.Rmd" class="external-link"><code>vignettes/reports.Rmd</code></a></small>
       <div class="d-none name"><code>reports.Rmd</code></div>
     </div>
 
@@ -223,7 +225,6 @@ cite it!</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Schwartz S (2025). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
 <span><span class="co">#&gt;   Processing of Pupil Data_. R package version 1.0.1,</span></span>
-<span><span class="co">#&gt;   https://github.com/shawntz/eyeris/,</span></span>
 <span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
@@ -232,8 +233,7 @@ cite it!</p>
 <span><span class="co">#&gt;     title = {eyeris: Flexible, Extensible, &amp; Reproducible Processing of Pupil Data},</span></span>
 <span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
 <span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     note = {R package version 1.0.1, </span></span>
-<span><span class="co">#&gt; https://github.com/shawntz/eyeris/},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.0.1},</span></span>
 <span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
@@ -244,7 +244,7 @@ cite it!</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Made with ♥ in Palo Alto, CA by <a href="http://shawnschwartz.com" class="external-link">Shawn Schwartz</a>.</p>
+  <p>Made with ♥ in Palo Alto by <a href="http://shawnschwartz.com" class="external-link">Shawn Schwartz</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
