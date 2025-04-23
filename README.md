@@ -136,21 +136,29 @@ plot(eyeris_preproc,
 
 ------------------------------------------------------------------------
 
-# Suggestions, questions, issues?
+# Contributing to `eyeris`
 
-Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
-to make note of any bugs, comments, suggestions, feedback, etc… all are
-welcomed and appreciated, thanks!
+Thank you for considering contributing to the open-source `eyeris` R
+package; there are many ways one could contribute to `eyeris`.
 
-# Code of Conduct
+We believe the best preprocessing practices emerge from collective
+expertise and rigorous discussion. Please see the [contribution
+guidelines](https://shawnschwartz.com/eyeris/CONTRIBUTING.html) for more
+information on how to get started..
+
+## Code of Conduct
 
 Please note that the eyeris project is released with a [Contributor Code
 of Conduct](https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html). By
 contributing to this project, you agree to abide by its terms.
 
-------------------------------------------------------------------------
+## Suggestions, questions, issues?
 
-### 📚 Citing `eyeris`
+Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
+to make note of any bugs, comments, suggestions, feedback, etc… all are
+welcomed and appreciated, thanks!
+
+## 📚 Citing `eyeris`
 
 <div class="alert alert-light">
 
@@ -165,8 +173,7 @@ citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
 #>   Schwartz S (2025). _eyeris: Flexible, Extensible, & Reproducible
-#>   Processing of Pupil Data_. R package version 1.0.0,
-#>   https://github.com/shawntz/eyeris/,
+#>   Processing of Pupil Data_. R package version 1.0.1,
 #>   <https://shawnschwartz.com/eyeris/>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -175,7 +182,7 @@ citation("eyeris")
 #>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
 #>     year = {2025},
-#>     note = {R package version 1.0.0, https://github.com/shawntz/eyeris/},
+#>     note = {R package version 1.0.1},
 #>     url = {https://shawnschwartz.com/eyeris/},
 #>   }
 ```
