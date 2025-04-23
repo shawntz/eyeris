@@ -1,13 +1,17 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: Flexible, Extensible, & Reproducible Processing of Pupil Data <a href="http://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
-<a href="https://github.com/shawntz/eyeris/blob/dev/LICENSE.md" alt="MIT License"><img src="https://badgen.net/static/license/MIT/blue?icon=github" alt="MIT License Badge"/></a>
-<a href="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="R Package Build Status"><img src="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="Package Build Status Badge" /></a>
-<a href="https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg" alt="R Package Linter Status"><img src="https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg" alt="Package Linter Status Badge" /></a>
+[![CRAN
+status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
+[![linter](https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/linter.yml)
+[![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
 <!-- badges: end -->
 
 <!-- The goal of eyeris is to ... -->
@@ -37,19 +41,30 @@ beautiful, interactive HTML report files (see demonstration below ⬇️)!
 
 ## Installation
 
-You can install the development version of eyeris from
-[GitHub](https://github.com/) with:
+### stable release from CRAN
+
+You can install the stable release of [`eyeris` from
+CRAN](https://cran.r-project.org/package=eyeris) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("shawntz/eyeris")
+install.packages("eyeris")
 ```
 
 or
 
 ``` r
 # install.packages("pak")
-pak::pak("shawntz/eyeris")
+pak::pak("eyeris")
+```
+
+### development version from GitHub
+
+You can install the development version of [`eyeris` from
+GitHub](https://github.com/shawntz/eyeris) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
 ## Example
@@ -97,7 +112,7 @@ plot(eyeris_preproc)
 
 <div style="display: flex; justify-content: center; gap: 20px;">
 
-<img src="man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
+<img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
 
 </div>
 
@@ -121,21 +136,29 @@ plot(eyeris_preproc,
 
 ------------------------------------------------------------------------
 
-# Suggestions, questions, issues?
+# Contributing to `eyeris`
 
-Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
-to make note of any bugs, comments, suggestions, feedback, etc… all are
-welcomed and appreciated, thanks!
+Thank you for considering contributing to the open-source `eyeris` R
+package; there are many ways one could contribute to `eyeris`.
 
-# Code of Conduct
+We believe the best preprocessing practices emerge from collective
+expertise and rigorous discussion. Please see the [contribution
+guidelines](https://shawnschwartz.com/eyeris/CONTRIBUTING.html) for more
+information on how to get started..
+
+## Code of Conduct
 
 Please note that the eyeris project is released with a [Contributor Code
 of Conduct](https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html). By
 contributing to this project, you agree to abide by its terms.
 
-------------------------------------------------------------------------
+## Suggestions, questions, issues?
 
-### 📚 Citing `eyeris`
+Please use the issues tab (<https://github.com/shawntz/eyeris/issues>)
+to make note of any bugs, comments, suggestions, feedback, etc… all are
+welcomed and appreciated, thanks!
+
+## 📚 Citing `eyeris`
 
 <div class="alert alert-light">
 
@@ -150,8 +173,7 @@ citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
 #>   Schwartz S (2025). _eyeris: Flexible, Extensible, & Reproducible
-#>   Processing of Pupil Data_. R package version 1.0.0,
-#>   https://github.com/shawntz/eyeris/,
+#>   Processing of Pupil Data_. R package version 1.0.1,
 #>   <https://shawnschwartz.com/eyeris/>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -160,7 +182,7 @@ citation("eyeris")
 #>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
 #>     year = {2025},
-#>     note = {R package version 1.0.0, https://github.com/shawntz/eyeris/},
+#>     note = {R package version 1.0.1},
 #>     url = {https://shawnschwartz.com/eyeris/},
 #>   }
 ```

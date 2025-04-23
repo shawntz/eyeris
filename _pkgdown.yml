@@ -1,14 +1,18 @@
 url: http://shawnschwartz.com/eyeris/
 
 news:
-    cran_dates: true # update to true once published to CRAN
+    cran_dates: true
     releases:
-    - text: "Version 1.0.0"
-      href: news/index.html#eyeris-v100
-    - text: "Version 0.1.0.9000"
-      href: news/index.html#eyeris-v0109000
-    - text: "Version 0.0.0.9000"
-      href: news/index.html#eyeris-v0009000
+    - text: "v1.0.1 (devel)"
+      href: news/index.html#eyeris-101
+    - text: "v1.0.0 (CRAN)"
+      href: news/index.html#eyeris-100
+    - text: "v0.1.0.9001 (devel)"
+      href: news/index.html#eyeris-0109001
+    - text: "v0.1.0.9000 (devel)"
+      href: news/index.html#eyeris-0109000
+    - text: "v0.0.0.9000 (devel)"
+      href: news/index.html#eyeris-0009000
 
 home:
   sidebar:
@@ -43,10 +47,10 @@ authors:
   Shawn Schwartz:
       href: "http://shawnschwartz.com"
   footer:
-      roles: [cre, fnd]
-      text: "Made with ♥ in Palo Alto, CA by"
+      roles: [cre]
+      text: "Made with ♥ in Palo Alto by"
   sidebar:
-      roles: [aut, ctb]
+      roles: [aut, fnd, ctb]
 
 reference:
   - title: "[start here] \"glassbox\" all-in-one wrapper"

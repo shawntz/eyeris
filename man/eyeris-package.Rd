@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states (see Clewett et al., 2020 \doi{10.1038/s41467-020-17851-9}; Kret & Sjak-Shie, 2018 \doi{10.3758/s13428-018-1075-y}; Strauch, 2024 \doi{10.1016/j.tins.2024.06.002}). Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles (see Wilkinson et al., 2016 \doi{10.1038/sdata.2016.18} for more information). 'eyeris', on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. 'eyeris' introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files (Esteban et al., 2019 \doi{10.1038/s41592-018-0235-4}; Gorgolewski et al., 2016 \doi{10.1038/sdata.2016.44}).
+Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states [Clewett et al. (2020) \doi{10.1038/s41467-020-17851-9}; Kret & Sjak-Shie (2018) \doi{10.3758/s13428-018-1075-y}; Strauch (2024) \doi{10.1016/j.tins.2024.06.002}]. Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles [see Wilkinson et al. (2016) \doi{10.1038/sdata.2016.18}]. 'eyeris', on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. 'eyeris' introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files [Esteban et al. (2019) \doi{10.1038/s41592-018-0235-4}; Gorgolewski et al. (2016) \doi{10.1038/sdata.2016.44}].
 }
 \seealso{
 Useful links:
@@ -21,6 +21,17 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Shawn Schwartz \email{stschwartz@stanford.edu} (\href{https://orcid.org/0000-0001-6444-8451}{ORCID}) [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Stanford Wu Tsai Human Performance Alliance [funder]
+  \item Stanford Ric Weiland Graduate Fellowship [funder]
+  \item Stanford Center for Mind, Brain, Computation and Technology [funder]
+  \item NIH National Institute on Aging R01 AG065255 [funder]
+  \item Mingjian He (\href{https://orcid.org/0000-0002-6688-8693}{ORCID}) [contributor]
+  \item Haopei Yang (\href{https://orcid.org/0000-0002-1207-3245}{ORCID}) [contributor]
+  \item Gustavo Santiago-Reyes (\href{https://orcid.org/0009-0005-3764-3215}{ORCID}) [contributor]
+}
 
 }
 \keyword{internal}

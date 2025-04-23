@@ -1,8 +1,21 @@
 # eyeris 1.0.1
 
+This non-CRAN release patches a small handful of documentation-related chores that have no direct impact on the functionality of `eyeris` for the end user. The minor improvements and fixes contained within this release will soon be bundled with a more substantial feature upgrade when submitted to CRAN to reduce burden on the CRAN reviewers at this time. Stay tuned!
+
+## Minor improvements and fixes (#159)
+* CHORE: fix duplicate `LICENSE` file issue in `release/**` branches (#145)
+* CHORE: update funders list on `DESCRIPTION` (#149)
+* CHORE: add DOI badge to `README` (#150)
+* CHORE: fix citation years in `DESCRIPTION` (i.e., put them in parentheses, per request of `CRAN` reviewer) (#151)
+* DOC: update `README` to include `CRAN` install code + option for @latest `dev` branch via download with devtools/GitHub (#153)
+* DOC: fix version titles + urls on changelog webpage (#154)
+* CHORE: change pkgdown docs website deployment rules so that public webpage only updates on pushes to official release branches, and not the `dev` branch (#155)
+* DOC: add `CONTRIBUTING.md` guidelines file for GitHub (#157)
+* DOC: fix `/man/figures/...` image ref issues which is leading to broken links on the `R CRAN read-only` [GitHub mirror repo](https://github.com/cran/eyeris) (#158)
+
 # eyeris 1.0.0
 
-🎉 **First CRAN release!** (#144)
+## 🎉 **First CRAN release!** (#144)
 
 This version marks the official launch of the `eyeris` package on CRAN.
 
@@ -56,7 +69,7 @@ Thanks for checking out `eyeris`! 🧠👁️
 
 ---
 
-## Commit message tags
+## Commit message tags reference:
 * **BF:** bug fix (in the *release* branch)
 * **FF:** feature fix (bug fixes in the *dev* branch)
 * **RF:** refactoring
