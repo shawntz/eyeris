@@ -120,12 +120,12 @@ plot(eyeris_preproc,
 ---
 
 ## `eyeris` dependency graph :see_no_evil:
-```{r, eval=TRUE, echo=FALSE, fig.width=5, fig.height=5, fig.dpi=300}
+```{r, eval=TRUE, echo=FALSE, fig.width=8.5, fig.height=10, fig.dpi=120}
 depgraph::plot_dependency_graph(
   pkg = ".",
   suggests = FALSE,
   option = "cividis",
-  ggrepel_opts = list(max.overlaps = 20)
+  ggrepel_opts = list(max.overlaps = 100)
 )
 ```
 
