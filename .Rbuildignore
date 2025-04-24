@@ -15,6 +15,7 @@
 ^data/sticker\.rda$
 ^R/sticker\.data\.R$
 ^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
 ^CRAN-SUBMISSION$
 ^inst/figures$
 ^doc$
