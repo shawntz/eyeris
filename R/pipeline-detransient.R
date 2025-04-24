@@ -7,7 +7,22 @@
 #' absolute deviation from sample-to-sample). This threshold is computed based
 #' on the constant `n`, which defaults to the value `16`.
 #'
+#' @note
+#' This function is part of the `glassbox()` preprocessing pipeline and is not
+#' intended for direct use in most cases. Provide parameters via
+#' `detransient = list(...)`.
+#'
+#' Advanced users may call it directly if needed.
+#'
 #' @details
+#' This function is automatically called by `glassbox()` by default. If needed,
+#' customize the parameters for `detransient` by providing a parameter list. Use
+#' `glassbox(detransient = FALSE)` to disable this step as needed.
+#'
+#' Users should prefer using `glassbox()` rather than invoking this function
+#' directly unless they have a specific reason to customize the pipeline
+#' manually.
+#'
 #' **Computed properties:**
 #'
 #' - **`pupil_speed`:** Compute speed of pupil by approximating the derivative
@@ -66,6 +81,9 @@
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_detransient`.
+#'
+#' @seealso [eyeris::glassbox()] for the recommended way to run this step as
+#' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
 #' system.file("extdata", "memory.asc", package = "eyeris") |>
