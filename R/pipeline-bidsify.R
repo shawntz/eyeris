@@ -58,13 +58,10 @@
 #' # Bleed around blink periods just long enough to remove majority of
 #' #  deflections due to eyelid movements
 #' \donttest{
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
-#'   eyeris::load_asc() |>
-#'   eyeris::deblink(extend = 50) |>
-#'   eyeris::detransient() |>
-#'   eyeris::interpolate() |>
-#'   eyeris::lpfilt(plot_freqz = TRUE) |>
-#'   eyeris::zscore() |>
+#' demo_data <- eyelink_asc_demo_dataset()
+#'
+#' demo_data |>
+#'   eyeris::glassbox(deblink = list(extend = 50)) |>
 #'   eyeris::epoch(
 #'     events = "PROBE_{type}_{trial}",
 #'     limits = c(-1, 1), # grab 1 second prior to and 1 second post event
