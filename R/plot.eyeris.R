@@ -38,7 +38,7 @@
 #' blocks in the recording.
 #' @param plot_distributions Logical flag to indicate whether to plot both
 #' diagnostic pupil timeseries *and* accompanying histograms of the pupil
-#' samples at each processing step. Defaults to `TRUE`.
+#' samples at each processing step. Defaults to `FALSE`.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
 #' from each preprocessing step run.
