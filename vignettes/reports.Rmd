@@ -120,7 +120,9 @@ participant.
 **with as little overhead as possible!**
 
 ```{r, echo=FALSE, out.width='100%'}
-knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif")
+gif_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
+                  "figures/interactive-reports-demo.gif")
+knitr::include_graphics(gif_url)
 ```
 
 ---
