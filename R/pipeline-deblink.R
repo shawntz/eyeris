@@ -7,6 +7,22 @@
 #' missing in-between these 'spike'-looking events. The deblinking procedure
 #' here will NA-pad each missing data point by your specified number of ms.
 #'
+#' @note
+#' This function is part of the `glassbox()` preprocessing pipeline and is not
+#' intended for direct use in most cases. Provide parameters via
+#' `deblink = list(...)`.
+#'
+#' Advanced users may call it directly if needed.
+#'
+#' @details
+#' This function is automatically called by `glassbox()` by default. If needed,
+#' customize the parameters for `deblink` by providing a parameter list. Use
+#' `glassbox(deblink = FALSE)` to disable this step as needed.
+#'
+#' Users should prefer using `glassbox()` rather than invoking this function
+#' directly unless they have a specific reason to customize the pipeline
+#' manually.
+#'
 #' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
 #' @param extend Either a single number indicating the number of milliseconds to
 #' pad forward/backward around each missing sample, or, a vector of length two
@@ -14,6 +30,9 @@
 #' missing sample, in the format `c(backward, forward)`.
 #'
 #' @return An `eyeris` object with a new column: `pupil_raw_{...}_deblink`.
+#'
+#' @seealso [eyeris::glassbox()] for the recommended way to run this step as
+#' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
 #' system.file("extdata", "memory.asc", package = "eyeris") |>
