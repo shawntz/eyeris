@@ -9,7 +9,20 @@
 #' the tracker do not scale across participants, and therefore make analyses
 #' that depend on data from more than one participant difficult to interpret.
 #'
+#' @note
+#' This function is part of the `glassbox()` preprocessing pipeline and is not
+#' intended for direct use in most cases. Use `glassbox(zscore = TRUE)`.
+#'
+#' Advanced users may call it directly if needed.
+#'
 #' @details
+#' This function is automatically called by `glassbox()` by default. Use
+#' `glassbox(zscore = FALSE)` to disable this step as needed.
+#'
+#' Users should prefer using `glassbox()` rather than invoking this function
+#' directly unless they have a specific reason to customize the pipeline
+#' manually.
+#'
 #' In general, it is common to z-score pupil data within any given
 #' participant, and furthermore, z-score that participant's data as a function
 #' of block number (for tasks/experiments where participants complete more than
@@ -38,6 +51,9 @@
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_z`.
+#'
+#' @seealso [eyeris::glassbox()] for the recommended way to run this step as
+#' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
 #' system.file("extdata", "memory.asc", package = "eyeris") |>
