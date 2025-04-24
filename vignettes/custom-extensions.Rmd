@@ -150,7 +150,7 @@ request or discussion on [GitHub](https://github.com/shawntz/eyeris)!
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   
   Run the following in R to get the citation:

@@ -71,10 +71,11 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::detransient(n = 16) |>
   eyeris::interpolate() |>
   eyeris::lpfilt(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE) |>
+  # eyeris::detrend() |>  # optional (please read docs before enabling)
   eyeris::zscore()
 ```
 
-<div class="alert alert-light">
+<div class="alert alert-light" style="padding-bottom: 0;">
   💡 **For more detailed information on the implementation of functions within**
      **the `glassbox()` and thus how to create your own custom pipeline**
      **extensions that conform to the `eyeris` protocol, see the:**
@@ -85,7 +86,7 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   
   Run the following in R to get the citation:

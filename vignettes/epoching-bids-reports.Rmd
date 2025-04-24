@@ -40,8 +40,8 @@ additional code)!
 library(eyeris)
 
 # Load the example memory task file and run default glassbox preproc workflow
-eye <- system.file("extdata", "memory.asc", package = "eyeris") |>
-  glassbox()
+demo_data <- eyelink_asc_demo_dataset()
+eye <- glassbox(demo_data)
 ```
 
 ## 2️⃣ Extract Data Epochs
@@ -76,7 +76,7 @@ procedure.
 However, you have the ability to customize this label, by passing a value to the
 `label` argument within `epoch()`.
 
-<div class="alert alert-warning">
+<div class="alert alert-warning" style="padding-bottom: 0;">
   ⚠️ Warning: if no label is specified and there are no event message strings
   provided for sanitization, then you may obtain a strange-looking epoch list
   element in your output `eyeris` object (e.g., `epoch_`, or perhaps even
@@ -244,7 +244,7 @@ about other customization options that may be useful for your specific workflow.
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   
   Run the following in R to get the citation:

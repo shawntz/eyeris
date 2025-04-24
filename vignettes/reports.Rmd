@@ -120,14 +120,14 @@ participant.
 **with as little overhead as possible!**
 
 ```{r, echo=FALSE, out.width='100%'}
-knitr::include_graphics("../man/figures/interactive-reports-demo.gif")
+knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif")
 ```
 
 ---
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   
   Run the following in R to get the citation:
