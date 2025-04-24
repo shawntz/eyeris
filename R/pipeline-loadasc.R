@@ -48,16 +48,22 @@
 #' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
-#' # Basic usage (no block column specified)
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
+#' demo_data <- eyelink_asc_demo_dataset()
+#'
+#' demo_data |>
+#'   eyeris::glassbox(load_asc = list(block = 1))
+#'
+#' # Other useful parameter configurations
+#' ## (1) Basic usage (no block column specified)
+#' demo_data |>
 #'   eyeris::load_asc()
 #'
-#' # Manual specification of block number
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
+#' ## (2) Manual specification of block number
+#' demo_data |>
 #'   eyeris::load_asc(block = 3)
 #'
-#' # Auto-detect multiple recording segments embedded within the same file
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
+#' ## (3) Auto-detect multiple recording segments embedded within the same file
+#' demo_data |>
 #'   eyeris::load_asc(block = "auto")
 #'
 #' @export
