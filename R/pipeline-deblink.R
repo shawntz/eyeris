@@ -35,14 +35,18 @@
 #' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
-#'   eyeris::load_asc() |>
-#'   eyeris::deblink(extend = 40) |> # 40 ms in both directions
+#' demo_data <- eyelink_asc_demo_dataset()
+#'
+#' # 50 ms in both directions
+#' demo_data |>
+#'   eyeris::glassbox(deblink = list(extend = 50)) |>
 #'   plot(seed = 0)
 #'
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
-#'   eyeris::load_asc() |>
-#'   eyeris::deblink(extend = c(40, 50)) |> # 40 ms backward, 50 ms forward
+#' # 40 ms backward, 50 ms forward
+#' demo_data |>
+#'   # set deblink to FALSE (instead of a list of params)
+#'   #  to skip step (not recommended)
+#'   eyeris::glassbox(deblink = list(extend = c(40, 50))) |>
 #'   plot(seed = 0)
 #'
 #' @export
