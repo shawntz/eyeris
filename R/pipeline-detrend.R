@@ -3,10 +3,26 @@
 #' Linearly detrend_pupil data by fitting a linear model of `pupil_data ~ time`,
 #' and return the fitted betas and the residuals (`pupil_data - fitted_values`).
 #'
+#' @note
+#' This function is part of the `glassbox()` preprocessing pipeline and is not
+#' intended for direct use in most cases. Use `glassbox(detrend = TRUE)`.
+#'
+#' Advanced users may call it directly if needed.
+#'
+#' @details
+#' This function is automatically called by `glassbox()` if `detrend = TRUE`.
+#'
+#' Users should prefer using `glassbox()` rather than invoking this function
+#' directly unless they have a specific reason to customize the pipeline
+#' manually.
+#'
 #' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
 #'
 #' @return An `eyeris` object with two new columns in `timeseries`:
 #' `detrend_fitted_betas`, and `pupil_raw_{...}_detrend`.
+#'
+#' @seealso [eyeris::glassbox()] for the recommended way to run this step as
+#' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
 #' system.file("extdata", "memory.asc", package = "eyeris") |>
