@@ -25,13 +25,10 @@
 #' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
-#'   eyeris::load_asc() |>
-#'   eyeris::deblink(extend = 50) |>
-#'   eyeris::detransient() |>
-#'   eyeris::interpolate() |>
-#'   eyeris::lpfilt(plot_freqz = TRUE) |>
-#'   eyeris::detrend() |>
+#' demo_data <- eyelink_asc_demo_dataset()
+#'
+#' demo_data |>
+#'   eyeris::glassbox(detrend = TRUE) |>  # set to FALSE to skip step (default)
 #'   plot(seed = 0)
 #'
 #' @export
