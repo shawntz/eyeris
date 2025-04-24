@@ -34,7 +34,7 @@ We will specifically focus on demonstrating the
 `eyeris::glassbox()` function, which we built to streamline, in part, the process
 of collecting and preprocessing any freshly collected **raw** pupillometry dataset
 within minutes to assess the quality of those data while simultaneously running
-a full preprocessing pipeline in _1/2-ish_ lines of code.
+a full preprocessing pipeline in _1-to-2-ish_ lines of code.
 
 ## 🔎 The Glass Box Function
 
@@ -64,7 +64,7 @@ If you haven't already installed the `eyeris` package:
 
 <!-- # nolint start -->
 ```{r setup, eval=FALSE}
-# Install from CRAN (coming soon)
+# Install latest stable release from CRAN
 # install.packages("eyeris")
 
 # pak
@@ -95,7 +95,7 @@ For this demo, we'll use our built in demo dataset, which contains a handful of
 trials from an associative memory task recorded in our lab.
 
 ```{r load-data}
-demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
+demo_data <- eyelink_asc_demo_dataset()
 ```
 
 ### Running the Fully-Automated Pipeline
@@ -119,7 +119,7 @@ plot(
 ### Running the Pipeline Interactively
 
 ```{r eval=FALSE, out.width='100%'}
-output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
+output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
 ```
 
 ### Overriding the Default Parameters
@@ -133,7 +133,7 @@ step to `glassbox()`.
 ```{r}
 output <- eyeris::glassbox(
   demo_data,
-  confirm = FALSE, # TRUE if you want to visualize each step in real-time
+  interactive_preview = FALSE, # TRUE to visualize each step in real-time
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = FALSE)
 )
@@ -141,19 +141,32 @@ output <- eyeris::glassbox(
 
 ##### Pipeline Steps with Overridable Parameters
 
-1. `eyeris::load_asc()`: `block`
-2. `eyeris::deblink()`: `extend`
-3. `eyeris::detransient()`: `n`; `mad_thresh`
-4. `eyeris::lpfilt()`: `wp`; `ws`; `rp`; `rs`; `plot_freqz`
+1. `eyeris::load_asc()`: 
+  * `block`
+2. `eyeris::deblink()`: 
+  * `extend`
+3. `eyeris::detransient()`: 
+  * `n`
+  * `mad_thresh`
+4. `eyeris::lpfilt()`: 
+  * `wp`
+  * `ws`
+  * `rp` 
+  * `rs`
+  * `plot_freqz`
 
 ## 💬 Caveats
 
-### Detrending Step
+### `Detrend` Step
 
-`detrend_data` is set to `FALSE` by default. Detrending your pupil timeseries can 
-have unintended consequences; we thus recommend that users understand the 
-implications of detrending – in addition to whether detrending is appropriate 
-for the research design and question(s) – before using this function.
+Detrending is turned off by default. 
+
+> To enable detrending in the pipeline, pass `detrend = TRUE` to `glassbox()`. 
+
+**Note: Detrending your pupil timeseries can have unintended consequences; **
+**we thus recommend that users understand the implications of detrending – in **
+**addition to whether detrending is appropriate for the research design and ** 
+**question(s) – before using this function.**
 
 ### _I received this message... what does it mean and what should I do?_
 
@@ -163,30 +176,33 @@ You (hopefully) shouldn't encounter this, but if you do, let us explain:
 ***WARNING: SOMETHING OUTRAGEOUS IS HAPPENING WITH YOUR PUPIL DATA!*** 
 
 The median absolute deviation (MAD) of your pupil speed is 0.
- This indicates a potential setup / hardware issue which has likely propogated into your pupil recording.
- Most often, this is due to online filtering being applied directly to your pupil data via the EyeLink Host PC.
+ This indicates a potential setup / hardware issue which has likely propogated 
+ into your pupil recording. Most often, this is due to online filtering being 
+ applied directly to your pupil data via the EyeLink Host PC.
 
  WE DO NOT RECOMMEND USING ANY ONLINE AUTO FILTERING DURING YOUR DATA RECORDING.
 
  ***ADDITIONAL INFO***
 The default setting for communicating with the EyeLink
- machine is to have filtering enabled on either live-streamed data or saved data in EDF files.
+ machine is to have filtering enabled on either live-streamed data or saved data 
+ in EDF files.
 
- We do not want these filters because:
- (1) it is unclear how the EyeLink machine is specifying their low-pass filter, and
- (2) it conflicts with an assumption here in `eyeris::detransient()` to use one-step 
-difference to compute a threshold for detecting large jumps in pupil data
- (suggesting blinking or other artifacts).
+We do not want these filters because:
+ (1) it is unclear how the EyeLink machine is specifying their low-pass filter,
+ and (2) it conflicts with an assumption here in `eyeris::detransient()` to use 
+ one-step difference to compute a threshold for detecting large jumps in pupil 
+ data (suggesting blinking or other artifacts).
 
  ***GENERAL TIP***
  You should aim to have your data as raw as possible so you can 'cook' it fresh!
 
  ***WHAT TO DO NEXT***
  If you would like to continue preprocessing your current pupil data file,
- you should consider skipping the `eyeris::detransient()` step of the pipeline altogether.
- Advanced users might consider additional testing by manually passing in different `mad_thresh` override values
- into `eyeris::detransient()` and then carefully assessing the consequences of any given override value on the pupil data;
- however, this step is not recommended for most users.
+ you should consider skipping the `eyeris::detransient()` step of the pipeline 
+ altogether. Advanced users might consider additional testing by manually 
+ passing in different `mad_thresh` override values into `eyeris::detransient()` 
+ and then carefully assessing the consequences of any given override value on 
+ the pupil data; however, this step is not recommended for most users.
 
  PLEASE CONTINUE AT YOUR OWN RISK.
 ```
@@ -204,8 +220,11 @@ You **do not** want these filters because
 
 **So, if your data aren't as raw as possible, you will need to run `eyeris` without the `detransient` step.**
 
-To skip the `detransient` step, pass `skip_detransient = TRUE` into your 
-`glassbox()` call.
+> To skip the `detransient` step, pass `detransient = FALSE` into your 
+> `glassbox()` call.
+
+To skip the `detransient` step within the `glassbox` pipeline,
+pass `detrend = TRUE` to `glassbox()`. 
 
 #### Some additional notes about preventing live filtering in future recordings...
 
@@ -260,7 +279,7 @@ _co-author of_ `eyeris`.
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light" style="margin-top: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem;">
+<div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   
   Run the following in R to get the citation:
