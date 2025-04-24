@@ -274,7 +274,7 @@ glassbox <- function(file,
     }
   )
 
-  seed <- NULL
+  seed <- params$seed
   step_counter <- 1
   only_linear_trend <- FALSE
   next_step <- c()
@@ -355,8 +355,11 @@ glassbox <- function(file,
 
           for (block_name in names(file$timeseries)) {
             bn <- get_block_numbers(block_name)
+            if (is.null(seed)) {
+              seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
+            }
             withr::with_seed(
-              rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1)),
+              seed,
               {
                 plot(
                   file,
