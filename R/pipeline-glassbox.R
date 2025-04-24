@@ -212,42 +212,65 @@ glassbox <- function(file,
     params$lpfilt <- default_params$lpfilt
   }
 
+  # evaluate which steps of pipeline to run
+  which_steps <- evaluate_pipeline_step_params(params)
+
   # eyeris workflow data structure
   pipeline <- list(
     load_asc = function(data, params) {
-      eyeris::load_asc(data, block = params$load_asc$block)
+      if (which_steps[["load_asc"]]) {
+        eyeris::load_asc(data, block = params$load_asc$block)
+      } else {
+        stop("No data loaded... the glassbox pipeline cannot proceed.")
+      }
     },
     deblink = function(data, params) {
-      eyeris::deblink(data, extend = params$deblink$extend)
+      if (which_steps[["deblink"]]) {
+        eyeris::deblink(data, extend = params$deblink$extend)
+      } else {
+        data
+      }
     },
     detransient = function(data, params) {
-      if (skip_detransient) {
-        data
-      } else {
+      if (which_steps[["detransient"]]) {
         eyeris::detransient(data, n = params$detransient$n)
+      } else {
+        data
       }
     },
     interpolate = function(data, params) {
-      eyeris::interpolate(data, verbose = verbose)
+      if (which_steps[["interpolate"]]) {
+        eyeris::interpolate(data, verbose = verbose)
+      } else {
+        data
+      }
     },
     lpfilt = function(data, params) {
-      eyeris::lpfilt(data,
-        wp = params$lpfilt$wp,
-        ws = params$lpfilt$ws,
-        rp = params$lpfilt$rp,
-        rs = params$lpfilt$rs,
-        plot_freqz = params$lpfilt$plot_freqz
-      )
+      if (which_steps[["lpfilt"]]) {
+        eyeris::lpfilt(data,
+          wp = params$lpfilt$wp,
+          ws = params$lpfilt$ws,
+          rp = params$lpfilt$rp,
+          rs = params$lpfilt$rs,
+          plot_freqz = params$lpfilt$plot_freqz
+        )
+      } else {
+        data
+      }
     },
     detrend = function(data, params) {
-      if (detrend_data) {
+      if (which_steps[["detrend"]]) {
         eyeris::detrend(data)
       } else {
         data
       }
     },
     zscore = function(data, params) {
-      eyeris::zscore(data)
+      if (which_steps[["zscore"]]) {
+        eyeris::zscore(data)
+      } else {
+        data
+      }
     }
   )
 
@@ -260,12 +283,10 @@ glassbox <- function(file,
     action <- "Running "
     skip_plot <- FALSE
 
-    if (!detrend_data) {
-      if (step_name == "detrend") {
-        action <- "Skipping "
-        step_counter <- step_counter - 1
-        skip_plot <- TRUE
-      }
+    if (!which_steps[[step_name]]) {
+      action <- "Skipping "
+      step_counter <- step_counter - 1
+      skip_plot <- TRUE
     } else {
       if (step_name == "detrend") {
         only_linear_trend <- TRUE
@@ -273,18 +294,37 @@ glassbox <- function(file,
     }
 
     if (verbose) {
-      cli::cli_alert_success(
-        paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
-      )
+      if (action == "Running ") {
+        cli::cli_alert_success(
+          paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
+        )
+      } else {
+        cli::cli_alert_warning(
+          paste0("[ SKIP ] - ", action, "eyeris::", step_name, "()")
+        )
+      }
     }
 
     step_to_run <- pipeline[[step_name]]
     err_thrown <- FALSE
+
     file <- tryCatch(
       {
         step_to_run(file, params)
       },
       error = function(e) {
+        if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
+          cli::cli_alert_danger(
+            paste0(
+              "[ WARN ] - ", "Because missing pupil samples were not ",
+              "interpolated, there is a mismatch in the number of samples ",
+              "in the detrended data. Please set `interpolate` to `TRUE` ",
+              "before detrending data OR disable detrending by setting ",
+              "`detrend` to `FALSE`."
+            )
+          )
+        }
+
         if (verbose) {
           cli::cli_alert_info(
             paste0(
@@ -304,7 +344,7 @@ glassbox <- function(file,
       value = TRUE
     )
 
-    if (confirm) {
+    if (interactive_preview) {
       if (!err_thrown) {
         if (!skip_plot) {
           if (step_counter + 1 <= length(names(pipeline))) {
@@ -364,4 +404,14 @@ glassbox <- function(file,
 prompt_user <- function() {
   resp <- readline(prompt = "Continue? [Yes/No]: ")
   tolower(resp) == "yes" | tolower(resp) == "y"
+}
+
+evaluate_pipeline_step_params <- function(params) {
+  sapply(params, function(x) {
+    if (is.logical(x)) {
+      isTRUE(x)
+    } else {
+      !identical(x, FALSE)
+    }
+  })
 }
