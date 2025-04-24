@@ -37,7 +37,7 @@ derivative (preprocessed) pupillometry data, as well as an intuitive
 workflow for inspecting preprocessed pupillometry epochs within
 beautiful, interactive HTML report files (see demonstration below ⬇️)!
 
-<img src="man/figures/interactive-reports-demo.gif" width="100%" />
+<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%" />
 
 ## Installation
 
@@ -87,19 +87,18 @@ set.seed(32)
 
 library(eyeris)
 
-demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
+demo_data <- eyelink_asc_demo_dataset()
 
 eyeris_preproc <- glassbox(
   demo_data,
-  detrend_data = F,
-  lpfilt = list(plot_freqz = T)
+  lpfilt = list(plot_freqz = FALSE)
 )
 #> ✔ [  OK  ] - Running eyeris::load_asc()
 #> ✔ [  OK  ] - Running eyeris::deblink()
 #> ✔ [  OK  ] - Running eyeris::detransient()
 #> ✔ [  OK  ] - Running eyeris::interpolate()
 #> ✔ [  OK  ] - Running eyeris::lpfilt()
-#> ✔ [  OK  ] - Skipping eyeris::detrend()
+#> ! [ SKIP ] - Skipping eyeris::detrend()
 #> ✔ [  OK  ] - Running eyeris::zscore()
 ```
 
@@ -107,12 +106,11 @@ eyeris_preproc <- glassbox(
 
 ``` r
 plot(eyeris_preproc)
-#> ! Plotting block 1 from possible blocks: 1
 ```
 
 <div style="display: flex; justify-content: center; gap: 20px;">
 
-<img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
+<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation">
 
 </div>
 
@@ -126,11 +124,14 @@ plot(eyeris_preproc,
 #> ! Plotting block 1 from possible blocks: 1
 ```
 
-<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
 
 ------------------------------------------------------------------------
 
 ## `eyeris` dependency graph :see_no_evil:
+
+    #> Warning: ggrepel: 17 unlabeled data points (too many overlaps). Consider
+    #> increasing max.overlaps
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
@@ -160,7 +161,7 @@ welcomed and appreciated, thanks!
 
 ## 📚 Citing `eyeris`
 
-<div class="alert alert-light">
+<div class="alert alert-light" style="padding-bottom: 0;">
 
 If you use the `eyeris` package in your research, please cite it!
 
@@ -173,7 +174,7 @@ citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
 #>   Schwartz S (2025). _eyeris: Flexible, Extensible, & Reproducible
-#>   Processing of Pupil Data_. R package version 1.0.1,
+#>   Processing of Pupil Data_. R package version 1.1.0,
 #>   <https://shawnschwartz.com/eyeris/>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -182,7 +183,7 @@ citation("eyeris")
 #>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
 #>     author = {Shawn Schwartz},
 #>     year = {2025},
-#>     note = {R package version 1.0.1},
+#>     note = {R package version 1.1.0},
 #>     url = {https://shawnschwartz.com/eyeris/},
 #>   }
 ```
