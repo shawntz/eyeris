@@ -1,5 +1,21 @@
 # eyeris 1.1.0
 
+## ✨ New Features
+* NF: Simplify `glassbox()` caller with redesigned parameters that enhance continuity across all pipeline steps (#148)
+
+## 📚 Documentation
+* DOC: Improved function documentation across the package and added more usage notes for clarity.
+* DOC: Updated styling of documentation website.
+
+## Minor improvements and fixes
+* ENH: Make histograms disabled by default when plotting an `eyeris` object (#156).
+* RF: Deprecated the `confirm` parameter in `glassbox()`.
+  * Please use `interactive_preview` instead.
+* RF: Deprecated the `num_previews` parameter in `glassbox()`.
+  * Please use `preview_n` instead.
+* BF: Random seed assignment was not behaving as expcted within the `glassbox()` pipeline.
+* RF: Modify paths to documentation assets to fix broken links at build.
+
 # eyeris 1.0.1
 
 This non-CRAN release patches a small handful of documentation-related chores that have no direct impact on the functionality of `eyeris` for the end user. The minor improvements and fixes contained within this release will soon be bundled with a more substantial feature upgrade when submitted to CRAN to reduce burden on the CRAN reviewers at this time. Stay tuned!
