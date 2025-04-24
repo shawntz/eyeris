@@ -159,15 +159,58 @@ glassbox <- function(file,
   }
 
   # the default parameters
-  params <- list(
+  default_params <- list(
     load_asc = list(block = "auto"),
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
-    lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE)
+    interpolate = TRUE,
+    lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose),
+    detrend = FALSE,
+    zscore = TRUE
   )
 
   # override defaults
-  params <- utils::modifyList(params, list(...))
+  params <- utils::modifyList(default_params, list(...))
+
+  # guard params that accept lists in the event a boolean is supplied
+  if ("load_asc" %in% names(list(...)) && isTRUE(list(...)$load_asc)) {
+    cli::cli_alert_warning(
+      paste(
+        "[ WARN ] - `load_asc` expects a list of args (not a boolean)...",
+        "using default: `list(block = \"auto\")`"
+      )
+    )
+    params$load_asc <- default_params$load_asc
+  }
+
+  if ("deblink" %in% names(list(...)) && isTRUE(list(...)$deblink)) {
+    cli::cli_alert_warning(
+      paste(
+        "[ WARN ] - `deblink` expects a list of args (not a boolean)...",
+        "using default: `list(extend = 50)`"
+      )
+    )
+    params$deblink <- default_params$deblink
+  }
+
+  if ("detransient" %in% names(list(...)) && isTRUE(list(...)$detransient)) {
+    cli::cli_alert_warning(
+      paste(
+        "[ WARN ] - `detransient` expects a list of args (not a boolean)...",
+        "using default: `list(n = 16, mad_thresh = NULL)`"
+      )
+    )
+    params$detransient <- default_params$detransient
+  }
+
+  if ("lpfilt" %in% names(list(...)) && isTRUE(list(...)$lpfilt)) {
+    cli::cli_alert_warning(paste(
+      "[ WARN ] - `lpfilt` expects a list of args (not a boolean)...",
+      "using default:",
+      "`list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose)`"
+    ))
+    params$lpfilt <- default_params$lpfilt
+  }
 
   # eyeris workflow data structure
   pipeline <- list(
