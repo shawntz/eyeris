@@ -24,6 +24,13 @@ the tracker do not scale across participants, and therefore make analyses
 that depend on data from more than one participant difficult to interpret.
 }
 \details{
+This function is automatically called by \code{glassbox()} by default. Use
+\code{glassbox(zscore = FALSE)} to disable this step as needed.
+
+Users should prefer using \code{glassbox()} rather than invoking this function
+directly unless they have a specific reason to customize the pipeline
+manually.
+
 In general, it is common to z-score pupil data within any given
 participant, and furthermore, z-score that participant's data as a function
 of block number (for tasks/experiments where participants complete more than
@@ -48,14 +55,21 @@ outcome variable group, separately). Instead, you should compute the z-score
 on the entire pupil timeseries (before epoching the data), and then split and
 take the mean of the z-scored timeseries as a function of condition variable.
 }
+\note{
+This function is part of the \code{glassbox()} preprocessing pipeline and is not
+intended for direct use in most cases. Use \code{glassbox(zscore = TRUE)}.
+
+Advanced users may call it directly if needed.
+}
 \examples{
-system.file("extdata", "memory.asc", package = "eyeris") |>
-  eyeris::load_asc() |>
-  eyeris::deblink(extend = 50) |>
-  eyeris::detransient() |>
-  eyeris::interpolate() |>
-  eyeris::lpfilt(plot_freqz = TRUE) |>
-  eyeris::zscore() |>
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  eyeris::glassbox(zscore = TRUE) |> # set to FALSE to skip (not recommended)
   plot(seed = 0)
 
+}
+\seealso{
+\code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
+part of the full eyeris glassbox preprocessing pipeline.
 }

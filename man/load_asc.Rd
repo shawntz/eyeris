@@ -39,20 +39,44 @@ messages and metadata within the EyeLink \code{.asc} file. After loading and
 additional processing, this function returns an S3 \code{eyeris} class for use in
 all subsequent \code{eyeris} pipeline steps and functions.
 }
+\details{
+This function is automatically called by \code{glassbox()} by default. If needed,
+customize the parameters for \code{load_asc} by providing a parameter list.
+
+Users should prefer using \code{glassbox()} rather than invoking this function
+directly unless they have a specific reason to customize the pipeline
+manually.
+}
+\note{
+This function is part of the \code{glassbox()} preprocessing pipeline and is not
+intended for direct use in most cases. Provide parameters via
+\code{load_asc = list(...)}.
+
+Advanced users may call it directly if needed.
+}
 \examples{
-# Basic usage (no block column specified)
-system.file("extdata", "memory.asc", package = "eyeris") |>
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  eyeris::glassbox(load_asc = list(block = 1))
+
+# Other useful parameter configurations
+## (1) Basic usage (no block column specified)
+demo_data |>
   eyeris::load_asc()
 
-# Manual specification of block number
-system.file("extdata", "memory.asc", package = "eyeris") |>
+## (2) Manual specification of block number
+demo_data |>
   eyeris::load_asc(block = 3)
 
-# Auto-detect multiple recording segments embedded within the same file
-system.file("extdata", "memory.asc", package = "eyeris") |>
+## (3) Auto-detect multiple recording segments embedded within the same file
+demo_data |>
   eyeris::load_asc(block = "auto")
 
 }
 \seealso{
 \code{\link[eyelinker:read.asc]{eyelinker::read.asc()}} which this function wraps.
+
+\code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
+part of the full eyeris glassbox preprocessing pipeline.
 }

@@ -126,13 +126,8 @@ feature where additional trial data embedded within event messages can easily
 be identified and joined into the resulting epoched data frames.
 }
 \examples{
-eye_preproc <- system.file("extdata", "memory.asc", package = "eyeris") |>
-  eyeris::load_asc() |>
-  eyeris::deblink(extend = 50) |>
-  eyeris::detransient() |>
-  eyeris::interpolate() |>
-  eyeris::lpfilt(plot_freqz = TRUE) |>
-  eyeris::zscore()
+demo_data <- eyelink_asc_demo_dataset()
+eye_preproc <- eyeris::glassbox(demo_data)
 
 # example 1: select 1 second before/after matched event message "PROBE*"
 eye_preproc |>

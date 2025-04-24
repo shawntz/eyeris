@@ -28,13 +28,32 @@ The intended use of this method is for smoothing, although by specifying
 \code{wp} and \code{ws} differently one can achieve highpass or bandpass filtering
 as well. However, only lowpass filtering should be done on pupillometry data.
 }
+\details{
+This function is automatically called by \code{glassbox()} by default. If needed,
+customize the parameters for \code{lpfilt} by providing a parameter list. Use
+\code{glassbox(lpfilt = FALSE)} to disable this step as needed.
+
+Users should prefer using \code{glassbox()} rather than invoking this function
+directly unless they have a specific reason to customize the pipeline
+manually.
+}
+\note{
+This function is part of the \code{glassbox()} preprocessing pipeline and is not
+intended for direct use in most cases. Provide parameters via
+\code{lpfilt = list(...)}.
+
+Advanced users may call it directly if needed.
+}
 \examples{
-system.file("extdata", "memory.asc", package = "eyeris") |>
-  eyeris::load_asc() |>
-  eyeris::deblink(extend = 50) |>
-  eyeris::detransient() |>
-  eyeris::interpolate() |>
-  eyeris::lpfilt(plot_freqz = TRUE) |>
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  # set lpfilt to FALSE (instead of a list of params) to skip step
+  eyeris::glassbox(lpfilt = list(plot_freqz = TRUE)) |>
   plot(seed = 0)
 
+}
+\seealso{
+\code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
+part of the full eyeris glassbox preprocessing pipeline.
 }

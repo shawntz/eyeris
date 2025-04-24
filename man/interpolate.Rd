@@ -10,7 +10,7 @@ interpolate(eyeris, verbose = TRUE)
 \item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
-Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
+Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current
 processing step and run silently.}
 }
 \value{
@@ -26,12 +26,30 @@ Currently, NAs at the beginning and the end of the data are replaced with
 values on either end, respectively, using the "rule = 2" argument in the
 \code{approx()} function.
 }
+\details{
+This function is automatically called by \code{glassbox()} by default. Use
+\code{glassbox(interpolate = FALSE)} to disable this step as needed.
+
+Users should prefer using \code{glassbox()} rather than invoking this function
+directly unless they have a specific reason to customize the pipeline
+manually.
+}
+\note{
+This function is part of the \code{glassbox()} preprocessing pipeline and is not
+intended for direct use in most cases. Use \code{glassbox(interpolate = TRUE)}.
+
+Advanced users may call it directly if needed.
+}
 \examples{
-system.file("extdata", "memory.asc", package = "eyeris") |>
-  eyeris::load_asc() |>
-  eyeris::deblink(extend = 50) |>
-  eyeris::detransient() |>
-  eyeris::interpolate() |>
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  # set to FALSE to skip (not recommended)
+  eyeris::glassbox(interpolate = TRUE) |>
   plot(seed = 0)
 
+}
+\seealso{
+\code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
+part of the full eyeris glassbox preprocessing pipeline.
 }

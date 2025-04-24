@@ -46,6 +46,14 @@ absolute deviation from sample-to-sample). This threshold is computed based
 on the constant \code{n}, which defaults to the value \code{16}.
 }
 \details{
+This function is automatically called by \code{glassbox()} by default. If needed,
+customize the parameters for \code{detransient} by providing a parameter list. Use
+\code{glassbox(detransient = FALSE)} to disable this step as needed.
+
+Users should prefer using \code{glassbox()} rather than invoking this function
+directly unless they have a specific reason to customize the pipeline
+manually.
+
 \strong{Computed properties:}
 \itemize{
 \item \strong{\code{pupil_speed}:} Compute speed of pupil by approximating the derivative
@@ -77,11 +85,24 @@ using a constant multiplier \eqn{n} (default value: 16):
 \deqn{mad\_thresh = median\_speed + (n \times mad\_val)}
 }
 }
+\note{
+This function is part of the \code{glassbox()} preprocessing pipeline and is not
+intended for direct use in most cases. Provide parameters via
+\code{detransient = list(...)}.
+
+Advanced users may call it directly if needed.
+}
 \examples{
-system.file("extdata", "memory.asc", package = "eyeris") |>
-  eyeris::load_asc() |>
-  eyeris::deblink(extend = 50) |>
-  eyeris::detransient() |>
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  eyeris::glassbox(
+    detransient = list(n = 16) # set to FALSE to skip step (not recommended)
+  ) |>
   plot(seed = 0)
 
+}
+\seealso{
+\code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
+part of the full eyeris glassbox preprocessing pipeline.
 }

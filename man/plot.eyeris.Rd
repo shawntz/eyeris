@@ -13,7 +13,7 @@
   preview_window = NULL,
   seed = NULL,
   block = 1,
-  plot_distributions = TRUE
+  plot_distributions = FALSE
 )
 }
 \arguments{
@@ -57,7 +57,7 @@ blocks in the recording.}
 
 \item{plot_distributions}{Logical flag to indicate whether to plot both
 diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
-samples at each processing step. Defaults to \code{TRUE}.}
+samples at each processing step. Defaults to \code{FALSE}.}
 }
 \value{
 No return value; iteratively plots a subset of the pupil timeseries
