@@ -34,12 +34,11 @@
 #' part of the full eyeris glassbox preprocessing pipeline.
 #'
 #' @examples
-#' system.file("extdata", "memory.asc", package = "eyeris") |>
-#'   eyeris::load_asc() |>
-#'   eyeris::deblink(extend = 50) |>
-#'   eyeris::detransient() |>
-#'   eyeris::interpolate() |>
-#'   eyeris::lpfilt(plot_freqz = TRUE) |>
+#' demo_data <- eyelink_asc_demo_dataset()
+#'
+#' demo_data |>
+#'   # set lpfilt to FALSE (instead of a list of params) to skip step
+#'   eyeris::glassbox(lpfilt = list(plot_freqz = TRUE)) |>
 #'   plot(seed = 0)
 #'
 #' @export
