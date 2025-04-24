@@ -3,6 +3,8 @@ url: http://shawnschwartz.com/eyeris/
 news:
     cran_dates: true
     releases:
+    - text: "v1.1.0 (CRAN)"
+      href: news/index.html#eyeris-110
     - text: "v1.0.1 (devel)"
       href: news/index.html#eyeris-101
     - text: "v1.0.0 (CRAN)"
@@ -20,14 +22,14 @@ home:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news]
-    right: [search, github, lightswitch]
+    left:  [intro, reference, articles, news, github]
+    right: [search]
 
 template:
   bootstrap: 5
-  light-switch: true
+  light-switch: false
   theme: breeze-light
-  theme-dark: gruvbox-dark
+  # theme-dark: breeze-light
   math-rendering: mathjax
   bslib:
       bootswatch: united
@@ -53,28 +55,48 @@ authors:
       roles: [aut, fnd, ctb]
 
 reference:
-  - title: "[start here] \"glassbox\" all-in-one wrapper"
+  - title: "🧠 Core Pipeline"
+    desc: >
+      Start here with the full pipeline wrapper to quickly and easily call and customize the opinionated `glassbox` pipeline in `eyeris`.
     contents:
-    - glassbox
-  - title: "[next] extract trial epochs"
+      - glassbox
+
+  - title: "⏱️ Epoching Pupil Data"
+    desc: >
+      Conveniently extract tidy trial-based epochs with optional baseline correction.
     contents:
-    - epoch
-  - title: "[and finally] exporting your preprocessed data + visualize with interactive HTML reports"
+      - epoch
+
+  - title: "📤 Export & Visualize"
+    desc: >
+      Save out BIDS-style derivatives, generate diagnostic HTML reports, and interactively plot and explore your pupil data.
     contents:
-    - bidsify
-    - plot.eyeris
-  - title: "[helper functions] core preprocessing operations"
+      - bidsify
+      - plot.eyeris
+
+  - title: "🔧 Preprocessing Steps"
+    desc: >
+      Modular functions used by the `glassbox` pipeline for cleaning and transforming pupil data.
     contents:
-    - load_asc
-    - deblink
-    - detransient
-    - interpolate
-    - lpfilt
-    - detrend
-    - zscore
-  - title: "[advanced] building custom extensions"
+      - load_asc
+      - deblink
+      - detransient
+      - interpolate
+      - lpfilt
+      - detrend
+      - zscore
+
+  - title: "🧩 Build Your Own Extensions"
+    desc: >
+      Advanced tools for creating custom steps that plug into the glassbox pipeline.
     contents:
-    - pipeline_handler
+      - pipeline_handler
+
+  - title: "📈 Demo Datasets"
+    desc: >
+      Example eye-tracking / pupil datasets for testing and demonstrating pipeline functionality.
+    contents:
+      - eyelink_asc_demo_dataset
 
 articles:
   - title: Start Here
