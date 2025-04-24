@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Raleway-0.4.10/font.css" rel="stylesheet">
 <link href="deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
@@ -28,11 +28,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
+    <li><a class="dropdown-item" href="news/index.html#eyeris-110">v1.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
     <li><a class="dropdown-item" href="news/index.html#eyeris-100">v1.0.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="news/index.html#eyeris-0109001">v0.1.0.9001 (devel)</a></li>
@@ -71,20 +72,12 @@
     <li><a class="dropdown-item" href="news/index.html">Changelog</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/shawntz/eyeris/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/shawntz/eyeris/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
-<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
-  </ul>
-</li>
       </ul>
 </div>
 
@@ -108,7 +101,7 @@
 <p>Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. <code>eyeris</code>, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by <code>Nipype</code>.</p>
 <p><code>eyeris</code> also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by <code>fMRIPrep</code>). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).</p>
 <p><code>eyeris</code> also introduces a <code>BIDS</code>-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files (see demonstration below ⬇️)!</p>
-<p><img src="reference/figures/interactive-reports-demo.gif" width="100%"></p>
+<p><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -146,29 +139,27 @@
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/" class="external-link">eyeris</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"memory.asc"</span>, package <span class="op">=</span> <span class="st">"eyeris"</span><span class="op">)</span></span>
+<span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">eyeris_preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
 <span>  <span class="va">demo_data</span>,</span>
-<span>  detrend_data <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::load_asc()</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::deblink()</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::detransient()</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::interpolate()</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::lpfilt()</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Skipping eyeris::detrend()</span></span>
+<span><span class="co">#&gt; ! [ SKIP ] - Skipping eyeris::detrend()</span></span>
 <span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::zscore()</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-wise-correction-of-pupillary-signal">step-wise correction of pupillary signal<a class="anchor" aria-label="anchor" href="#step-wise-correction-of-pupillary-signal"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ! Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">)</span></span></code></pre></div>
 <div style="display: flex; justify-content: center; gap: 20px;">
-<p><img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/man/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
+<p><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
 </div>
 </div>
 <div class="section level3">
@@ -180,7 +171,7 @@
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ! Plotting block 1 from possible blocks: 1</span></span></code></pre></div>
-<p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"></p>
+<p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"></p>
 <hr>
 </div>
 </div>
@@ -213,7 +204,7 @@
 <h2 id="id_-citing-eyeris">📚 Citing <code>eyeris</code>
 <a class="anchor" aria-label="anchor" href="#id_-citing-eyeris"></a>
 </h2>
-<div class="alert alert-light">
+<div class="alert alert-light" style="padding-bottom: 0;">
 <p>If you use the <code>eyeris</code> package in your research, please cite it!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
@@ -222,7 +213,7 @@
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Schwartz S (2025). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
-<span><span class="co">#&gt;   Processing of Pupil Data_. R package version 1.0.1,</span></span>
+<span><span class="co">#&gt;   Processing of Pupil Data_. R package version 1.1.0,</span></span>
 <span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
@@ -231,7 +222,7 @@
 <span><span class="co">#&gt;     title = {eyeris: Flexible, Extensible, &amp; Reproducible Processing of Pupil Data},</span></span>
 <span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
 <span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     note = {R package version 1.0.1},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.1.0},</span></span>
 <span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
