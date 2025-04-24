@@ -99,7 +99,9 @@ Here, notice specifically these two files:
 > `sub-001.html` will look something like this:
 
 ```{r echo=FALSE, out.width='75%'}
-knitr::include_graphics("../man/figures/report_example_annotated-1.png")
+img_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
+                  "figures/report_example_annotated-1.png")
+knitr::include_graphics(img_url)
 ```
 
 ## 4️⃣ Data QC of Extracted Pupil Epochs with Interactive Reports
