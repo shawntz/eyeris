@@ -70,7 +70,7 @@
 #' @seealso [lifecycle::deprecate_warn()]
 #'
 #' @examples
-#' demo_data <- system.file("extdata", "memory.asc", package = "eyeris")
+#' demo_data <- eyelink_asc_demo_dataset()
 #'
 #' # (1) examples using the default prescribed parameters and pipeline recipe
 #'
@@ -86,15 +86,25 @@
 #'
 #' ## (b) run a interactive workflow (with confirmation prompts after each step)
 #' \donttest{
-#' output <- eyeris::glassbox(demo_data, confirm = TRUE, seed = 0)
+#' output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
 #' }
 #'
-#' # (2) examples overriding the default parameters
+#' # (2) examples of overriding the default parameters
 #' output <- eyeris::glassbox(
 #'   demo_data,
-#'   confirm = FALSE, # TRUE if you want to visualize each step in real-time
+#'   interactive_preview = FALSE, # TRUE to visualize each step in real-time
 #'   deblink = list(extend = 40),
-#'   lpfilt = list(plot_freqz = FALSE)
+#'   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
+#' )
+#'
+#' plot(output, seed = 0)
+#'
+#' # (3) examples of disabling certain steps
+#' output <- eyeris::glassbox(
+#'   demo_data,
+#'   detransient = FALSE,
+#'   detrend = FALSE,
+#'   zscore = FALSE
 #' )
 #'
 #' plot(output, seed = 0)
