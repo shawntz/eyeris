@@ -217,6 +217,4 @@ normalize_time_orig <- function(eyeris_obj) {
         .after = "time_orig"
       )
   }
-
-  return(eyeris_obj)
 }

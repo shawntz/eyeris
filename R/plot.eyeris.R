@@ -233,7 +233,10 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
             par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
             do.call(robust_plot, c(
-              list(y = pupil_data[[pupil_steps[i - 1]]], x = pupil_data$time_secs),
+              list(
+                y = pupil_data[[pupil_steps[i - 1]]],
+                x = pupil_data$time_secs
+              ),
               plot_params,
               list(
                 type = "l", col = "black", lwd = 2,
@@ -261,11 +264,12 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
               "detrend:\n",
               params$next_step[length(params$next_step) - 1]
             )
+
+            ydat <- pupil_data[[params$next_step[length(params$next_step) - 1]]]
+            xdat <- pupil_data$time_secs
+
             do.call(robust_plot, c(
-              list(
-                y = pupil_data[[params$next_step[length(params$next_step) - 1]]],
-                x = pupil_data$time_secs
-              ),
+              list(y = ydat, x = xdat),
               plot_params,
               list(
                 type = "l",
@@ -339,9 +343,11 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
     end_index <- min(preview_window[2], nrow(pupil_data))
 
     if (start_index < 1 || start_index > nrow(pupil_data) ||
-        end_index < 1 || end_index > nrow(pupil_data) ||
-        start_index >= end_index) {
-      cli::cli_abort("Invalid preview_window: start/end index out of range or invalid.")
+          end_index < 1 || end_index > nrow(pupil_data) ||
+          start_index >= end_index) {
+      cli::cli_abort(
+        "Invalid preview_window: start/end index out of range or invalid."
+      )
     }
 
     sliced_pupil_data <- pupil_data[start_index:end_index, ]
