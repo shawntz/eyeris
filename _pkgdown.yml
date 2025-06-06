@@ -22,8 +22,13 @@ home:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news, github]
+    left:  [intro, reference, articles, news, preprint, github, bluesky]
     right: [search]
+  components:
+    bluesky:
+      icon: fa-twitter
+      href: http://bsky.app/profile/shawnschwartz.bsky.social
+      aria-label: Bluesky
     preprint:
       text: "bioRxiv Preprint"
       href: http://www.biorxiv.org/content/10.1101/2025.06.01.657312v1
