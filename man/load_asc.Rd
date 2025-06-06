@@ -70,8 +70,13 @@ demo_data |>
   eyeris::load_asc(block = 3)
 
 ## (3) Auto-detect multiple recording segments embedded within the same file
+##  (i.e., the default behavior)
 demo_data |>
   eyeris::load_asc(block = "auto")
+
+## (4) Omit block column
+demo_data |>
+  eyeris::load_asc(block = NULL)
 
 }
 \seealso{

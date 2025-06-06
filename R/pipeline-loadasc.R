@@ -63,8 +63,13 @@
 #'   eyeris::load_asc(block = 3)
 #'
 #' ## (3) Auto-detect multiple recording segments embedded within the same file
+#' ##  (i.e., the default behavior)
 #' demo_data |>
 #'   eyeris::load_asc(block = "auto")
+#'
+#' ## (4) Omit block column
+#' demo_data |>
+#'   eyeris::load_asc(block = NULL)
 #'
 #' @export
 load_asc <- function(file, block = "auto") {
@@ -146,17 +151,17 @@ load_asc <- function(file, block = "auto") {
         list_out$blinks <- list("block_1" = x$blinks)
       }
     } else if (is.numeric(block)) {
-      # manual setting
+      # manually set block number inside the data
       list_out$timeseries <- setNames(
-        list(raw_df),
+        list(raw_df |> dplyr::mutate(block = !!as.numeric(block))),
         paste0("block_", as.character(block))
       )
       list_out$events <- setNames(
-        list(x$msg),
+        list(x$msg |> dplyr::mutate(block = !!as.numeric(block))),
         paste0("block_", as.character(block))
       )
       list_out$blinks <- setNames(
-        list(x$blinks),
+        list(x$blinks |> dplyr::mutate(block = !!as.numeric(block))),
         paste0("block_", as.character(block))
       )
     } else {
@@ -164,9 +169,13 @@ load_asc <- function(file, block = "auto") {
     }
   } else {
     # fallback to direct assignment if all block cases fail
-    list_out$timeseries <- raw_df
-    list_out$events <- x$msg
-    list_out$blinks <- x$blinks
+    list_out$timeseries <- list("block_1" = raw_df)
+
+    # omit the block column from the timeseries, events, and blinks
+    list_out$timeseries$block_1 <- list_out$timeseries$block_1 |>
+      dplyr::select(-block)
+    list_out$events <- x$msg |> dplyr::select(-block)
+    list_out$blinks <- x$blinks |> dplyr::select(-block)
   }
 
   # fix metadata (info) for newer versions of eyelink
