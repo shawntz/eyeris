@@ -392,21 +392,26 @@ draw_random_epochs <- function(x, n, d, hz) {
 robust_plot <- function(x, ...) {
   tryCatch(
     {
-      valid <- is.finite(x) # filter out non-finite values
+      dots <- list(...)
 
-      if (all(!valid)) {
-        cli::cli_alert_warning(
-          paste0(
-            "All values are non-finite in random segment, try running",
-            "again with a different seed to avoid empty plots!"
-          )
-        )
-        x <- rep(0, length(x)) # create empty placeholder plot
-      } else {
-        x <- x[valid]
+      col_user <- if ("col" %in% names(dots)) dots$col else "blue"
+
+      # store original x for getting NA positions
+      x_orig <- x
+
+      # init placeholder line
+      plot(seq_along(x_orig), ifelse(is.na(x_orig), NA, x_orig), ...)
+
+      # add vertical lines where there are NAs
+      na_idx <- which(is.na(x_orig))
+      if (length(na_idx) > 0) {
+        abline(v = na_idx, col = "black", lty = 2)
       }
 
-      plot(x, ...)
+      # replace NA with -1 after drawing NA lines for continuity
+      x_clean <- x_orig
+      x_clean[is.na(x_clean)] <- -1
+      lines(seq_along(x_clean), x_clean, col = col_user)
     },
     error = function(e) {
       cli::cli_alert_info(
@@ -437,4 +442,9 @@ plot_pupil_distribution <- function(data, color, main, xlab) {
     border = "white",
     breaks = "FD"
   )
+}
+
+draw_na_lines <- function(x, y, ...) {
+  na_idx <- which(is.na(y))
+  abline(v = x[na_idx], col = "black", lty = 2, ...)
 }
