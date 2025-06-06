@@ -39,7 +39,7 @@ detrend <- function(eyeris) {
 
 detrend_pupil <- function(x, prev_op) {
   pupil <- x[[prev_op]]
-  timeseries <- x[["time_orig"]]
+  timeseries <- x[["time_secs"]]
 
   fit <- lm(pupil ~ timeseries)
 

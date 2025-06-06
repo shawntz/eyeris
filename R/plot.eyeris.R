@@ -107,6 +107,10 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
   )
 
   params <- list(...)
+  non_plot_params <- c("preview_window", "seed", "steps", "num_previews",
+                       "preview_duration", "block", "plot_distributions")
+  plot_params <- params[!(names(params) %in% non_plot_params)]
+
   only_liner_trend <- if ("only_linear_trend" %in% names(params)) {
     params$only_linear_trend <- params$only_linear_trend
   } else {
@@ -227,19 +231,21 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
         if (!only_liner_trend) {
           if (grepl("_detrend$", pupil_steps[i]) && !detrend_plotted) {
             par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-            robust_plot(pupil_data$time_orig, pupil_data[[pupil_steps[i - 1]]],
-              type = "l", col = "black", lwd = 2,
-              main = paste0(
-                "detrend:\n",
-                gsub(
-                  "_", " > ",
-                  gsub("pupil_", "", pupil_steps[i - 1])
-                )
-              ),
-              xlab = "raw tracker time (ms)", ylab = "pupil size (a.u.)"
-            )
-            lines(pupil_data$time_orig, pupil_data$detrend_fitted_values,
-              type = "l", col = "blue", lwd = 2, lty = 2
+
+            do.call(robust_plot, c(
+              list(y = pupil_data[[pupil_steps[i - 1]]], x = pupil_data$time_secs),
+              plot_params,
+              list(
+                type = "l", col = "black", lwd = 2,
+                main = paste0(
+                  "detrend:\n",
+                  gsub("_", " > ", gsub("pupil_", "", pupil_steps[i - 1]))
+                ),
+                xlab = "tracker time (s)", ylab = "pupil size (a.u.)"
+              )
+            ))
+            lines(pupil_data$time_secs, pupil_data$detrend_fitted_values,
+              type = "l", col = "blue", lwd = 2, lty = c(9, 15)
             )
             legend("topleft",
               legend = c("pupil timeseries", "linear trend"),
@@ -255,14 +261,24 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
               "detrend:\n",
               params$next_step[length(params$next_step) - 1]
             )
-            robust_plot(pupil_data$time_orig,
-              pupil_data[[params$next_step[length(params$next_step) - 1]]],
-              type = "l", col = "black", lwd = 2, main = title,
-              xlab = "raw tracker time (ms)", ylab = "pupil size (a.u.)"
-            )
-            lines(pupil_data$time_orig,
+            do.call(robust_plot, c(
+              list(
+                y = pupil_data[[params$next_step[length(params$next_step) - 1]]],
+                x = pupil_data$time_secs
+              ),
+              plot_params,
+              list(
+                type = "l",
+                col = "black",
+                lwd = 2,
+                main = title,
+                xlab = "tracker time (s)",
+                ylab = "pupil size (a.u.)"
+              )
+            ))
+            lines(pupil_data$time_secs,
               pupil_data$detrend_fitted_values,
-              type = "l", col = "blue", lwd = 2, lty = 2
+              type = "l", col = "blue", lwd = 2, lty = c(9, 15)
             )
             legend("topleft",
               legend = c("pupil timeseries", "linear trend"),
@@ -281,18 +297,24 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
           plot_data <- random_epochs[[n]][[
             params$next_step[length(params$next_step)]
           ]]
-          robust_plot(
-            plot_data,
-            type = "l", col = colors[i], lwd = 2,
-            main = title, xlab = "time (ms)", ylab = y_label
-          )
+          do.call(robust_plot, c(
+            list(y = plot_data),
+            plot_params,
+            list(
+              type = "l", col = colors[i], lwd = 2,
+              main = title, xlab = "time (ms)", ylab = y_label
+            )
+          ))
         } else {
           plot_data <- random_epochs[[n]][[pupil_steps[i]]]
-          robust_plot(
-            plot_data,
-            type = "l", col = colors[i], lwd = 2,
-            main = title, xlab = "time (ms)", ylab = y_label
-          )
+          do.call(robust_plot, c(
+            list(y = plot_data),
+            plot_params,
+            list(
+              type = "l", col = colors[i], lwd = 2,
+              main = title, xlab = "time (ms)", ylab = y_label
+            )
+          ))
         }
       }
 
@@ -315,11 +337,18 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
   } else {
     start_index <- preview_window[1]
     end_index <- min(preview_window[2], nrow(pupil_data))
+
+    if (start_index < 1 || start_index > nrow(pupil_data) ||
+        end_index < 1 || end_index > nrow(pupil_data) ||
+        start_index >= end_index) {
+      cli::cli_abort("Invalid preview_window: start/end index out of range or invalid.")
+    }
+
     sliced_pupil_data <- pupil_data[start_index:end_index, ]
 
     for (i in seq_along(pupil_steps)) {
-      st <- min(sliced_pupil_data$time_orig)
-      et <- max(sliced_pupil_data$time_orig)
+      st <- min(sliced_pupil_data$time_secs)
+      et <- max(sliced_pupil_data$time_secs)
 
       if (grepl("z", pupil_steps[i])) {
         y_units <- "(z)"
@@ -329,20 +358,27 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
       y_label <- paste("pupil size", y_units)
 
-      robust_plot(sliced_pupil_data[[pupil_steps[i]]],
-        type = "l", col = colors[i], lwd = 2,
-        main = paste(paste0(
-          gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
-          if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
-            sprintf(" (Run %d)", block)
-          } else {
-            ""
-          },
-          "\n[", st, " - ", et, "] | ",
-          "[", preview_window[1], " - ", preview_window[2], "]"
-        )),
-        xlab = "time (s)", ylab = y_label
-      )
+      do.call(robust_plot, c(
+        list(y = sliced_pupil_data[[pupil_steps[i]]]),
+        plot_params,
+        list(
+          type = "l",
+          col = colors[i],
+          lwd = 2,
+          main = paste0(
+            gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
+            if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+              sprintf(" (Run %d)", block)
+            } else {
+              ""
+            },
+            "\n[", st, " - ", et, " seconds] | ",
+            "[index: ", preview_window[1], " - ", preview_window[2], "]"
+          ),
+          xlab = "time (ms)",
+          ylab = y_label
+        )
+      ))
 
       if (plot_distributions) {
         plot_pupil_distribution(
@@ -389,29 +425,42 @@ draw_random_epochs <- function(x, n, d, hz) {
   drawn_epochs
 }
 
-robust_plot <- function(x, ...) {
+robust_plot <- function(y, x = NULL, ...) {
   tryCatch(
     {
-      dots <- list(...)
+      if (length(y) == 0 || all(is.na(y))) {
+        cli::cli_alert_warning("No finite data to plot.")
+        return(invisible(NULL))
+      }
 
+      dots <- list(...)
       col_user <- if ("col" %in% names(dots)) dots$col else "blue"
 
-      # store original x for getting NA positions
-      x_orig <- x
+      # store original y for getting NA positions
+      y_orig <- y
+
+      # if x is NULL, use 1:length(y)
+      if (is.null(x)) {
+        x_seq <- seq_along(y_orig)
+      } else {
+        x_seq <- x
+      }
 
       # init placeholder line
-      plot(seq_along(x_orig), ifelse(is.na(x_orig), NA, x_orig), ...)
+      plot(x_seq, ifelse(is.na(y_orig), NA, y_orig),
+           xlim = range(x_seq, na.rm = TRUE),
+           ...)
 
       # add vertical lines where there are NAs
-      na_idx <- which(is.na(x_orig))
+      na_idx <- which(is.na(y_orig))
       if (length(na_idx) > 0) {
         abline(v = na_idx, col = "black", lty = 2)
       }
 
       # replace NA with -1 after drawing NA lines for continuity
-      x_clean <- x_orig
-      x_clean[is.na(x_clean)] <- -1
-      lines(seq_along(x_clean), x_clean, col = col_user)
+      y_clean <- y_orig
+      y_clean[is.na(y_clean)] <- -1
+      lines(x_seq, y_clean, col = col_user)
     },
     error = function(e) {
       cli::cli_alert_info(
