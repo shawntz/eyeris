@@ -37,7 +37,7 @@
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # 50 ms in both directions
+#' # 50 ms in both directions (the default)
 #' demo_data |>
 #'   eyeris::glassbox(deblink = list(extend = 50)) |>
 #'   plot(seed = 0)
@@ -50,7 +50,7 @@
 #'   plot(seed = 0)
 #'
 #' @export
-deblink <- function(eyeris, extend = 40) {
+deblink <- function(eyeris, extend = 50) {
   eyeris |>
     pipeline_handler(deblink_pupil, "deblink", extend)
 }
