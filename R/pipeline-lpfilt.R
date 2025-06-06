@@ -20,7 +20,7 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load()].
+#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
 #' @param wp The end of passband frequency in Hz (desired lowpass cutoff).
 #' @param ws The start of stopband frequency in Hz (required lowpass cutoff).
 #' @param rp Required maximal ripple within passband in dB.

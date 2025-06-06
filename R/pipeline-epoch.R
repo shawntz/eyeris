@@ -6,7 +6,7 @@
 #' feature where additional trial data embedded within event messages can easily
 #' be identified and joined into the resulting epoched data frames.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load()].
+#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
 #' @param events Either (1) a single string representing the event message to
 #' perform trial extraction around, using specified `limits` to center the epoch
 #' around or no `limits` (which then just grabs the data epochs between each

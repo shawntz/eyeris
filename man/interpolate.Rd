@@ -7,7 +7,7 @@
 interpolate(eyeris, verbose = TRUE)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current

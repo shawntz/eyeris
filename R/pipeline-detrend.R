@@ -16,7 +16,7 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
+#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
 #'
 #' @return An `eyeris` object with two new columns in `timeseries`:
 #' `detrend_fitted_betas`, and `pupil_raw_{...}_detrend`.

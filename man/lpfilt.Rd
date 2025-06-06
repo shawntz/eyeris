@@ -7,7 +7,7 @@
 lpfilt(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{wp}{The end of passband frequency in Hz (desired lowpass cutoff).}
 

@@ -47,7 +47,7 @@
 #' on the entire pupil timeseries (before epoching the data), and then split and
 #' take the mean of the z-scored timeseries as a function of condition variable.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
+#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_z`.

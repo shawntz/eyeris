@@ -19,7 +19,7 @@ epoch(
 )
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{events}{Either (1) a single string representing the event message to
 perform trial extraction around, using specified \code{limits} to center the epoch

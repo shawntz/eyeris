@@ -7,7 +7,7 @@
 detransient(eyeris, n = 16, mad_thresh = NULL)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{n}{A constant used to compute the median absolute deviation (MAD)
 threshold.}

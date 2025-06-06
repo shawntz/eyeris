@@ -7,7 +7,7 @@
 detrend(eyeris)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 }
 \value{
 An \code{eyeris} object with two new columns in \code{timeseries}:

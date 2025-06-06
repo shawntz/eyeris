@@ -17,8 +17,6 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{eyeris} derived from \code{\link[=load]{load()}}.}
-
 \item{...}{Additional arguments to be passed to \code{plot}.}
 
 \item{steps}{Which steps to plot; defaults to \code{all} (i.e., plot all steps).
@@ -58,6 +56,8 @@ blocks in the recording.}
 \item{plot_distributions}{Logical flag to indicate whether to plot both
 diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
 samples at each processing step. Defaults to \code{FALSE}.}
+
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 }
 \value{
 No return value; iteratively plots a subset of the pupil timeseries

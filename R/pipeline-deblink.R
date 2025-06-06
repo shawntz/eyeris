@@ -23,7 +23,7 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load()].
+#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
 #' @param extend Either a single number indicating the number of milliseconds to
 #' pad forward/backward around each missing sample, or, a vector of length two
 #' indicating different numbers of milliseconds pad forward/backward around each

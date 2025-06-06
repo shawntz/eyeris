@@ -7,7 +7,7 @@
 deblink(eyeris, extend = 40)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load]{load()}}.}
+\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{extend}{Either a single number indicating the number of milliseconds to
 pad forward/backward around each missing sample, or, a vector of length two
