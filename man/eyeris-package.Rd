@@ -4,7 +4,7 @@
 \name{eyeris-package}
 \alias{eyeris}
 \alias{eyeris-package}
-\title{eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data}
+\title{eyeris: Flexible, Extensible, & Reproducible Pupillometry Preprocessing}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
