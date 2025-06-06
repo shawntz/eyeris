@@ -16,6 +16,8 @@ uninstall:
 getdeps:
 	@echo "[ INFO ] - installing R package dependencies..."
 	Rscript -e "install.packages(c('eyelinker', 'dplyr', 'gsignal', 'tidyr', 'zoo'), repos = 'http://cran.us.r-project.org')"
+	Rscript -e "install.packages('remotes')"
+	Rscript -e "remotes::install_github('crsh/depgraph')"
 	@echo "[  OK  ] - dependencies installed successfully!\n"
 
 # build package
