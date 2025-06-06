@@ -3,6 +3,9 @@ url: http://shawnschwartz.com/eyeris/
 news:
     cran_dates: true
     releases:
+    - text: "LATEST RELEASE"
+    - text: -------
+    - text: "Previous Releases"
     - text: "v1.1.0 (CRAN)"
       href: news/index.html#eyeris-110
     - text: "v1.0.1 (devel)"
