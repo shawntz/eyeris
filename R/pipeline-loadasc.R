@@ -179,5 +179,35 @@ load_asc <- function(file, block = "auto") {
   list_out$latest <- "pupil_raw"
   class(list_out) <- "eyeris"
 
+  list_out <- normalize_time_orig(list_out)
+
   return(list_out)
+}
+
+# normalize "time_orig" to seconds and to start at 0
+any_block_entries <- function(eyeris_obj) {
+  is.list(eyeris_obj$timeseries) &&
+    any(grepl("^block_", names(eyeris_obj$timeseries)))
+}
+
+normalize_time_orig <- function(eyeris_obj) {
+  if (any_block_entries(eyeris_obj)) {
+    # case: one or more multiple "blocks"
+    eyeris_obj$timeseries <- lapply(eyeris_obj$timeseries, function(block_df) {
+      block_df |>
+        dplyr::mutate(
+          time_secs = (time_orig - dplyr::first(time_orig)) / 1000,
+          .after = "time_orig"
+        )
+    })
+  } else { # safety mechanism: shouldn't ever get to this condition b/c of 167
+    # case: no tibble "block_{}" in list timeseries; timeseries is the tibble
+    eyeris_obj$timeseries <- eyeris_obj$timeseries |>
+      dplyr::mutate(
+        time_secs = (time_orig - dplyr::first(time_orig)) / 1000,
+        .after = "time_orig"
+      )
+  }
+
+  return(eyeris_obj)
 }

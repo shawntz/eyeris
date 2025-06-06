@@ -26,6 +26,7 @@ The key components are:
 - `timeseries`: a list of data frames (1 df per identified recording block per file) which contains the following columns:
   - `block`: block number
   - `time_orig`: raw tracker time (ms)
+  - `time_secs`: normalized tracker time, starting at 0 (seconds)
   - `eye_x`: eye position x-coordinate
   - `eye_y`: eye position y-coordinate
   - `eye`: which eye (Left or Right) the recorded data are sourced from
