@@ -12,6 +12,8 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
 [![linter](https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/linter.yml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
+[![bioRxiv
+Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 <!-- badges: end -->
 
 <!-- The goal of eyeris is to ... -->
@@ -160,7 +162,8 @@ welcomed and appreciated, thanks!
 
 <div class="alert alert-light" style="padding-bottom: 0;">
 
-If you use the `eyeris` package in your research, please cite it!
+If you use the `eyeris` package in your research, please consider citing
+our preprint!
 
 Run the following in R to get the citation:
 
@@ -170,17 +173,19 @@ Run the following in R to get the citation:
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz S (2025). _eyeris: Flexible, Extensible, & Reproducible
-#>   Processing of Pupil Data_. R package version 1.1.0,
-#>   <https://shawnschwartz.com/eyeris/>.
+#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   extensible, and reproducible pupillometry preprocessing framework in
+#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
+#>   <https://doi.org/10.1101/2025.06.01.657312>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
-#>   @Manual{,
-#>     title = {eyeris: Flexible, Extensible, & Reproducible Processing of Pupil Data},
-#>     author = {Shawn Schwartz},
+#>   @Article{,
+#>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
+#>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
+#>     journal = {bioRxiv},
 #>     year = {2025},
-#>     note = {R package version 1.1.0},
-#>     url = {https://shawnschwartz.com/eyeris/},
+#>     pages = {1--37},
+#>     doi = {10.1101/2025.06.01.657312},
 #>   }
 ```

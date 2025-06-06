@@ -24,6 +24,10 @@ navbar:
   structure:
     left:  [intro, reference, articles, news, github]
     right: [search]
+    preprint:
+      text: "bioRxiv Preprint"
+      href: http://www.biorxiv.org/content/10.1101/2025.06.01.657312v1
+      aria-label: Preprint
 
 template:
   bootstrap: 5

@@ -1,0 +1,9 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R",
+  author   = "Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He",
+  journal  = "bioRxiv",
+  year     = "2025",
+  pages    = "1--37",
+  doi      = "10.1101/2025.06.01.657312"
+)

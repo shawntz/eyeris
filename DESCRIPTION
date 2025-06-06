@@ -15,7 +15,12 @@ Authors@R:
     person("Stanford Wu Tsai Human Performance Alliance", role = "fnd"),
     person("Stanford Ric Weiland Graduate Fellowship", role = "fnd"),
     person("Stanford Center for Mind, Brain, Computation and Technology", role = "fnd"),
-    person("NIH National Institute on Aging R01 AG065255", role = "fnd"),
+    person("NIH National Institute on Aging R01-AG065255", role = "fnd"),
+    person("NIH National Institute on Aging R01-AG079345", role = "fnd"),
+    person("National Science Foundation Graduate Research Fellowship DGE-2146755", role = "fnd"),
+    person("McKnight Brain Research Foundation Clinical Translational Research Scholarship in Cognitive Aging and Age-Related Memory Loss", role = "fnd"),
+    person("American Brain Foundation", role = "fnd"),
+    person("American Academy of Neurology", role = "fnd"),
     person(
       given = "Mingjian",
       family = "He",
@@ -27,6 +32,12 @@ Authors@R:
       family = "Yang",
       role = "ctb",
       comment = c(ORCID = "0000-0002-1207-3245")
+    ),
+    person(
+      given = "Alice",
+      family = "Xue",
+      role = "ctb",
+      comment = c(ORCID = "0009-0006-3176-8786")
     ),
     person(
       given = "Gustavo",

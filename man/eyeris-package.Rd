@@ -27,9 +27,15 @@ Other contributors:
   \item Stanford Wu Tsai Human Performance Alliance [funder]
   \item Stanford Ric Weiland Graduate Fellowship [funder]
   \item Stanford Center for Mind, Brain, Computation and Technology [funder]
-  \item NIH National Institute on Aging R01 AG065255 [funder]
+  \item NIH National Institute on Aging R01-AG065255 [funder]
+  \item NIH National Institute on Aging R01-AG079345 [funder]
+  \item National Science Foundation Graduate Research Fellowship DGE-2146755 [funder]
+  \item McKnight Brain Research Foundation Clinical Translational Research Scholarship in Cognitive Aging and Age-Related Memory Loss [funder]
+  \item American Brain Foundation [funder]
+  \item American Academy of Neurology [funder]
   \item Mingjian He (\href{https://orcid.org/0000-0002-6688-8693}{ORCID}) [contributor]
   \item Haopei Yang (\href{https://orcid.org/0000-0002-1207-3245}{ORCID}) [contributor]
+  \item Alice Xue (\href{https://orcid.org/0009-0006-3176-8786}{ORCID}) [contributor]
   \item Gustavo Santiago-Reyes (\href{https://orcid.org/0009-0005-3764-3215}{ORCID}) [contributor]
 }
 
