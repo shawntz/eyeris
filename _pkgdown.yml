@@ -38,7 +38,6 @@ template:
   bootstrap: 5
   light-switch: false
   theme: breeze-light
-  # theme-dark: breeze-light
   math-rendering: mathjax
   bslib:
       bootswatch: united
