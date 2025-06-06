@@ -51,7 +51,7 @@ footer:
     left: developed_by
     right: [built_with, legal]
   components:
-    legal: Provided without **any warranty**.
+    legal: Provided without **any warranty**.<br />The funders had no role in study design, data collection, and interpretation, or the decision to submit the work for publication.
 
 authors:
   Shawn Schwartz:
