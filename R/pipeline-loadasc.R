@@ -186,9 +186,8 @@ load_asc <- function(file, block = "auto") {
   list_out$file <- file
   list_out$info <- x$info
   list_out$latest <- "pupil_raw"
-  class(list_out) <- "eyeris"
-
   list_out <- normalize_time_orig(list_out)
+  class(list_out) <- "eyeris"
 
   return(list_out)
 }
@@ -217,4 +216,6 @@ normalize_time_orig <- function(eyeris_obj) {
         .after = "time_orig"
       )
   }
+
+  eyeris_obj
 }
