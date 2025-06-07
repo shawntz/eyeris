@@ -27,8 +27,8 @@ home:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news, preprint, github, bluesky]
-    right: [search]
+    left:  [intro, reference, articles, news, preprint]
+    right: [search, github, bluesky, lightswitch]
   components:
     bluesky:
       icon: fa-twitter
@@ -50,6 +50,7 @@ template:
       heading_font: {google: "Open Sans"}
       code_font: {google: "JetBrains Mono"}
       pkgdown-nav-height: 100px
+      primary: "#820000"
 
 footer:
   structure:
