@@ -6,20 +6,25 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Complete Pupillometry Pipeline Walkthrough • eyeris</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="../deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Complete Pupillometry Pipeline Walkthrough">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Complete Pupillometry Pipeline Walkthrough">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -29,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +64,10 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-110">v1.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-100">v1.0.0 (CRAN)</a></li>
@@ -69,12 +78,14 @@
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/shawntz/eyeris/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="http://www.biorxiv.org/content/10.1101/2025.06.01.657312v1" aria-label="Preprint">bioRxiv Preprint</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/shawntz/eyeris/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="http://bsky.app/profile/shawnschwartz.bsky.social" aria-label="Bluesky"><span class="fa fa-twitter"></span></a></li>
       </ul>
 </div>
 
@@ -90,7 +101,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Complete Pupillometry Pipeline Walkthrough</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v1.1.0/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v1.2.0/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
       <div class="d-none name"><code>complete-pipeline.Rmd</code></div>
     </div>
 
@@ -195,7 +206,7 @@ parameters and pipeline recipe:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">output</span>,</span>
 <span>  steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span></span></code></pre>
@@ -235,38 +246,14 @@ the appropriate parameter(s) for each pipeline step to
 <h5 id="pipeline-steps-with-overridable-parameters">Pipeline Steps with Overridable Parameters<a class="anchor" aria-label="anchor" href="#pipeline-steps-with-overridable-parameters"></a>
 </h5>
 <ol style="list-style-type: decimal">
-<li>
-<code><a href="../reference/load_asc.html">eyeris::load_asc()</a></code>:</li>
+<li><p><code><a href="../reference/load_asc.html">eyeris::load_asc()</a></code>: &gt; <code>block</code></p></li>
+<li><p><code><a href="../reference/deblink.html">eyeris::deblink()</a></code>: &gt; <code>extend</code></p></li>
+<li><p><code><a href="../reference/detransient.html">eyeris::detransient()</a></code>: &gt; <code>n</code>,
+<code>mad_thresh</code></p></li>
+<li><p><code><a href="../reference/lpfilt.html">eyeris::lpfilt()</a></code>: &gt; <code>wp</code>,
+<code>ws</code>, <code>rp</code>, <code>rs</code>,
+<code>plot_freqz</code></p></li>
 </ol>
-<ul>
-<li><code>block</code></li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>
-<code><a href="../reference/deblink.html">eyeris::deblink()</a></code>:</li>
-</ol>
-<ul>
-<li><code>extend</code></li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>
-<code><a href="../reference/detransient.html">eyeris::detransient()</a></code>:</li>
-</ol>
-<ul>
-<li><code>n</code></li>
-<li><code>mad_thresh</code></li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li>
-<code><a href="../reference/lpfilt.html">eyeris::lpfilt()</a></code>:</li>
-</ol>
-<ul>
-<li><code>wp</code></li>
-<li><code>ws</code></li>
-<li><code>rp</code></li>
-<li><code>rs</code></li>
-<li><code>plot_freqz</code></li>
-</ul>
 </div>
 </div>
 </div>
@@ -426,18 +413,20 @@ cite it!</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Schwartz S (2025). _eyeris: Flexible, Extensible, &amp; Reproducible</span></span>
-<span><span class="co">#&gt;   Processing of Pupil Data_. R package version 1.1.0,</span></span>
-<span><span class="co">#&gt;   &lt;https://shawnschwartz.com/eyeris/&gt;.</span></span>
+<span><span class="co">#&gt;   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,</span></span>
+<span><span class="co">#&gt;   extensible, and reproducible pupillometry preprocessing framework in</span></span>
+<span><span class="co">#&gt;   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312</span></span>
+<span><span class="co">#&gt;   &lt;https://doi.org/10.1101/2025.06.01.657312&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   @Manual{,</span></span>
-<span><span class="co">#&gt;     title = {eyeris: Flexible, Extensible, &amp; Reproducible Processing of Pupil Data},</span></span>
-<span><span class="co">#&gt;     author = {Shawn Schwartz},</span></span>
+<span><span class="co">#&gt;   @Article{,</span></span>
+<span><span class="co">#&gt;     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},</span></span>
+<span><span class="co">#&gt;     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},</span></span>
+<span><span class="co">#&gt;     journal = {bioRxiv},</span></span>
 <span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     note = {R package version 1.1.0},</span></span>
-<span><span class="co">#&gt;     url = {https://shawnschwartz.com/eyeris/},</span></span>
+<span><span class="co">#&gt;     pages = {1--37},</span></span>
+<span><span class="co">#&gt;     doi = {10.1101/2025.06.01.657312},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -451,7 +440,7 @@ cite it!</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1. Provided without <strong>any warranty</strong>.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Provided without <strong>any warranty</strong>.<br>The funders had no role in study design, data collection, and interpretation, or the decision to submit the work for publication.</p>
 </div>
 
     </footer>

@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   anatomy: anatomy.html
@@ -7,7 +7,7 @@ articles:
   custom-extensions: custom-extensions.html
   epoching-bids-reports: epoching-bids-reports.html
   reports: reports.html
-last_built: 2025-04-24T16:41Z
+last_built: 2025-06-07T03:15Z
 urls:
   reference: http://shawnschwartz.com/eyeris/reference
   article: http://shawnschwartz.com/eyeris/articles
