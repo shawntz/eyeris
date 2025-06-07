@@ -363,7 +363,7 @@ glassbox <- function(file,
                 plot(
                   file,
                   steps = step_counter,
-                  num_previews = preview_n,
+                  preview_n = preview_n,
                   seed = seed,
                   preview_duration = preview_duration,
                   preview_window = preview_window,

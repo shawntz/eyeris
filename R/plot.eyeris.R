@@ -11,7 +11,7 @@
 #' @param steps Which steps to plot; defaults to `all` (i.e., plot all steps).
 #' Otherwise, pass in a vector containing the index of the step(s) you want to
 #' plot, with index `1` being the original raw pupil timeseries.
-#' @param num_previews Number of random example "epochs" to generate for
+#' @param preview_n Number of random example "epochs" to generate for
 #' previewing the effect of each preprocessing step on the pupil timeseries.
 #' @param preview_duration Time in seconds of each randomly selected preview.
 #' @param preview_window The start and stop raw timestamps used to subset the
@@ -25,7 +25,7 @@
 #' indices for the supplied range of seconds using the `$info$sample.rate`
 #' metadata in the `eyeris` S3 class object.
 #' @param seed Random seed for current plotting session. Leave NULL to select
-#' `num_previews` number of random preview "epochs" (of `preview_duration`) each
+#' `preview_n` number of random preview "epochs" (of `preview_duration`) each
 #' time. Otherwise, choose any seed-integer as you would normally select for
 #' [base::set.seed()], and you will be able to continue re-plotting the same
 #' random example pupil epochs each time -- which is helpful when adjusting
@@ -38,9 +38,12 @@
 #' @param plot_distributions Logical flag to indicate whether to plot both
 #' diagnostic pupil timeseries *and* accompanying histograms of the pupil
 #' samples at each processing step. Defaults to `FALSE`.
+#' @param num_previews **(Deprecated)** Use `preview_n` instead.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
 #' from each preprocessing step run.
+#'
+#' @seealso [lifecycle::deprecate_warn()]
 #'
 #' @examples
 #' # first, generate the preprocessed pupil data
@@ -80,9 +83,18 @@
 #' @rdname plot.eyeris
 #'
 #' @export
-plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
+plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         preview_duration = NULL, preview_window = NULL,
-                        seed = NULL, block = 1, plot_distributions = FALSE) {
+                        seed = NULL, block = 1, plot_distributions = FALSE,
+                        num_previews = deprecated()) {
+  # handle deprecated parameters
+  if (is_present(num_previews)) {
+    deprecate_warn("1.2.0",
+                   "plot(num_previews)",
+                   "plot(preview_n)")
+    preview_n <- num_previews
+  }
+
   # safely handle user's current options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
@@ -122,10 +134,10 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
   # set param defaults outside of function declaration
   if (!is.null(preview_window)) {
-    if (!is.null(num_previews) || !is.null(preview_duration)) {
+    if (!is.null(preview_n) || !is.null(preview_duration)) {
       cli::cli_alert_warning(
         paste(
-          "num_previews and/or preview_duration will be ignored,",
+          "preview_n and/or preview_duration will be ignored,",
           "since preview_window was specified here."
         )
       )
@@ -136,8 +148,8 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
     steps <- "all"
   }
 
-  if (is.null(num_previews)) {
-    num_previews <- 3
+  if (is.null(preview_n)) {
+    preview_n <- 3
   }
 
   if (is.null(preview_duration)) {
@@ -197,15 +209,15 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
 
     withr::with_seed(seed, {
       random_epochs <- draw_random_epochs(
-        pupil_data, num_previews,
+        pupil_data, preview_n,
         preview_duration, hz
       )
     })
 
-    par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
+    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     detrend_plotted <- FALSE
     for (i in seq_along(pupil_steps)) {
-      for (n in 1:num_previews) {
+      for (n in 1:preview_n) {
         st <- min(random_epochs[[n]]$time_orig)
         et <- max(random_epochs[[n]]$time_orig)
         title <- paste0("\n[", st, " - ", et, "]")
@@ -257,7 +269,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
               legend = c("pupil timeseries", "linear trend"),
               col = c("black", "blue"), lwd = 2, lty = c(1, 2)
             )
-            par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
+            par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
             detrend_plotted <- TRUE
           }
         } else {
@@ -291,7 +303,7 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
               legend = c("pupil timeseries", "linear trend"),
               col = c("black", "blue"), lwd = 2, lty = c(1, 2)
             )
-            par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
+            par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
             detrend_plotted <- TRUE
             prompt_user()
           }
@@ -337,10 +349,10 @@ plot.eyeris <- function(x, ..., steps = NULL, num_previews = NULL,
           xlab = y_label
         )
 
-        par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
+        par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
       }
     }
-    par(mfrow = c(1, num_previews), oma = c(0, 0, 3, 0))
+    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   } else {
     preview_window_indices <- round(preview_window * x$info$sample.rate) + 1
     start_index <- preview_window_indices[1]
