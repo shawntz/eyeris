@@ -37,13 +37,12 @@ previewing the effect of each preprocessing step on the pupil timeseries.}
 preprocessed data from each step of the \code{eyeris} workflow for visualization.
 Defaults to NULL, meaning random epochs as defined by \code{preview_n} and
 \code{preview_duration} will be plotted. To override the random epochs, set
-\code{preview_window} here to a vector with relative start and stop times
-(e.g., \code{c(5000, 6000)} to indicate the raw data from 5-6 seconds on data that
-were recorded at 1000 Hz). Note, the start/stop time values indicated here
-relate to the raw index position of each pupil sample from 1 to n (which
-will need to be specified manually by the user depending on the sampling rate
-of the recording; i.e., 5000-6000 for the epoch positioned from 5-6 seconds
-after the start of the timeseries, sampled at 1000 Hz).}
+\code{preview_window} here to a vector with relative start and stop times (in
+seconds), for example -- \code{c(5,6)} -- to indicate the raw data from 5-6 secs
+on data that were recorded at 1000 Hz). Note, the start/stop time values
+indicated here are in seconds because \code{eyeris} automatically computes the
+indices for the supplied range of seconds using the \verb{$info$sample.rate}
+metadata in the \code{eyeris} S3 class object.}
 
 \item{verbose}{A logical flag to indicate whether to print status messages to
 the console. Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about
