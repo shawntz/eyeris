@@ -86,7 +86,7 @@ my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
 plot(my_eyeris_data, seed = 0)
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
-plot(my_eyeris_data, preview_window = c(1, 500), seed = 0)
+plot(my_eyeris_data, preview_window = c(0.01, 0.5), seed = 0)
 
 # controlling which block of data you would like to plot:
 
@@ -97,10 +97,11 @@ plot(my_eyeris_data, seed = 0)
 plot(my_eyeris_data, block = 1, seed = 0)
 
 ## example 3: plots a specific block along with a custom preview window
+##   (i.e., 1000 to 2000 ms)
 plot(
   my_eyeris_data,
   block = 1,
-  preview_window = c(1000, 2000),
+  preview_window = c(1, 2),
   seed = 0
 )
 

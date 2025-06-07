@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @importFrom dplyr across
 #' @importFrom dplyr all_of
+#' @importFrom graphics abline
 #' @importFrom graphics hist
 #' @importFrom graphics legend
 #' @importFrom graphics lines

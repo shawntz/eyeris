@@ -80,7 +80,7 @@
 #' plot(
 #'   output,
 #'   steps = c(1, 5),
-#'   preview_window = c(0, nrow(output$timeseries$block_1)),
+#'   preview_window = c(0, max(output$timeseries$block_1$time_secs)),
 #'   seed = 0
 #' )
 #'

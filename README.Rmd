@@ -114,7 +114,7 @@ plot(eyeris_preproc)
 ```{r timeseries-plot, echo=TRUE, fig.width=10, fig.height=4, fig.dpi=300}
 plot(eyeris_preproc,
   steps = c(1, 5),
-  preview_window = c(0, nrow(eyeris_preproc$timeseries$block_1))
+  preview_window = c(0, max(eyeris_preproc$timeseries$block_1$time_secs))
 )
 ```
 

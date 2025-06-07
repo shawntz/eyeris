@@ -111,7 +111,7 @@ output <- eyeris::glassbox(demo_data)
 plot(
   output,
   steps = c(1, 5),
-  preview_window = c(0, nrow(output$timeseries$block_1)),
+  preview_window = c(0, max(output$timeseries$block_1$time_secs)),
   seed = 0
 )
 ```
@@ -142,18 +142,16 @@ output <- eyeris::glassbox(
 ##### Pipeline Steps with Overridable Parameters
 
 1. `eyeris::load_asc()`: 
-  * `block`
+  > `block`
+  
 2. `eyeris::deblink()`: 
-  * `extend`
+  > `extend`
+  
 3. `eyeris::detransient()`: 
-  * `n`
-  * `mad_thresh`
+  > `n`, `mad_thresh`
+  
 4. `eyeris::lpfilt()`: 
-  * `wp`
-  * `ws`
-  * `rp` 
-  * `rs`
-  * `plot_freqz`
+  > `wp`, `ws`, `rp`, `rs`, `plot_freqz`
 
 ## 💬 Caveats
 

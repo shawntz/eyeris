@@ -523,7 +523,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         )
         plot(eyeris,
           steps = 1,
-          preview_window = c(0, nrow(current_data)),
+          preview_window = c(0, max(current_data$time_secs)),
           block = i_run, plot_distributions = plot_dist
         )
         dev.off()
@@ -549,7 +549,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         )
         plot(eyeris,
           steps = length(pupil_steps),
-          preview_window = c(0, nrow(current_data)),
+          preview_window = c(0, max(current_data$time_secs)),
           block = i_run,
           plot_distributions = plot_dist
         )
