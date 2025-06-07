@@ -2,19 +2,33 @@
 
 ## ✨ New features
 * NF: Add vertical lines to plots to indicate where missing data (such as blinks and/or removed artifacts) are located in the time series
+* ENH: Plotting now takes time ranges in seconds directly and does the conversion to row index using tracker Hz on the backend, making plotting in `eyeris` more intuitive. To demonstrate:
+```
+plot(eyeris_preproc,
+  steps = c(1, 5),
+  preview_window = c(0, max(eyeris_preproc$timeseries$block_1$time_secs))
+)
+```
 
 ## 🐛 Bug fixes
 * BF: `NA` slot offset in diagnostic plotting (#161)
-* BF: normalize physical machine timebins and convert to seconds / start at 0 seconds (#162)
+* BF: normalize physical machine time bins and convert to seconds / start at 0 seconds (#162)
 * BF: unit displayed on the x-axis doesn't match the unit listed on the x-axis text label in plots (#162)
 * BF: minor issue where a manually specified block number in `load_asc()` wasn't being translated to the column `block` in the resulting list of time series data frames
 * BF: minor issue where setting `block = NULL` in `load_asc()` didn't actually omit the block column values from the resulting data frames within the returned `eyeris` list object
 
 ## 🔧 Minor improvements and fixes
 * RF: update package title to match that of the published bioRxiv preprint
+* RF: Deprecated the `num_previews` parameter in `plot()`.
+  * Please use `preview_n` instead.
 * DOC: manually update citation file to include all authors + bioRxiv preprint DOI (#152)
-* DOC: incorrect URIs in eyeris documentation for load function (#160)
-* DOC: standardize default values for deblink() standalone [previously 40ms] vs. in glassbox() [now all 50ms] (#163)
+* DOC: incorrect URIs in `eyeris` documentation for `load_asc()` function (#160)
+* DOC: standardize default values for `deblink()` standalone [previously `40ms`] vs. in `glassbox()` [now all `50ms`] (#163)
+* DOC: updates to `pkgdown` documentation website:
+  * Matching accent color theme with the `eyeris` hex logo
+  * New nav bar items (buttons/links to access the bioRxiv preprint and socials)
+  * Update funders and contributors list
+  * Add funders disclaimer statement to the footer
 
 # eyeris 1.1.0
 
