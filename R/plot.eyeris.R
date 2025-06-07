@@ -16,15 +16,14 @@
 #' @param preview_duration Time in seconds of each randomly selected preview.
 #' @param preview_window The start and stop raw timestamps used to subset the
 #' preprocessed data from each step of the `eyeris` workflow for visualization.
-#' Defaults to NULL, meaning random epochs as defined by `num_examples` and
-#' `example_duration` will be plotted. To override the random epochs, set
-#' `example_timelim` here to a vector with relative start and stop times
-#' (e.g., `c(5000, 6000)` to indicate the raw data from 5-6 seconds on data that
-#' were recorded at 1000 Hz). Note, the start/stop time values indicated here
-#' relate to the raw index position of each pupil sample from 1 to n (which
-#' will need to be specified manually by the user depending on the sampling rate
-#' of the recording; i.e., 5000-6000 for the epoch positioned from 5-6 seconds
-#' after the start of the timeseries, sampled at 1000 Hz).
+#' Defaults to NULL, meaning random epochs as defined by `preview_n` and
+#' `preview_duration` will be plotted. To override the random epochs, set
+#' `preview_window` here to a vector with relative start and stop times (in
+#' seconds), for example -- `c(5,6)` -- to indicate the raw data from 5-6 secs
+#' on data that were recorded at 1000 Hz). Note, the start/stop time values
+#' indicated here are in seconds because `eyeris` automatically computes the
+#' indices for the supplied range of seconds using the `$info$sample.rate`
+#' metadata in the `eyeris` S3 class object.
 #' @param seed Random seed for current plotting session. Leave NULL to select
 #' `num_previews` number of random preview "epochs" (of `preview_duration`) each
 #' time. Otherwise, choose any seed-integer as you would normally select for
