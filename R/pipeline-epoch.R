@@ -225,6 +225,7 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
 
   processed_data <- list()
 
+  alert_str <- "\nEpoching pupil data..."
   if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
     if (c_bline) {
       alert_str <- "\nEpoching and baselining pupil data..."
@@ -320,6 +321,8 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
         )
       )
     }
+
+    msg_str <- "\nPupil epoching completed in %.2f seconds"
 
     if (a_bline && n_events > 0) {
       baseline_id <- processed_data[[bn]]$baseline$id
