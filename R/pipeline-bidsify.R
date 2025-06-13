@@ -621,14 +621,25 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                   res = 600,
                   pointsize = 6
                 )
-                plot(group_df$timebin, group_df[[pupil_steps[pstep]]],
-                  type = "l", xlab = "time (s)", ylab = y_label,
-                  col = colors[pstep],
-                  main = paste0(
-                    group, "\n", pupil_steps[pstep],
-                    sprintf(" (Run %d)", get_block_numbers(bn))
+                y_values <- group_df[[pupil_steps[pstep]]]
+                if (any(is.finite(y_values))) {
+                  plot(group_df$timebin, y_values,
+                       type = "l", xlab = "time (s)", ylab = y_label,
+                       col = colors[pstep],
+                       main = paste0(group, "\n", pupil_steps[pstep],
+                                     sprintf(" (Run %d)",
+                                             get_block_numbers(bn))))
+                } else {
+                  plot(NA, xlim = range(group_df$timebin, na.rm = TRUE),
+                       ylim = c(0, 1), type = "n", xlab = "time (s)",
+                       ylab = y_label, main = paste0(group, "\n",
+                                                     pupil_steps[pstep],
+                                                     "\nNO DATA"))
+                  warning(
+                    paste("eyeris: no finite pupillometry data to plot for
+                          current epoch...", "plotting empty epoch plot.")
                   )
-                )
+                }
                 dev.off()
               }
             }
