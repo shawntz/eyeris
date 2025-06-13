@@ -369,7 +369,8 @@ glassbox <- function(file,
                   preview_window = preview_window,
                   only_linear_trend = only_linear_trend,
                   next_step = next_step,
-                  block = bn
+                  block = bn,
+                  suppress_prompt = FALSE
                 )
               }
             )

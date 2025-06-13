@@ -38,6 +38,12 @@
 #' @param plot_distributions Logical flag to indicate whether to plot both
 #' diagnostic pupil timeseries *and* accompanying histograms of the pupil
 #' samples at each processing step. Defaults to `FALSE`.
+#' @param suppress_prompt Logical flag to disable interactive confirmation prompts
+#' during plotting [prompt_user()]. Defaults to `TRUE`, which avoids hanging behavior in
+#' non-interactive or automated contexts (e.g., RMarkdown, scripts).
+#' Set to `FALSE` only when running inside `glassbox()` with
+#' `interactive_preview = TRUE`, where prompting after each step is desired, as
+#' well as in the generation of interactive HTML reports with [eyeris::bidsify].
 #' @param num_previews **(Deprecated)** Use `preview_n` instead.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
@@ -86,6 +92,7 @@
 plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         preview_duration = NULL, preview_window = NULL,
                         seed = NULL, block = 1, plot_distributions = FALSE,
+                        suppress_prompt = TRUE,
                         num_previews = deprecated()) {
   # handle deprecated parameters
   if (is_present(num_previews)) {
@@ -127,7 +134,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   non_plot_params <- c("preview_window", "seed", "steps", "num_previews",
-                       "preview_n", "preview_duration", "block",
+                       "preview_n", "preview_duration", "block", "suppress_prompt",
                        "plot_distributions", "only_linear_trend", "next_step")
 
   plot_params <- params[!(names(params) %in% non_plot_params)]
@@ -179,7 +186,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
       ))
     }
   } else {
-    pupil_data <- x$timeseries
+    pupil_data <- x$timeseries$block_1
   }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
@@ -245,72 +252,15 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
         # used when running `plot()` by itself (and thus plotting all steps)
         if (!only_liner_trend) {
           if (grepl("_detrend$", pupil_steps[i]) && !detrend_plotted) {
-            par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-
-            do.call(robust_plot, c(
-              list(
-                y = pupil_data[[pupil_steps[i - 1]]],
-                x = pupil_data$time_secs
-              ),
-              plot_params,
-              list(
-                type = "l", col = "black", lwd = 2,
-                main = paste0(
-                  "detrend:\n",
-                  gsub("_", " > ", gsub("pupil_", "", pupil_steps[i - 1]))
-                ),
-                xlab = "tracker time (s)", ylab = "pupil size (a.u.)"
-              )
-            ))
-            lines(pupil_data$time_secs, pupil_data$detrend_fitted_values,
-              type = "l", col = "blue", lwd = 2, lty = c(9, 15)
-            )
-            legend("topleft",
-              legend = c("pupil timeseries", "linear trend"),
-              col = c("black", "blue"), lwd = 2, lty = c(1, 2)
-            )
-            par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+            plot_detrend_overlay(pupil_data, pupil_steps = pupil_steps, preview_n = preview_n, suppress_prompt = suppress_prompt)
             detrend_plotted <- TRUE
           }
         } else {
           if (!detrend_plotted) {
-            par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-            title <- paste0(
-              "detrend:\n",
-              params$next_step[length(params$next_step) - 1]
-            )
-
-            ydat <- pupil_data[[params$next_step[length(params$next_step) - 1]]]
-            xdat <- pupil_data$time_secs
-
-            do.call(robust_plot, c(
-              list(y = ydat, x = xdat),
-              plot_params,
-              list(
-                type = "l",
-                col = "black",
-                lwd = 2,
-                main = title,
-                xlab = "tracker time (s)",
-                ylab = "pupil size (a.u.)"
-              )
-            ))
-            lines(pupil_data$time_secs,
-              pupil_data$detrend_fitted_values,
-              type = "l", col = "blue", lwd = 2, lty = c(9, 15)
-            )
-            legend("topleft",
-              legend = c("pupil timeseries", "linear trend"),
-              col = c("black", "blue"), lwd = 2, lty = c(1, 2)
-            )
-            par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+            plot_detrend_overlay(pupil_data, pupil_steps = pupil_steps, preview_n = preview_n, suppress_prompt = suppress_prompt)
             detrend_plotted <- TRUE
-            prompt_user()
           }
         }
-
-        # nolint start
-        # nolint end
 
         if (!is.null(params$next_step)) {
           plot_data <- random_epochs[[n]][[
@@ -519,4 +469,66 @@ plot_pupil_distribution <- function(data, color, main, xlab) {
 draw_na_lines <- function(x, y, ...) {
   na_idx <- which(is.na(y))
   abline(v = x[na_idx], col = "black", lty = 2, ...)
+}
+
+#' Internal helper to plot detrending overlay
+#'
+#' This function replicates the exact detrending visualization from the
+#' `glassbox()` interactive preview mode. It uses `robust_plot()` to show the
+#' most recent detrended pupil signal overlaid with the fitted linear trend.
+#'
+#' @param pupil_data A single block of pupil timeseries data (e.g. `eyeris$timeseries$block_1`)
+#' @param preview_n Number of columns for `par(mfrow)`. Default = 3.
+#' @param plot_params A named list of additional parameters to forward to `robust_plot()`
+#' @param suppress_prompt Logical. Whether to skip prompting. Default = TRUE.
+#'
+#' @keywords internal
+plot_detrend_overlay <- function(pupil_data,
+                                 pupil_steps,
+                                 preview_n = preview_n,
+                                 plot_params = list(),
+                                 suppress_prompt = TRUE) {
+  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
+
+
+  detrend_step <- grep("_detrend$", pupil_steps, value = TRUE)
+
+  all_cols <- colnames(pupil_data)
+  detrend_fitted_index <- which(all_cols == "detrend_fitted_values")
+
+  if (length(detrend_fitted_index) == 0 || detrend_fitted_index == 1) {
+    cli::cli_alert_danger("detrend_fitted_values not found in eyeris S3 object.")
+    prev_col <- NULL
+  } else {
+    prev_col <- all_cols[detrend_fitted_index - 1]
+  }
+
+  ydat <- pupil_data[[prev_col]]
+  xdat <- pupil_data$time_secs
+
+  do.call(robust_plot, c(
+    list(y = ydat, x = xdat),
+    plot_params,
+    list(
+      type = "l",
+      col = "black",
+      lwd = 2,
+      main = paste0("detrend:\n", gsub("_", " > ", gsub("pupil_", "", detrend_step))),
+      xlab = "tracker time (s)",
+      ylab = "pupil size (a.u.)"
+    )
+  ))
+
+  lines(pupil_data$time_secs,
+        pupil_data$detrend_fitted_values,
+        type = "l", col = "blue", lwd = 2, lty = 1)
+
+  legend("topleft",
+         legend = c("pupil timeseries", "linear trend"),
+         col = c("black", "blue"), lwd = 2, lty = c(1, 1))
+
+  par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+  if (!suppress_prompt) prompt_user()
+
+  invisible(NULL)
 }
