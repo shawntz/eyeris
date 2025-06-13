@@ -1,20 +1,23 @@
+## CRAN Submission
+
+This is a minor bug fix update submitted shortly after the previous release.
+
+## Notes
+
+I am submitting this update sooner than usual to address a user-reported issue that could affect core package functionality. 
+
+All checks (`R CMD check`, `devtools::check(remote = TRUE)`, GitHub Actions CI) pass on macOS, Windows, and Ubuntu.
+
+Thank you for your time and consideration.
+
 ## R CMD check results (eyeris v1.2.1)
 
-Duration: 1m 9.4s
+Duration: 1m 4.5s
 
-```
-❯ checking CRAN incoming feasibility ... [4s/33s] NOTE
-
+❯ checking CRAN incoming feasibility ... [4s/27s] NOTE
   Maintainer: ‘Shawn Schwartz <stschwartz@stanford.edu>’
   
   Days since last update: 6
-  
-  Found the following (possibly) invalid URLs:
-    URL: http://shawnschwartz.com/eyeris/ (moved to https://shawnschwartz.com/eyeris/)
-      From: README.md
-      Status: 200
-      Message: OK
-```
 
 0 errors ✔ | 0 warnings ✔ | 1 note ✖
 
