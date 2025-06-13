@@ -23,7 +23,6 @@ eyelogger({
 * FF: missing x-axis labels on histograms in rendered reports by @shawntz in #169
 * NF: add detrend fitted values diagnostic plot to rendered reports by @shawntz in #169
 
-
 # eyeris 1.2.0
 
 ## ✨ New features
