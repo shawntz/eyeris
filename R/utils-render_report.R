@@ -143,7 +143,10 @@ print_plots <- function(plots) {
         )
 
         # run's detrend diagnostic path
-        detrend_plot_path <- file.path(run_dir, paste0("run-", run_num, "_detrend.png"))
+        detrend_plot_path <- file.path(
+          run_dir,
+          paste0("run-", run_num, "_detrend.png")
+        )
         detrend_exists <- file.exists(detrend_plot_path)
 
         # sort by fig number
@@ -197,12 +200,12 @@ print_plots <- function(plots) {
         }
       }
     }
-    return(md_plots)
+    md_plots
   }
-
 }
 
-save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list()) {
+save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
+                               plot_params = list()) {
   blocks <- names(eyeris$timeseries)
 
   for (block in blocks) {
@@ -219,10 +222,16 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = lis
 
     # only proceed if detrended values exist
     if ("detrend_fitted_values" %in% names(pupil_data) &&
-        any(grepl("_detrend$", names(pupil_data)))) {
+          any(grepl("_detrend$", names(pupil_data)))) {
       pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
-      grDevices::jpeg(filename = detrend_path, width = 1850, height = 1500, res = 300)
+      grDevices::jpeg(
+        filename = detrend_path,
+        width = 1850,
+        height = 1500,
+        res = 300
+      )
+
       plot_detrend_overlay(
         pupil_data = pupil_data,
         pupil_steps = pupil_steps,
@@ -230,6 +239,7 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = lis
         plot_params = plot_params,
         suppress_prompt = TRUE
       )
+
       grDevices::dev.off()
 
       message(sprintf("[Saved] %s", detrend_path))

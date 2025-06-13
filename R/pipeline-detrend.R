@@ -33,12 +33,12 @@
 #'
 #' @export
 detrend <- function(eyeris) {
-  eyeris.out <- eyeris |>
+  eyeris_out <- eyeris |>
     pipeline_handler(detrend_pupil, "detrend")
 
-  eyeris.out$metadata$detrended <- TRUE
+  eyeris_out$metadata$detrended <- TRUE
 
-  return(eyeris.out)
+  eyeris_out
 }
 
 detrend_pupil <- function(x, prev_op) {
