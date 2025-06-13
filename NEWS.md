@@ -2,12 +2,23 @@
 
 ## 🚨 What's changed
 
-### Bugs fixed
+### ✨ New features
+* `eyelogger()`: a new utility function to automatically capture and record R console output, errors, and the evaluated `eyeris` command into timestamped log files for improved reproducibility, record keeping, and debugging by @shawntz in #171
+
+Logging your `eyeris` commands with `eyelogger()` is as simple as wrapping your command like this:
+
+```r
+eyelogger({
+  glassbox(eyelink_asc_demo_dataset(), interactive_preview = FALSE)
+}, log_dir = file.path("~/Documents", "eyeris_logs"))
+```
+
+### 🐛 Bugs fixed
 * Fixed edge case related to non-finite samples in `bidsify` epoch plotting function by @gustxsr in #166
 * Fixed multi-block epoch bug by extracting data from blocks using their names rather than their indices by @hyang336 in #168
 * Fixed plotting bug (#165) by @shawntz in #169
 
-### Other changes
+### 🔧 Other minor improvements and fixes
 * ENH: make plot color scheme more accessible/easier to read by @shawntz in #169
 * FF: missing x-axis labels on histograms in rendered reports by @shawntz in #169
 * NF: add detrend fitted values diagnostic plot to rendered reports by @shawntz in #169
