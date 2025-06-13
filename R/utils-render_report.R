@@ -223,7 +223,7 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = lis
       pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
       grDevices::jpeg(filename = detrend_path, width = 1850, height = 1500, res = 300)
-      eyeris:::plot_detrend_overlay(
+      plot_detrend_overlay(
         pupil_data = pupil_data,
         pupil_steps = pupil_steps,
         preview_n = preview_n,
