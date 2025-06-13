@@ -92,18 +92,18 @@ capturing and recording both standard output (<code>stdout</code>) and standard 
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-log-dir">log_dir<a class="anchor" aria-label="anchor" href="#arg-log-dir"></a></dt>
+<dl><dt id="arg-eyeris-cmd">eyeris_cmd<a class="anchor" aria-label="anchor" href="#arg-eyeris-cmd"></a></dt>
+<dd><p>An <code>eyeris</code> command, wrapped in <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> if multiline.</p></dd>
+
+
+<dt id="arg-log-dir">log_dir<a class="anchor" aria-label="anchor" href="#arg-log-dir"></a></dt>
 <dd><p>Character path to the desired log directory. Is set to the
 temporary directory given by <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> by default.</p></dd>
 
 
 <dt id="arg-timestamp-format">timestamp_format<a class="anchor" aria-label="anchor" href="#arg-timestamp-format"></a></dt>
-<dd><p>Format string passed to format(Sys.time()) for
+<dd><p>Format string passed to <code>format(Sys.time())</code> for
 naming the log files. Defaults to <code>"%Y%m%d_%H%M%S"</code>.</p></dd>
-
-
-<dt id="arg-expr">expr<a class="anchor" aria-label="anchor" href="#arg-expr"></a></dt>
-<dd><p>An <code>eyeris</code> command, wrapped in <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> if multi-line.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -122,11 +122,9 @@ naming the log files. Defaults to <code>"%Y%m%d_%H%M%S"</code>.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"eyeris `glassbox()` completed successfully."</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"eyeris `glassbox()` completed with warnings."</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"some eyeris-related information."</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"eyeris `glassbox()` exited with some error."</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> eyeris `glassbox()` completed successfully.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>eyeris `glassbox()` completed with warnings.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(eyeris_cmd, envir = parent.frame()):</span> eyeris `glassbox()` exited with some error.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">eyelogger</span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="fu"><a href="eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span>, interactive_preview <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
