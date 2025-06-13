@@ -11,13 +11,13 @@ eyelogger(
 )
 }
 \arguments{
+\item{eyeris_cmd}{An \code{eyeris} command, wrapped in \code{{}} if multiline.}
+
 \item{log_dir}{Character path to the desired log directory. Is set to the
 temporary directory given by \code{\link[=tempdir]{tempdir()}} by default.}
 
-\item{timestamp_format}{Format string passed to \link{format(Sys.time())} for
+\item{timestamp_format}{Format string passed to \code{format(Sys.time())} for
 naming the log files. Defaults to \code{"\%Y\%m\%d_\%H\%M\%S"}.}
-
-\item{expr}{An \code{eyeris} command, wrapped in \code{{}} if multi-line.}
 }
 \value{
 The result of the evaluated \code{eyeris} command (invisibly).
@@ -39,7 +39,6 @@ eyelogger({
   message("eyeris `glassbox()` completed successfully.")
   warning("eyeris `glassbox()` completed with warnings.")
   print("some eyeris-related information.")
-  stop("eyeris `glassbox()` exited with some error.")
 })
 
 eyelogger({
