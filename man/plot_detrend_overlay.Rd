@@ -13,11 +13,13 @@ plot_detrend_overlay(
 )
 }
 \arguments{
-\item{pupil_data}{A single block of pupil timeseries data (e.g. \code{eyeris$timeseries$block_1})}
+\item{pupil_data}{A single block of pupil timeseries data
+(e.g. \code{eyeris$timeseries$block_1})}
 
 \item{preview_n}{Number of columns for \code{par(mfrow)}. Default = 3.}
 
-\item{plot_params}{A named list of additional parameters to forward to \code{robust_plot()}}
+\item{plot_params}{A named list of additional parameters to forward to
+\code{robust_plot()}}
 
 \item{suppress_prompt}{Logical. Whether to skip prompting. Default = TRUE.}
 }
