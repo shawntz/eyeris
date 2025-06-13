@@ -39,7 +39,7 @@
 #' diagnostic pupil timeseries *and* accompanying histograms of the pupil
 #' samples at each processing step. Defaults to `FALSE`.
 #' @param suppress_prompt Logical flag to disable interactive confirmation prompts
-#' during plotting [prompt_user()]. Defaults to `TRUE`, which avoids hanging behavior in
+#' during plotting. Defaults to `TRUE`, which avoids hanging behavior in
 #' non-interactive or automated contexts (e.g., RMarkdown, scripts).
 #' Set to `FALSE` only when running inside `glassbox()` with
 #' `interactive_preview = TRUE`, where prompting after each step is desired, as
