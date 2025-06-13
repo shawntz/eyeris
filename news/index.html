@@ -5,7 +5,7 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Changelog"><meta property="og:image" content="http://shawnschwartz.com/eyeris/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Changelog"><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,8 +40,9 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-110">v1.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
@@ -65,9 +66,37 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/feat/logger/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/release/v1.2.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.1" id="eyeris-121">eyeris 1.2.1<a class="anchor" aria-label="anchor" href="#eyeris-121"></a></h2>
+<div class="section level3">
+<h3 id="id_-whats-changed-1-2-1">🚨 What’s changed<a class="anchor" aria-label="anchor" href="#id_-whats-changed-1-2-1"></a></h3>
+<div class="section level4">
+<h4 id="id_-new-features-1-2-1">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-1-2-1"></a></h4>
+<ul><li>
+<code>eyelogger()</code>: a new utility function to automatically capture and record R console output, errors, and the evaluated <code>eyeris</code> command into timestamped log files (<code>.out</code>, <code>.err</code>, and <code>.cmd</code>) for improved reproducibility, record keeping, and debugging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/171" class="external-link">#171</a></li>
+</ul><p>Logging your <code>eyeris</code> commands with <code>eyelogger()</code> is as simple as wrapping your command like this:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">eyelogger</span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span>, interactive_preview <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">}</span>, log_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"~/Documents"</span>, <span class="st">"eyeris_logs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="id_-bugs-fixed-1-2-1">🐛 Bugs fixed<a class="anchor" aria-label="anchor" href="#id_-bugs-fixed-1-2-1"></a></h4>
+<ul><li>Fixed edge case related to non-finite samples in <code>bidsify</code> epoch plotting function by <a href="https://github.com/gustxsr" class="external-link">@gustxsr</a> in <a href="https://github.com/shawntz/eyeris/issues/166" class="external-link">#166</a></li>
+<li>Fixed multi-block epoch bug by extracting data from blocks using their names rather than their indices by <a href="https://github.com/hyang336" class="external-link">@hyang336</a> in <a href="https://github.com/shawntz/eyeris/issues/168" class="external-link">#168</a></li>
+<li>Fixed plotting bug (<a href="https://github.com/shawntz/eyeris/issues/165" class="external-link">#165</a>) by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/169" class="external-link">#169</a></li>
+</ul></div>
+<div class="section level4">
+<h4 id="id_-other-minor-improvements-and-fixes-1-2-1">🔧 Other minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-other-minor-improvements-and-fixes-1-2-1"></a></h4>
+<ul><li>ENH: make plot color scheme more accessible/easier to read by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/169" class="external-link">#169</a></li>
+<li>FF: missing x-axis labels on histograms in rendered reports by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/169" class="external-link">#169</a></li>
+<li>NF: add detrend fitted values diagnostic plot to rendered reports by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/169" class="external-link">#169</a></li>
+</ul></div>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="eyeris-120">eyeris 1.2.0<a class="anchor" aria-label="anchor" href="#eyeris-120"></a></h2><p class="text-muted">CRAN release: 2025-06-07</p>
 <div class="section level3">

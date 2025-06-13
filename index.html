@@ -27,7 +27,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Flexible, Extensible, &amp; Reproducible Pupillometry Preprocessing">
 <meta name="description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states [Clewett et al. (2020) &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie (2018) &lt;doi:10.3758/s13428-018-1075-y&gt;; Strauch (2024) &lt;doi:10.1016/j.tins.2024.06.002&gt;]. Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles [see Wilkinson et al. (2016) &lt;doi:10.1038/sdata.2016.18&gt;]. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files [Esteban et al. (2019) &lt;doi:10.1038/s41592-018-0235-4&gt;; Gorgolewski et al. (2016) &lt;doi:10.1038/sdata.2016.44&gt;].">
 <meta property="og:description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states [Clewett et al. (2020) &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie (2018) &lt;doi:10.3758/s13428-018-1075-y&gt;; Strauch (2024) &lt;doi:10.1016/j.tins.2024.06.002&gt;]. Yet, despite decades of pupillometry research, many established packages and workflows to date unfortunately lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles [see Wilkinson et al. (2016) &lt;doi:10.1038/sdata.2016.18&gt;]. eyeris, on the other hand, follows a design philosophy that provides users with an intuitive, modular, performant, and extensible pupillometry data preprocessing framework out-of-the-box. eyeris introduces a Brain Imaging Data Structure (BIDS)-like organization for derivative (i.e., preprocessed) pupillometry data as well as an intuitive workflow for inspecting preprocessed pupil epochs using interactive output report files [Esteban et al. (2019) &lt;doi:10.1038/s41592-018-0235-4&gt;; Gorgolewski et al. (2016) &lt;doi:10.1038/sdata.2016.44&gt;].">
-<meta property="og:image" content="http://shawnschwartz.com/eyeris/logo.png">
+<meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -37,7 +37,7 @@
 
     <a class="navbar-brand me-2" href="index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,9 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
-    <li><a class="dropdown-item" href="news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
+    <li><a class="dropdown-item" href="news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
     <li><a class="dropdown-item" href="news/index.html#eyeris-110">v1.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
@@ -148,7 +149,7 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">32</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/" class="external-link">eyeris</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -200,11 +201,11 @@
 <a class="anchor" aria-label="anchor" href="#contributing-to-eyeris"></a>
 </h1>
 <p>Thank you for considering contributing to the open-source <code>eyeris</code> R package; there are many ways one could contribute to <code>eyeris</code>.</p>
-<p>We believe the best preprocessing practices emerge from collective expertise and rigorous discussion. Please see the <a href="https://shawnschwartz.com/eyeris/CONTRIBUTING.html" class="external-link">contribution guidelines</a> for more information on how to get started..</p>
+<p>We believe the best preprocessing practices emerge from collective expertise and rigorous discussion. Please see the <a href="https://shawnschwartz.com/eyeris/CONTRIBUTING.html">contribution guidelines</a> for more information on how to get started..</p>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
 </h2>
-<p>Please note that the eyeris project is released with a <a href="https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Please note that the eyeris project is released with a <a href="https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 <div class="section level2">
 <h2 id="suggestions-questions-issues">Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#suggestions-questions-issues"></a>
