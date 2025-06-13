@@ -79,6 +79,7 @@ make_report <- function(eyeris, out, plots, ...) {
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
     "\n## Preprocessed Data Preview\n\n",
+    save_detrend_plots(eyeris = eyeris, out_dir = out),
     print_plots(plots), "\n",
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
@@ -130,13 +131,8 @@ print_plots <- function(plots) {
     unique()
 
   if (length(run_dirs) > 0) {
-    # when there are multiple runs...
     for (run_dir in run_dirs) {
-      run_plots <- run_dir |>
-        list.files("*.jpg",
-          full.names = TRUE,
-          recursive = FALSE
-        )
+      run_plots <- list.files(run_dir, pattern = "*.jpg", full.names = TRUE)
 
       if (length(run_plots) > 0) {
         run_num <- sub(".*run-(\\d+).*", "\\1", run_dir)
@@ -146,14 +142,23 @@ print_plots <- function(plots) {
           "## Run ", run_num, "\n\n"
         )
 
-        # handle each run's plots separately
-        num_plots <- length(run_plots)
+        # run's detrend diagnostic path
+        detrend_plot_path <- file.path(
+          run_dir,
+          paste0("run-", run_num, "_detrend.png")
+        )
+        detrend_exists <- file.exists(detrend_plot_path)
+
+        # sort by fig number
+        plot_fig_ids <- as.numeric(sub(".*_fig-(\\d+)_.*", "\\1", run_plots))
+        sorted_plot_paths <- run_plots[order(plot_fig_ids)]
+
+        num_plots <- length(sorted_plot_paths)
         before_plot_index <- num_plots - 3
         after_plot_index <- num_plots - 1
 
-        for (i in seq_along(run_plots)) {
-          # make path relative to where the .Rmd file is
-          relative_fig_path <- make_relative_path(run_plots[i])
+        for (i in seq_along(sorted_plot_paths)) {
+          relative_fig_path <- make_relative_path(sorted_plot_paths[i])
 
           if (i < before_plot_index) {
             md_plots <- paste0(
@@ -185,8 +190,61 @@ print_plots <- function(plots) {
             )
           }
         }
+
+        if (detrend_exists) {
+          md_plots <- paste0(
+            md_plots,
+            "### Detrend Diagnostic\n\n",
+            "![](", make_relative_path(detrend_plot_path), ")\n\n"
+          )
+        }
       }
     }
     md_plots
+  }
+}
+
+save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
+                               plot_params = list()) {
+  blocks <- names(eyeris$timeseries)
+
+  for (block in blocks) {
+    block_number <- sub("block_", "", block)
+    run_id <- sprintf("run-%02d", as.numeric(block_number))
+    run_dir <- file.path(out_dir, "source", "figures", run_id)
+    detrend_path <- file.path(run_dir, paste0(run_id, "_detrend.png"))
+
+    if (!dir.exists(run_dir)) {
+      dir.create(run_dir, recursive = TRUE)
+    }
+
+    pupil_data <- eyeris$timeseries[[block]]
+
+    # only proceed if detrended values exist
+    if ("detrend_fitted_values" %in% names(pupil_data) &&
+          any(grepl("_detrend$", names(pupil_data)))) {
+      pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
+
+      grDevices::jpeg(
+        filename = detrend_path,
+        width = 1850,
+        height = 1500,
+        res = 300
+      )
+
+      plot_detrend_overlay(
+        pupil_data = pupil_data,
+        pupil_steps = pupil_steps,
+        preview_n = preview_n,
+        plot_params = plot_params,
+        suppress_prompt = TRUE
+      )
+
+      grDevices::dev.off()
+
+      message(sprintf("[Saved] %s", detrend_path))
+    } else {
+      message(sprintf("[Skipped] No detrend data found for %s", run_id))
+    }
   }
 }

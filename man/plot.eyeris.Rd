@@ -14,6 +14,7 @@
   seed = NULL,
   block = 1,
   plot_distributions = FALSE,
+  suppress_prompt = TRUE,
   num_previews = deprecated()
 )
 }
@@ -58,6 +59,13 @@ blocks in the recording.}
 \item{plot_distributions}{Logical flag to indicate whether to plot both
 diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
 samples at each processing step. Defaults to \code{FALSE}.}
+
+\item{suppress_prompt}{Logical flag to disable interactive confirmation prompts
+during plotting. Defaults to \code{TRUE}, which avoids hanging behavior in
+non-interactive or automated contexts (e.g., RMarkdown, scripts).
+Set to \code{FALSE} only when running inside \code{glassbox()} with
+\code{interactive_preview = TRUE}, where prompting after each step is desired, as
+well as in the generation of interactive HTML reports with \link{bidsify}.}
 
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead.}
 }
