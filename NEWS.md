@@ -3,7 +3,7 @@
 ## 🚨 What's changed
 
 ### ✨ New features
-* `eyelogger()`: a new utility function to automatically capture and record R console output, errors, and the evaluated `eyeris` command into timestamped log files for improved reproducibility, record keeping, and debugging by @shawntz in #171
+* `eyelogger()`: a new utility function to automatically capture and record R console output, errors, and the evaluated `eyeris` command into timestamped log files (`.out`, `.err`, and `.cmd`) for improved reproducibility, record keeping, and debugging by @shawntz in #171
 
 Logging your `eyeris` commands with `eyelogger()` is as simple as wrapping your command like this:
 
