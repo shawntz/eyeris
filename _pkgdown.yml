@@ -74,6 +74,7 @@ reference:
       Start here with the full pipeline wrapper to quickly and easily call and customize the opinionated `glassbox` pipeline in `eyeris`.
     contents:
       - glassbox
+      - eyelogger
 
   - title: "⏱️ Epoching Pupil Data"
     desc: >
