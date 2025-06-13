@@ -377,8 +377,8 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
   n_events <- blk$n_events
   block_id <- blk$id
   block_name <- blk$name
-  block_data <- x$timeseries[[block_id]]
-  block_events <- x$events[[block_id]]
+  block_data <- x$timeseries[[block_name]]
+  block_events <- x$events[[block_name]]
 
   dt <- data.table::as.data.table(block_data)
 
