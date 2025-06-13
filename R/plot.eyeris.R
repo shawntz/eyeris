@@ -247,11 +247,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
           y_units <- "(a.u.)"
         }
 
-        if (n == 1) {
-          y_label <- paste("pupil size", y_units)
-        } else {
-          y_label <- ""
-        }
+        y_label <- paste("pupil size", y_units)
 
         # used when running `plot()` by itself (and thus plotting all steps)
         if (!only_liner_trend) {
@@ -300,7 +296,8 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
           data = pupil_data[[pupil_steps[i]]],
           color = colors[i],
           main = header,
-          xlab = y_label
+          xlab = y_label,
+          backuplab = "pupil size"
         )
 
         par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
@@ -369,7 +366,8 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
               ""
             }
           )),
-          xlab = y_label
+          xlab = y_label,
+          backuplab = "pupil size"
         )
         par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
       }
@@ -452,17 +450,25 @@ robust_plot <- function(y, x = NULL, ...) {
   )
 }
 
-plot_pupil_distribution <- function(data, color, main, xlab) {
+plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
   # safely handle user's current options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
+  new_xlab <- if (!is.null(xlab)) {
+    xlab
+  } else if (!is.null(backuplab)) {
+    backuplab
+  } else {
+    "pupil size"
+  }
+
   hist(
     data,
     main = main,
-    xlab = xlab,
+    xlab = new_xlab,
     ylab = "frequency (count)",
     col = color,
     border = "white",
