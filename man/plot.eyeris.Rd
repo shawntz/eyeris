@@ -60,8 +60,8 @@ blocks in the recording.}
 diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
 samples at each processing step. Defaults to \code{FALSE}.}
 
-\item{suppress_prompt}{Logical flag to disable interactive confirmation prompts
-during plotting. Defaults to \code{TRUE}, which avoids hanging behavior in
+\item{suppress_prompt}{Logical flag to disable interactive confirmation
+prompts during plotting. Defaults to \code{TRUE}, which avoids hanging behavior in
 non-interactive or automated contexts (e.g., RMarkdown, scripts).
 Set to \code{FALSE} only when running inside \code{glassbox()} with
 \code{interactive_preview = TRUE}, where prompting after each step is desired, as
