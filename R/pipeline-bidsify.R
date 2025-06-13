@@ -607,7 +607,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                   y_units <- "(a.u.)"
                 }
 
-                colors <- c("black", rainbow(length(pupil_steps) - 1))
+                # modified from `RColorBrewer`: Set1
+                colorpal <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628")
+                colors <- c("black", colorpal)
+
                 y_label <- paste("pupil size", y_units)
 
                 file_out <- file.path(epochs_out, sprintf(

@@ -13,7 +13,6 @@
 #' @importFrom grDevices dev.off
 #' @importFrom grDevices jpeg
 #' @importFrom grDevices png
-#' @importFrom grDevices rainbow
 #' @importFrom lifecycle deprecate_warn
 #' @importFrom lifecycle deprecated
 #' @importFrom lifecycle is_present

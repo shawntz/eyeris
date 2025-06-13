@@ -190,7 +190,11 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
-  colors <- c("black", rainbow(length(pupil_steps) - 1))
+
+  # modified from `RColorBrewer`: Set1
+  colorpal <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628")
+  colors <- c("black", colorpal)
+
   transparent_colors <- sapply(colors, function(x) {
     grDevices::adjustcolor(x, alpha.f = 0.5)
   })
