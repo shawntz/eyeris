@@ -1,3 +1,18 @@
+# eyeris 1.2.1
+
+## 🚨 What's changed
+
+### Bugs fixed
+* Fixed edge case related to non-finite samples in `bidsify` epoch plotting function by @gustxsr in #166
+* Fixed multi-block epoch bug by extracting data from blocks using their names rather than their indices by @hyang336 in #168
+* Fixed plotting bug (#165) by @shawntz in #169
+
+### Other changes
+* ENH: make plot color scheme more accessible/easier to read by @shawntz in #169
+* FF: missing x-axis labels on histograms in rendered reports by @shawntz in #169
+* NF: add detrend fitted values diagnostic plot to rendered reports by @shawntz in #169
+
+
 # eyeris 1.2.0
 
 ## ✨ New features
