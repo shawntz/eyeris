@@ -635,6 +635,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                        ylab = y_label, main = paste0(group, "\n",
                                                      pupil_steps[pstep],
                                                      "\nNO DATA"))
+                  warning(
+                    paste("eyeris: no finite pupillometry data to plot for
+                          current epoch...", "plotting empty epoch plot.")
+                  )
                 }
                 dev.off()
               }
