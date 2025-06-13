@@ -73,7 +73,7 @@ parameters on the raw pupillary signal."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot pre-processed pupil data from <code>eyeris</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/release/v1.2.0/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/feat/detrend-plots-refactor/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
       <div class="d-none name"><code>plot.eyeris.Rd</code></div>
     </div>
 
@@ -98,6 +98,7 @@ parameters on the raw pupillary signal.</p>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  block <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  plot_distributions <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  suppress_prompt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  num_previews <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -163,6 +164,15 @@ blocks in the recording.</p></dd>
 <dd><p>Logical flag to indicate whether to plot both
 diagnostic pupil timeseries <em>and</em> accompanying histograms of the pupil
 samples at each processing step. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-suppress-prompt">suppress_prompt<a class="anchor" aria-label="anchor" href="#arg-suppress-prompt"></a></dt>
+<dd><p>Logical flag to disable interactive confirmation prompts
+during plotting. Defaults to <code>TRUE</code>, which avoids hanging behavior in
+non-interactive or automated contexts (e.g., RMarkdown, scripts).
+Set to <code>FALSE</code> only when running inside <code><a href="glassbox.html">glassbox()</a></code> with
+<code>interactive_preview = TRUE</code>, where prompting after each step is desired, as
+well as in the generation of interactive HTML reports with <a href="bidsify.html">bidsify</a>.</p></dd>
 
 
 <dt id="arg-num-previews">num_previews<a class="anchor" aria-label="anchor" href="#arg-num-previews"></a></dt>
