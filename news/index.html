@@ -76,10 +76,10 @@
 <div class="section level4">
 <h4 id="id_-new-features-1-2-1">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-1-2-1"></a></h4>
 <ul><li>
-<code>eyelogger()</code>: a new utility function to automatically capture and record R console output, errors, and the evaluated <code>eyeris</code> command into timestamped log files (<code>.out</code>, <code>.err</code>, and <code>.cmd</code>) for improved reproducibility, record keeping, and debugging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/171" class="external-link">#171</a></li>
-</ul><p>Logging your <code>eyeris</code> commands with <code>eyelogger()</code> is as simple as wrapping your command like this:</p>
+<code><a href="../reference/eyelogger.html">eyelogger()</a></code>: a new utility function to automatically capture and record R console output, errors, and the evaluated <code>eyeris</code> command into timestamped log files (<code>.out</code>, <code>.err</code>, and <code>.cmd</code>) for improved reproducibility, record keeping, and debugging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/171" class="external-link">#171</a></li>
+</ul><p>Logging your <code>eyeris</code> commands with <code><a href="../reference/eyelogger.html">eyelogger()</a></code> is as simple as wrapping your command like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">eyelogger</span><span class="op">(</span><span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/eyelogger.html">eyelogger</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span>, interactive_preview <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span>, log_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"~/Documents"</span>, <span class="st">"eyeris_logs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
