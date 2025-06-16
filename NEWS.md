@@ -1,3 +1,12 @@
+# eyeris 1.3.0 (in development)
+
+The following changes are in progress and available only in the GitHub development version (`v1.3.0.9000`).
+
+### ✨ New features
+* tbd...
+
+_This version has not yet been released to CRAN._
+
 # eyeris 1.2.1
 
 ## 🚨 What's changed
