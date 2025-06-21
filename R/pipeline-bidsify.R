@@ -735,3 +735,41 @@ make_bids_fname <- function(sub = sub, task = task, run = run,
 
   return(f)
 }
+#' Find baseline structure name for a given epoch
+#'
+#' Helper function to find the correct baseline structure name that matches
+#' the complex baseline naming scheme used by eyeris.
+#'
+#' @param eyeris An eyeris object
+#' @param epoch_label The epoch label (without "epoch_" prefix)
+#'
+#' @return The baseline structure name or NULL if not found
+#'
+#' @keywords internal
+find_baseline_structure <- function(eyeris, epoch_label) {
+  baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
+
+  if (length(baseline_names) > 0) {
+    message("Available baseline structures: ",
+            paste(baseline_names, collapse = ", "))
+    message("Looking for epoch label: ", epoch_label)
+  }
+
+  for (baseline_name in baseline_names) {
+    if (grepl(paste0("_epoch_", epoch_label, "$"), baseline_name)) {
+      message("Found matching baseline structure: ", baseline_name)
+      return(baseline_name)
+    }
+  }
+
+  simple_name <- paste0("baseline_", epoch_label)
+  if (simple_name %in% names(eyeris)) {
+    message("Found simple baseline structure: ", simple_name)
+    return(simple_name)
+  }
+
+  message("No baseline structure found for epoch label: ", epoch_label)
+  NULL
+}
+
+# nolint end
