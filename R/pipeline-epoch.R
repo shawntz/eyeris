@@ -58,13 +58,10 @@
 #' should still be accessible within this nested lists, however, to avoid
 #' ambiguous list objects, we recommend you provide an `epoch` label here
 #' to be safe.**
-#' @param calc_baseline A flag indicated whether to perform baseline correction.
-#' Note, setting `calc_baseline` to TRUE alone will only compute the baseline
-#' period, but will not apply it to the preprocessed timeseries unless
-#' `apply_baseline` is also set to TRUE.
-#' @param apply_baseline A flag indicating whether to apply the calculated
-#' baseline to the pupil timeseries. The baseline correction will be applied to
-#' the pupil from the latest preprocessing step.
+#' @param baseline **(New)** A single parameter that controls baseline
+#' correction. Set to `TRUE` to both calculate and apply baseline correction, or
+#' `FALSE` to skip it. This replaces the deprecated `calc_baseline` and
+#' `apply_baseline` parameters.
 #' @param baseline_type Whether to perform *subtractive* (`sub`) or *divisive*
 #' (`div`) baseline correction. Defaults to `sub`.
 #' @param baseline_events Similar to `events`, `baseline_events`, you can supply
@@ -90,9 +87,18 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `False` to suppress messages about the current
 #' processing step and run silently.
+#' @param calc_baseline **(Deprecated)** Use `baseline` instead.
+#' @param apply_baseline **(Deprecated)** Use `baseline` instead.
 #'
-#' @return Updated `eyeris` object with dataframes containing the epoched data
-#' (`epoch_`).
+#' @return An `eyeris` object with a new nested list of data frames: `$epoch_*`.
+#'   The epochs are organized hierarchically by block and preprocessing step.
+#'   Each epoch contains the pupil timeseries data for the specified time window
+#'   around each event message, along with metadata about the event.
+#'
+#'   When using `bidsify()` to export the data, filenames will include both
+#'   epoch and baseline event information for clarity.
+#'
+#' @seealso [lifecycle::deprecate_warn()]
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -154,8 +160,7 @@
 #'     events = "PROBE_START_{trial}",
 #'     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
 #'     label = "prePostProbe", # custom epoch label name
-#'     calc_baseline = TRUE,
-#'     apply_baseline = TRUE,
+#'     baseline = TRUE, # Calculate and apply baseline correction
 #'     baseline_type = "sub", # "sub"tractive baseline calculation is default
 #'     baseline_events = "DELAY_STOP_*",
 #'     baseline_period = c(-1, 0)
@@ -170,8 +175,7 @@
 #'     events = "PROBE_START_{trial}",
 #'     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
 #'     label = "prePostProbe", # custom epoch label name
-#'     calc_baseline = TRUE,
-#'     apply_baseline = TRUE,
+#'     baseline = TRUE, # Calculate and apply baseline correction
 #'     baseline_type = "sub", # "sub"tractive baseline calculation is default
 #'     baseline_events = c(
 #'       "DELAY_START_*",
@@ -198,9 +202,31 @@
 #'
 #' @export
 epoch <- function(eyeris, events, limits = NULL, label = NULL,
-                  calc_baseline = FALSE, apply_baseline = FALSE,
-                  baseline_type = c("sub", "div"), baseline_events = NULL,
-                  baseline_period = NULL, hz = NULL, verbose = TRUE) {
+                  baseline = FALSE, baseline_type = c("sub", "div"),
+                  baseline_events = NULL, baseline_period = NULL,
+                  hz = NULL, verbose = TRUE,
+                  calc_baseline = deprecated(),
+                  apply_baseline = deprecated()) {
+  # Handle deprecated parameters
+  if (is_present(calc_baseline)) {
+    lifecycle::deprecate_warn("1.3.0",
+                              "epoch(calc_baseline)", "epoch(baseline)")
+    if (isTRUE(calc_baseline)) {
+      baseline <- TRUE
+    }
+  }
+
+  if (is_present(apply_baseline)) {
+    lifecycle::deprecate_warn("1.3.0",
+                              "epoch(apply_baseline)", "epoch(baseline)")
+    if (isTRUE(apply_baseline)) {
+      baseline <- TRUE
+    }
+  }
+
+  calc_baseline <- baseline
+  apply_baseline <- baseline
+
   eyeris |>
     pipeline_handler(
       epoch_pupil, "epoch", events, limits, label, calc_baseline,
@@ -309,7 +335,27 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
 
     epoch_id <- processed_data[[bn]]$epoch$id
     epoched_data <- processed_data[[bn]]$epoch$res
+
+    if (is.null(x[[epoch_id]])) {
+      x[[epoch_id]] <- list()
+    }
     x[[epoch_id]][[bn]] <- dplyr::as_tibble(epoched_data)
+
+    # store epoch metadata when no baseline correction is used
+    if (!a_bline) {
+      epoch_info <- list(
+        calc_baseline = FALSE,
+        apply_baseline = FALSE,
+        epoch_events = evs,
+        epoch_limits = lims,
+        n_epochs = length(unique(epoched_data$matched_event))
+      )
+
+      if (is.null(x[[epoch_id]]$info)) {
+        x[[epoch_id]]$info <- list()
+      }
+      x[[epoch_id]]$info[[bn]] <- epoch_info
+    }
 
     if (verbose) {
       alert(
@@ -431,6 +477,8 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
 
     computed_baselines <- compute_baseline(
       x, result, baseline_epochs, bline_type
+      x, result, baseline_epochs, bline_type,
+      epoch_events = evs, baseline_events = bline_evs
     )
 
     baseline_id <- make_baseline_label(computed_baselines, epoch_id)
@@ -448,6 +496,11 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
       baseline_type = bline_type,
       baseline_events = bline_evs,
       baseline_period = bline_per
+      baseline_period = bline_per,
+      epoch_events = evs,
+      epoch_limits = lims,
+      n_epochs = length(result),
+      n_baseline_epochs = length(baseline_epochs)
     )
   }
 
