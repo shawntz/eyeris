@@ -444,6 +444,7 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
     )
 
     computed_baselines <- compute_baseline(
+<<<<<<< Updated upstream
       x, result, baseline_epochs, bline_type
     )
 
