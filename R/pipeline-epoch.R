@@ -490,7 +490,6 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
     )
 
     computed_baselines <- compute_baseline(
-      x, result, baseline_epochs, bline_type
       x, result, baseline_epochs, bline_type,
       epoch_events = evs, baseline_events = bline_evs
     )
