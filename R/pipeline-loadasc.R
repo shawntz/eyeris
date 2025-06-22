@@ -223,6 +223,7 @@ add_unique_event_identifiers <- function(events_list) {
 #' @param events_df A single events data frame
 #'
 #' @return Updated events data frame with `text_unique` column
+#'
 #' @keywords internal
 add_unique_identifiers_to_df <- function(events_df) {
   if (!"text" %in% colnames(events_df)) {
