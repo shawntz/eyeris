@@ -72,7 +72,7 @@ all subsequent eyeris pipeline steps and functions."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Load and parse SR Research EyeLink <code>.asc</code> files</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/release/v1.2.1/R/pipeline-loadasc.R" class="external-link"><code>R/pipeline-loadasc.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/chore/docs-cleanup-spelling/R/pipeline-loadasc.R" class="external-link"><code>R/pipeline-loadasc.R</code></a></small>
       <div class="d-none name"><code>load_asc.Rd</code></div>
     </div>
 
@@ -154,6 +154,7 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-plt img"><img src="load_asc-1.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -182,19 +183,19 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events$block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                       text_unique               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R !MODE RECORD CR 1000 2 1 R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                  EXP_START                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                 TRIALID 22                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22             START_TRIAL_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22               CUE_START_22              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22                CUE_STOP_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22             DELAY_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22              DELAY_STOP_22             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22             PROBE_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22                RESPONSE_22               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 57 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -234,6 +235,108 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        74  0.003563346      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                74                  74                74                  74</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 74                   74         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172   0.00014446        1    0.04815564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    56                    56                     56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  56     0.002696716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767       156  0.007511918      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1               156                 156               156                 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                156                  156         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        1    0.04815564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   156                   156                    156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 156      0.00751228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767       156  0.007511918      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1               156                 156               156                 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                156                  156         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        1    0.04815564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   156                   156                    156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 156      0.00751228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "eyeris"</span>
 <span class="r-in"><span></span></span>
@@ -264,19 +367,19 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events$block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                       text_unique               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R !MODE RECORD CR 1000 2 1 R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                  EXP_START                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                 TRIALID 22                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22             START_TRIAL_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22               CUE_START_22              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22                CUE_STOP_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22             DELAY_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22              DELAY_STOP_22             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22             PROBE_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22                RESPONSE_22               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 57 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -328,19 +431,19 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events$block_3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     3 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     3 11<span style="text-decoration: underline;">334</span>491 EXP_START                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     3 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     3 11<span style="text-decoration: underline;">334</span>491 CUE_START_22              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     3 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     3 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     3 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     3 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     3 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                       text_unique               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     3 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R !MODE RECORD CR 1000 2 1 R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     3 11<span style="text-decoration: underline;">334</span>491 EXP_START                  EXP_START                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                 TRIALID 22                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     3 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22             START_TRIAL_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     3 11<span style="text-decoration: underline;">334</span>491 CUE_START_22               CUE_START_22              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     3 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22                CUE_STOP_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     3 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22             DELAY_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     3 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22              DELAY_STOP_22             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     3 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22             PROBE_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     3 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22                RESPONSE_22               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 57 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -393,19 +496,19 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events$block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    block     time text                       text_unique               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R !MODE RECORD CR 1000 2 1 R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 11<span style="text-decoration: underline;">334</span>491 EXP_START                  EXP_START                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                 TRIALID 22                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22             START_TRIAL_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 11<span style="text-decoration: underline;">334</span>491 CUE_START_22               CUE_START_22              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22                CUE_STOP_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22             DELAY_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22              DELAY_STOP_22             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22             PROBE_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22                RESPONSE_22               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 57 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -456,19 +559,19 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        time text                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 11<span style="text-decoration: underline;">334</span>491 EXP_START                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 11<span style="text-decoration: underline;">334</span>491 CUE_START_22              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        time text                       text_unique               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 11<span style="text-decoration: underline;">242</span>177 !MODE RECORD CR 1000 2 1 R !MODE RECORD CR 1000 2 1 R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 11<span style="text-decoration: underline;">334</span>491 EXP_START                  EXP_START                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 11<span style="text-decoration: underline;">334</span>491 TRIALID 22                 TRIALID 22                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 11<span style="text-decoration: underline;">334</span>491 START_TRIAL_22             START_TRIAL_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 11<span style="text-decoration: underline;">334</span>491 CUE_START_22               CUE_START_22              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 11<span style="text-decoration: underline;">335</span>466 CUE_STOP_22                CUE_STOP_22               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 11<span style="text-decoration: underline;">335</span>467 DELAY_START_22             DELAY_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 11<span style="text-decoration: underline;">336</span>473 DELAY_STOP_22              DELAY_STOP_22             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 11<span style="text-decoration: underline;">336</span>474 PROBE_START_22             PROBE_START_22            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 11<span style="text-decoration: underline;">337</span>158 RESPONSE_22                RESPONSE_22               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 57 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $blinks</span>

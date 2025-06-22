@@ -102,7 +102,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Complete Pupillometry Pipeline Walkthrough</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/release/v1.2.1/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/chore/docs-cleanup-spelling/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
       <div class="d-none name"><code>complete-pipeline.Rmd</code></div>
     </div>
 
@@ -202,6 +202,7 @@ parameters and pipeline recipe:</p>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-1.png" width="100%"></p>
 <pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend()</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span></span>
 <span></span>
 <span><span class="co"># Preview first and last steps of the pipeline</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
@@ -242,7 +243,8 @@ the appropriate parameter(s) for each pipeline step to
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate()</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt()</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span></span></code></pre></div>
 <div class="section level5">
 <h5 id="pipeline-steps-with-overridable-parameters">Pipeline Steps with Overridable Parameters<a class="anchor" aria-label="anchor" href="#pipeline-steps-with-overridable-parameters"></a>
 </h5>
