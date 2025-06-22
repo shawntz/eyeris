@@ -513,10 +513,9 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       epoch_manually(evs, hz, verbose)
   }
 
-  # nolint start
   if (!is.null(n_timestamps) &&
-    length(epochs) > 0 &&
-    length(epochs) != n_timestamps) {
+        length(epochs) > 0 &&
+        length(epochs) != n_timestamps) {
     stop(sprintf(
       paste0(
         "Expected %d samples but got %d samples.",
@@ -525,7 +524,6 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       )
     ))
   }
-  # nolint end
 
   if (verbose) {
     alert("success", "Done!")
