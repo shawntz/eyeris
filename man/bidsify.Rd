@@ -24,7 +24,7 @@ bidsify(
 )
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{save_all}{Logical flag indicating whether all epochs are to be saved
 or only a subset of them. Defaults to TRUE.}
