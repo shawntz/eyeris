@@ -48,16 +48,25 @@ check_baseline_mean <- function(x) {
 }
 
 check_baseline_epoch_counts <- function(epochs, baselines) {
-  err_m <- paste(
-    "Number of trials matched based on baseline_events/",
-    "baseline_period {", length(baselines), "} does not match the",
-    "number of epochs matched based on events/limits {",
-    length(epochs), "}! please check whether the event message(s)",
-    "provided for baselining align with the epoched data.\t"
-  )
-  err_c <- "baseline_epochs_mismatch_error"
+  n_epochs <- length(epochs)
+  n_baselines <- length(baselines)
 
-  if (length(epochs) != length(baselines)) {
+  if (n_epochs != n_baselines) {
+    err_m <- paste(
+      "Number of trials matched based on baseline_events/",
+      "baseline_period {", n_baselines, "} does not match the",
+      "number of epochs matched based on events/limits {",
+      n_epochs, "}! please check whether the event message(s)",
+      "provided for baselining align with the epoched data.\n",
+      "This usually happens when:\n",
+      "1. There are different numbers of baseline events vs epoch events\n",
+      "2. Some baseline events don't have valid baseline windows\n",
+      "3. The baseline events and epoch events are not properly paired\n",
+      "Consider using the same event for both epoching and baselining,\n",
+      "or ensure they are properly aligned.\t"
+    )
+    err_c <- "baseline_epochs_mismatch_error"
+
     stop(structure(list(message = err_m, call = match.call()), class = err_c))
   }
 }
