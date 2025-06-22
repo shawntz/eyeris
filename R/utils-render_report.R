@@ -219,7 +219,7 @@ print_plots <- function(plots) {
         if (detrend_exists) {
           md_plots <- paste0(
             md_plots,
-            "### Detrend Diagnostic\n\n",
+            "### Detrend Diagnostics\n\n",
             "![](", make_relative_path(detrend_plot_path), ")\n\n"
           )
         }
