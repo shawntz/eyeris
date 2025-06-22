@@ -11,7 +11,7 @@
 #' At this time, however, this function instead takes a more BIDS-inspired
 #' approach to organizing the output files for preprocessed pupil data.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param save_all Logical flag indicating whether all epochs are to be saved
 #' or only a subset of them. Defaults to TRUE.
 #' @param epochs_list List of epochs to be saved. Defaults to NULL.
@@ -1467,74 +1467,86 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
       }
 
+      # plot random epoch panel
       for (i in seq_along(run_fig_paths)) {
         plot_dist <- i %% 2 == 0
-        # First plot
         jpeg(run_fig_paths[i],
           width = 12, height = 7, units = "in",
           res = 300, pointsize = 14
         )
-        plot(eyeris,
-          steps = ceiling(i / 2),
-          seed = report_seed,
-          block = i_run,
-          plot_distributions = plot_dist
+        tryCatch(
+          {
+            plot(eyeris,
+              steps = ceiling(i / 2),
+              seed = report_seed,
+              block = i_run,
+              plot_distributions = plot_dist
+            )
+          },
+          error = function(e) {
+            # create empty plot with error message
+            plot(NA,
+              xlim = c(0, 1), ylim = c(0, 1), type = "n",
+              xlab = "", ylab = "",
+              main = paste("No data to plot for block", i_run)
+            )
+            text(0.5, 0.5,
+                 paste("Error plotting block", i_run, ":\n", e$message),
+              cex = 0.8, col = "red"
+            )
+          }
         )
         dev.off()
       }
 
-      # make full timeseries plots
-      for (p in seq_along(plot_types)) {
-        plot_dist <- p %% 2 == 0
+      # make full timeseries plots for all intermediate steps
+      for (i_step in seq_along(pupil_steps)) {
+        for (p in seq_along(plot_types)[1]) {
+          plot_dist <- p %% 2 == 0
 
-        run_fig_paths <- c(
-          run_fig_paths,
-          file.path(
+          fig_filename <- file.path(
             run_dir,
             sprintf(
-              "run-%02d_fig-%d_desc-%s.jpg",
+              "run-%02d_fig-full-%d_desc-%s.jpg",
               i_run,
-              ceiling(length(run_fig_paths) / 2 + 1), plot_types[p]
+              i_step,
+              plot_types[p]
             )
           )
-        )
+          run_fig_paths <- c(run_fig_paths, fig_filename)
 
-        jpeg(file.path(run_fig_paths[length(run_fig_paths)]),
-          width = 12, height = 7, units = "in", res = 300, pointsize = 18
-        )
-        plot(eyeris,
-          steps = 1,
-          preview_window = c(0, max(current_data$time_secs)),
-          block = i_run, plot_distributions = plot_dist
-        )
-        dev.off()
-      }
-
-      for (p in seq_along(plot_types)) {
-        plot_dist <- p %% 2 == 0
-
-        run_fig_paths <- c(
-          run_fig_paths,
-          file.path(
-            run_dir,
-            sprintf(
-              "run-%02d_fig-%d_desc-%s.jpg",
-              i_run,
-              ceiling(length(run_fig_paths) / 2 + 1), plot_types[p]
-            )
+          jpeg(fig_filename,
+            width = 12, height = 7, units = "in", res = 300, pointsize = 18
           )
-        )
 
-        jpeg(file.path(run_fig_paths[length(run_fig_paths)]),
-          width = 12, height = 7, units = "in", res = 300, pointsize = 18
-        )
-        plot(eyeris,
-          steps = length(pupil_steps),
-          preview_window = c(0, max(current_data$time_secs)),
-          block = i_run,
-          plot_distributions = plot_dist
-        )
-        dev.off()
+          max_time <- max(current_data$time_secs, na.rm = TRUE)
+          if (!is.finite(max_time)) {
+            max_time <- 1 # default if no time data
+          }
+
+          tryCatch(
+            {
+              plot(eyeris,
+                steps = i_step,
+                preview_window = c(0, max_time),
+                block = i_run,
+                plot_distributions = plot_dist
+              )
+            },
+            error = function(e) {
+              plot(NA,
+                xlim = c(0, 1), ylim = c(0, 1), type = "n",
+                xlab = "", ylab = "",
+                main = paste("No data to plot for block", i_run)
+              )
+              text(0.5, 0.5,
+                   paste("Error plotting block", i_run, ":\n", e$message),
+                cex = 0.8, col = "red"
+              )
+            }
+          )
+          dev.off()
+        }
       }
 
       fig_paths <- c(fig_paths, run_fig_paths)
@@ -1543,116 +1555,142 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     # now handle epochs (if present)
     if (!is.null(report_epoch_grouping_var_col)) {
       for (i in seq_along(epochs_to_save)) {
-        for (bn in names(epochs_to_save[[i]])) {
-          if (nrow(epochs_to_save[[i]][[bn]]) > 0) {
-            tryCatch(
-              {
-                check_column(
-                  epochs_to_save[[i]][[bn]],
-                  report_epoch_grouping_var_col
-                )
-              },
-              error = function(e) {
-                error_handler(e, "column_doesnt_exist_in_df_error")
-              }
-            )
+        epoch_data <- epochs_to_save[[i]]
 
-            run_dir <- file.path(
-              figs_out,
-              sprintf(
-                "run-%02d",
-                get_block_numbers(bn)
-              )
-            )
-            check_and_create_dir(run_dir, verbose = verbose)
-            epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
-            check_and_create_dir(epochs_out, verbose = verbose)
-
-            # nolint start
-            epoch_groups <- as.vector(
-              unique(epochs_to_save[[i]][[bn]]
-              [report_epoch_grouping_var_col])[[1]]
-            )
-            # nolint end
-
-            for (group in epoch_groups) {
-              group_df <- epochs_to_save[[i]][[bn]]
-              group_df <- group_df[
-                group_df[[report_epoch_grouping_var_col]] == group,
-              ]
-
-              for (pstep in seq_along(pupil_steps)) {
-                if (grepl("z", pupil_steps[pstep])) {
-                  y_units <- "(z)"
-                } else {
-                  y_units <- "(a.u.)"
-                }
-
-                # modified from `RColorBrewer`: Set1
-                colorpal <- c(
-                  "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
-                  "#FF7F00", "#F781BF", "#A65628"
-                )
-                colors <- c("black", colorpal)
-
-                y_label <- paste("pupil size", y_units)
-
-                file_out <- file.path(epochs_out, sprintf(
-                  "run-%02d_%s_%d.png",
-                  get_block_numbers(bn), group, pstep
-                ))
-                png(file_out,
-                  width = 3.25,
-                  height = 2.5,
-                  units = "in",
-                  res = 600,
-                  pointsize = 6
-                )
-                y_values <- group_df[[pupil_steps[pstep]]]
-                if (any(is.finite(y_values))) {
-                  plot(group_df$timebin, y_values,
-                       type = "l", xlab = "time (s)", ylab = y_label,
-                       col = colors[pstep],
-                       main = paste0(group, "\n", pupil_steps[pstep],
-                                     sprintf(" (Run %d)",
-                                             get_block_numbers(bn))))
-                } else {
-                  plot(NA, xlim = range(group_df$timebin, na.rm = TRUE),
-                       ylim = c(0, 1), type = "n", xlab = "time (s)",
-                       ylab = y_label, main = paste0(group, "\n",
-                                                     pupil_steps[pstep],
-                                                     "\nNO DATA"))
-                  warning(
-                    paste("eyeris: no finite pupillometry data to plot for
-                          current epoch...", "plotting empty epoch plot.")
-                  )
-                }
-                dev.off()
-              }
-            }
-            epochs <- list.files(epochs_out,
-              full.names = FALSE,
-              pattern = "\\.(jpg|jpeg|png|gif)$",
-              ignore.case = TRUE
-            )
-
-            epochs <- file.path(
-              "source", "figures",
-              sprintf("run-%02d", get_block_numbers(bn)),
-              names(epochs_to_save)[i],
-              epochs
-            )
-
-            make_gallery(eyeris, epochs, report_path,
-              sprintf(
-                "%s%s",
-                names(epochs_to_save)[i],
-                sprintf("_run-%02d", get_block_numbers(bn))
-              ),
-              sub = sub, ses = ses, task = task,
-              run = sprintf("%02d", get_block_numbers(bn))
-            )
+        if (is.null(epoch_data) || !is.list(epoch_data)) {
+          if (verbose) {
+            alert("warning",
+                  "Skipping epoch %d for report generation - no valid data", i)
           }
+          next
+        }
+
+        for (bn in names(epoch_data)) {
+          if (is.null(epoch_data[[bn]]) ||
+              !is.data.frame(epoch_data[[bn]]) || nrow(epoch_data[[bn]]) == 0) {
+            if (verbose) {
+              alert("warning",
+                    "Skipping block %s for epoch %d - no valid data", bn, i)
+            }
+            next
+          }
+
+          tryCatch(
+            {
+              check_column(
+                epochs_to_save[[i]][[bn]],
+                report_epoch_grouping_var_col
+              )
+            },
+            error = function(e) {
+              error_handler(e, "column_doesnt_exist_in_df_error")
+            }
+          )
+
+          run_dir <- file.path(
+            figs_out,
+            sprintf(
+              "run-%02d",
+              get_block_numbers(bn)
+            )
+          )
+          check_and_create_dir(run_dir, verbose = verbose)
+          epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
+          check_and_create_dir(epochs_out, verbose = verbose)
+
+          # nolint start
+          epoch_groups <- as.vector(
+            unique(epochs_to_save[[i]][[bn]]
+            [report_epoch_grouping_var_col])[[1]]
+          )
+          # nolint end
+
+          for (group in epoch_groups) {
+            group_df <- epochs_to_save[[i]][[bn]]
+            group_df <- group_df[
+              group_df[[report_epoch_grouping_var_col]] == group,
+            ]
+
+            for (pstep in seq_along(pupil_steps)) {
+              if (grepl("z", pupil_steps[pstep])) {
+                y_units <- "(z)"
+              } else {
+                y_units <- "(a.u.)"
+              }
+
+              # modified from `RColorBrewer`: Set1
+              colorpal <- c(
+                "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
+                "#FF7F00", "#F781BF", "#A65628"
+              )
+              colors <- c("black", colorpal)
+
+              y_label <- paste("pupil size", y_units)
+
+              file_out <- file.path(epochs_out, sprintf(
+                "run-%02d_%s_%d.png",
+                get_block_numbers(bn), group, pstep
+              ))
+              png(file_out,
+                width = 3.25,
+                height = 2.5,
+                units = "in",
+                res = 600,
+                pointsize = 6
+              )
+              y_values <- group_df[[pupil_steps[pstep]]]
+              if (any(is.finite(y_values))) {
+                plot(group_df$timebin, y_values,
+                  type = "l", xlab = "time (s)", ylab = y_label,
+                  col = colors[pstep],
+                  main = paste0(
+                    group, "\n", pupil_steps[pstep],
+                    sprintf(
+                      " (Run %d)",
+                      get_block_numbers(bn)
+                    )
+                  )
+                )
+              } else {
+                plot(NA,
+                  xlim = range(group_df$timebin, na.rm = TRUE),
+                  ylim = c(0, 1), type = "n", xlab = "time (s)",
+                  ylab = y_label, main = paste0(
+                    group, "\n",
+                    pupil_steps[pstep],
+                    "\nNO DATA"
+                  )
+                )
+                warning(
+                  paste("eyeris: no finite pupillometry data to plot for
+                        current epoch...", "plotting empty epoch plot.")
+                )
+              }
+              dev.off()
+            }
+          }
+          epochs <- list.files(epochs_out,
+            full.names = FALSE,
+            pattern = "\\.(jpg|jpeg|png|gif)$",
+            ignore.case = TRUE
+          )
+
+          epochs <- file.path(
+            "source", "figures",
+            sprintf("run-%02d", get_block_numbers(bn)),
+            names(epochs_to_save)[i],
+            epochs
+          )
+
+          make_gallery(eyeris, epochs, report_path,
+            sprintf(
+              "%s%s",
+              names(epochs_to_save)[i],
+              sprintf("_run-%02d", get_block_numbers(bn))
+            ),
+            sub = sub, ses = ses, task = task,
+            run = sprintf("%02d", get_block_numbers(bn))
+          )
         }
       }
     }
@@ -1671,39 +1709,32 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   invisible(NULL)
 }
 
-make_bids_fname <- function(sub = sub, task = task, run = run,
-                            desc = "", ses = NULL, epoch = NULL) {
-  if (!is.null(ses)) {
-    if (!is.null(epoch)) {
-      f <- paste0(
-        "sub-", sub,
-        "_ses-", ses,
-        "_task-", task,
-        "_run-", run,
-        "_epoch-", epoch,
-        "_desc-", desc,
-        ".csv"
-      )
+make_bids_fname <- function(sub_id, task_name, run_num,
+                            desc = "", ses_id = NULL, epoch_name = NULL,
+                            epoch_events = NULL, baseline_events = NULL,
+                            baseline_type = NULL) {
+  desc_parts <- c(desc)
+
+  if (!is.null(epoch_events)) {
+    epoch_event_name <- if (is.character(epoch_events) &&
+                            length(epoch_events) == 1) {
+      gsub("[*{}]", "", epoch_events)
     } else {
-      f <- paste0(
-        "sub-", sub,
-        "_ses-", ses,
-        "_task-", task,
-        "_run-", run,
-        "_desc-", desc,
-        ".csv"
-      )
+      "multi_events"
     }
-  } else {
-    if (!is.null(epoch)) {
-      f <- paste0(
-        "sub-", sub,
-        "_task-", task,
-        "_run-", run,
-        "_epoch-", epoch,
-        "_desc-", desc,
-        ".csv"
-      )
+    desc_parts <- c(desc_parts,
+                    paste0("epoch-", sanitize_event_tag(epoch_event_name, "")))
+  } else if (!is.null(epoch_name)) {
+    # fallback: use epoch_name with "epoch_" prefix removed
+    epoch_name_clean <- sub("^epoch_", "", epoch_name)
+    desc_parts <- c(desc_parts,
+                    paste0("epoch-", sanitize_event_tag(epoch_name_clean, "")))
+  }
+
+  if (!is.null(baseline_events)) {
+    baseline_event_name <-
+      if (is.character(baseline_events) && length(baseline_events) == 1) {
+      gsub("[*{}]", "", baseline_events)
     } else {
       "multi_baseline"
     }

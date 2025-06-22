@@ -6,7 +6,7 @@
 #' qualitatively assessing the consequences of the preprocessing recipe and
 #' parameters on the raw pupillary signal.
 #'
-#' @param x An object of class `eyeris` dervived from [eyeris::load_asc()].
+#' @param x An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param ... Additional arguments to be passed to `plot`.
 #' @param steps Which steps to plot; defaults to `all` (i.e., plot all steps).
 #' Otherwise, pass in a vector containing the index of the step(s) you want to
@@ -284,16 +284,26 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
           plot_data <- random_epochs[[n]][[
             params$next_step[length(params$next_step)]
           ]]
-          do.call(robust_plot, c(
-            list(y = plot_data),
-            plot_params,
-            list(
-              type = "l", col = colors[i], lwd = 2,
-              main = title, xlab = "time (ms)", ylab = y_label
-            )
-          ))
         } else {
           plot_data <- random_epochs[[n]][[pupil_steps[i]]]
+        }
+
+        is_placeholder <- "message" %in% colnames(random_epochs[[n]]) &&
+          any(random_epochs[[n]]$message == "NO_VALID_SAMPLES")
+        no_valid_data <- is.null(plot_data) || all(is.na(plot_data))
+
+        if (is_placeholder || no_valid_data) {
+          plot(NA,
+            xlim = c(0, 1), ylim = c(0, 1), type = "n",
+            xlab = "", ylab = "", main = title
+          )
+          text(
+            0.5, 0.5,
+            "No valid samples\nin this segment.\n
+            Please re-run with a different `report_seed`",
+            cex = 0.8, col = "red"
+          )
+        } else {
           do.call(robust_plot, c(
             list(y = plot_data),
             plot_params,
@@ -407,12 +417,51 @@ draw_random_epochs <- function(x, n, d, hz) {
   }
 
   drawn_epochs <- list()
+  max_attempts <- 100 # prevent inf loops
 
   for (i in 1:n) {
-    rand_start <- sample(min_timestamp:(max_timestamp - n_samples), 1)
-    rand_end <- rand_start + n_samples
-    drawn_epochs[[i]] <- x |>
-      dplyr::filter(time_orig >= rand_start & time_orig < rand_end)
+    attempts <- 0
+    valid_epoch_found <- FALSE
+
+    while (attempts < max_attempts && !valid_epoch_found) {
+      rand_start <- sample(min_timestamp:(max_timestamp - n_samples), 1)
+      rand_end <- rand_start + n_samples
+      epoch_data <- x |>
+        dplyr::filter(time_orig >= rand_start & time_orig < rand_end)
+
+      pupil_cols <- grep("^pupil_", colnames(epoch_data), value = TRUE)
+      if (length(pupil_cols) > 0) {
+        has_valid_data <- any(sapply(pupil_cols, function(col) {
+          any(is.finite(epoch_data[[col]]))
+        }))
+
+        if (has_valid_data) {
+          drawn_epochs[[i]] <- epoch_data
+          valid_epoch_found <- TRUE
+        } else {
+          attempts <- attempts + 1
+        }
+      } else {
+        drawn_epochs[[i]] <- epoch_data
+        valid_epoch_found <- TRUE
+      }
+    }
+
+    if (!valid_epoch_found) {
+      placeholder_data <- data.frame(
+        time_orig = c(rand_start, rand_end),
+        time_secs = c(0, d),
+        message = c("NO_VALID_SAMPLES", "NO_VALID_SAMPLES")
+      )
+      drawn_epochs[[i]] <- placeholder_data
+
+      cli::cli_alert_warning(
+        paste0(
+          "Randomly selected plot segment ", i, " had no valid samples. ",
+          "Please re-run with a different `report_seed`."
+        )
+      )
+    }
   }
 
   drawn_epochs

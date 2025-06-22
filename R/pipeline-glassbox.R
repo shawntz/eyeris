@@ -122,16 +122,20 @@ glassbox <- function(file,
                      skip_detransient = deprecated()) {
   # handle deprecated parameters
   if (is_present(confirm)) {
-    deprecate_warn("1.1.0",
-                   "glassbox(confirm)",
-                   "glassbox(interactive_preview)")
+    deprecate_warn(
+      "1.1.0",
+      "glassbox(confirm)",
+      "glassbox(interactive_preview)"
+    )
     interactive_preview <- confirm
   }
 
   if (is_present(num_previews)) {
-    deprecate_warn("1.1.0",
-                   "glassbox(num_previews)",
-                   "glassbox(preview_n)")
+    deprecate_warn(
+      "1.1.0",
+      "glassbox(num_previews)",
+      "glassbox(preview_n)"
+    )
     preview_n <- num_previews
   }
 
@@ -139,8 +143,10 @@ glassbox <- function(file,
     deprecate_warn(
       "1.1.0",
       "glassbox(detrend_data)",
-      details = paste("The `detrend_data` argument is no longer used",
-                      "and will be ignored.")
+      details = paste(
+        "The `detrend_data` argument is no longer used",
+        "and will be ignored."
+      )
     )
 
     detrend_data <- NULL
@@ -150,8 +156,10 @@ glassbox <- function(file,
     deprecate_warn(
       "1.1.0",
       "glassbox(skip_detransient)",
-      details = paste("The `skip_detransient` argument is no longer used",
-                      "and will be ignored.")
+      details = paste(
+        "The `skip_detransient` argument is no longer used",
+        "and will be ignored."
+      )
     )
 
     skip_detransient <- NULL
@@ -278,127 +286,287 @@ glassbox <- function(file,
   only_linear_trend <- FALSE
   next_step <- c()
 
-  for (step_name in names(pipeline)) {
-    action <- "Running "
-    skip_plot <- FALSE
-
-    if (!which_steps[[step_name]]) {
-      action <- "Skipping "
-      step_counter <- step_counter - 1
-      skip_plot <- TRUE
-    } else {
-      if (step_name == "detrend") {
-        only_linear_trend <- TRUE
-      }
-    }
-
+  if (which_steps[["load_asc"]]) {
     if (verbose) {
-      if (action == "Running ") {
-        cli::cli_alert_success(
-          paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
-        )
-      } else {
-        cli::cli_alert_warning(
-          paste0("[ SKIP ] - ", action, "eyeris::", step_name, "()")
-        )
-      }
+      cli::cli_alert_success("[  OK  ] - Running eyeris::load_asc()")
+    }
+    file <- pipeline[["load_asc"]](file, params)
+  }
+
+  has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 1
+
+  # process each block individually through all steps (except load_asc)
+  if (has_multiple_blocks) {
+    if (verbose) {
+      cli::cli_alert_info(
+        "Processing blocks individually through pipeline steps..."
+      )
     }
 
-    step_to_run <- pipeline[[step_name]]
-    err_thrown <- FALSE
+    block_names <- names(file$timeseries)
+    processed_blocks <- list()
 
-    file <- tryCatch(
-      {
-        step_to_run(file, params)
-      },
-      error = function(e) {
-        if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
-          cli::cli_alert_danger(
-            paste0(
-              "[ WARN ] - ", "Because missing pupil samples were not ",
-              "interpolated, there is a mismatch in the number of samples ",
-              "in the detrended data. Please set `interpolate` to `TRUE` ",
-              "before detrending data OR disable detrending by setting ",
-              "`detrend` to `FALSE`."
-            )
-          )
+    for (block_name in block_names) {
+      if (verbose) {
+        cli::cli_alert_info(paste0("[ INFO ] - Processing block: ", block_name))
+      }
+
+      temp_file <- file
+      temp_file$timeseries <- list(file$timeseries[[block_name]])
+      names(temp_file$timeseries) <- block_name
+
+      block_step_counter <- 1
+
+      for (step_name in names(pipeline)[-1]) {
+        action <- "Running "
+        skip_plot <- FALSE
+
+        if (!which_steps[[step_name]]) {
+          action <- "Skipping "
+          block_step_counter <- block_step_counter - 1
+          skip_plot <- TRUE
+        } else {
+          if (step_name == "detrend") {
+            only_linear_trend <- TRUE
+          }
         }
 
         if (verbose) {
-          cli::cli_alert_info(
-            paste0(
-              "[ INFO ] - ", "Skipping eyeris::", step_name, "(): ",
-              e$message
+          if (action == "Running ") {
+            cli::cli_alert_success(
+              paste0("[  OK  ] - ", action, "eyeris::",
+                     step_name, "() for ", block_name)
             )
-          )
-        }
-        err_thrown <<- TRUE
-        step_counter <<- step_counter - 1
-        file
-      }
-    )
-
-    pupil_steps <- grep("^pupil_",
-      colnames(file$timeseries$block_1),
-      value = TRUE
-    )
-
-    if (interactive_preview) {
-      if (!err_thrown) {
-        if (!skip_plot) {
-          if (step_counter + 1 <= length(names(pipeline))) {
-            next_step <- c(next_step, pupil_steps[step_counter])
           } else {
-            next_step <- NULL
-          }
-
-          for (block_name in names(file$timeseries)) {
-            bn <- get_block_numbers(block_name)
-            if (is.null(seed)) {
-              seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
-            }
-            withr::with_seed(
-              seed,
-              {
-                plot(
-                  file,
-                  steps = step_counter,
-                  preview_n = preview_n,
-                  seed = seed,
-                  preview_duration = preview_duration,
-                  preview_window = preview_window,
-                  only_linear_trend = only_linear_trend,
-                  next_step = next_step,
-                  block = bn,
-                  suppress_prompt = FALSE
-                )
-              }
+            cli::cli_alert_warning(
+              paste0("[ SKIP ] - ", action, "eyeris::",
+                     step_name, "() for ", block_name)
             )
           }
-
-          if (step_name == "detrend") {
-            # reset linear trend flags
-            only_linear_trend <- FALSE
-          }
         }
-        if (step_name != "zscore") {
-          if (!prompt_user()) {
-            if (verbose) {
-              cli::cli_alert_info(
-                paste(
-                  "Process cancelled after running the", step_name, "step.",
-                  "Adjust your parameters and re-run!\n"
+
+        step_to_run <- pipeline[[step_name]]
+        err_thrown <- FALSE
+
+        temp_file <- tryCatch(
+          {
+            step_to_run(temp_file, params)
+          },
+          error = function(e) {
+            if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
+              cli::cli_alert_danger(
+                paste0(
+                  "[ WARN ] - ", "Because missing pupil samples were not ",
+                  "interpolated, there is a mismatch in the number of samples ",
+                  "in the detrended data. Please set `interpolate` to `TRUE` ",
+                  "before detrending data OR disable detrending by setting ",
+                  "`detrend` to `FALSE`."
                 )
               )
             }
 
-            break
+            if (verbose) {
+              cli::cli_alert_info(
+                paste0(
+                  "[ INFO ] - ", "Skipping eyeris::",
+                  step_name, "() for ", block_name, ": ",
+                  e$message
+                )
+              )
+            }
+            err_thrown <<- TRUE
+            block_step_counter <<- block_step_counter - 1
+            temp_file
+          }
+        )
+
+        if (interactive_preview && !err_thrown && !skip_plot) {
+          pupil_steps <- grep("^pupil_",
+            colnames(temp_file$timeseries[[block_name]]),
+            value = TRUE
+          )
+
+          if (block_step_counter + 1 <= length(names(pipeline))) {
+            next_step <- c(next_step, pupil_steps[block_step_counter])
+          } else {
+            next_step <- NULL
+          }
+
+          bn <- get_block_numbers(block_name)
+          if (is.null(seed)) {
+            seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
+          }
+          withr::with_seed(
+            seed,
+            {
+              plot(
+                temp_file,
+                steps = block_step_counter,
+                preview_n = preview_n,
+                seed = seed,
+                preview_duration = preview_duration,
+                preview_window = preview_window,
+                only_linear_trend = only_linear_trend,
+                next_step = next_step,
+                block = bn,
+                suppress_prompt = FALSE
+              )
+            }
+          )
+
+          if (step_name == "detrend") {
+            only_linear_trend <- FALSE
+          }
+
+          if (step_name != "zscore") {
+            if (!prompt_user()) {
+              if (verbose) {
+                cli::cli_alert_info(
+                  paste(
+                    "Process cancelled after running the",
+                    step_name, "step for", block_name, ".",
+                    "Adjust your parameters and re-run!\n"
+                  )
+                )
+              }
+              break
+            }
+          }
+        }
+
+        block_step_counter <- block_step_counter + 1
+      }
+
+      processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
+    }
+
+    # recombine processed blocks
+    file$timeseries <- processed_blocks
+  } else {
+    # single block case
+    for (step_name in names(pipeline)[-1]) {
+      action <- "Running "
+      skip_plot <- FALSE
+
+      if (!which_steps[[step_name]]) {
+        action <- "Skipping "
+        step_counter <- step_counter - 1
+        skip_plot <- TRUE
+      } else {
+        if (step_name == "detrend") {
+          only_linear_trend <- TRUE
+        }
+      }
+
+      if (verbose) {
+        if (action == "Running ") {
+          cli::cli_alert_success(
+            paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
+          )
+        } else {
+          cli::cli_alert_warning(
+            paste0("[ SKIP ] - ", action, "eyeris::", step_name, "()")
+          )
+        }
+      }
+
+      step_to_run <- pipeline[[step_name]]
+      err_thrown <- FALSE
+
+      file <- tryCatch(
+        {
+          step_to_run(file, params)
+        },
+        error = function(e) {
+          if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
+            cli::cli_alert_danger(
+              paste0(
+                "[ WARN ] - ", "Because missing pupil samples were not ",
+                "interpolated, there is a mismatch in the number of samples ",
+                "in the detrended data. Please set `interpolate` to `TRUE` ",
+                "before detrending data OR disable detrending by setting ",
+                "`detrend` to `FALSE`."
+              )
+            )
+          }
+
+          if (verbose) {
+            cli::cli_alert_info(
+              paste0(
+                "[ INFO ] - ", "Skipping eyeris::", step_name, "(): ",
+                e$message
+              )
+            )
+          }
+          err_thrown <<- TRUE
+          step_counter <<- step_counter - 1
+          file
+        }
+      )
+
+      pupil_steps <- grep("^pupil_",
+        colnames(file$timeseries$block_1),
+        value = TRUE
+      )
+
+      if (interactive_preview) {
+        if (!err_thrown) {
+          if (!skip_plot) {
+            if (step_counter + 1 <= length(names(pipeline))) {
+              next_step <- c(next_step, pupil_steps[step_counter])
+            } else {
+              next_step <- NULL
+            }
+
+            for (block_name in names(file$timeseries)) {
+              bn <- get_block_numbers(block_name)
+              if (is.null(seed)) {
+                seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
+              }
+              withr::with_seed(
+                seed,
+                {
+                  plot(
+                    file,
+                    steps = step_counter,
+                    preview_n = preview_n,
+                    seed = seed,
+                    preview_duration = preview_duration,
+                    preview_window = preview_window,
+                    only_linear_trend = only_linear_trend,
+                    next_step = next_step,
+                    block = bn,
+                    suppress_prompt = FALSE
+                  )
+                }
+              )
+            }
+
+            if (step_name == "detrend") {
+              only_linear_trend <- FALSE
+            }
+          }
+          if (step_name != "zscore") {
+            if (!prompt_user()) {
+              if (verbose) {
+                cli::cli_alert_info(
+                  paste(
+                    "Process cancelled after running the", step_name, "step.",
+                    "Adjust your parameters and re-run!\n"
+                  )
+                )
+              }
+
+              break
+            }
           }
         }
       }
-    }
 
-    step_counter <- step_counter + 1
+      step_counter <- step_counter + 1
+    }
+  }
+
   # generate confounds after all other steps
   if (verbose) {
     cli::cli_alert_success("[  OK  ] - Running eyeris::summarize_confounds()")
