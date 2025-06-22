@@ -102,6 +102,7 @@ eyeris_preproc <- glassbox(
 #> ✔ [  OK  ] - Running eyeris::lpfilt()
 #> ! [ SKIP ] - Skipping eyeris::detrend()
 #> ✔ [  OK  ] - Running eyeris::zscore()
+#> ✔ [  OK  ] - Running eyeris::summarize_confounds()
 ```
 
 ### step-wise correction of pupillary signal
