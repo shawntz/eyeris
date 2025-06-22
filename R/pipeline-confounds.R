@@ -23,18 +23,23 @@
 #' # Calculate confounds for all blocks and preprocessing steps
 #' demo_data <- demo_data |>
 #'   eyeris::glassbox() |>
+#'   eyeris::epoch(
+#'     events = "PROBE_{type}_{trial}",
+#'     limits = c(-1, 1), # grab 1 second prior to and 1 second post event
+#'     label = "prePostProbe" # custom epoch label name
+#'   ) |>
 #'   eyeris::summarize_confounds()
 #'
 #' # Access confounds for entire timeseries for a specific block and step
-#' block1_raw_confounds <-
-#'   demo_data$confounds$unepoched_timeseries$block_1$pupil_raw
-#' print(block1_raw_confounds)
+#' unepoched_timeseries_confounds <-
+#'   demo_data$confounds$unepoched_timeseries
+#' print(unepoched_timeseries_confounds)
 #'
 #' # Access confounds for a specific epoched timeseries
 #' # for a specific block and step
-#' block1_raw_confounds <-
-#'   demo_data$confounds$epoched_timeseries$block_1$pupil_raw
-#' print(block1_raw_confounds)
+#' epoched_timeseries_confounds <-
+#'   demo_data$confounds$epoched_timeseries
+#' print(epoched_timeseries_confounds)
 #'
 #' @export
 summarize_confounds <- function(eyeris) {
