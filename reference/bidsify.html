@@ -72,7 +72,7 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Save out pupil timeseries data in a BIDS-like structure</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/chore/docs-cleanup-spelling/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/ff/glassbox-multi-block-errors/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
       <div class="d-none name"><code>bidsify.Rd</code></div>
     </div>
 
@@ -246,18 +246,18 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.20 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.34 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`run_num` is ignored when data contains multiple blocks.Blocks will be automatically numbered as runs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/RtmpcmtLHT' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpcmtLHT/derivatives' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpcmtLHT/derivatives'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpcmtLHT/derivatives/sub-001' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpcmtLHT/derivatives/sub-001'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpcmtLHT/derivatives/sub-001/ses-01' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpcmtLHT/derivatives/sub-001/ses-01'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpcmtLHT/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpcmtLHT/derivatives/sub-001/ses-01/eye'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/RtmpbxLmsg' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01/eye'</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in make_bids_fname(sub = sub, ses = ses, task = task, run = sprintf("%02d",     get_block_numbers(i)), epoch = current_label, desc = "preproc_pupil"):</span> argument 5 matches multiple formal arguments</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
