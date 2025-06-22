@@ -11,7 +11,7 @@
 #' At this time, however, this function instead takes a more BIDS-inspired
 #' approach to organizing the output files for preprocessed pupil data.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param save_all Logical flag indicating whether all epochs are to be saved
 #' or only a subset of them. Defaults to TRUE.
 #' @param epochs_list List of epochs to be saved. Defaults to NULL.
