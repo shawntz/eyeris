@@ -1200,16 +1200,30 @@ make_bids_fname <- function(sub = sub, task = task, run = run,
         ".csv"
       )
     } else {
-      f <- paste0(
-        "sub-", sub,
-        "_task-", task,
-        "_run-", run,
-        "_desc-", desc, ".csv"
-      )
+      "multi_baseline"
     }
+
+    bline_string <- "bline"
+    if (!is.null(baseline_type)) {
+      bline_string <- paste0(bline_string, "-", baseline_type)
+    }
+    bline_string <- paste0(bline_string, "-",
+                           sanitize_event_tag(baseline_event_name, ""))
+    desc_parts <- c(desc_parts, bline_string)
   }
 
-  return(f)
+  final_desc <- paste(desc_parts, collapse = "_")
+
+  f <- paste0(
+    "sub-", sub_id,
+    if (!is.null(ses_id)) paste0("_ses-", ses_id) else "",
+    "_task-", task_name,
+    if (!is.null(run_num)) paste0("_run-", run_num) else "",
+    "_desc-", final_desc,
+    ".csv"
+  )
+
+  return(gsub("__", "_", f)) # replace double underscores
 }
 #' Find baseline structure name for a given epoch
 #'
