@@ -178,6 +178,9 @@ load_asc <- function(file, block = "auto") {
     list_out$blinks <- x$blinks |> dplyr::select(-block)
   }
 
+  # Add unique event identifiers to handle duplicate event messages
+  list_out$events <- add_unique_event_identifiers(list_out$events)
+
   # fix metadata (info) for newer versions of eyelink
   fixed_info <- parse_eyelink_info(x$info$version, x$info$model)
   x$info$version <- fixed_info$version
@@ -190,6 +193,55 @@ load_asc <- function(file, block = "auto") {
   class(list_out) <- "eyeris"
 
   return(list_out)
+}
+
+#' Add unique event identifiers to handle duplicate event messages
+#'
+#' This function adds a new column `text_unique` to each events table that
+#' creates unique identifiers for each occurrence of the same event message
+#' by appending a count number. This prevents events like "GOAL" from being
+#' merged across all separate goals.
+#'
+#' @param events_list A list of event data frames (one per block)
+#'
+#' @return Updated events list with `text_unique` column added
+#' @keywords internal
+add_unique_event_identifiers <- function(events_list) {
+  if (is.data.frame(events_list)) {
+    # Single data frame case
+    events_list <- add_unique_identifiers_to_df(events_list)
+  } else if (is.list(events_list)) {
+    # List of data frames case (multiple blocks)
+    events_list <- lapply(events_list, add_unique_identifiers_to_df)
+  }
+
+  events_list
+}
+
+#' Add unique identifiers to a single events data frame
+#'
+#' @param events_df A single events data frame
+#'
+#' @return Updated events data frame with `text_unique` column
+#' @keywords internal
+add_unique_identifiers_to_df <- function(events_df) {
+  if (!"text" %in% colnames(events_df)) {
+    return(events_df)
+  }
+
+  # Create a counter for each unique text message
+  events_df <- events_df |>
+    dplyr::group_by(text) |>
+    dplyr::mutate(
+      text_unique = if (dplyr::n() > 1) {
+        paste0(text, "_", dplyr::row_number())
+      } else {
+        text
+      }
+    ) |>
+    dplyr::ungroup()
+
+  events_df
 }
 
 # normalize "time_orig" to seconds and to start at 0
