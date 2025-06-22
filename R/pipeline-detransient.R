@@ -54,7 +54,7 @@
 #'   using a constant multiplier \eqn{n} (default value: 16):
 #'   \deqn{mad\_thresh = median\_speed + (n \times mad\_val)}
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param n A constant used to compute the median absolute deviation (MAD)
 #' threshold.
 #' @param mad_thresh Default `NULL`. This parameter provides

@@ -6,7 +6,7 @@
 #' feature where additional trial data embedded within event messages can easily
 #' be identified and joined into the resulting epoched data frames.
 #'
-#' @param eyeris An object of class `eyeris` dervived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param events Either (1) a single string representing the event message to
 #' perform trial extraction around, using specified `limits` to center the epoch
 #' around or no `limits` (which then just grabs the data epochs between each
@@ -564,10 +564,9 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       epoch_manually(evs, hz, verbose)
   }
 
-  # nolint start
   if (!is.null(n_timestamps) &&
-    length(epochs) > 0 &&
-    length(epochs) != n_timestamps) {
+        length(epochs) > 0 &&
+        length(epochs) != n_timestamps) {
     stop(sprintf(
       paste0(
         "Expected %d samples but got %d samples.",
@@ -576,7 +575,6 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       )
     ))
   }
-  # nolint end
 
   if (verbose) {
     alert("success", "Done!")
