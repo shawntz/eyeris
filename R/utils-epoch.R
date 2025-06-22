@@ -22,7 +22,7 @@ make_epoch_label <- function(evs, label, epoched_data) {
 }
 
 # Sanitize event tag string into a canonical epoch label
-sanitize_event_tag <- function(string) {
+sanitize_event_tag <- function(string, prefix = "epoch_") {
   sanitized <- string |>
     stringr::str_to_lower() |>
     stringr::str_replace_all("[^[:alnum:] ]", " ") |>
@@ -35,7 +35,7 @@ sanitize_event_tag <- function(string) {
   }
 
   camel_case_str <- paste0(sanitized, collapse = "")
-  paste0("epoch_", gsub("\\d", "", camel_case_str))
+  paste0(prefix, gsub("\\d", "", camel_case_str))
 }
 
 # Slice epoch from the raw timeseries data based on start and end times
@@ -128,18 +128,27 @@ merge_events_with_timeseries <- function(events, metadata_template,
     "\\", ".", "+", "*", "?", "^",
     "$", "(", ")", "[", "]", "{", "}", "|"
   )
-  event_messages <- dplyr::pull(events, text)
+
+  # Use text_unique if available, otherwise fall back to text
+  if ("text_unique" %in% colnames(events)) {
+    event_messages <- dplyr::pull(events, text_unique)
+    event_text_original <- dplyr::pull(events, text)
+  } else {
+    event_messages <- dplyr::pull(events, text)
+    event_text_original <- event_messages
+  }
+
   event_times <- dplyr::pull(events, time)
 
   # first check for exact matches (like "11")
   if (!grepl("[*{}]", metadata_template)) {
-    matches <- event_messages == metadata_template
+    matches <- event_text_original == metadata_template
     matched_indices <- which(matches)
 
     result <- dplyr::tibble(
       template = metadata_template,
       matching_pattern = metadata_template,
-      event_message = event_messages[matched_indices],
+      event_message = event_text_original[matched_indices],
       matched_event = event_messages[matched_indices],
       time = event_times[matched_indices]
     ) |>
@@ -159,13 +168,14 @@ merge_events_with_timeseries <- function(events, metadata_template,
     }
 
     regex_pattern <- paste0("^", prefix, ".*$")
-    matches <- stringr::str_detect(event_messages, regex_pattern)
+    matches <- stringr::str_detect(event_text_original, regex_pattern)
 
     result <- dplyr::tibble(
       template = metadata_template,
       matching_pattern = regex_pattern,
-      event_message = event_messages,
-      matched_event = ifelse(matches, event_messages, NA_character_)
+      event_message = event_text_original,
+      matched_event = ifelse(matches, event_messages, NA_character_),
+      time = ifelse(matches, event_times, NA_real_)
     ) |>
       tidyr::drop_na(matched_event)
   } else { # template mode
@@ -179,28 +189,54 @@ merge_events_with_timeseries <- function(events, metadata_template,
     }
 
     regex_pattern <- paste0("^", template, "$")
-    matches <- stringr::str_match(event_messages, regex_pattern)
+    matches <- stringr::str_match(event_text_original, regex_pattern)
     matches_df <- as.data.frame(matches)
     colnames(matches_df) <- c("matched_event", placeholder_names)
+
+    # Create a time vector that aligns with matches_df
+    # For non-matches (NA in matched_event), use NA for time
+    # For matches, use the corresponding event time
+    result_times <- rep(NA_real_, length(event_text_original))
+    matched_indices <- which(!is.na(matches[, 1]))
+    result_times[matched_indices] <- event_times[matched_indices]
+
     result <- dplyr::tibble(
       template = metadata_template,
       matching_pattern = regex_pattern
     ) |>
       dplyr::bind_cols(matches_df) |>
+      dplyr::mutate(time = result_times) |>
       tidyr::drop_na(matched_event)
   }
 
   if (merge) {
     result <- dplyr::distinct(result)
 
-    epoched_timeseries <- events |>
-      dplyr::mutate(matched_event = text) |>
-      dplyr::right_join(result, by = "matched_event") |>
-      dplyr::select(-block, -text) |>
+    # Create a mapping between text_unique and text for joining
+    events_mapping <- events |>
+      dplyr::select(text_unique, text) |>
+      dplyr::rename(event_text_original = text)
+
+    # If text_unique doesn't exist, use text as both
+    if (!"text_unique" %in% colnames(events)) {
+      events_mapping <- events |>
+        dplyr::select(text) |>
+        dplyr::mutate(text_unique = text) |>
+        dplyr::rename(event_text_original = text)
+    }
+
+    epoched_timeseries <- events_mapping |>
+      dplyr::right_join(result, by = c("text_unique" = "matched_event")) |>
+      dplyr::rename(matched_event = event_text_original) |>
       dplyr::relocate(matched_event, .after = matching_pattern)
 
     return(epoched_timeseries)
   } else {
+    # When merge = FALSE, ensure we have the time column
+    if (!"time" %in% colnames(result)) {
+      # This shouldn't happen, but let's add it for safety
+      result$time <- event_times[match(result$matched_event, event_messages)]
+    }
     return(result)
   }
 }
