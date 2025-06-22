@@ -73,7 +73,8 @@ compute_baseline <- function(x, epochs,
 
   if (n_baseline_epochs > n_epochs) {
     warning(sprintf(
-      "More baseline epochs (%d) than actual epochs (%d).\nTruncating baseline epochs to match.",
+      paste0("More baseline epochs (%d) than actual epochs (%d).\n",
+             "Truncating baseline epochs to match."),
       n_baseline_epochs, n_epochs
     ))
     baseline_epochs <- baseline_epochs[1:n_epochs]
