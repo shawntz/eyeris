@@ -158,41 +158,62 @@ print_plots <- function(plots) {
         sorted_plot_paths <- run_plots[order(plot_fig_ids)]
 
         num_plots <- length(sorted_plot_paths)
-        before_plot_index <- num_plots - 3
-        after_plot_index <- num_plots - 1
+        num_steps <- length(grep("_fig-full-\\d+_", sorted_plot_paths))
+        before_plot_index <- 2 * num_steps + 1
 
         for (i in seq_along(sorted_plot_paths)) {
           relative_fig_path <- make_relative_path(sorted_plot_paths[i])
 
           if (i < before_plot_index) {
-            md_plots <- paste0(
-              md_plots,
+            if (grepl("_fig-full-\\d+_", relative_fig_path)) {
+              md_plots <- paste0(
+                md_plots,
+                "![](", relative_fig_path, ")\n\n"
+              )
+            } else {
               if (i %% 2 == 1) {
-                paste0(
-                  "### Step ", ceiling(i / 2), "\n",
+                md_plots <- paste0(
+                  md_plots,
+                  "### Step ", ceiling(i / 2), ": Preview\n",
                   "<div style='display: flex;'>",
                   "<img src='", relative_fig_path, "' width='50%' />"
                 )
               } else {
-                paste0(
+                md_plots <- paste0(
+                  md_plots,
                   "<img src='", relative_fig_path, "' width='50%' />",
                   "</div>"
                 )
               }
-            )
-          } else if (i == before_plot_index || i == before_plot_index + 1) {
-            md_plots <- paste0(
-              md_plots,
-              if (i == before_plot_index) "### Before", "\n",
-              "![](", relative_fig_path, ")\n\n"
-            )
-          } else if (i == after_plot_index || i == after_plot_index + 1) {
-            md_plots <- paste0(
-              md_plots,
-              if (i == after_plot_index) "### After", "\n",
-              "![](", relative_fig_path, ")\n\n"
-            )
+            }
+          } else {
+            # For i >= before_plot_index, only plot full figures
+            if (grepl("_fig-full-\\d+_", relative_fig_path)) {
+              md_plots <- paste0(
+                md_plots,
+                if (i == before_plot_index) {
+                  "### Full Timeseries\n"
+                } else {
+                  ""
+                },
+                "![](", relative_fig_path, ")\n\n"
+              )
+            }
           }
+          # else if (i == before_plot_index || i == before_plot_index + 1) {
+          #   md_plots <- paste0(
+          #     md_plots,
+          #     if (i == before_plot_index) "### Before", "\n",
+          #     "![](", relative_fig_path, ")\n\n"
+          #   )
+          # }
+          # else if (i == after_plot_index || i == after_plot_index + 1) {
+          #   md_plots <- paste0(
+          #     md_plots,
+          #     if (i == after_plot_index) "### After", "\n",
+          #     "![](", relative_fig_path, ")\n\n"
+          #   )
+          # }
         }
 
         if (detrend_exists) {
