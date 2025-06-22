@@ -122,16 +122,20 @@ glassbox <- function(file,
                      skip_detransient = deprecated()) {
   # handle deprecated parameters
   if (is_present(confirm)) {
-    deprecate_warn("1.1.0",
-                   "glassbox(confirm)",
-                   "glassbox(interactive_preview)")
+    deprecate_warn(
+      "1.1.0",
+      "glassbox(confirm)",
+      "glassbox(interactive_preview)"
+    )
     interactive_preview <- confirm
   }
 
   if (is_present(num_previews)) {
-    deprecate_warn("1.1.0",
-                   "glassbox(num_previews)",
-                   "glassbox(preview_n)")
+    deprecate_warn(
+      "1.1.0",
+      "glassbox(num_previews)",
+      "glassbox(preview_n)"
+    )
     preview_n <- num_previews
   }
 
@@ -139,8 +143,10 @@ glassbox <- function(file,
     deprecate_warn(
       "1.1.0",
       "glassbox(detrend_data)",
-      details = paste("The `detrend_data` argument is no longer used",
-                      "and will be ignored.")
+      details = paste(
+        "The `detrend_data` argument is no longer used",
+        "and will be ignored."
+      )
     )
 
     detrend_data <- NULL
@@ -150,8 +156,10 @@ glassbox <- function(file,
     deprecate_warn(
       "1.1.0",
       "glassbox(skip_detransient)",
-      details = paste("The `skip_detransient` argument is no longer used",
-                      "and will be ignored.")
+      details = paste(
+        "The `skip_detransient` argument is no longer used",
+        "and will be ignored."
+      )
     )
 
     skip_detransient <- NULL
