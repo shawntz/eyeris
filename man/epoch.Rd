@@ -9,13 +9,14 @@ epoch(
   events,
   limits = NULL,
   label = NULL,
-  calc_baseline = FALSE,
-  apply_baseline = FALSE,
+  baseline = FALSE,
   baseline_type = c("sub", "div"),
   baseline_events = NULL,
   baseline_period = NULL,
   hz = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  calc_baseline = deprecated(),
+  apply_baseline = deprecated()
 )
 }
 \arguments{
@@ -75,14 +76,10 @@ should still be accessible within this nested lists, however, to avoid
 ambiguous list objects, we recommend you provide an \code{epoch} label here
 to be safe.}}
 
-\item{calc_baseline}{A flag indicated whether to perform baseline correction.
-Note, setting \code{calc_baseline} to TRUE alone will only compute the baseline
-period, but will not apply it to the preprocessed timeseries unless
-\code{apply_baseline} is also set to TRUE.}
-
-\item{apply_baseline}{A flag indicating whether to apply the calculated
-baseline to the pupil timeseries. The baseline correction will be applied to
-the pupil from the latest preprocessing step.}
+\item{baseline}{\strong{(New)} A single parameter that controls baseline
+correction. Set to \code{TRUE} to both calculate and apply baseline correction, or
+\code{FALSE} to skip it. This replaces the deprecated \code{calc_baseline} and
+\code{apply_baseline} parameters.}
 
 \item{baseline_type}{Whether to perform \emph{subtractive} (\code{sub}) or \emph{divisive}
 (\code{div}) baseline correction. Defaults to \code{sub}.}
@@ -113,10 +110,19 @@ within the tracker's metadata.}
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
 processing step and run silently.}
+
+\item{calc_baseline}{\strong{(Deprecated)} Use \code{baseline} instead.}
+
+\item{apply_baseline}{\strong{(Deprecated)} Use \code{baseline} instead.}
 }
 \value{
-Updated \code{eyeris} object with dataframes containing the epoched data
-(\code{epoch_}).
+An \code{eyeris} object with a new nested list of data frames: \verb{$epoch_*}.
+The epochs are organized hierarchically by block and preprocessing step.
+Each epoch contains the pupil timeseries data for the specified time window
+around each event message, along with metadata about the event.
+
+When using \code{bidsify()} to export the data, filenames will include both
+epoch and baseline event information for clarity.
 }
 \description{
 Intended to be used as the final preprocessing step. This function creates
@@ -185,8 +191,7 @@ eye_preproc |>
     events = "PROBE_START_{trial}",
     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
     label = "prePostProbe", # custom epoch label name
-    calc_baseline = TRUE,
-    apply_baseline = TRUE,
+    baseline = TRUE, # Calculate and apply baseline correction
     baseline_type = "sub", # "sub"tractive baseline calculation is default
     baseline_events = "DELAY_STOP_*",
     baseline_period = c(-1, 0)
@@ -201,8 +206,7 @@ eye_preproc |>
     events = "PROBE_START_{trial}",
     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
     label = "prePostProbe", # custom epoch label name
-    calc_baseline = TRUE,
-    apply_baseline = TRUE,
+    baseline = TRUE, # Calculate and apply baseline correction
     baseline_type = "sub", # "sub"tractive baseline calculation is default
     baseline_events = c(
       "DELAY_START_*",
@@ -227,4 +231,7 @@ eye_preproc |>
     label  = "example9"
   )
 
+}
+\seealso{
+\code{\link[lifecycle:deprecate_soft]{lifecycle::deprecate_warn()}}
 }
