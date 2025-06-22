@@ -403,9 +403,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                 get_block_numbers(i), current_label, file.path(dir, p, f)
               )
             }
-          })
+          }
         }
-      })
+      }
     } else {
       for (epoch_id in names(epochs_to_save)) {
         current_label <- substr(epoch_id, 7, nchar(epoch_id))
