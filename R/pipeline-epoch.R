@@ -356,6 +356,20 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
     }
   }
 
+  # recalculate epoched confounds if they exist, since new epochs were created
+  if (!is.null(x$confounds$unepoched_timeseries)) {
+    if (verbose) {
+      alert("info", "Recalculating epoched confounds for new epochs...")
+    }
+
+    # check for epoch data and compute confounds if present
+    epoch_names <- grep("^epoch_", names(x), value = TRUE)
+
+    if (length(epoch_names) > 0) {
+      x <- calculate_epoched_confounds(x, epoch_names, hz, verbose)
+    }
+  }
+
   return(x)
 }
 
