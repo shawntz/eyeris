@@ -19,7 +19,7 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
+\item{x}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{...}{Additional arguments to be passed to \code{plot}.}
 

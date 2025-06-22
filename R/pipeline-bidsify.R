@@ -170,6 +170,36 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   }
 
+  if (verbose) {
+    alert("info", "Epochs to save structure:")
+    alert("info", "  Names: %s", paste(names(epochs_to_save), collapse = ", "))
+    for (epoch_name in names(epochs_to_save)) {
+      epoch_data <- epochs_to_save[[epoch_name]]
+      if (is.list(epoch_data)) {
+        alert(
+          "info", "  %s: list with %d elements", epoch_name, length(epoch_data)
+        )
+        for (block_name in names(epoch_data)) {
+          block_data <- epoch_data[[block_name]]
+          if (is.data.frame(block_data)) {
+            alert(
+              "info", "    %s: data.frame with %d rows",
+              block_name, nrow(block_data)
+            )
+          } else {
+            alert("info", "    %s: %s", block_name, class(block_data))
+          }
+        }
+      } else if (is.data.frame(epoch_data)) {
+        alert(
+          "info", "  %s: data.frame with %d rows", epoch_name, nrow(epoch_data)
+        )
+      } else {
+        alert("info", "  %s: %s", epoch_name, class(epoch_data))
+      }
+    }
+  }
+
   check_and_create_dir(dir, verbose = verbose)
   p <- file.path("derivatives")
   check_and_create_dir(dir, p, verbose = verbose)
@@ -316,6 +346,112 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           })
         )
 
+        if (verbose) {
+          alert(
+            "info", "Processing single-run epoch: %s (label: %s)",
+            epoch_id, current_label
+          )
+        }
+
+        if (is.null(epochs_to_save[[epoch_id]])) {
+          if (verbose) {
+            alert("warning", "Skipping epoch %s - no data", epoch_id)
+          }
+          next
+        }
+
+        if (!is.data.frame(epochs_to_save[[epoch_id]]) ||
+            nrow(epochs_to_save[[epoch_id]]) == 0
+        ) {
+          if (verbose) {
+            alert(
+              "warning", "Skipping epoch %s - empty or invalid data", epoch_id
+            )
+          }
+          next
+        }
+
+        if (verbose) {
+          alert(
+            "info", "Single-run epoch %s has %d rows",
+            epoch_id, nrow(epochs_to_save[[epoch_id]])
+          )
+        }
+
+        evs <- if (!is.null(find_baseline_structure(eyeris, current_label)) &&
+ !is.null(eyeris[[find_baseline_structure(
+                     eyeris, current_label
+                   )]]$block_1$info$epoch_events)) {
+          epoch_events <- eyeris[[find_baseline_structure(
+            eyeris, current_label
+          )]]$block_1$info$epoch_events
+          if (is.character(epoch_events)) {
+            if (length(epoch_events) == 1) {
+              epoch_events
+            } else {
+              paste(epoch_events, collapse = ", ")
+            }
+          } else {
+            paste(epoch_events, collapse = ", ")
+          }
+        } else {
+          epoch_data <- eyeris[[epoch_id]]
+          if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+            for (block_name in names(epoch_data$info)) {
+              if (!is.null(epoch_data$info[[block_name]]$epoch_events)) {
+                epoch_events <- epoch_data$info[[block_name]]$epoch_events
+                if (is.character(epoch_events)) {
+                  if (length(epoch_events) == 1) {
+                    result <- epoch_events
+                  } else {
+                    result <- paste(epoch_events, collapse = ", ")
+                  }
+                } else {
+                  result <- paste(epoch_events, collapse = ", ")
+                }
+                message("Found epoch events in epoch structure: ", result)
+              }
+            }
+          }
+          NULL
+        }
+        c_bline <- !is.null(find_baseline_structure(eyeris, current_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, current_label
+          )]]$block_1$info$baseline_events)
+        bline_evs <- if (c_bline) {
+          baseline_events <- eyeris[[find_baseline_structure(
+            eyeris, current_label
+          )]]$block_1$info$baseline_events
+          if (is.character(baseline_events)) {
+            if (length(baseline_events) == 1) {
+              baseline_events
+            } else {
+              paste(baseline_events, collapse = ", ")
+            }
+          } else {
+            paste(baseline_events, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+        bline_type <- if (c_bline) {
+          baseline_type <- eyeris[[find_baseline_structure(
+            eyeris, current_label
+          )]]$block_1$info$baseline_type
+          if (is.character(baseline_type)) {
+            if (length(baseline_type) == 1) {
+              baseline_type
+            } else {
+              paste(baseline_type, collapse = ", ")
+            }
+          } else {
+            paste(baseline_type, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+
         f <- make_bids_fname(
           sub = sub, ses = ses, task = task,
           epoch = "all", desc = "preproc_pupil_allruns"
@@ -373,7 +509,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         )
 
         f <- make_bids_fname(
-          sub = sub, ses = ses, task = task,
+          sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
           desc = "timeseries_pupil_allruns"
         )
 
@@ -406,8 +542,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           }
 
           f <- make_bids_fname(
-            sub = sub, ses = ses, task = task,
-            run = sprintf("%02d", i), # BIDS format
+            sub_id = sub,
+            ses_id = ses,
+            task_name = task,
+            run_num = sprintf("%02d", i),
             desc = "timeseries_pupil"
           )
 
@@ -433,8 +571,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     } else {
       # single run fallback case
       f <- make_bids_fname(
-        sub = sub, ses = ses, task = task,
-        run = sprintf("%02d", as.numeric(run_num)),
+        sub_id = sub,
+        ses_id = ses,
+        task_name = task,
+        run_num = sprintf("%02d", as.numeric(run_num)),
         desc = "timeseries_pupil"
       )
 
@@ -1285,16 +1425,67 @@ make_bids_fname <- function(sub_id, task_name, run_num,
       if (is.character(baseline_events) && length(baseline_events) == 1) {
       gsub("[*{}]", "", baseline_events)
     } else {
-      f <- paste0(
-        "sub-", sub,
-        "_task-", task,
-        "_run-", run,
-        "_desc-", desc, ".csv"
-      )
+      "multi_baseline"
+    }
+
+    bline_string <- "bline"
+    if (!is.null(baseline_type)) {
+      bline_string <- paste0(bline_string, "-", baseline_type)
+    }
+    bline_string <- paste0(bline_string, "-",
+                           sanitize_event_tag(baseline_event_name, ""))
+    desc_parts <- c(desc_parts, bline_string)
+  }
+
+  final_desc <- paste(desc_parts, collapse = "_")
+
+  f <- paste0(
+    "sub-", sub_id,
+    if (!is.null(ses_id)) paste0("_ses-", ses_id) else "",
+    "_task-", task_name,
+    if (!is.null(run_num)) paste0("_run-", run_num) else "",
+    "_desc-", final_desc,
+    ".csv"
+  )
+
+  return(gsub("__", "_", f)) # replace double underscores
+}
+            
+#' Find baseline structure name for a given epoch
+#'
+#' Helper function to find the correct baseline structure name that matches
+#' the complex baseline naming scheme used by eyeris.
+#'
+#' @param eyeris An eyeris object
+#' @param epoch_label The epoch label (without "epoch_" prefix)
+#'
+#' @return The baseline structure name or NULL if not found
+#'
+#' @keywords internal
+find_baseline_structure <- function(eyeris, epoch_label) {
+  baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
+
+  if (length(baseline_names) > 0) {
+    message("Available baseline structures: ",
+            paste(baseline_names, collapse = ", "))
+    message("Looking for epoch label: ", epoch_label)
+  }
+
+  for (baseline_name in baseline_names) {
+    if (grepl(paste0("_epoch_", epoch_label, "$"), baseline_name)) {
+      message("Found matching baseline structure: ", baseline_name)
+      return(baseline_name)
     }
   }
 
-  return(f)
+  simple_name <- paste0("baseline_", epoch_label)
+  if (simple_name %in% names(eyeris)) {
+    message("Found simple baseline structure: ", simple_name)
+    return(simple_name)
+  }
+
+  message("No baseline structure found for epoch label: ", epoch_label)
+  NULL
 }
 
 #' Get text_unique value for a given matched_event

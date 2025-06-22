@@ -200,20 +200,6 @@ print_plots <- function(plots) {
               )
             }
           }
-          # else if (i == before_plot_index || i == before_plot_index + 1) {
-          #   md_plots <- paste0(
-          #     md_plots,
-          #     if (i == before_plot_index) "### Before", "\n",
-          #     "![](", relative_fig_path, ")\n\n"
-          #   )
-          # }
-          # else if (i == after_plot_index || i == after_plot_index + 1) {
-          #   md_plots <- paste0(
-          #     md_plots,
-          #     if (i == after_plot_index) "### After", "\n",
-          #     "![](", relative_fig_path, ")\n\n"
-          #   )
-          # }
         }
 
         if (detrend_exists) {

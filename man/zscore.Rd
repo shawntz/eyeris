@@ -7,7 +7,7 @@
 zscore(eyeris)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} dervived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:
