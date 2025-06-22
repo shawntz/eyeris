@@ -255,11 +255,11 @@ glassbox <- function(file,
     lpfilt = function(data, params) {
       if (which_steps[["lpfilt"]]) {
         eyeris::lpfilt(data,
-          wp = params$lpfilt$wp,
-          ws = params$lpfilt$ws,
-          rp = params$lpfilt$rp,
-          rs = params$lpfilt$rs,
-          plot_freqz = params$lpfilt$plot_freqz
+                       wp = params$lpfilt$wp,
+                       ws = params$lpfilt$ws,
+                       rp = params$lpfilt$rp,
+                       rs = params$lpfilt$rs,
+                       plot_freqz = params$lpfilt$plot_freqz
         )
       } else {
         data
@@ -382,8 +382,8 @@ glassbox <- function(file,
 
         if (interactive_preview && !err_thrown && !skip_plot) {
           pupil_steps <- grep("^pupil_",
-            colnames(temp_file$timeseries[[block_name]]),
-            value = TRUE
+                              colnames(temp_file$timeseries[[block_name]]),
+                              value = TRUE
           )
 
           if (block_step_counter + 1 <= length(names(pipeline))) {
@@ -505,8 +505,8 @@ glassbox <- function(file,
       )
 
       pupil_steps <- grep("^pupil_",
-        colnames(file$timeseries$block_1),
-        value = TRUE
+                          colnames(file$timeseries$block_1),
+                          value = TRUE
       )
 
       if (interactive_preview) {
@@ -563,14 +563,16 @@ glassbox <- function(file,
         }
       }
 
-    step_counter <- step_counter + 1
-  # generate confounds after all other steps
-  if (verbose) {
-    cli::cli_alert_success("[  OK  ] - Running eyeris::summarize_confounds()")
-  }
-  file <- eyeris::summarize_confounds(file)
+      step_counter <- step_counter + 1
+      # generate confounds after all other steps
+      if (verbose) {
+        cli::cli_alert_success("[  OK  ] - Running eyeris::summarize_confounds()")
+      }
+      file <- eyeris::summarize_confounds(file)
 
-  return(file)
+      return(file)
+    }
+  }
 }
 
 prompt_user <- function() {
