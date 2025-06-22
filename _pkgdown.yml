@@ -89,6 +89,7 @@ reference:
       Save out BIDS-style derivatives, generate diagnostic HTML reports, and interactively plot and explore your pupil data.
     contents:
       - bidsify
+      - summarize_confounds
       - plot.eyeris
 
   - title: "🔧 Preprocessing Steps"
