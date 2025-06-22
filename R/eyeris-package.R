@@ -21,6 +21,7 @@
 #' @importFrom stats median
 #' @importFrom stats sd
 #' @importFrom stats setNames
+#' @importFrom stats var
 #' @importFrom utils write.csv
 #' @importFrom withr with_seed
 ## usethis namespace: end
