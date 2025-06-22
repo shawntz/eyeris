@@ -991,74 +991,86 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
       }
 
+      # plot random epoch panel
       for (i in seq_along(run_fig_paths)) {
         plot_dist <- i %% 2 == 0
-        # First plot
         jpeg(run_fig_paths[i],
           width = 12, height = 7, units = "in",
           res = 300, pointsize = 14
         )
-        plot(eyeris,
-          steps = ceiling(i / 2),
-          seed = report_seed,
-          block = i_run,
-          plot_distributions = plot_dist
+        tryCatch(
+          {
+            plot(eyeris,
+              steps = ceiling(i / 2),
+              seed = report_seed,
+              block = i_run,
+              plot_distributions = plot_dist
+            )
+          },
+          error = function(e) {
+            # create empty plot with error message
+            plot(NA,
+              xlim = c(0, 1), ylim = c(0, 1), type = "n",
+              xlab = "", ylab = "",
+              main = paste("No data to plot for block", i_run)
+            )
+            text(0.5, 0.5,
+                 paste("Error plotting block", i_run, ":\n", e$message),
+              cex = 0.8, col = "red"
+            )
+          }
         )
         dev.off()
       }
 
-      # make full timeseries plots
-      for (p in seq_along(plot_types)) {
-        plot_dist <- p %% 2 == 0
+      # make full timeseries plots for all intermediate steps
+      for (i_step in seq_along(pupil_steps)) {
+        for (p in seq_along(plot_types)[1]) {
+          plot_dist <- p %% 2 == 0
 
-        run_fig_paths <- c(
-          run_fig_paths,
-          file.path(
+          fig_filename <- file.path(
             run_dir,
             sprintf(
-              "run-%02d_fig-%d_desc-%s.jpg",
+              "run-%02d_fig-full-%d_desc-%s.jpg",
               i_run,
-              ceiling(length(run_fig_paths) / 2 + 1), plot_types[p]
+              i_step,
+              plot_types[p]
             )
           )
-        )
+          run_fig_paths <- c(run_fig_paths, fig_filename)
 
-        jpeg(file.path(run_fig_paths[length(run_fig_paths)]),
-          width = 12, height = 7, units = "in", res = 300, pointsize = 18
-        )
-        plot(eyeris,
-          steps = 1,
-          preview_window = c(0, max(current_data$time_secs)),
-          block = i_run, plot_distributions = plot_dist
-        )
-        dev.off()
-      }
-
-      for (p in seq_along(plot_types)) {
-        plot_dist <- p %% 2 == 0
-
-        run_fig_paths <- c(
-          run_fig_paths,
-          file.path(
-            run_dir,
-            sprintf(
-              "run-%02d_fig-%d_desc-%s.jpg",
-              i_run,
-              ceiling(length(run_fig_paths) / 2 + 1), plot_types[p]
-            )
+          jpeg(fig_filename,
+            width = 12, height = 7, units = "in", res = 300, pointsize = 18
           )
-        )
 
-        jpeg(file.path(run_fig_paths[length(run_fig_paths)]),
-          width = 12, height = 7, units = "in", res = 300, pointsize = 18
-        )
-        plot(eyeris,
-          steps = length(pupil_steps),
-          preview_window = c(0, max(current_data$time_secs)),
-          block = i_run,
-          plot_distributions = plot_dist
-        )
-        dev.off()
+          max_time <- max(current_data$time_secs, na.rm = TRUE)
+          if (!is.finite(max_time)) {
+            max_time <- 1 # default if no time data
+          }
+
+          tryCatch(
+            {
+              plot(eyeris,
+                steps = i_step,
+                preview_window = c(0, max_time),
+                block = i_run,
+                plot_distributions = plot_dist
+              )
+            },
+            error = function(e) {
+              plot(NA,
+                xlim = c(0, 1), ylim = c(0, 1), type = "n",
+                xlab = "", ylab = "",
+                main = paste("No data to plot for block", i_run)
+              )
+              text(0.5, 0.5,
+                   paste("Error plotting block", i_run, ":\n", e$message),
+                cex = 0.8, col = "red"
+              )
+            }
+          )
+          dev.off()
+        }
       }
 
       fig_paths <- c(fig_paths, run_fig_paths)
