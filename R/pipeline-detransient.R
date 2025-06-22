@@ -129,7 +129,7 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
   # validate `mad_val` != 0: unrealistic outcome for real data
   # likely means filtering has already been applied to the data
   # (i.e., if online filtering is enabled on the EyeLink Host PC)
-  if (!using_mad_thresh_override && mad_val == 0) {
+  if (!using_mad_thresh_override && !is.na(mad_val) && mad_val == 0) {
     warning(paste(
       "\n ***WARNING: SOMETHING OUTRAGEOUS IS HAPPENING WITH YOUR PUPIL",
       "DATA!***",
@@ -171,6 +171,12 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
     ))
 
     stop("Computed property `mad_val` == 0!")
+  }
+
+  # handle case where mad_val is NA (all pupil data is NA)
+  if (!using_mad_thresh_override && is.na(mad_val)) {
+    # if all pupil data is NA, return the original pupil data unchanged
+    return(pupil)
   }
 
   if (mad_thresh == 1) {
