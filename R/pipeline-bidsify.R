@@ -437,6 +437,511 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   }
 
+  # first export confounds for unepoched timeseries
+  if (!is.null(eyeris$confounds$unepoched_timeseries)) {
+    if (length(block_numbers) == 1) {
+      # case: single block
+      export_confounds_to_csv(
+        confounds_list = eyeris$confounds$unepoched_timeseries,
+        output_dir = file.path(dir, p),
+        filename_prefix = function(i) {
+          paste0(
+            "sub-", sub,
+            if (!is.null(ses)) paste0("_ses-", ses) else "",
+            "_task-", task,
+            if (!merge_runs) sprintf("_run-%02d",
+                                     as.numeric(block_numbers)) else "",
+            "_desc-confounds"
+          )
+        },
+        verbose = verbose,
+        run_num = if (!merge_runs) as.numeric(block_numbers) else run_num
+      )
+    } else {
+      # case: multiple blocks - export each block's confounds separately
+      for (block in block_numbers) {
+        block_name <- paste0("block_", block)
+        if (block_name %in% names(eyeris$confounds$unepoched_timeseries)) {
+          single_block_confounds <- list()
+          single_block_confounds[[block_name]] <-
+            eyeris$confounds$unepoched_timeseries[[block_name]]
+
+          export_confounds_to_csv(
+            confounds_list = single_block_confounds,
+            output_dir = file.path(dir, p),
+            filename_prefix = function(i) {
+              paste0(
+                "sub-", sub,
+                if (!is.null(ses)) paste0("_ses-", ses) else "",
+                "_task-", task,
+                if (!merge_runs) sprintf("_run-%02d",
+                                         as.numeric(block)) else "",
+                "_desc-confounds"
+              )
+            },
+            verbose = verbose,
+            run_num = if (!merge_runs) as.numeric(block) else run_num
+          )
+        }
+      }
+    }
+  }
+
+  if (!is.null(eyeris$confounds$epoched_timeseries) ||
+   !is.null(eyeris$confounds$epoched_epoch_wide)) {
+    # create summary files for each block
+    for (block in block_numbers) {
+      epoch_summary <- data.frame(
+        epoch_type = names(eyeris)[grep("^epoch_", names(eyeris))],
+        epoch_events = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                              function(epoch_name) {
+                                epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+          message("Processing epoch: ", epoch_name, " -> label: ",
+                  epoch_label, " -> baseline: ", baseline_structure)
+
+                               if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$epoch_events)) {
+            epoch_events <- eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$epoch_events
+            if (is.character(epoch_events)) {
+              if (length(epoch_events) == 1) {
+                result <- epoch_events
+              } else {
+                result <- paste(epoch_events, collapse = ", ")
+              }
+            } else {
+              result <- paste(epoch_events, collapse = ", ")
+            }
+            message("Found epoch events in baseline structure: ", result)
+            result
+          } else {
+            epoch_data <- eyeris[[epoch_name]]
+            if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+              block_name <- paste0("block_", block)
+              if (block_name %in% names(epoch_data$info) &&
+                  !is.null(epoch_data$info[[block_name]]$epoch_events)) {
+                epoch_events <- epoch_data$info[[block_name]]$epoch_events
+                if (is.character(epoch_events)) {
+                  if (length(epoch_events) == 1) {
+                    result <- epoch_events
+                  } else {
+                    result <- paste(epoch_events, collapse = ", ")
+                  }
+                } else {
+                  result <- paste(epoch_events, collapse = ", ")
+                }
+                message("Found epoch events in epoch structure: ", result)
+                result
+              }
+            }
+            message("No epoch events found for: ", epoch_name)
+            NA_character_
+          }
+        }),
+        baseline_events = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                                 function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_events)) {
+            baseline_events <- eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_events
+            if (is.character(baseline_events)) {
+              if (length(baseline_events) == 1) {
+                result <- baseline_events
+              } else {
+                result <- paste(baseline_events, collapse = ", ")
+              }
+            } else {
+              result <- paste(baseline_events, collapse = ", ")
+            }
+            message("Found baseline events: ", result)
+            result
+          } else {
+            message("No baseline events found for: ", epoch_name)
+            NA_character_
+          }
+        }),
+        baseline_period = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                                 function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_period)) {
+            paste(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_period, collapse = ", ")
+          } else {
+            NA_character_
+          }
+        }),
+        n_epochs = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                          function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$n_epochs)) {
+            eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$n_epochs
+          } else {
+            epoch_data <- eyeris[[epoch_name]]
+            if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+              block_name <- paste0("block_", block)
+              if (block_name %in% names(epoch_data$info) &&
+                  !is.null(epoch_data$info[[block_name]]$n_epochs)) {
+                return(epoch_data$info[[block_name]]$n_epochs)
+              }
+            }
+            # fallback: count epochs from the data itself for this block
+            epoch_data <- eyeris[[epoch_name]]
+            if (is.list(epoch_data)) {
+              block_name <- paste0("block_", block)
+              if (block_name %in% names(epoch_data) &&
+                  is.data.frame(epoch_data[[block_name]]) &&
+                  "matched_event" %in% colnames(epoch_data[[block_name]])) {
+                length(unique(epoch_data[[block_name]]$matched_event))
+              } else {
+                0
+              }
+            } else if (is.data.frame(epoch_data) &&
+                       "matched_event" %in% colnames(epoch_data)) {
+              length(unique(epoch_data$matched_event))
+            } else {
+              NA_integer_
+            }
+          }
+        }),
+        n_baseline_epochs = sapply(names(eyeris)[
+          grep("^epoch_", names(eyeris))], function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$n_baseline_epochs)) {
+            eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$n_baseline_epochs
+          } else {
+            # if no baseline structure, there are no baseline epochs
+            NA_integer_
+          }
+        })
+      )
+
+      summary_filename <- make_bids_fname(
+        sub_id = sub,
+        ses_id = ses,
+        task_name = task,
+        run_num = if (!merge_runs) sprintf("%02d",
+                                           as.numeric(block)) else run_num,
+        desc = "epoch_summary"
+      )
+      summary_filepath <- file.path(dir, p, summary_filename)
+
+      if (verbose) {
+        alert("info", "Writing epoch summary for block %d to '%s'...", block,
+              summary_filepath)
+      }
+
+      write.csv(epoch_summary, summary_filepath, row.names = FALSE)
+
+      if (verbose) {
+        alert("success", "Epoch summary for block %d written to: '%s'", block,
+              summary_filepath)
+      }
+    }
+
+    # export epoch-wide confounds
+    if (!is.null(eyeris$confounds$epoched_epoch_wide)) {
+      for (epoch_name in names(eyeris$confounds$epoched_epoch_wide)) {
+        epoch_label <- sub("^epoch_", "", epoch_name)
+
+        epoch_folder <- file.path(dir, p, paste0("epoch_", epoch_label))
+        if (!dir.exists(epoch_folder)) {
+          dir.create(epoch_folder, recursive = TRUE)
+        }
+
+        epoch_events_info <- if (!is.null(find_baseline_structure(
+          eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$epoch_events)) {
+          epoch_events <- eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$epoch_events
+          if (is.character(epoch_events)) {
+            if (length(epoch_events) == 1) {
+              epoch_events
+            } else {
+              paste(epoch_events, collapse = ", ")
+            }
+          } else {
+            paste(epoch_events, collapse = ", ")
+          }
+        } else {
+          epoch_data <- eyeris[[epoch_name]]
+          if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+            for (block_name in names(epoch_data$info)) {
+              if (!is.null(epoch_data$info[[block_name]]$epoch_events)) {
+                epoch_events <- epoch_data$info[[block_name]]$epoch_events
+                if (is.character(epoch_events)) {
+                  if (length(epoch_events) == 1) {
+                    result <- epoch_events
+                  } else {
+                    result <- paste(epoch_events, collapse = ", ")
+                  }
+                } else {
+                  result <- paste(epoch_events, collapse = ", ")
+                }
+                message("Found epoch events in epoch structure: ", result)
+              }
+            }
+          }
+          NULL
+        }
+        baseline_events_info <-
+          if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_events)) {
+          baseline_events <- eyeris[[
+            find_baseline_structure(
+              eyeris, epoch_label)]]$block_1$info$baseline_events
+          if (is.character(baseline_events)) {
+            if (length(baseline_events) == 1) {
+              baseline_events
+            } else {
+              paste(baseline_events, collapse = ", ")
+            }
+          } else {
+            paste(baseline_events, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+        baseline_type_info <-
+          if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_type)) {
+          baseline_type <- eyeris[[
+            find_baseline_structure(
+              eyeris, epoch_label)]]$block_1$info$baseline_type
+          if (is.character(baseline_type)) {
+            if (length(baseline_type) == 1) {
+              baseline_type
+            } else {
+              paste(baseline_type, collapse = ", ")
+            }
+          } else {
+            paste(baseline_type, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+
+        for (block_name in names(
+          eyeris$confounds$epoched_epoch_wide[[epoch_name]])) {
+          block_confounds <-
+            eyeris$confounds$epoched_epoch_wide[[epoch_name]][[block_name]]
+
+          if (nrow(block_confounds) == 0) next
+
+          matched_events <- unique(block_confounds$matched_event)
+
+          for (event in matched_events) {
+            event_confounds <- block_confounds[
+              block_confounds$matched_event == event, ]
+
+            if (nrow(event_confounds) == 0) next
+
+            event_unique <- if ("text_unique" %in% colnames(event_confounds)) {
+              unique(event_confounds$text_unique)[1]
+            } else {
+              event
+            }
+
+            epoch_filename <- make_bids_fname(
+              sub_id = sub,
+              ses_id = ses,
+              task_name = task,
+              run_num = sprintf("%02d", get_block_numbers(block_name)),
+              epoch_name = epoch_label,
+              desc = paste0("confounds_epoch_wide_", event_unique),
+              epoch_events = epoch_events_info,
+              baseline_events = baseline_events_info,
+              baseline_type = baseline_type_info
+            )
+            epoch_filepath <- file.path(epoch_folder, epoch_filename)
+
+            if (verbose) {
+              alert(
+                "info",
+                paste0("Writing epoch-wide confounds for event '%s'",
+                       "(unique: '%s') to '%s'..."),
+                event, event_unique, epoch_filepath
+              )
+            }
+
+            write.csv(event_confounds, epoch_filepath, row.names = FALSE)
+
+            if (verbose) {
+              alert(
+                "success",
+                paste0("Epoch-wide confounds for event '%s'",
+                       "(unique: '%s') written to: '%s'"),
+                event, event_unique, epoch_filepath
+              )
+            }
+          }
+        }
+      }
+    }
+
+    if (!is.null(eyeris$confounds$epoched_timeseries)) {
+      for (epoch_name in names(eyeris$confounds$epoched_timeseries)) {
+        epoch_label <- sub("^epoch_", "", epoch_name)
+
+        epoch_folder <- file.path(dir, p, paste0("epoch_", epoch_label))
+        if (!dir.exists(epoch_folder)) {
+          dir.create(epoch_folder, recursive = TRUE)
+        }
+
+        epoch_events_info <-
+          if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$epoch_events)) {
+          epoch_events <- eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$epoch_events
+          if (is.character(epoch_events)) {
+            if (length(epoch_events) == 1) {
+              epoch_events
+            } else {
+              paste(epoch_events, collapse = ", ")
+            }
+          } else {
+            paste(epoch_events, collapse = ", ")
+          }
+        } else {
+          epoch_data <- eyeris[[epoch_name]]
+          if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+            for (block_name in names(epoch_data$info)) {
+              if (!is.null(epoch_data$info[[block_name]]$epoch_events)) {
+                epoch_events <- epoch_data$info[[block_name]]$epoch_events
+                if (is.character(epoch_events)) {
+                  if (length(epoch_events) == 1) {
+                    result <- epoch_events
+                  } else {
+                    result <- paste(epoch_events, collapse = ", ")
+                  }
+                } else {
+                  result <- paste(epoch_events, collapse = ", ")
+                }
+                message("Found epoch events in epoch structure: ", result)
+              }
+            }
+          }
+          NULL
+        }
+        baseline_events_info <-
+          if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_events)) {
+          baseline_events <- eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_events
+          if (is.character(baseline_events)) {
+            if (length(baseline_events) == 1) {
+              result <- baseline_events
+            } else {
+              result <- paste(baseline_events, collapse = ", ")
+            }
+          } else {
+            result <- paste(baseline_events, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+        baseline_type_info <-
+          if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
+          !is.null(eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_type)) {
+          baseline_type <- eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_type
+          if (is.character(baseline_type)) {
+            if (length(baseline_type) == 1) {
+              result <- baseline_type
+            } else {
+              result <- paste(baseline_type, collapse = ", ")
+            }
+          } else {
+            result <- paste(baseline_type, collapse = ", ")
+          }
+        } else {
+          NULL
+        }
+
+        for (block_name in names(
+          eyeris$confounds$epoched_timeseries[[epoch_name]])) {
+          block_confounds <- eyeris$confounds$epoched_timeseries[[
+            epoch_name]][[block_name]]
+
+          if (nrow(block_confounds) == 0) next
+
+          matched_events <- unique(block_confounds$matched_event)
+
+          for (event in matched_events) {
+            event_confounds <-
+              block_confounds[block_confounds$matched_event == event, ]
+
+            if (nrow(event_confounds) == 0) next
+
+            event_unique <- if ("text_unique" %in% colnames(event_confounds)) {
+              unique(event_confounds$text_unique)[1]
+            } else {
+              event
+            }
+
+            event_filename <- make_bids_fname(
+              sub_id = sub,
+              ses_id = ses,
+              task_name = task,
+              run_num = sprintf("%02d", get_block_numbers(block_name)),
+              epoch_name = epoch_label,
+              desc = paste0("confounds_steps_", event_unique),
+              epoch_events = epoch_events_info,
+              baseline_events = baseline_events_info,
+              baseline_type = baseline_type_info
+            )
+            event_filepath <- file.path(epoch_folder, event_filename)
+
+            if (verbose) {
+              alert(
+                "info",
+                paste0("Writing step-specific confounds for event '%s'",
+                       "(unique: '%s') to '%s'..."),
+                event, event_unique, event_filepath
+              )
+            }
+
+            write.csv(event_confounds, event_filepath, row.names = FALSE)
+
+            if (verbose) {
+              alert(
+                "success",
+                paste0("Step-specific confounds for event '%s'",
+                       "(unique: '%s') written to: '%s'"),
+                event, event_unique, event_filepath
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+
   should_render_report <- html_report || pdf_report
 
   if (should_render_report) {
