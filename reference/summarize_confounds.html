@@ -19,7 +19,7 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,8 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-130">v1.3.0 (DEV)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
@@ -72,7 +73,7 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract confounding variables calculated separately for each pupil data file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/ff/glassbox-multi-block-errors/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/enh/174/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
       <div class="d-none name"><code>summarize_confounds.Rd</code></div>
     </div>
 
@@ -115,6 +116,11 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-in"><span><span class="co"># Calculate confounds for all blocks and preprocessing steps</span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="epoch.html">epoch</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    events <span class="op">=</span> <span class="st">"PROBE_{type}_{trial}"</span>,</span></span>
+<span class="r-in"><span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># grab 1 second prior to and 1 second post event</span></span></span>
+<span class="r-in"><span>    label <span class="op">=</span> <span class="st">"prePostProbe"</span> <span class="co"># custom epoch label name</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">summarize_confounds</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink()</span>
@@ -125,11 +131,19 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epoching pupil data...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.12 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access confounds for entire timeseries for a specific block and step</span></span></span>
-<span class="r-in"><span><span class="va">block1_raw_confounds</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">unepoched_timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">pupil_raw</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">block1_raw_confounds</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">unepoched_timeseries_confounds</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">unepoched_timeseries</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">unepoched_timeseries_confounds</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        74  0.003563346      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
@@ -144,13 +158,647 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                    56                    56                     56</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                  56     0.002696716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767       156  0.007511918      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1               156                 156               156                 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                156                  156         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        1    0.04815564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   156                   156                    156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 156      0.00751228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767       156  0.007511918      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1               156                 156               156                 156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                156                  156         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        1    0.04815564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   156                   156                    156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 156      0.00751228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             1000         20766     20767        NA           NA      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0                   0                 0                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  0                    0         1920          1080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      197.3489      780.2944                          1112.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                          0.02866172 9.630664e-05        0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    NA                    NA                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_blink_time_ms prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0               0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access confounds for a specific epoched timeseries</span></span></span>
 <span class="r-in"><span><span class="co"># for a specific block and step</span></span></span>
-<span class="r-in"><span><span class="va">block1_raw_confounds</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">epoched_timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">pupil_raw</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">block1_raw_confounds</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="va">epoched_timeseries_confounds</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">epoched_timeseries</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">epoched_timeseries_confounds</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe$block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                    matched_event</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                          PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                  PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                      PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate          PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                            PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                    PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                        PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                          PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                  PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                      PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate          PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                            PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                    PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                        PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                          PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                  PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                      PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate          PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                            PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                    PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                        PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                          PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                  PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                      PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate          PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                            PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                    PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                        PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                          PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                  PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                      PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate          PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                            PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                    PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                        PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                      text_unique</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                          PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                  PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                      PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate          PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                            PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                    PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                        PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                          PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                  PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                      PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate          PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                            PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                    PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                        PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                          PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                  PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                      PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate          PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                            PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                    PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                        PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                          PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                  PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                      PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate          PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                            PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                    PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                        PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                          PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                  PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                      PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate          PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt   PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z PROBE_START_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                            PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                    PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                        PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate            PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt     PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z   PROBE_STOP_26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                           step</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                                                                   raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                                                   raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                                           raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                                                                    raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                                                    raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                                            raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                                                                   raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                                                   raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                                           raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                                                                    raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                                                    raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                                            raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                                                                   raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                                                   raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                                           raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                                                                    raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                                                    raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                                            raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                                                                   raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                                                   raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                                           raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                                                                    raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                                                    raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                                            raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                                                                   raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                                                   raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                                           raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                                                                    raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                                                    raw_deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                                            raw_deblink_detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                         range</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                           998.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                   998.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                       998.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate           998.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt    971.130196</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z    2.140145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                           1051.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                   1051.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                       1051.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate           1051.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt    1010.411304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z     2.226711</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                          1260.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                  1260.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                      1260.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate          1260.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt   1231.702862</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z    2.714386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                           1699.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                   1699.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                       1699.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate           1699.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt    1660.799078</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z     3.660014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                          1040.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                  1040.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                      1040.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate          1040.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt    999.811746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z    2.203352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                           1129.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                   1129.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                       1129.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate           1129.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt    1080.197345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z     2.380503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                          2619.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                   797.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                       797.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate           797.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt    737.992888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z    1.626364</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                            680.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                    680.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                        680.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate            680.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt     624.752894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z     1.376810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                          1088.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                  1088.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                      1088.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate          1088.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt   1036.831886</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z    2.284936</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                           1136.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                   1136.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                       1136.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate           1136.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt    1093.494898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z     2.409808</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   zscore_max</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                           1.8741331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                   1.8741331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                       1.8741331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate           1.8741331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt    1.8252086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z  1.8252086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                            1.7388454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                    1.7388454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                        1.7388454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate            1.7388454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt     1.7002157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z   1.7002157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                           1.7529229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                   1.7529229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                       1.7529229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate           1.7529229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt    1.6937001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z  1.6937001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                            1.4647589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                    1.4647589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                        1.4647589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate            1.4647589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt     1.4340379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z   1.4340379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                           1.8640236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                   1.8640236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                       1.8640236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate           1.8640236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt    1.8174791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z  1.8174791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                            1.7923244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                    1.7923244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                        1.7923244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate            1.7923244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt     1.7495699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z   1.7495699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                           1.3800539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                   1.6486043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                       1.6486043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate           1.4772399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt    1.3809607</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z  1.3809607</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                            2.0509766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                    2.0509766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                        2.0509766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate            2.0509766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt     1.9363269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z   1.9363269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                           0.9536077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                   0.9536077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                       0.9536077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate           0.9536077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt    0.8914853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z  0.8914853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                            1.3920774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                    1.3920774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                        1.3920774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate            1.3920774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt     1.3508719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z   1.3508719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   zscore_min</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                           -1.777871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                   -1.777871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                       -1.777871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate           -1.777871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt    -1.732595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z  -1.732595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                            -1.255038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                    -1.255038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                        -1.255038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate            -1.255038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt     -1.179065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z   -1.179065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                           -2.423805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                   -2.423805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                       -2.423805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate           -2.423805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt    -2.391404</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z  -2.391404</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                            -1.440223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                    -1.440223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                        -1.440223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate            -1.440223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt     -1.406486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z   -1.406486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                           -1.388605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                   -1.388605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                       -1.388605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate           -1.388605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt    -1.311083</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z  -1.311083</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                            -1.427859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                    -1.427859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                        -1.427859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate            -1.427859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt     -1.333209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z   -1.333209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                           -6.868822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                   -1.478325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                       -1.478325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate           -1.534412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt    -1.410658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z  -1.410658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                            -1.567514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                    -1.567514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                        -1.567514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate            -1.567514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt     -1.394280</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z   -1.394280</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                           -2.652579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                   -2.652579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                       -2.652579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate           -2.652579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt    -2.548880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z  -2.548880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                            -1.119261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                    -1.119261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                        -1.119261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate            -1.119261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt     -1.067685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z   -1.067685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   prop_blink_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                           0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                            0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt         0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                           0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                            0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt         0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                           0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                            0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt         0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                               0.02801401</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                       0.07803902</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                           0.07803902</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                            0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt         0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                           0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate               0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                        0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                            0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt         0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   pre_epoch_pupil_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                                 18.87011114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                         18.87011114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                             18.87011114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                 18.87011114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt          15.83341397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.03489315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                                  19.58511847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                          19.58511847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                              19.58511847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                  19.58511847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt           16.76829235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0.03695341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                                 39.18459439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                         39.18459439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                             39.18459439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                 39.18459439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt          36.55426622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.08055708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                                  46.75058783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                          46.75058783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                              46.75058783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                  46.75058783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt           44.20880062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0.09742589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                                 14.64897395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                         14.64897395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                             14.64897395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                 14.64897395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt           8.15804826</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.01797844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                                  71.34731950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                          71.34731950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                              71.34731950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                  71.34731950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt           69.20431208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0.15251017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                                 25.10132303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                         25.10132303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                             25.10132303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                 25.10132303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt          21.23178857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.04678991</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                                  78.38380633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                          78.38380633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                              78.38380633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                  78.38380633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt           80.27863046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0.17691539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                                 14.94516511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                         14.94516511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                             14.94516511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                 14.94516511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt          11.00293946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.02424791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                                  25.89951305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                          25.89951305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                              25.89951305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                  25.89951305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt           25.86194518</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0.05699370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   epoch_pupil_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw                                             273.2746093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink                                     273.2746093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient                         273.2746093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate             273.2746093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt      272.9577740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.6015353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw                                              351.0490369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink                                      351.0490369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient                          351.0490369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate              351.0490369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt       350.9249533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.7733568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw                                             301.6715758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink                                     301.6715758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient                         301.6715758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate             301.6715758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt      301.5107621</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.6644594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw                                              584.8573616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink                                      584.8573616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient                          584.8573616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate              584.8573616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt       584.6805383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z       1.2884996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw                                             319.7413904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink                                     319.7413904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient                         319.7413904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate             319.7413904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt      319.5755099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.7042699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw                                              350.6011604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink                                      350.6011604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient                          350.6011604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate              350.6011604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt       350.3972600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.7721939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw                                             317.4978075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink                                     254.8826566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient                         254.8826566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate             264.6388087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt      264.3601953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.5825883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw                                              187.9236423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink                                      187.9236423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient                          187.9236423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate              187.9236423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt       187.5792866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.4133810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw                                             301.7037201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink                                     301.7037201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient                         301.7037201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate             301.7037201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt      301.3726523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      0.6641551</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw                                              452.3483977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink                                      452.3483977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient                          452.3483977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate              452.3483977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt       452.1269805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.9963825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

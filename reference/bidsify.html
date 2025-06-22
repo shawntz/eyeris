@@ -19,7 +19,7 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,8 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-130">v1.3.0 (DEV)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
@@ -72,7 +73,7 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Save out pupil timeseries data in a BIDS-like structure</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/ff/glassbox-multi-block-errors/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/enh/174/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
       <div class="d-none name"><code>bidsify.Rd</code></div>
     </div>
 
@@ -110,7 +111,7 @@ metadata you provide.</p>
 
 
 <dl><dt id="arg-eyeris">eyeris<a class="anchor" aria-label="anchor" href="#arg-eyeris"></a></dt>
-<dd><p>An object of class <code>eyeris</code> dervived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
+<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
 
 
 <dt id="arg-save-all">save_all<a class="anchor" aria-label="anchor" href="#arg-save-all"></a></dt>
@@ -208,6 +209,10 @@ official BIDS format for eyetracking data (see <a href="https://github.com/bids-
 At this time, however, this function instead takes a more BIDS-inspired
 approach to organizing the output files for preprocessed pupil data.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="https://lifecycle.r-lib.org/reference/deprecate_soft.html" class="external-link">lifecycle::deprecate_warn()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -246,18 +251,23 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.34 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.21 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`run_num` is ignored when data contains multiple blocks.Blocks will be automatically numbered as runs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/RtmpbxLmsg' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpbxLmsg/derivatives/sub-001/ses-01/eye'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epochs to save structure:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   Names: epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   epoch_prePostProbe: list with 2 elements</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     block_1: data.frame with 20000 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     info: list</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/RtmpJIUySs' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpJIUySs/derivatives' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpJIUySs/derivatives'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpJIUySs/derivatives/sub-001' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpJIUySs/derivatives/sub-001'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpJIUySs/derivatives/sub-001/ses-01' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpJIUySs/derivatives/sub-001/ses-01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/RtmpJIUySs/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/RtmpJIUySs/derivatives/sub-001/ses-01/eye'</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in make_bids_fname(sub = sub, ses = ses, task = task, run = sprintf("%02d",     get_block_numbers(i)), epoch = current_label, desc = "preproc_pupil"):</span> argument 5 matches multiple formal arguments</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
