@@ -54,6 +54,8 @@
 #'
 #' @return Invisibly returns `NULL`. Called for its side effects.
 #'
+#' @seealso [lifecycle::deprecate_warn()]
+#'
 #' @examples
 #' # Bleed around blink periods just long enough to remove majority of
 #' #  deflections due to eyelid movements
@@ -141,19 +143,31 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   tryCatch(
     {
       epochs <- filter_epochs(eyeris, epochs_list)
-      count_epochs(epochs)
+      # Only check epochs if we actually need them for processing
+      if (length(epochs) > 0) {
+        count_epochs(epochs)
+      }
     },
     error = function(e) {
       error_handler(e, "epoch_count_error")
     }
   )
 
-  if (save_all) {
-    epochs_to_save <- eyeris[epochs]
-  } else if (!is.null(epochs_list)) {
-    epochs_to_save <- eyeris[epochs_list]
+  # Only process epochs if they exist
+  if (length(epochs) > 0) {
+    if (save_all) {
+      epochs_to_save <- eyeris[epochs]
+    } else if (!is.null(epochs_list)) {
+      epochs_to_save <- eyeris[epochs_list]
+    } else {
+      stop("Either save_all must be TRUE or epochs_list must be specified.")
+    }
   } else {
-    stop("Either save_all must be TRUE or epochs_list must be specified.")
+    # No epochs available - set epochs_to_save to empty list
+    epochs_to_save <- list()
+    if (verbose) {
+      alert("info", "No epoched data found. Proceeding with confounds and summary export only.")
+    }
   }
 
   check_and_create_dir(dir, verbose = verbose)
@@ -179,65 +193,37 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
 
   block_numbers <- get_block_numbers(eyeris)
 
-  if (!merge_epochs) {
-    if (has_multiple_runs) {
-      # process each epoch-type separately, one-at-a-time
-      lapply(names(epochs_to_save), function(epoch_id) {
-        current_label <- substr(epoch_id, 7, nchar(epoch_id))
+  # Only process epochs if they exist
+  if (length(epochs_to_save) > 0) {
+    if (!merge_epochs) {
+      if (has_multiple_runs) {
+        # process each epoch-type separately, one-at-a-time
+        lapply(names(epochs_to_save), function(epoch_id) {
+          current_label <- substr(epoch_id, 7, nchar(epoch_id))
 
-        if (merge_runs) {
-          epochs_with_runs <- do.call(
-            rbind, lapply(names(eyeris$timeseries), function(i) {
-              run_epochs <- epochs_to_save[[epoch_id]][[i]]
-              run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              run_epochs
-            })
-          )
-
-          f <- make_bids_fname(
-            sub = sub, ses = ses, task = task,
-            epoch = current_label, desc = "preproc_pupil_allruns"
-          )
-
-          if (verbose) {
-            alert(
-              "info",
-              "Writing combined runs epoched data to '%s'...",
-              file.path(dir, p, f)
+          if (merge_runs) {
+            epochs_with_runs <- do.call(
+              rbind, lapply(names(eyeris$timeseries), function(i) {
+                run_epochs <- epochs_to_save[[epoch_id]][[i]]
+                run_epochs$run <- sprintf("%02d", get_block_numbers(i))
+                run_epochs
+              })
             )
-          }
-
-          write.csv(epochs_with_runs,
-            file = file.path(bids_dir, p, f),
-            row.names = FALSE
-          )
-
-          if (verbose) {
-            alert(
-              "success",
-              "Combined runs epoched data written to: '%s'",
-              file.path(dir, p, f)
-            )
-          }
-        } else {
-          lapply(names(eyeris$timeseries), function(i) {
-            run_epochs <- epochs_to_save[[epoch_id]][[i]]
 
             f <- make_bids_fname(
               sub = sub, ses = ses, task = task,
-              run = sprintf("%02d", get_block_numbers(i)),
-              epoch = current_label, desc = "preproc_pupil"
+              epoch = current_label, desc = "preproc_pupil_allruns"
             )
 
             if (verbose) {
               alert(
                 "info",
-                "Writing run %02d epoched data to '%s'...",
-                get_block_numbers(i), file.path(dir, p, f)
+                "Writing combined runs epoched data to '%s'...",
+                file.path(dir, p, f)
               )
             }
 
-            write.csv(run_epochs,
+            write.csv(epochs_with_runs,
               file = file.path(bids_dir, p, f),
               row.names = FALSE
             )
@@ -245,96 +231,129 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             if (verbose) {
               alert(
                 "success",
-                "Run %02d epoched data written to: '%s'",
-                get_block_numbers(i), file.path(dir, p, f)
+                "Combined runs epoched data written to: '%s'",
+                file.path(dir, p, f)
               )
             }
-          })
-        }
-      })
+          } else {
+            lapply(names(eyeris$timeseries), function(i) {
+              run_epochs <- epochs_to_save[[epoch_id]][[i]]
+
+              f <- make_bids_fname(
+                sub = sub, ses = ses, task = task,
+                run = sprintf("%02d", get_block_numbers(i)),
+                epoch = current_label, desc = "preproc_pupil"
+              )
+
+              if (verbose) {
+                alert(
+                  "info",
+                  "Writing run %02d epoched data to '%s'...",
+                  get_block_numbers(i), file.path(dir, p, f)
+                )
+              }
+
+              write.csv(run_epochs,
+                file = file.path(bids_dir, p, f),
+                row.names = FALSE
+              )
+
+              if (verbose) {
+                alert(
+                  "success",
+                  "Run %02d epoched data written to: '%s'",
+                  get_block_numbers(i), file.path(dir, p, f)
+                )
+              }
+            })
+          }
+        })
+      } else {
+        # original single-run handler method
+        lapply(names(epochs_to_save), function(epoch_id) {
+          current_label <- substr(epoch_id, 7, nchar(epoch_id))
+
+          f <- make_bids_fname(
+            sub = sub, ses = ses, task = task,
+            run = sprintf("%02d", as.numeric(run_num)),
+            epoch = current_label, desc = "preproc_pupil"
+          )
+
+          if (verbose) {
+            alert(
+              "info",
+              "Writing epoched data to '%s'...", file.path(dir, p, f)
+            )
+          }
+
+          write.csv(epochs_to_save[[epoch_id]],
+            file = file.path(bids_dir, p, f),
+            row.names = FALSE
+          )
+
+          if (verbose) {
+            alert(
+              "success", "Epoched data written to: '%s'",
+              file.path(dir, p, f)
+            )
+          }
+        })
+      }
     } else {
-      # original single-run handler method
-      lapply(names(epochs_to_save), function(epoch_id) {
-        current_label <- substr(epoch_id, 7, nchar(epoch_id))
+      # merge all epochs and runs (if multiple runs exist)
+      if (has_multiple_runs && merge_runs) {
+        merged_epochs <- do.call(
+          rbind, lapply(names(epochs_to_save), function(epoch_id) {
+            epochs_with_runs <- do.call(
+              rbind, lapply(names(eyeris$timeseries), function(i) {
+                run_epochs <- epochs_to_save[[epoch_id]][[i]]
+                run_epochs$run <- sprintf("%02d", get_block_numbers(i))
+                run_epochs$epoch_type <- epoch_id
+                run_epochs
+              })
+            )
+            epochs_with_runs
+          })
+        )
+
+        f <- make_bids_fname(
+          sub = sub, ses = ses, task = task,
+          epoch = "all", desc = "preproc_pupil_allruns"
+        )
+      } else {
+        merged_epochs <- do.call(
+          rbind, lapply(names(epochs_to_save), function(epoch_id) {
+            epochs <- epochs_to_save[[epoch_id]]
+            epochs$epoch_type <- epoch_id
+            epochs
+          })
+        )
 
         f <- make_bids_fname(
           sub = sub, ses = ses, task = task,
           run = sprintf("%02d", as.numeric(run_num)),
-          epoch = current_label, desc = "preproc_pupil"
+          epoch = "all", desc = "preproc_pupil"
         )
+      }
 
-        if (verbose) {
-          alert(
-            "info",
-            "Writing epoched data to '%s'...", file.path(dir, p, f)
-          )
-        }
+      if (verbose) {
+        alert("info", "Writing merged epochs to '%s'...", file.path(dir, p, f))
+      }
 
-        write.csv(epochs_to_save[[epoch_id]],
-          file = file.path(bids_dir, p, f),
-          row.names = FALSE
+      write.csv(merged_epochs,
+        file = file.path(bids_dir, p, f),
+        row.names = FALSE
+      )
+
+      if (verbose) {
+        alert(
+          "success", "Merged epochs written to: '%s'",
+          file.path(dir, p, f)
         )
-
-        if (verbose) {
-          alert(
-            "success", "Epoched data written to: '%s'",
-            file.path(dir, p, f)
-          )
-        }
-      })
+      }
     }
-  } else {
-    # merge all epochs and runs (if multiple runs exist)
-    if (has_multiple_runs && merge_runs) {
-      merged_epochs <- do.call(
-        rbind, lapply(names(epochs_to_save), function(epoch_id) {
-          epochs_with_runs <- do.call(
-            rbind, lapply(names(eyeris$timeseries), function(i) {
-              run_epochs <- epochs_to_save[[epoch_id]][[i]]
-              run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              run_epochs$epoch_type <- epoch_id
-              run_epochs
-            })
-          )
-          epochs_with_runs
-        })
-      )
-
-      f <- make_bids_fname(
-        sub = sub, ses = ses, task = task,
-        epoch = "all", desc = "preproc_pupil_allruns"
-      )
-    } else {
-      merged_epochs <- do.call(
-        rbind, lapply(names(epochs_to_save), function(epoch_id) {
-          epochs <- epochs_to_save[[epoch_id]]
-          epochs$epoch_type <- epoch_id
-          epochs
-        })
-      )
-
-      f <- make_bids_fname(
-        sub = sub, ses = ses, task = task,
-        run = sprintf("%02d", as.numeric(run_num)),
-        epoch = "all", desc = "preproc_pupil"
-      )
-    }
-
-    if (verbose) {
-      alert("info", "Writing merged epochs to '%s'...", file.path(dir, p, f))
-    }
-
-    write.csv(merged_epochs,
-      file = file.path(bids_dir, p, f),
-      row.names = FALSE
-    )
-
-    if (verbose) {
-      alert(
-        "success", "Merged epochs written to: '%s'",
-        file.path(dir, p, f)
-      )
-    }
+  } else if (verbose) {
+    alert("info", "Skipping epoch processing - no epoched data available.")
   }
 
   if (save_raw) {
@@ -487,8 +506,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   }
 
-  if (!is.null(eyeris$confounds$epoched_timeseries) ||
-   !is.null(eyeris$confounds$epoched_epoch_wide)) {
+  # Only process epoched confounds if epochs exist
+  if (length(epochs) > 0 && 
+      (!is.null(eyeris$confounds$epoched_timeseries) ||
+       !is.null(eyeris$confounds$epoched_epoch_wide))) {
     # create summary files for each block
     for (block in block_numbers) {
       epoch_summary <- data.frame(
@@ -727,9 +748,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           if (!is.null(find_baseline_structure(eyeris, epoch_label)) &&
           !is.null(eyeris[[find_baseline_structure(
             eyeris, epoch_label)]]$block_1$info$baseline_type)) {
-          baseline_type <- eyeris[[
-            find_baseline_structure(
-              eyeris, epoch_label)]]$block_1$info$baseline_type
+          baseline_type <- eyeris[[find_baseline_structure(
+            eyeris, epoch_label)]]$block_1$info$baseline_type
           if (is.character(baseline_type)) {
             if (length(baseline_type) == 1) {
               baseline_type
@@ -940,6 +960,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
       }
     }
+  } else if (verbose && (!is.null(eyeris$confounds$epoched_timeseries) ||
+                         !is.null(eyeris$confounds$epoched_epoch_wide))) {
+    alert("info", "Skipping epoched confounds processing - no epoched data available.")
   }
 
   should_render_report <- html_report || pdf_report
@@ -1077,7 +1100,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
 
     # now handle epochs (if present)
-    if (!is.null(report_epoch_grouping_var_col)) {
+    if (!is.null(report_epoch_grouping_var_col) && length(epochs_to_save) > 0) {
       for (i in seq_along(epochs_to_save)) {
         epoch_data <- epochs_to_save[[i]]
 
@@ -1217,6 +1240,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           )
         }
       }
+    } else if (verbose && !is.null(report_epoch_grouping_var_col) && length(epochs_to_save) == 0) {
+      alert("info", "Skipping epoch report generation - no epoched data available.")
     }
 
     # make final report
@@ -1270,4 +1295,65 @@ make_bids_fname <- function(sub_id, task_name, run_num,
   }
 
   return(f)
+}
+
+#' Get text_unique value for a given matched_event
+#'
+#' Helper function to map from the original text (matched_event) to the unique
+#' identifier (text_unique) for file naming purposes.
+#'
+#' @param eyeris An eyeris object
+#' @param matched_event The original event text
+#' @param block_name The block name
+#'
+#' @return The text_unique value for the given matched_event
+#'
+#' @keywords internal
+get_text_unique_for_event <- function(eyeris, matched_event, block_name) {
+  if (!is.null(eyeris$events[[block_name]]) &&
+    "text_unique" %in% colnames(eyeris$events[[block_name]])) {
+    events_df <- eyeris$events[[block_name]]
+    unique_value <- events_df$text_unique[events_df$text == matched_event]
+    if (length(unique_value) > 0) {
+      return(unique_value[1]) # return first match if multiple
+    }
+  }
+  matched_event
+}
+
+#' Find baseline structure name for a given epoch
+#'
+#' Helper function to find the correct baseline structure name that matches
+#' the complex baseline naming scheme used by eyeris.
+#'
+#' @param eyeris An eyeris object
+#' @param epoch_label The epoch label (without "epoch_" prefix)
+#'
+#' @return The baseline structure name or NULL if not found
+#'
+#' @keywords internal
+find_baseline_structure <- function(eyeris, epoch_label) {
+  baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
+
+  if (length(baseline_names) > 0) {
+    message("Available baseline structures: ",
+            paste(baseline_names, collapse = ", "))
+    message("Looking for epoch label: ", epoch_label)
+  }
+
+  for (baseline_name in baseline_names) {
+    if (grepl(paste0("_epoch_", epoch_label, "$"), baseline_name)) {
+      message("Found matching baseline structure: ", baseline_name)
+      return(baseline_name)
+    }
+  }
+
+  simple_name <- paste0("baseline_", epoch_label)
+  if (simple_name %in% names(eyeris)) {
+    message("Found simple baseline structure: ", simple_name)
+    return(simple_name)
+  }
+
+  message("No baseline structure found for epoch label: ", epoch_label)
+  NULL
 }
