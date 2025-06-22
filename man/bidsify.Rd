@@ -121,3 +121,6 @@ demo_data |>
 }
 
 }
+\seealso{
+\code{\link[lifecycle:deprecate_soft]{lifecycle::deprecate_warn()}}
+}
