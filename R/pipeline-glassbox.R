@@ -563,7 +563,9 @@ glassbox <- function(file,
         }
       }
 
-    step_counter <- step_counter + 1
+      step_counter <- step_counter + 1
+    }
+  }
   # generate confounds after all other steps
   if (verbose) {
     cli::cli_alert_success("[  OK  ] - Running eyeris::summarize_confounds()")
