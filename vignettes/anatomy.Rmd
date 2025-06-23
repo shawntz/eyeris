@@ -45,6 +45,7 @@ step is appended to the previous columns name
 - `blinks`: a list of data frames containing start/stop/durations for blinks
 - `info`: EyeLink EDF header data parsed into a data frame
 - `latest`: internal tracker used for assessing which steps have been run so far
+- `confounds`: a list of data frames containing confounding variables for each preprocessing step (see: [📊 Summarize Confounds](summarize_confounds.html))
 - `params`: detailed list of steps run and parameters passed to each step
 - `epoch_{name}`: list of data frames for any given epoched timeseries
 
@@ -73,7 +74,8 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::interpolate() |>
   eyeris::lpfilt(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE) |>
   # eyeris::detrend() |>  # optional (please read docs before enabling)
-  eyeris::zscore()
+  eyeris::zscore() |>
+  eyeris::summarize_confounds()
 ```
 
 <div class="alert alert-light" style="padding-bottom: 0;">
