@@ -96,12 +96,13 @@ eyeris_preproc <- glassbox(
   lpfilt = list(plot_freqz = FALSE)
 )
 #> ✔ [  OK  ] - Running eyeris::load_asc()
-#> ✔ [  OK  ] - Running eyeris::deblink()
-#> ✔ [  OK  ] - Running eyeris::detransient()
-#> ✔ [  OK  ] - Running eyeris::interpolate()
-#> ✔ [  OK  ] - Running eyeris::lpfilt()
-#> ! [ SKIP ] - Skipping eyeris::detrend()
-#> ✔ [  OK  ] - Running eyeris::zscore()
+#> ℹ [ INFO ] - Processing block: block_1
+#> ✔ [  OK  ] - Running eyeris::deblink() for block_1
+#> ✔ [  OK  ] - Running eyeris::detransient() for block_1
+#> ✔ [  OK  ] - Running eyeris::interpolate() for block_1
+#> ✔ [  OK  ] - Running eyeris::lpfilt() for block_1
+#> ! [ SKIP ] - Skipping eyeris::detrend() for block_1
+#> ✔ [  OK  ] - Running eyeris::zscore() for block_1
 #> ✔ [  OK  ] - Running eyeris::summarize_confounds()
 ```
 
