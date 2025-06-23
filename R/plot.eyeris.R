@@ -259,24 +259,38 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
         # used when running `plot()` by itself (and thus plotting all steps)
         if (!only_liner_trend) {
           if (grepl("_detrend$", pupil_steps[i]) && !detrend_plotted) {
-            plot_detrend_overlay(
-              pupil_data,
-              pupil_steps = pupil_steps,
-              preview_n = preview_n,
-              suppress_prompt = suppress_prompt
-            )
-
-            detrend_plotted <- TRUE
+            # only attempt detrend overlay if detrend_fitted_values exists
+            if ("detrend_fitted_values" %in% colnames(pupil_data)) {
+              detrend_success <- plot_detrend_overlay(
+                pupil_data,
+                pupil_steps = pupil_steps,
+                preview_n = preview_n,
+                suppress_prompt = suppress_prompt
+              )
+              
+              if (detrend_success) {
+                detrend_plotted <- TRUE
+              }
+            } else {
+              detrend_plotted <- TRUE
+            }
           }
         } else {
           if (!detrend_plotted) {
-            plot_detrend_overlay(
-              pupil_data,
-              pupil_steps = pupil_steps,
-              preview_n = preview_n,
-              suppress_prompt = suppress_prompt
-            )
-            detrend_plotted <- TRUE
+            if ("detrend_fitted_values" %in% colnames(pupil_data)) {
+              detrend_success <- plot_detrend_overlay(
+                pupil_data,
+                pupil_steps = pupil_steps,
+                preview_n = preview_n,
+                suppress_prompt = suppress_prompt
+              )
+              
+              if (detrend_success) {
+                detrend_plotted <- TRUE
+              }
+            } else {
+              detrend_plotted <- TRUE
+            }
           }
         }
 
@@ -562,27 +576,54 @@ draw_na_lines <- function(x, y, ...) {
 #' `robust_plot()`
 #' @param suppress_prompt Logical. Whether to skip prompting. Default = TRUE.
 #'
+#' @return Logical indicating whether the detrend overlay was successfully plotted
+#' 
 #' @keywords internal
 plot_detrend_overlay <- function(pupil_data,
                                  pupil_steps,
                                  preview_n = preview_n,
                                  plot_params = list(),
                                  suppress_prompt = TRUE) {
+  # store current par settings to restore them in case func returns early
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par), add = TRUE)
+  
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-
 
   detrend_step <- grep("_detrend$", pupil_steps, value = TRUE)
 
   all_cols <- colnames(pupil_data)
   detrend_fitted_index <- which(all_cols == "detrend_fitted_values")
 
-  if (length(detrend_fitted_index) == 0 || detrend_fitted_index == 1) {
+  # guard if detrend_fitted_values exists and has a valid previous column
+  if (length(detrend_fitted_index) == 0) {
     cli::cli_alert_danger(
       "detrend_fitted_values not found in eyeris S3 object."
     )
-    prev_col <- NULL
-  } else {
-    prev_col <- all_cols[detrend_fitted_index - 1]
+    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+    return(FALSE)
+  }
+  
+  if (detrend_fitted_index <= 1) {
+    cli::cli_alert_warning(
+      "No previous pupil column found to plot detrend overlay against. ",
+      "This can happen when detrend is the only preprocessing step enabled."
+    )
+    # restore main plotting func layout 
+    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+    return(FALSE)
+  }
+  
+  prev_col <- all_cols[detrend_fitted_index - 1]
+  
+  # ensure prev col is a pupil col
+  if (!grepl("^pupil_", prev_col)) {
+    cli::cli_alert_warning(
+      "Previous column is not a pupil column. Cannot plot detrend overlay."
+    )
+    # restore main plotting func layout 
+    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+    return(FALSE)
   }
 
   ydat <- pupil_data[[prev_col]]
@@ -617,5 +658,5 @@ plot_detrend_overlay <- function(pupil_data,
   par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   if (!suppress_prompt) prompt_user()
 
-  invisible(NULL)
+  return(TRUE)
 }
