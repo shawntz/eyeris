@@ -24,7 +24,7 @@ plot_detrend_overlay(
 \item{suppress_prompt}{Logical. Whether to skip prompting. Default = TRUE.}
 }
 \value{
-Logical indicating whether the detrend overlay was successfully plotted
+Logical indicating whether detrend overlay was plotted successfully
 }
 \description{
 This function replicates the exact detrending visualization from the
