@@ -991,7 +991,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               result <- paste(epoch_events, collapse = ", ")
             }
             message("Found epoch events in baseline structure: ", result)
-            result
+            return(result)
           } else {
             epoch_data <- eyeris[[epoch_name]]
             if (is.list(epoch_data) && !is.null(epoch_data$info)) {
@@ -1009,7 +1009,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                   result <- paste(epoch_events, collapse = ", ")
                 }
                 message("Found epoch events in epoch structure: ", result)
-                result
+                return(result)
               }
             }
             message("No epoch events found for: ", epoch_name)
