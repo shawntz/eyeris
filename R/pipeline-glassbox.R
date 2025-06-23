@@ -223,6 +223,17 @@ glassbox <- function(file,
   # evaluate which steps of pipeline to run
   which_steps <- evaluate_pipeline_step_params(params)
 
+  if (which_steps[["detrend"]] && !any(which_steps[c("deblink", "detransient", "interpolate", "lpfilt")])) {
+    cli::cli_alert_warning(
+      paste(
+        "[ WARN ] - Detrend is enabled but no other preprocessing steps are enabled.",
+        "This may cause plotting issues since there will be no pupil columns",
+        "to detrend against. Consider enabling at least one preprocessing step",
+        "before detrending, or disable detrending if you want to work with raw data."
+      )
+    )
+  }
+
   # eyeris workflow data structure
   pipeline <- list(
     load_asc = function(data, params) {
@@ -292,18 +303,35 @@ glassbox <- function(file,
       cli::cli_alert_success("[  OK  ] - Running eyeris::load_asc()")
     }
     file <- pipeline[["load_asc"]](file, params)
+
+    if (interactive_preview) {
+      plot_with_seed(
+        file = file,
+        step_counter = 1,
+        seed = seed,
+        preview_n = preview_n,
+        preview_duration = preview_duration,
+        preview_window = preview_window,
+        only_linear_trend = only_linear_trend,
+        next_step = NULL,
+        verbose = verbose
+      )
+
+      if (!prompt_user()) {
+        if (verbose) {
+          cli::cli_alert_info(
+            "[ INFO ] - Process cancelled after loading data. Adjust your parameters and re-run!\n"
+          )
+        }
+        return(file)
+      }
+    }
   }
 
-  has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 1
+  has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 0
 
   # process each block individually through all steps (except load_asc)
   if (has_multiple_blocks) {
-    if (verbose) {
-      cli::cli_alert_info(
-        "Processing blocks individually through pipeline steps..."
-      )
-    }
-
     block_names <- names(file$timeseries)
     processed_blocks <- list()
 
@@ -316,7 +344,7 @@ glassbox <- function(file,
       temp_file$timeseries <- list(file$timeseries[[block_name]])
       names(temp_file$timeseries) <- block_name
 
-      block_step_counter <- 1
+      block_step_counter <- 2
 
       for (step_name in names(pipeline)[-1]) {
         action <- "Running "
@@ -393,26 +421,17 @@ glassbox <- function(file,
             next_step <- NULL
           }
 
-          bn <- get_block_numbers(block_name)
-          if (is.null(seed)) {
-            seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
-          }
-          withr::with_seed(
-            seed,
-            {
-              plot(
-                temp_file,
-                steps = block_step_counter,
-                preview_n = preview_n,
-                seed = seed,
-                preview_duration = preview_duration,
-                preview_window = preview_window,
-                only_linear_trend = only_linear_trend,
-                next_step = next_step,
-                block = bn,
-                suppress_prompt = FALSE
-              )
-            }
+          plot_with_seed(
+            file = temp_file,
+            step_counter = block_step_counter,
+            seed = seed,
+            preview_n = preview_n,
+            preview_duration = preview_duration,
+            preview_window = preview_window,
+            only_linear_trend = only_linear_trend,
+            next_step = next_step,
+            block_name = block_name,
+            verbose = verbose
           )
 
           if (step_name == "detrend") {
@@ -436,6 +455,7 @@ glassbox <- function(file,
         }
 
         block_step_counter <- block_step_counter + 1
+
       }
 
       processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
@@ -444,138 +464,83 @@ glassbox <- function(file,
     # recombine processed blocks
     file$timeseries <- processed_blocks
   } else {
-    # single block case
-    for (step_name in names(pipeline)[-1]) {
-      action <- "Running "
-      skip_plot <- FALSE
+    cli::cli_abort("No data blocks found error.")
+  }
 
-      if (!which_steps[[step_name]]) {
-        action <- "Skipping "
-        step_counter <- step_counter - 1
-        skip_plot <- TRUE
+  # generate confounds after all other steps
+  if (verbose) {
+    cli::cli_alert_success("[  OK  ] - Running eyeris::summarize_confounds()")
+  }
+
+  file <- eyeris::summarize_confounds(file)
+
+  return(file)
+}
+
+#' Plot with seed handling for glassbox pipeline
+#'
+#' Internal function to handle plotting with consistent seed management
+#' for the glassbox pipeline interactive previews.
+#'
+#' @param file The eyeris object to plot
+#' @param step_counter Current step counter
+#' @param seed Seed for reproducible plotting
+#' @param preview_n Number of preview epochs
+#' @param preview_duration Duration of each preview
+#' @param preview_window Preview window specification
+#' @param only_linear_trend Whether to show only linear trend
+#' @param next_step Next step information
+#' @param block_name Block name (optional, for multi-block processing)
+#' @param verbose Whether to show verbose output
+#'
+#' @keywords internal
+plot_with_seed <- function(file,
+                          step_counter,
+                          seed,
+                          preview_n,
+                          preview_duration,
+                          preview_window,
+                          only_linear_trend,
+                          next_step,
+                          block_name = NULL,
+                          verbose = TRUE) {
+
+  if (is.null(seed)) {
+    seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
+  }
+
+  withr::with_seed(
+    seed,
+    {
+      if (!is.null(block_name)) {
+        bn <- get_block_numbers(block_name)
+        plot(
+          file,
+          steps = step_counter,
+          preview_n = preview_n,
+          seed = seed,
+          preview_duration = preview_duration,
+          preview_window = preview_window,
+          only_linear_trend = only_linear_trend,
+          next_step = next_step,
+          block = bn,
+          suppress_prompt = FALSE
+        )
       } else {
-        if (step_name == "detrend") {
-          only_linear_trend <- TRUE
-        }
-      }
-
-      if (verbose) {
-        if (action == "Running ") {
-          cli::cli_alert_success(
-            paste0("[  OK  ] - ", action, "eyeris::", step_name, "()")
-          )
-        } else {
-          cli::cli_alert_warning(
-            paste0("[ SKIP ] - ", action, "eyeris::", step_name, "()")
-          )
-        }
-      }
-
-      step_to_run <- pipeline[[step_name]]
-      err_thrown <- FALSE
-
-      file <- tryCatch(
-        {
-          step_to_run(file, params)
-        },
-        error = function(e) {
-          if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
-            cli::cli_alert_danger(
-              paste0(
-                "[ WARN ] - ", "Because missing pupil samples were not ",
-                "interpolated, there is a mismatch in the number of samples ",
-                "in the detrended data. Please set `interpolate` to `TRUE` ",
-                "before detrending data OR disable detrending by setting ",
-                "`detrend` to `FALSE`."
-              )
-            )
-          }
-
-          if (verbose) {
-            cli::cli_alert_info(
-              paste0(
-                "[ INFO ] - ", "Skipping eyeris::", step_name, "(): ",
-                e$message
-              )
-            )
-          }
-          err_thrown <<- TRUE
-          step_counter <<- step_counter - 1
-          file
-        }
-      )
-
-      pupil_steps <- grep("^pupil_",
-        colnames(file$timeseries$block_1),
-        value = TRUE
-      )
-
-      if (interactive_preview) {
-        if (!err_thrown) {
-          if (!skip_plot) {
-            if (step_counter + 1 <= length(names(pipeline))) {
-              next_step <- c(next_step, pupil_steps[step_counter])
-            } else {
-              next_step <- NULL
-            }
-
-            for (block_name in names(file$timeseries)) {
-              bn <- get_block_numbers(block_name)
-              if (is.null(seed)) {
-                seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
-              }
-              withr::with_seed(
-                seed,
-                {
-                  plot(
-                    file,
-                    steps = step_counter,
-                    preview_n = preview_n,
-                    seed = seed,
-                    preview_duration = preview_duration,
-                    preview_window = preview_window,
-                    only_linear_trend = only_linear_trend,
-                    next_step = next_step,
-                    block = bn,
-                    suppress_prompt = FALSE
-                  )
-                }
-              )
-            }
-
-            if (step_name == "detrend") {
-              only_linear_trend <- FALSE
-            }
-          }
-          if (step_name != "zscore") {
-            if (!prompt_user()) {
-              if (verbose) {
-                cli::cli_alert_info(
-                  paste(
-                    "Process cancelled after running the", step_name, "step.",
-                    "Adjust your parameters and re-run!\n"
-                  )
-                )
-              }
-
-              break
-            }
-          }
-        }
-      }
-
-      step_counter <- step_counter + 1
-      # generate confounds after all other steps
-      if (verbose) {
-        cli::cli_alert_success(
-          "[  OK  ] - Running eyeris::summarize_confounds()"
+        plot(
+          file,
+          steps = step_counter,
+          preview_n = preview_n,
+          seed = seed,
+          preview_duration = preview_duration,
+          preview_window = preview_window,
+          only_linear_trend = only_linear_trend,
+          next_step = next_step,
+          suppress_prompt = FALSE
         )
       }
-      file <- eyeris::summarize_confounds(file)
-
-      return(file)
     }
-  }
+  )
 }
 
 prompt_user <- function() {
