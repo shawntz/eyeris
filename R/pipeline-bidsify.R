@@ -1094,6 +1094,46 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             }
           }
         }),
+        baseline_events = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                                 function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_events)) {
+            baseline_events <- eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_events
+            if (is.character(baseline_events)) {
+              if (length(baseline_events) == 1) {
+                result <- baseline_events
+              } else {
+                result <- paste(baseline_events, collapse = ", ")
+              }
+            } else {
+              result <- paste(baseline_events, collapse = ", ")
+            }
+            message("Found baseline events: ", result)
+            return(result)
+          } else {
+            message("No baseline events found for: ", epoch_name)
+            NA_character_
+          }
+        }),
+        baseline_period = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
+                                 function(epoch_name) {
+          epoch_label <- sub("^epoch_", "", epoch_name)
+          baseline_structure <- find_baseline_structure(eyeris, epoch_label)
+
+          if (!is.null(baseline_structure) &&
+            !is.null(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_period)) {
+            paste(eyeris[[baseline_structure]][[
+              paste0("block_", block)]]$info$baseline_period, collapse = ", ")
+          } else {
+            NA_character_
+          }
+        }),
         n_baseline_epochs = sapply(names(eyeris)[
           grep("^epoch_", names(eyeris))], function(epoch_name) {
           epoch_label <- sub("^epoch_", "", epoch_name)
