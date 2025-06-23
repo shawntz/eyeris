@@ -223,13 +223,16 @@ glassbox <- function(file,
   # evaluate which steps of pipeline to run
   which_steps <- evaluate_pipeline_step_params(params)
 
-  if (which_steps[["detrend"]] && !any(which_steps[c("deblink", "detransient", "interpolate", "lpfilt")])) {
+  if (which_steps[["detrend"]] &&
+        !any(which_steps[c("deblink", "detransient",
+                           "interpolate", "lpfilt")])) {
     cli::cli_alert_warning(
       paste(
-        "[ WARN ] - Detrend is enabled but no other preprocessing steps are enabled.",
-        "This may cause plotting issues since there will be no pupil columns",
-        "to detrend against. Consider enabling at least one preprocessing step",
-        "before detrending, or disable detrending if you want to work with raw data."
+        "[ WARN ] - Detrend is enabled but no other preprocessing steps are",
+        "enabled. This may cause plotting issues since there will be no pupil",
+        "columns to detrend against. Consider enabling at least one",
+        "preprocessing step before detrending, or disable detrending if you",
+        "want to work with raw data."
       )
     )
   }
@@ -320,7 +323,10 @@ glassbox <- function(file,
       if (!prompt_user()) {
         if (verbose) {
           cli::cli_alert_info(
-            "[ INFO ] - Process cancelled after loading data. Adjust your parameters and re-run!\n"
+            paste(
+              "[ INFO ] - Process cancelled after loading data.",
+              "Adjust your parameters and re-run!\n"
+            )
           )
         }
         return(file)
@@ -495,15 +501,15 @@ glassbox <- function(file,
 #'
 #' @keywords internal
 plot_with_seed <- function(file,
-                          step_counter,
-                          seed,
-                          preview_n,
-                          preview_duration,
-                          preview_window,
-                          only_linear_trend,
-                          next_step,
-                          block_name = NULL,
-                          verbose = TRUE) {
+                           step_counter,
+                           seed,
+                           preview_n,
+                           preview_duration,
+                           preview_window,
+                           only_linear_trend,
+                           next_step,
+                           block_name = NULL,
+                           verbose = TRUE) {
 
   if (is.null(seed)) {
     seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))

@@ -267,7 +267,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                 preview_n = preview_n,
                 suppress_prompt = suppress_prompt
               )
-              
+
               if (detrend_success) {
                 detrend_plotted <- TRUE
               }
@@ -284,7 +284,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                 preview_n = preview_n,
                 suppress_prompt = suppress_prompt
               )
-              
+
               if (detrend_success) {
                 detrend_plotted <- TRUE
               }
@@ -576,8 +576,8 @@ draw_na_lines <- function(x, y, ...) {
 #' `robust_plot()`
 #' @param suppress_prompt Logical. Whether to skip prompting. Default = TRUE.
 #'
-#' @return Logical indicating whether the detrend overlay was successfully plotted
-#' 
+#' @return Logical indicating whether detrend overlay was plotted successfully
+#'
 #' @keywords internal
 plot_detrend_overlay <- function(pupil_data,
                                  pupil_steps,
@@ -587,7 +587,7 @@ plot_detrend_overlay <- function(pupil_data,
   # store current par settings to restore them in case func returns early
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par), add = TRUE)
-  
+
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
   detrend_step <- grep("_detrend$", pupil_steps, value = TRUE)
@@ -603,25 +603,25 @@ plot_detrend_overlay <- function(pupil_data,
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
-  
+
   if (detrend_fitted_index <= 1) {
     cli::cli_alert_warning(
       "No previous pupil column found to plot detrend overlay against. ",
       "This can happen when detrend is the only preprocessing step enabled."
     )
-    # restore main plotting func layout 
+    # restore main plotting func layout
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
-  
+
   prev_col <- all_cols[detrend_fitted_index - 1]
-  
+
   # ensure prev col is a pupil col
   if (!grepl("^pupil_", prev_col)) {
     cli::cli_alert_warning(
       "Previous column is not a pupil column. Cannot plot detrend overlay."
     )
-    # restore main plotting func layout 
+    # restore main plotting func layout
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
