@@ -23,6 +23,9 @@ plot_detrend_overlay(
 
 \item{suppress_prompt}{Logical. Whether to skip prompting. Default = TRUE.}
 }
+\value{
+Logical indicating whether the detrend overlay was successfully plotted
+}
 \description{
 This function replicates the exact detrending visualization from the
 \code{glassbox()} interactive preview mode. It uses \code{robust_plot()} to show the
