@@ -173,7 +173,8 @@ glassbox <- function(file,
     interpolate = TRUE,
     lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose),
     detrend = FALSE,
-    zscore = TRUE
+    zscore = TRUE,
+    seed = 123
   )
 
   # override defaults
