@@ -96,7 +96,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     )
     html_report <- pdf_report
   }
-  
+
   # setup
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     if (!is.null(run_num)) {
