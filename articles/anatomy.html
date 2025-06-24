@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Anatomy of an eyeris Object</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/enh/174/vignettes/anatomy.Rmd" class="external-link"><code>vignettes/anatomy.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/196-deprecation-pdf/vignettes/anatomy.Rmd" class="external-link"><code>vignettes/anatomy.Rmd</code></a></small>
       <div class="d-none name"><code>anatomy.Rmd</code></div>
     </div>
 
@@ -167,6 +167,8 @@ start/stop/durations for blinks</p></li>
 frame</p></li>
 <li><p><code>latest</code>: internal tracker used for assessing which
 steps have been run so far</p></li>
+<li><p><code>confounds</code>: a list of data frames containing
+confounding variables for each preprocessing step (see: <a href="summarize_confounds.html">📊 Summarize Confounds</a>)</p></li>
 <li><p><code>params</code>: detailed list of steps run and parameters
 passed to each step</p></li>
 <li><p><code>epoch_{name}</code>: list of data frames for any given
@@ -201,7 +203,8 @@ Deconstructed:<a class="anchor" aria-label="anchor" href="#the-default-glassbox-
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/interpolate.html">interpolate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/lpfilt.html">lpfilt</a></span><span class="op">(</span>wp <span class="op">=</span> <span class="fl">4</span>, ws <span class="op">=</span> <span class="fl">8</span>, rp <span class="op">=</span> <span class="fl">1</span>, rs <span class="op">=</span> <span class="fl">35</span>, plot_freqz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># eyeris::detrend() |&gt;  # optional (please read docs before enabling)</span></span>
-<span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/zscore.html">zscore</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/zscore.html">zscore</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/summarize_confounds.html">summarize_confounds</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="alert alert-light" style="padding-bottom: 0;">
 <p>💡 <strong>For more detailed information on the implementation of
 functions within</strong> <strong>the <code><a href="../reference/glassbox.html">glassbox()</a></code> and thus

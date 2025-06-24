@@ -19,7 +19,7 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract confounding variables calculated separately for each pupil data file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/enh/174/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/196-deprecation-pdf/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
       <div class="d-none name"><code>summarize_confounds.Rd</code></div>
     </div>
 
@@ -114,7 +114,7 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate confounds for all blocks and preprocessing steps</span></span></span>
-<span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">confounds</span> <span class="op">&lt;-</span> <span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="epoch.html">epoch</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    events <span class="op">=</span> <span class="st">"PROBE_{type}_{trial}"</span>,</span></span>
@@ -123,25 +123,24 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">summarize_confounds</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="summarize_confounds-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epoching pupil data...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.12 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.10 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access confounds for entire timeseries for a specific block and step</span></span></span>
-<span class="r-in"><span><span class="va">unepoched_timeseries_confounds</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">unepoched_timeseries</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">unepoched_timeseries_confounds</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">confounds</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">unepoched_timeseries</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $block_1$pupil_raw</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps</span>
@@ -243,9 +242,7 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access confounds for a specific epoched timeseries</span></span></span>
 <span class="r-in"><span><span class="co"># for a specific block and step</span></span></span>
-<span class="r-in"><span><span class="va">epoched_timeseries_confounds</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">demo_data</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">epoched_timeseries</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">epoched_timeseries_confounds</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">confounds</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">epoched_timeseries</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                    matched_event</span>
@@ -797,6 +794,33 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate              452.3483977</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt       452.1269805</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z       0.9963825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">confounds</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">epoched_epoch_wide</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe$block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 matched_event    text_unique n_samples n_blinks_in_baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22 PROBE_START_22 PROBE_START_22      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22   PROBE_STOP_22  PROBE_STOP_22      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23 PROBE_START_23 PROBE_START_23      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23   PROBE_STOP_23  PROBE_STOP_23      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24 PROBE_START_24 PROBE_START_24      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24   PROBE_STOP_24  PROBE_STOP_24      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25 PROBE_START_25 PROBE_START_25      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25   PROBE_STOP_25  PROBE_STOP_25      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26 PROBE_START_26 PROBE_START_26      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26   PROBE_STOP_26  PROBE_STOP_26      2000                   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                time_to_first_blink_ms epoch_duration_ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_22                     NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_22                      NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_23                     NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_23                      NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_24                     NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_24                      NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_25                    295              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_25                      NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26                     NA              1999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_STOP_26                      NA              1999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
