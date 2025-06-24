@@ -1,26 +1,5 @@
-render_report <- function(rmd_f, html, pdf) {
+render_report <- function(rmd_f, html, pdf = FALSE) {
   rmarkdown::render(rmd_f, output_format = "html_document")
-
-  if (pdf) {
-    tryCatch(
-      {
-        rmarkdown::render(rmd_f, output_format = "pdf_document")
-      },
-      error = function(e) {
-        cli::cli_alert_danger(paste(
-          "Could not render eyeris report PDF.",
-          "Do you have a TeX distribution installed?",
-          "If not, consider TinyTeX:\n",
-          "## install.packages('tinytex')\n",
-          "## tinytex::install_tinytex()"
-        ))
-        base_file <- tools::file_path_sans_ext(rmd_f)
-        unlink(paste0(base_file, ".log"))
-        unlink(paste0(base_file, ".tex"))
-      }
-    )
-  }
-
   unlink(rmd_f)
 }
 
@@ -65,7 +44,6 @@ make_report <- function(eyeris, out, plots, ...) {
     "    toc_float: true\n",
     "    toc_depth: 3\n",
     "    number_sections: false\n",
-    "  pdf_document: default\n",
     "---\n\n",
     "\n\n<img src='", sticker_path, "' class='top-right-image'>",
     "\n\n---\n\n## Summary\n",
