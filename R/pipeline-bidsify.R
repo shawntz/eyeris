@@ -36,7 +36,7 @@
 #' @param save_raw Logical flag indicating whether to save_raw pupil data in
 #' addition to epoched data. Defaults to TRUE.
 #' @param html_report Logical flag indicating whether to save out the `eyeris`
-#' preprocessing summary report as an HTML file. Defaults to FALSE.
+#' preprocessing summary report as an HTML file. Defaults to `TRUE`.
 #' @param pdf_report Logical flag indicating whether to save out the `eyeris`
 #' preprocessing summary report as a PDF file. Note, a valid TeX distribution
 #' must already be installed. Defaults to FALSE.
@@ -60,15 +60,30 @@
 #' \donttest{
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
+#' # example with unepoched data
 #' demo_data |>
-#'   eyeris::glassbox(deblink = list(extend = 50)) |>
+#'   eyeris::glassbox() |>
+#'   eyeris::bidsify(
+#'     bids_dir = tempdir(), # <- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH
+#'     participant_id = "001",
+#'     session_num = "01",
+#'     task_name = "assocret",
+#'     run_num = "01",
+#'     save_raw = TRUE, # save out raw timeseries
+#'     html_report = TRUE, # generate interactive report document
+#'     report_seed = 0 # make randomly selected plot epochs reproducible
+#'   )
+#'
+#' # example with epoched data
+#' demo_data |>
+#'   eyeris::glassbox() |>
 #'   eyeris::epoch(
 #'     events = "PROBE_{type}_{trial}",
 #'     limits = c(-1, 1), # grab 1 second prior to and 1 second post event
 #'     label = "prePostProbe" # custom epoch label name
 #'   ) |>
 #'   eyeris::bidsify(
-#'     bids_dir = tempdir(),
+#'     bids_dir = tempdir(), # <- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH
 #'     participant_id = "001",
 #'     session_num = "01",
 #'     task_name = "assocret",
@@ -138,29 +153,23 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   )
 
-  tryCatch(
-    {
-      epochs <- filter_epochs(eyeris, epochs_list)
-      count_epochs(epochs)
-    },
-    error = function(e) {
-      error_handler(e, "epoch_count_error")
-    }
-  )
+  epochs <- filter_epochs(eyeris, epochs_list)
+  n_epochs <- length(epochs)
+  any_epochs <- n_epochs > 0
 
   if (verbose) {
     alert("info", "Filtered epochs: %s", paste(epochs, collapse = ", "))
   }
 
-  if (save_all) {
+  if (save_all && any_epochs) {
     epochs_to_save <- eyeris[epochs]
   } else if (!is.null(epochs_list)) {
     epochs_to_save <- eyeris[epochs_list]
   } else {
-    stop("Either save_all must be TRUE or epochs_list must be specified.")
+    epochs_to_save <- NULL
   }
 
-  if (verbose) {
+  if (verbose && any_epochs) {
     alert("info", "Epochs to save structure:")
     alert("info", "  Names: %s", paste(names(epochs_to_save), collapse = ", "))
     for (epoch_name in names(epochs_to_save)) {
@@ -213,7 +222,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
 
   block_numbers <- get_block_numbers(eyeris)
 
-  if (!merge_epochs) {
+  if (!merge_epochs && any_epochs) {
     if (has_multiple_runs) {
       for (epoch_id in names(epochs_to_save)) {
         current_label <- substr(epoch_id, 7, nchar(epoch_id))
@@ -549,7 +558,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
       }
     }
-  } else {
+  } else if (any_epochs) {
     # merge all epochs and runs (if multiple runs exist)
     if (has_multiple_runs && merge_runs) {
       merged_epochs <- do.call(
@@ -964,7 +973,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   }
 
   if (!is.null(eyeris$confounds$epoched_timeseries) ||
-   !is.null(eyeris$confounds$epoched_epoch_wide)) {
+   !is.null(eyeris$confounds$epoched_epoch_wide) && any_epochs) {
     # create summary files for each block
     for (block in block_numbers) {
       epoch_summary <- data.frame(
@@ -1160,7 +1169,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
 
     # export epoch-wide confounds
-    if (!is.null(eyeris$confounds$epoched_epoch_wide)) {
+    if (!is.null(eyeris$confounds$epoched_epoch_wide) && any_epochs) {
       for (epoch_name in names(eyeris$confounds$epoched_epoch_wide)) {
         epoch_label <- sub("^epoch_", "", epoch_name)
 
@@ -1694,28 +1703,30 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               dev.off()
             }
           }
-          epochs <- list.files(epochs_out,
-            full.names = FALSE,
-            pattern = "\\.(jpg|jpeg|png|gif)$",
-            ignore.case = TRUE
-          )
+          if (any_epochs) {
+            epochs <- list.files(epochs_out,
+                                 full.names = FALSE,
+                                 pattern = "\\.(jpg|jpeg|png|gif)$",
+                                 ignore.case = TRUE
+            )
 
-          epochs <- file.path(
-            "source", "figures",
-            sprintf("run-%02d", get_block_numbers(bn)),
-            names(epochs_to_save)[i],
-            epochs
-          )
-
-          make_gallery(eyeris, epochs, report_path,
-            sprintf(
-              "%s%s",
+            epochs <- file.path(
+              "source", "figures",
+              sprintf("run-%02d", get_block_numbers(bn)),
               names(epochs_to_save)[i],
-              sprintf("_run-%02d", get_block_numbers(bn))
-            ),
-            sub = sub, ses = ses, task = task,
-            run = sprintf("%02d", get_block_numbers(bn))
-          )
+              epochs
+            )
+
+            make_gallery(eyeris, epochs, report_path,
+                         sprintf(
+                           "%s%s",
+                           names(epochs_to_save)[i],
+                           sprintf("_run-%02d", get_block_numbers(bn))
+                         ),
+                         sub = sub, ses = ses, task = task,
+                         run = sprintf("%02d", get_block_numbers(bn))
+            )
+          }
         }
       }
     }

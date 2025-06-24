@@ -60,7 +60,7 @@ BIDS-like-behavior).}
 addition to epoched data. Defaults to TRUE.}
 
 \item{html_report}{Logical flag indicating whether to save out the \code{eyeris}
-preprocessing summary report as an HTML file. Defaults to FALSE.}
+preprocessing summary report as an HTML file. Defaults to \code{TRUE}.}
 
 \item{pdf_report}{Logical flag indicating whether to save out the \code{eyeris}
 preprocessing summary report as a PDF file. Note, a valid TeX distribution
@@ -101,15 +101,30 @@ approach to organizing the output files for preprocessed pupil data.
 \donttest{
 demo_data <- eyelink_asc_demo_dataset()
 
+# example with unepoched data
 demo_data |>
-  eyeris::glassbox(deblink = list(extend = 50)) |>
+  eyeris::glassbox() |>
+  eyeris::bidsify(
+    bids_dir = tempdir(), # <- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH
+    participant_id = "001",
+    session_num = "01",
+    task_name = "assocret",
+    run_num = "01",
+    save_raw = TRUE, # save out raw timeseries
+    html_report = TRUE, # generate interactive report document
+    report_seed = 0 # make randomly selected plot epochs reproducible
+  )
+
+# example with epoched data
+demo_data |>
+  eyeris::glassbox() |>
   eyeris::epoch(
     events = "PROBE_{type}_{trial}",
     limits = c(-1, 1), # grab 1 second prior to and 1 second post event
     label = "prePostProbe" # custom epoch label name
   ) |>
   eyeris::bidsify(
-    bids_dir = tempdir(),
+    bids_dir = tempdir(), # <- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH
     participant_id = "001",
     session_num = "01",
     task_name = "assocret",
