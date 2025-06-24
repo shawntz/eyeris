@@ -1,4 +1,4 @@
-render_report <- function(rmd_f, html, pdf = FALSE) {
+render_report <- function(rmd_f) {
   rmarkdown::render(rmd_f, output_format = "html_document")
   unlink(rmd_f)
 }

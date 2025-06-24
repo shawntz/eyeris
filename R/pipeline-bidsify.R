@@ -1737,7 +1737,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       sub = sub, ses = ses, task = task
     )
 
-    render_report(report_output, html = html_report)
+    render_report(report_output)
   }
 
   invisible(NULL)
