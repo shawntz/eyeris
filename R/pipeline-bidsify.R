@@ -131,6 +131,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     html_report <- pdf_report
   }
 
+  # nolint start
   # setup
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     actual_block_count <- length(eyeris$timeseries)
@@ -152,6 +153,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       # case: single block in list format, here allow override
       has_multiple_runs <- FALSE
       num_runs <- 1
+
+      if (verbose) {
+        alert("info", "Only 1 block detected...")
+      }
 
       if (!is.null(run_num)) {
         if (verbose) {
@@ -188,6 +193,12 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               %in% names(eyeris[[epoch_name]])) {
             names(eyeris[[epoch_name]])[names(eyeris[[epoch_name]]) ==
                                           original_block_name] <- new_block_name
+
+            if (!is.null(eyeris[[epoch_name]]$info)) {
+              names(eyeris[[epoch_name]]$info)[
+                names(eyeris[[epoch_name]]$info) == original_block_name] <-
+                new_block_name
+            }
 
             if (is.data.frame(eyeris[[epoch_name]][[new_block_name]]) &&
                 "block" %in%
@@ -245,6 +256,15 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                 as.numeric(run_num)
             }
           }
+        }
+      } else {
+        original_block_name <- names(eyeris$timeseries)[1]
+        run_num <- as.numeric(sub("block_", "", original_block_name))
+
+        if (verbose) {
+          alert("info", "No value for run_num supplied...")
+          alert("info", "Using default run_num = %s for single block data",
+                run_num)
         }
       }
     }
@@ -435,7 +455,6 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               )
             }
 
-            # nolint start
             evs <- if (!is.null(find_baseline_structure(eyeris, current_label))
                        && !is.null(eyeris[[find_baseline_structure(
                          eyeris, current_label
@@ -558,135 +577,136 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           )
         }
 
-        if (is.null(epochs_to_save[[epoch_id]])) {
-          if (verbose) {
-            alert("warning", "Skipping epoch %s - no data", epoch_id)
+        epoch_entry <- epochs_to_save[[epoch_id]]
+        # Loop over blocks inside the epoch (excluding 'info')
+        block_names <- setdiff(names(epoch_entry), "info")
+        any_written <- FALSE
+        for (block_name in block_names) {
+          block_data <- epoch_entry[[block_name]]
+          if (is.null(block_data) || !is.data.frame(block_data) || nrow(block_data) == 0) {
+            if (verbose) {
+              alert(
+                "warning", "Skipping block %s for epoch %s - empty or invalid data", block_name, epoch_id
+              )
+            }
+            next
           }
-          next
-        }
 
-        if (!is.data.frame(epochs_to_save[[epoch_id]]) ||
-            nrow(epochs_to_save[[epoch_id]]) == 0
-        ) {
           if (verbose) {
             alert(
-              "warning", "Skipping epoch %s - empty or invalid data", epoch_id
+              "info", "Block %s for epoch %s has %d rows", block_name, epoch_id, nrow(block_data)
             )
           }
-          next
-        }
 
-        if (verbose) {
-          alert(
-            "info", "Single-run epoch %s has %d rows",
-            epoch_id, nrow(epochs_to_save[[epoch_id]])
-          )
-        }
-
-        evs <- if (!is.null(find_baseline_structure(eyeris, current_label)) &&
+          evs <- if (!is.null(find_baseline_structure(eyeris, current_label)) &&
  !is.null(eyeris[[find_baseline_structure(
                      eyeris, current_label
                    )]]$block_1$info$epoch_events)) {
-          epoch_events <- eyeris[[find_baseline_structure(
-            eyeris, current_label
-          )]]$block_1$info$epoch_events
-          if (is.character(epoch_events)) {
-            if (length(epoch_events) == 1) {
-              epoch_events
+            epoch_events <- eyeris[[find_baseline_structure(
+              eyeris, current_label
+            )]]$block_1$info$epoch_events
+            if (is.character(epoch_events)) {
+              if (length(epoch_events) == 1) {
+                epoch_events
+              } else {
+                paste(epoch_events, collapse = ", ")
+              }
             } else {
               paste(epoch_events, collapse = ", ")
             }
           } else {
-            paste(epoch_events, collapse = ", ")
-          }
-        } else {
-          epoch_data <- eyeris[[epoch_id]]
-          if (is.list(epoch_data) && !is.null(epoch_data$info)) {
-            for (block_name in names(epoch_data$info)) {
-              if (!is.null(epoch_data$info[[block_name]]$epoch_events)) {
-                epoch_events <- epoch_data$info[[block_name]]$epoch_events
-                if (is.character(epoch_events)) {
-                  if (length(epoch_events) == 1) {
-                    result <- epoch_events
+            epoch_data <- eyeris[[epoch_id]]
+            if (is.list(epoch_data) && !is.null(epoch_data$info)) {
+              for (bn in names(epoch_data$info)) {
+                if (!is.null(epoch_data$info[[bn]]$epoch_events)) {
+                  epoch_events <- epoch_data$info[[bn]]$epoch_events
+                  if (is.character(epoch_events)) {
+                    if (length(epoch_events) == 1) {
+                      result <- epoch_events
+                    } else {
+                      result <- paste(epoch_events, collapse = ", ")
+                    }
                   } else {
                     result <- paste(epoch_events, collapse = ", ")
                   }
-                } else {
-                  result <- paste(epoch_events, collapse = ", ")
+                  message("Found epoch events in epoch structure: ", result)
                 }
-                message("Found epoch events in epoch structure: ", result)
               }
             }
+            NULL
           }
-          NULL
-        }
-        c_bline <- !is.null(find_baseline_structure(eyeris, current_label)) &&
-          !is.null(eyeris[[find_baseline_structure(
-            eyeris, current_label
-          )]]$block_1$info$baseline_events)
-        bline_evs <- if (c_bline) {
-          baseline_events <- eyeris[[find_baseline_structure(
-            eyeris, current_label
-          )]]$block_1$info$baseline_events
-          if (is.character(baseline_events)) {
-            if (length(baseline_events) == 1) {
-              baseline_events
+          c_bline <- !is.null(find_baseline_structure(eyeris, current_label)) &&
+            !is.null(eyeris[[find_baseline_structure(
+              eyeris, current_label
+            )]]$block_1$info$baseline_events)
+          bline_evs <- if (c_bline) {
+            baseline_events <- eyeris[[find_baseline_structure(
+              eyeris, current_label
+            )]]$block_1$info$baseline_events
+            if (is.character(baseline_events)) {
+              if (length(baseline_events) == 1) {
+                baseline_events
+              } else {
+                paste(baseline_events, collapse = ", ")
+              }
             } else {
               paste(baseline_events, collapse = ", ")
             }
           } else {
-            paste(baseline_events, collapse = ", ")
+            NULL
           }
-        } else {
-          NULL
-        }
-        bline_type <- if (c_bline) {
-          baseline_type <- eyeris[[find_baseline_structure(
-            eyeris, current_label
-          )]]$block_1$info$baseline_type
-          if (is.character(baseline_type)) {
-            if (length(baseline_type) == 1) {
-              baseline_type
+          bline_type <- if (c_bline) {
+            baseline_type <- eyeris[[find_baseline_structure(
+              eyeris, current_label
+            )]]$block_1$info$baseline_type
+            if (is.character(baseline_type)) {
+              if (length(baseline_type) == 1) {
+                baseline_type
+              } else {
+                paste(baseline_type, collapse = ", ")
+              }
             } else {
               paste(baseline_type, collapse = ", ")
             }
           } else {
-            paste(baseline_type, collapse = ", ")
+            NULL
           }
-        } else {
-          NULL
-        }
 
-        f <- make_bids_fname(
-          sub_id = sub,
-          ses_id = ses,
-          task_name = task,
-          run_num = sprintf("%02d", as.numeric(run_num)),
-          desc = "preproc_pupil",
-          epoch_name = current_label,
-          epoch_events = evs,
-          baseline_events = bline_evs,
-          baseline_type = bline_type
-        )
-
-        if (verbose) {
-          alert(
-            "info",
-            "Writing epoched data for epoch '%s' to '%s'...",
-            current_label, file.path(dir, p, f)
+          f <- make_bids_fname(
+            sub_id = sub,
+            ses_id = ses,
+            task_name = task,
+            run_num = sprintf("%02d", as.numeric(run_num)),
+            desc = "preproc_pupil",
+            epoch_name = current_label,
+            epoch_events = evs,
+            baseline_events = bline_evs,
+            baseline_type = bline_type
           )
-        }
 
-        write.csv(epochs_to_save[[epoch_id]],
-          file = file.path(bids_dir, p, f),
-          row.names = FALSE
-        )
+          if (verbose) {
+            alert(
+              "info",
+              "Writing epoched data for epoch '%s' (block %s) to '%s'...",
+              current_label, block_name, file.path(dir, p, f)
+            )
+          }
 
-        if (verbose) {
-          alert(
-            "success", "Epoched data for epoch '%s' written to: '%s'",
-            current_label, file.path(dir, p, f)
+          write.csv(block_data,
+            file = file.path(bids_dir, p, f),
+            row.names = FALSE
           )
+
+          if (verbose) {
+            alert(
+              "success", "Epoched data for epoch '%s' (block %s) written to: '%s'",
+              current_label, block_name, file.path(dir, p, f)
+            )
+          }
+          any_written <- TRUE
+        }
+        if (!any_written && verbose) {
+          alert("warning", "No valid blocks found for epoch %s", epoch_id)
         }
       }
     }
@@ -1043,7 +1063,16 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         )
       }
 
-      write.csv(eyeris$timeseries, file.path(dir, p, f), row.names = FALSE)
+      # Extract the actual data.frame from the timeseries list
+      timeseries_data <- if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+        # If it's a list, get the first (and only) block
+        eyeris$timeseries[[1]]
+      } else {
+        # If it's already a data.frame, use it directly
+        eyeris$timeseries
+      }
+
+      write.csv(timeseries_data, file.path(dir, p, f), row.names = FALSE)
 
       if (verbose) {
         alert(
@@ -1764,12 +1793,10 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
           check_and_create_dir(epochs_out, verbose = verbose)
 
-          # nolint start
           epoch_groups <- as.vector(
             unique(epochs_to_save[[i]][[bn]]
             [report_epoch_grouping_var_col])[[1]]
           )
-          # nolint end
 
           for (group in epoch_groups) {
             group_df <- epochs_to_save[[i]][[bn]]
