@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Complete Pupillometry Pipeline Walkthrough</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/200-chore/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/18-feat-downsampling/vignettes/complete-pipeline.Rmd" class="external-link"><code>vignettes/complete-pipeline.Rmd</code></a></small>
       <div class="d-none name"><code>complete-pipeline.Rmd</code></div>
     </div>
 
@@ -202,7 +202,9 @@ parameters and pipeline recipe:</p>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span></span></code></pre></div>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-1.png" width="100%"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span></span>
 <span></span>
@@ -245,6 +247,8 @@ the appropriate parameter(s) for each pipeline step to
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span></span></code></pre></div>
