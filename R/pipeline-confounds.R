@@ -149,6 +149,10 @@ get_confounds_for_step <- function(
   blink_durs <- blink_rle$lengths[blink_rle$values] / hz * 1000
   total_blink_time <- sum(pupil_df$is_blink) / hz * 1000
 
+  # center coordinate of screen
+  cx <- screen_width / 2
+  cy <- screen_height / 2
+
   data.frame(
     sampling_rate_hz = hz,
     total_time_ms = total_time_ms,
@@ -172,8 +176,10 @@ get_confounds_for_step <- function(
     screen_height = screen_height,
     gaze_x_var_px = var(pupil_df$eye_x, na.rm = TRUE),
     gaze_y_var_px = var(pupil_df$eye_y, na.rm = TRUE),
-    mean_gaze_distance_from_center_px =
-      mean(calc_euclidean_dist(pupil_df$eye_x, pupil_df$eye_y), na.rm = TRUE),
+    mean_gaze_distance_from_center_px = mean(
+      calc_euclidean_dist(pupil_df$eye_x, pupil_df$eye_y, cx, cy),
+      na.rm = TRUE
+    ),
     mean_gaze_distance_from_center_norm =
       mean(pupil_df$gaze_dist_from_center, na.rm = TRUE),
     prop_clipped = mean(pupil_vec %in% range(pupil_vec, na.rm = TRUE)),
