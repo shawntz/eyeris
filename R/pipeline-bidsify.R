@@ -578,7 +578,6 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
 
         epoch_entry <- epochs_to_save[[epoch_id]]
-        # Loop over blocks inside the epoch (excluding 'info')
         block_names <- setdiff(names(epoch_entry), "info")
         any_written <- FALSE
         for (block_name in block_names) {
@@ -1063,12 +1062,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         )
       }
 
-      # Extract the actual data.frame from the timeseries list
       timeseries_data <- if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
-        # If it's a list, get the first (and only) block
         eyeris$timeseries[[1]]
       } else {
-        # If it's already a data.frame, use it directly
         eyeris$timeseries
       }
 
