@@ -41,9 +41,6 @@
 #' addition to epoched data. Defaults to TRUE.
 #' @param html_report Logical flag indicating whether to save out the `eyeris`
 #' preprocessing summary report as an HTML file. Defaults to `TRUE`.
-#' @param pdf_report Logical flag indicating whether to save out the `eyeris`
-#' preprocessing summary report as a PDF file. Note, a valid TeX distribution
-#' must already be installed. Defaults to FALSE.
 #' @param report_seed Random seed for the plots that will appear in the report.
 #' Defaults to 0. See [eyeris::plot()] for a more detailed description.
 #' @param report_epoch_grouping_var_col String name of grouping column to use
