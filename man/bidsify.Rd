@@ -17,10 +17,10 @@ bidsify(
   merge_runs = FALSE,
   save_raw = TRUE,
   html_report = FALSE,
-  pdf_report = FALSE,
   report_seed = 0,
   report_epoch_grouping_var_col = "matched_event",
-  verbose = TRUE
+  verbose = TRUE,
+  pdf_report = deprecated()
 )
 }
 \arguments{
@@ -62,10 +62,6 @@ addition to epoched data. Defaults to TRUE.}
 \item{html_report}{Logical flag indicating whether to save out the \code{eyeris}
 preprocessing summary report as an HTML file. Defaults to \code{TRUE}.}
 
-\item{pdf_report}{Logical flag indicating whether to save out the \code{eyeris}
-preprocessing summary report as a PDF file. Note, a valid TeX distribution
-must already be installed. Defaults to FALSE.}
-
 \item{report_seed}{Random seed for the plots that will appear in the report.
 Defaults to 0. See \code{\link[=plot]{plot()}} for a more detailed description.}
 
@@ -79,6 +75,8 @@ epoch-level diagnostic plots, set to \code{NULL}.}
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
 processing step and run silently.}
+
+\item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead.}
 }
 \value{
 Invisibly returns \code{NULL}. Called for its side effects.
@@ -135,4 +133,7 @@ demo_data |>
   )
 }
 
+}
+\seealso{
+\code{\link[lifecycle:deprecate_soft]{lifecycle::deprecate_warn()}}
 }

@@ -51,8 +51,11 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `False` to suppress messages about the current
 #' processing step and run silently.
+#' @param pdf_report **(Deprecated)** Use `html_report = TRUE` instead.
 #'
 #' @return Invisibly returns `NULL`. Called for its side effects.
+#'
+#' @seealso [lifecycle::deprecate_warn()]
 #'
 #' @examples
 #' # Bleed around blink periods just long enough to remove majority of
@@ -99,10 +102,19 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                     merge_epochs = FALSE, bids_dir = NULL,
                     participant_id = NULL, session_num = NULL,
                     task_name = NULL, run_num = NULL, merge_runs = FALSE,
-                    save_raw = TRUE, html_report = FALSE,
-                    pdf_report = FALSE, report_seed = 0,
+                    save_raw = TRUE, html_report = FALSE, report_seed = 0,
                     report_epoch_grouping_var_col = "matched_event",
-                    verbose = TRUE) {
+                    verbose = TRUE, pdf_report = deprecated()) {
+  # deprecation warning for pdf_report
+  if (is_present(pdf_report)) {
+    deprecate_warn(
+      "1.3.0",
+      "bidsify(pdf_report)",
+      "bidsify(html_report)"
+    )
+    html_report <- pdf_report
+  }
+
   # setup
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     if (!is.null(run_num)) {
@@ -1739,7 +1751,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       sub = sub, ses = ses, task = task
     )
 
-    render_report(report_output, html = html_report, pdf = pdf_report)
+    render_report(report_output)
   }
 
   invisible(NULL)
