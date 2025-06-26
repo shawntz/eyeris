@@ -73,7 +73,8 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    devtools
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
