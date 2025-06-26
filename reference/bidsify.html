@@ -19,7 +19,7 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ metadata you provide."><meta property="og:image" content="https://shawnschwartz.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Save out pupil timeseries data in a BIDS-like structure</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/200-chore/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/174-enh/R/pipeline-bidsify.R" class="external-link"><code>R/pipeline-bidsify.R</code></a></small>
       <div class="d-none name"><code>bidsify.Rd</code></div>
     </div>
 
@@ -99,10 +99,10 @@ metadata you provide.</p>
 <span>  merge_runs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  save_raw <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  html_report <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  pdf_report <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  report_seed <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  report_epoch_grouping_var_col <span class="op">=</span> <span class="st">"matched_event"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  pdf_report <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -145,16 +145,12 @@ as one file or as separate files. Defaults to FLASE (no merge).</p></dd>
 
 
 <dt id="arg-run-num">run_num<a class="anchor" aria-label="anchor" href="#arg-run-num"></a></dt>
-<dd><p>BIDS run ID. Optional override for the run number when there's
-only one block of data present in a given <code>.asc</code> file. This allows you to
-manually specify a run number (e.g., "03") instead of using the default block
-number in <code>.asc</code> files (1). This is especially useful if you have a single
-<code>.asc</code> file for a single run of a task and want you BIDSified derivatives to
-be labeled correctly. However, for files with multiple recording blocks
-embedded within the <strong>same</strong> <code>.asc</code> file, this parameter is ignored and
-blocks are automatically numbered as runs (block 1 = run-01, block 2 =
-run-02, etc.) in the order they appeared/were recorded. Defaults to NULL
-(no override).</p></dd>
+<dd><p>BIDS run ID. For single files without blocks (i.e., runs),
+<code>run_num</code> specifies which run this file represents. However, for files
+with multiple recording blocks embedded within the <strong>same</strong> <code>.asc</code> file,
+this parameter is ignored and blocks are automatically numbered as runs
+(block 1 = run-01, block 2 = run-02, etc.) in the order they appeared/were
+recorded.</p></dd>
 
 
 <dt id="arg-merge-runs">merge_runs<a class="anchor" aria-label="anchor" href="#arg-merge-runs"></a></dt>
@@ -173,13 +169,7 @@ addition to epoched data. Defaults to TRUE.</p></dd>
 
 <dt id="arg-html-report">html_report<a class="anchor" aria-label="anchor" href="#arg-html-report"></a></dt>
 <dd><p>Logical flag indicating whether to save out the <code>eyeris</code>
-preprocessing summary report as an HTML file. Defaults to FALSE.</p></dd>
-
-
-<dt id="arg-pdf-report">pdf_report<a class="anchor" aria-label="anchor" href="#arg-pdf-report"></a></dt>
-<dd><p>Logical flag indicating whether to save out the <code>eyeris</code>
-preprocessing summary report as a PDF file. Note, a valid TeX distribution
-must already be installed. Defaults to FALSE.</p></dd>
+preprocessing summary report as an HTML file. Defaults to <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-report-seed">report_seed<a class="anchor" aria-label="anchor" href="#arg-report-seed"></a></dt>
@@ -201,6 +191,10 @@ epoch-level diagnostic plots, set to <code>NULL</code>.</p></dd>
 Defaults to <code>TRUE</code>. Set to <code>False</code> to suppress messages about the current
 processing step and run silently.</p></dd>
 
+
+<dt id="arg-pdf-report">pdf_report<a class="anchor" aria-label="anchor" href="#arg-pdf-report"></a></dt>
+<dd><p><strong>(Deprecated)</strong> Use <code>html_report = TRUE</code> instead.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -213,6 +207,10 @@ official BIDS format for eyetracking data (see <a href="https://github.com/bids-
 At this time, however, this function instead takes a more BIDS-inspired
 approach to organizing the output files for preprocessed pupil data.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="https://lifecycle.r-lib.org/reference/deprecate_soft.html" class="external-link">lifecycle::deprecate_warn()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -221,15 +219,11 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example with unepoched data</span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span>deblink <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>extend <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="epoch.html">epoch</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    events <span class="op">=</span> <span class="st">"PROBE_{type}_{trial}"</span>,</span></span>
-<span class="r-in"><span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># grab 1 second prior to and 1 second post event</span></span></span>
-<span class="r-in"><span>    label <span class="op">=</span> <span class="st">"prePostProbe"</span> <span class="co"># custom epoch label name</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">bidsify</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    bids_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    bids_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># &lt;- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH</span></span></span>
 <span class="r-in"><span>    participant_id <span class="op">=</span> <span class="st">"001"</span>,</span></span>
 <span class="r-in"><span>    session_num <span class="op">=</span> <span class="st">"01"</span>,</span></span>
 <span class="r-in"><span>    task_name <span class="op">=</span> <span class="st">"assocret"</span>,</span></span>
@@ -248,96 +242,24 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epoching pupil data...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.21 seconds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using run_num = 01 for single block data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtered epochs: epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epochs to save structure:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   Names: epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   epoch_prePostProbe: list with 2 elements</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     block_1: data.frame with 20000 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     info: list</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing single-run epoch: epoch_prePostProbe (label: prePostProbe)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Skipping epoch epoch_prePostProbe - empty or invalid data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing single raw pupil timeseries to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Single raw pupil timeseries written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Confounds file written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-confounds.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing epoch: epoch_prePostProbe -&gt; label: prePostProbe -&gt; baseline: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline events found for: epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch summary for block 1 to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-epoch_summary.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch summary for block 1 written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-epoch_summary.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-01' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-01'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`run_num` is ignored when data contains multiple blocks.Blocks will be automatically numbered as runs.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtered epochs: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing run 01 raw pupil timeseries to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Run 01 raw pupil timeseries written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Confounds file written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-confounds.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
@@ -356,20 +278,6 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-01' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> processing file: sub-001_epoch-prePostProbe_run-01.Rmd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1/3           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2/3 [citation]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3/3           </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001_epoch-prePostProbe_run-01.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3IadD3/rmarkdown-str1d3d33c9f653.html </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001_epoch-prePostProbe_run-01.html</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Skipping block info for epoch 1 - no valid data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [Skipped] No detrend data found for run-01</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -379,28 +287,27 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2/3 [citation]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3/3           </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3IadD3/rmarkdown-str1d3d426b242d.html </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmprfw1yu/rmarkdown-str1d7e3dea1ca7.html </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001.html</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># example with run_num for single block data</span></span></span>
-<span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example with epoched data</span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="epoch.html">epoch</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    events <span class="op">=</span> <span class="st">"PROBE_{type}_{trial}"</span>,</span></span>
-<span class="r-in"><span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    label <span class="op">=</span> <span class="st">"prePostProbe"</span></span></span>
+<span class="r-in"><span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># grab 1 second prior to and 1 second post event</span></span></span>
+<span class="r-in"><span>    label <span class="op">=</span> <span class="st">"prePostProbe"</span> <span class="co"># custom epoch label name</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">bidsify</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    bids_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    bids_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># &lt;- MAKE SURE TO UPDATE TO YOUR DESIRED LOCAL PATH</span></span></span>
 <span class="r-in"><span>    participant_id <span class="op">=</span> <span class="st">"001"</span>,</span></span>
 <span class="r-in"><span>    session_num <span class="op">=</span> <span class="st">"01"</span>,</span></span>
 <span class="r-in"><span>    task_name <span class="op">=</span> <span class="st">"assocret"</span>,</span></span>
-<span class="r-in"><span>    run_num <span class="op">=</span> <span class="st">"03"</span>, <span class="co"># override default run-01 (block_1) to use run-03 instead</span></span></span>
-<span class="r-in"><span>    save_raw <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>    html_report <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>    run_num <span class="op">=</span> <span class="st">"01"</span>,</span></span>
+<span class="r-in"><span>    save_raw <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># save out raw timeseries</span></span></span>
+<span class="r-in"><span>    html_report <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># generate interactive report document</span></span></span>
+<span class="r-in"><span>    report_seed <span class="op">=</span> <span class="fl">0</span> <span class="co"># make randomly selected plot epochs reproducible</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Processing block: block_1</span>
@@ -415,121 +322,125 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.11 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.20 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using run_num = 03 for single block data</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`run_num` is ignored when data contains multiple blocks.Blocks will be automatically numbered as runs.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtered epochs: epoch_prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epochs to save structure:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   Names: epoch_prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>   epoch_prePostProbe: list with 2 elements</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     block_3: data.frame with 20000 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     block_1: data.frame with 20000 rows</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span>     info: list</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing single-run epoch: epoch_prePostProbe (label: prePostProbe)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Skipping epoch epoch_prePostProbe - empty or invalid data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing single raw pupil timeseries to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-timeseries_pupil.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Single raw pupil timeseries written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-timeseries_pupil.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Confounds file written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-confounds.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing epoch: epoch_prePostProbe (label: prePostProbe)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing run block_1 for epoch epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Run block_1 for epoch epoch_prePostProbe has 20000 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing run 01 epoched data for epoch 'prePostProbe' to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-preproc_pupil_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Run 01 epoched data for epoch 'prePostProbe' written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-preproc_pupil_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing run 01 raw pupil timeseries to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Run 01 raw pupil timeseries written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Confounds file written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-confounds.csv'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing epoch: epoch_prePostProbe -&gt; label: prePostProbe -&gt; baseline: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No epoch events found for: epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline events found for: epoch_prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch summary for block 3 to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-epoch_summary.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch summary for block 3 written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-epoch_summary.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch summary for block 1 to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-epoch_summary.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch summary for block 1 written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-epoch_summary.csv'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_22_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_23_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_24_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_25_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_START_26_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Epoch-wide confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_epoch_wide_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Found epoch events in epoch structure: PROBE_{type}_{trial}</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No baseline structure found for epoch label: prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-03_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-03' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-03'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 3 from possible blocks: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-03' already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe' does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmp3IadD3/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_22'(unique: 'PROBE_START_22') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_22_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_22'(unique: 'PROBE_STOP_22') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_22_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_23'(unique: 'PROBE_START_23') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_23_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_23'(unique: 'PROBE_STOP_23') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_23_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_24'(unique: 'PROBE_START_24') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_24_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_24'(unique: 'PROBE_STOP_24') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_24_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_25'(unique: 'PROBE_START_25') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_25_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_25'(unique: 'PROBE_STOP_25') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_25_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_START_26'(unique: 'PROBE_START_26') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_START_26_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Writing step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') to '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Step-specific confounds for event 'PROBE_STOP_26'(unique: 'PROBE_STOP_26') written to: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/eye/epoch_prePostProbe/sub-001_ses-01_task-assocret_run-01_desc-confounds_steps_PROBE_STOP_26_epoch-prepostprobe.csv'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Plotting block 1 from possible blocks: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01' already exists. Skipping creation...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe' does not exist. Creating...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> BIDS directory successfully created at: '/tmp/Rtmprfw1yu/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> processing file: sub-001_epoch-prePostProbe_run-03.Rmd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing file: sub-001_epoch-prePostProbe_run-01.Rmd</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1/3           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2/3 [citation]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3/3           </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001_epoch-prePostProbe_run-03.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-03.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-03.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3IadD3/rmarkdown-str1d3d6d2dab10.html </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001_epoch-prePostProbe_run-01.knit.md</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmprfw1yu/rmarkdown-str1d7e6ee8cda6.html </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001_epoch-prePostProbe_run-03.html</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001_epoch-prePostProbe_run-01.html</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Skipping block info for epoch 1 - no valid data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [Skipped] No detrend data found for run-03</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [Skipped] No detrend data found for run-01</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -538,7 +449,7 @@ approach to organizing the output files for preprocessed pupil data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2/3 [citation]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3/3           </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3IadD3/rmarkdown-str1d3d24925d65.html </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmprfw1yu/rmarkdown-str1d7e5ed8282d.html </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001.html</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
