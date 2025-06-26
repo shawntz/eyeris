@@ -23,11 +23,10 @@ make_report <- function(eyeris, out, plots, ...) {
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
+  run_ids <- get_block_numbers(eyeris)
   run_info <- paste(
     " - Runs: ",
-    paste(seq_len(length(grep("run-\\d+", unique(dirname(plots))))),
-      collapse = ", "
-    ),
+    paste(paste0("0", as.character(run_ids)), collapse = ", "),
     "\n"
   )
 

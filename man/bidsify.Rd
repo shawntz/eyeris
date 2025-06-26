@@ -42,12 +42,16 @@ as one file or as separate files. Defaults to FLASE (no merge).}
 
 \item{task_name}{BIDS task ID.}
 
-\item{run_num}{BIDS run ID. For single files without blocks (i.e., runs),
-\code{run_num} specifies which run this file represents. However, for files
-with multiple recording blocks embedded within the \strong{same} \code{.asc} file,
-this parameter is ignored and blocks are automatically numbered as runs
-(block 1 = run-01, block 2 = run-02, etc.) in the order they appeared/were
-recorded.}
+\item{run_num}{BIDS run ID. Optional override for the run number when there's
+only one block of data present in a given \code{.asc} file. This allows you to
+manually specify a run number (e.g., "03") instead of using the default block
+number in \code{.asc} files (1). This is especially useful if you have a single
+\code{.asc} file for a single run of a task and want your BIDSified derivatives to
+be labeled correctly. However, for files with multiple recording blocks
+embedded within the \strong{same} \code{.asc} file, this parameter is ignored and
+blocks are automatically numbered as runs (block 1 = run-01, block 2 =
+run-02, etc.) in the order they appeared/were recorded. Defaults to NULL
+(no override).}
 
 \item{merge_runs}{Logical flag indicating whether multiple runs (either
 from multiple recording blocks existing within the \strong{same} \code{.asc} file
@@ -130,6 +134,26 @@ demo_data |>
     save_raw = TRUE, # save out raw timeseries
     html_report = TRUE, # generate interactive report document
     report_seed = 0 # make randomly selected plot epochs reproducible
+  )
+
+# example with run_num for single block data
+demo_data <- eyelink_asc_demo_dataset()
+
+demo_data |>
+  eyeris::glassbox() |>
+  eyeris::epoch(
+    events = "PROBE_{type}_{trial}",
+    limits = c(-1, 1),
+    label = "prePostProbe"
+  ) |>
+  eyeris::bidsify(
+    bids_dir = tempdir(),
+    participant_id = "001",
+    session_num = "01",
+    task_name = "assocret",
+    run_num = "03", # override default run-01 (block_1) to use run-03 instead
+    save_raw = TRUE,
+    html_report = TRUE
   )
 }
 
