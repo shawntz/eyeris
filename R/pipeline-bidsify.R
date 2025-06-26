@@ -94,10 +94,7 @@
 #'     participant_id = "001",
 #'     session_num = "01",
 #'     task_name = "assocret",
-#'     run_num = "01",
-#'     save_raw = TRUE, # save out raw timeseries
-#'     html_report = TRUE, # generate interactive report document
-#'     report_seed = 0 # make randomly selected plot epochs reproducible
+#'     run_num = "01"
 #'   )
 #'
 #' # example with run_num for single block data
@@ -115,9 +112,7 @@
 #'     participant_id = "001",
 #'     session_num = "01",
 #'     task_name = "assocret",
-#'     run_num = "03", # override default run-01 (block_1) to use run-03 instead
-#'     save_raw = TRUE,
-#'     html_report = TRUE
+#'     run_num = "03" # override default run-01 (block_1) to use run-03 instead
 #'   )
 #' }
 #'
