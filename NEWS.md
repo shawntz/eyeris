@@ -1,9 +1,13 @@
-# eyeris 1.3.0 (in development)
+# eyeris 1.2.1.9000 (in development)
 
-The following changes are in progress and available only in the GitHub development version (`v1.3.0.9000`).
+The following changes are in progress and available only in the GitHub development version (`v1.2.1.9000`).
 
 ### ✨ New features
 * tbd...
+
+### 🔧 Minor improvements and fixes
+* RF: Deprecated the `pdf_report` parameter in `bidsify()`.
+  * Please use `html_report = TRUE` instead.
 
 _This version has not yet been released to CRAN._
 
