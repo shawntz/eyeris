@@ -25,7 +25,7 @@
 #' only one block of data present in a given `.asc` file. This allows you to
 #' manually specify a run number (e.g., "03") instead of using the default block
 #' number in `.asc` files (1). This is especially useful if you have a single
-#' `.asc` file for a single run of a task and want you BIDSified derivatives to
+#' `.asc` file for a single run of a task and want your BIDSified derivatives to
 #' be labeled correctly. However, for files with multiple recording blocks
 #' embedded within the **same** `.asc` file, this parameter is ignored and
 #' blocks are automatically numbered as runs (block 1 = run-01, block 2 =
