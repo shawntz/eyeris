@@ -103,6 +103,8 @@ reference:
       - detransient
       - interpolate
       - lpfilt
+      - downsample
+      - bin
       - detrend
       - zscore
 

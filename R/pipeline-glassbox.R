@@ -172,6 +172,8 @@ glassbox <- function(file,
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
     lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose),
+    downsample = FALSE,
+    bin = FALSE,
     detrend = FALSE,
     zscore = TRUE,
     seed = 123
@@ -218,6 +220,22 @@ glassbox <- function(file,
       "`list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose)`"
     ))
     params$lpfilt <- default_params$lpfilt
+  }
+
+  if ("downsample" %in% names(list(...)) && isTRUE(list(...)$downsample)) {
+    cli::cli_alert_warning(paste(
+      "[ WARN ] - `downsample` expects a list of args (not a boolean)...",
+      "using default: `list(target_fs = 100, plot_freqz = verbose)`"
+    ))
+    params$downsample <- list(target_fs = 100, plot_freqz = verbose)
+  }
+
+  if ("bin" %in% names(list(...)) && isTRUE(list(...)$bin)) {
+    cli::cli_alert_warning(paste(
+      "[ WARN ] - `bin` expects a list of args (not a boolean)...",
+      "using default: `list(bins_per_second = 10, method = \"mean\")`"
+    ))
+    params$bin <- list(bins_per_second = 10, method = "mean")
   }
 
   # evaluate which steps of pipeline to run
@@ -275,6 +293,26 @@ glassbox <- function(file,
           rp = params$lpfilt$rp,
           rs = params$lpfilt$rs,
           plot_freqz = params$lpfilt$plot_freqz
+        )
+      } else {
+        data
+      }
+    },
+    downsample = function(data, params) {
+      if (which_steps[["downsample"]]) {
+        eyeris::downsample(data,
+          target_fs = params$downsample$target_fs,
+          plot_freqz = params$downsample$plot_freqz
+        )
+      } else {
+        data
+      }
+    },
+    bin = function(data, params) {
+      if (which_steps[["bin"]]) {
+        eyeris::bin(data,
+          bins_per_second = params$bin$bins_per_second,
+          method = params$bin$method
         )
       } else {
         data

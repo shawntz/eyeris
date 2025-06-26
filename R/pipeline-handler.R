@@ -110,7 +110,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
 
     for (i_block in names(eyeris$timeseries)) {
-      if (new_suffix != "epoch") {
+      if (new_suffix != "epoch" &&
+            new_suffix != "bin" &&
+            new_suffix != "downsample") {
         data <- eyeris$timeseries[[i_block]]
 
         # run operation
@@ -130,8 +132,23 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         eyeris$timeseries[[i_block]] <- data
       }
     }
-    # update log var with latest op
-    eyeris$latest <- output_col
+
+    # handle bin and downsample operations that change data structure
+    if (new_suffix == "bin" || new_suffix == "downsample") {
+      for (i_block in names(eyeris$timeseries)) {
+        data <- eyeris$timeseries[[i_block]]
+
+        # run operation (this will modify the dataframe structure)
+        result <- operation(data, prev_operation, ...)
+
+        eyeris$timeseries[[i_block]] <- result
+      }
+      # update latest pointer for bin and downsample
+      eyeris$latest <- output_col
+    } else {
+      # update log var with latest op
+      eyeris$latest <- output_col
+    }
   } else {
     # handle single dfs fallback case
     if (new_suffix == "epoch") {
@@ -139,6 +156,12 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       data <- operation(eyeris, prev_operation, ...)
       # reset updated S3 eyeris class
       eyeris <- data
+    } else if (new_suffix == "bin" || new_suffix == "downsample") {
+      data <- eyeris$timeseries
+      # run op
+      result <- operation(data, prev_operation, ...)
+      # update S3 eyeris class
+      eyeris$timeseries <- result
     } else {
       data <- eyeris$timeseries
       # run operation
@@ -151,13 +174,13 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       }
       # update S3 eyeris class
       eyeris$timeseries <- data
-      # update log var with latest op
-      eyeris$latest <- output_col
       # update with detrend coefs if detrended
       if (new_suffix == "detrend") {
         eyeris$detrend_coefs <- list_detrend$coefficients
       }
     }
+    # update log var with latest op
+    eyeris$latest <- output_col
   }
 
   eyeris
