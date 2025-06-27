@@ -542,10 +542,12 @@ robust_plot <- function(y, x = NULL, ...) {
         ...
       )
 
-      # add vertical lines where there are NAs
+      # add vertical lines where there are NAs (using x values if available)
       na_idx <- which(is.na(y_orig))
       if (length(na_idx) > 0) {
-        abline(v = na_idx, col = "black", lty = 2)
+        abline(
+          v = if (!is.null(x)) x_seq[na_idx] else na_idx, col = "black", lty = 2
+        )
       }
 
       # replace NA with -1 after drawing NA lines for continuity
