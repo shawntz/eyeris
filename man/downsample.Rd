@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline-downsample.R
 \name{downsample}
 \alias{downsample}
-\title{Downsample time series data with anti-aliasing filtering}
+\title{Downsample pupil time series with anti-aliasing filtering}
 \usage{
 downsample(eyeris, target_fs, plot_freqz = FALSE)
 }
@@ -46,7 +46,7 @@ demo_data <- eyelink_asc_demo_dataset()
 
 # downsample pupil data recorded at 1000 Hz to 100 Hz
 demo_data |>
-  eyeris::glassbox(downsample = list(target_fs = 100)) |>
+  eyeris::glassbox(downsample = list(target_fs = 100, plot_freqz = TRUE)) |>
   plot(seed = 0)
 
 }

@@ -106,10 +106,13 @@ demo_data <- eyelink_asc_demo_dataset()
 ## (a) run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
 
+start_time <- min(output$timeseries$block_1$time_secs)
+end_time <- max(output$timeseries$block_1$time_secs)
+
 plot(
   output,
   steps = c(1, 5),
-  preview_window = c(0, max(output$timeseries$block_1$time_secs)),
+  preview_window = c(start_time, end_time),
   seed = 0
 )
 

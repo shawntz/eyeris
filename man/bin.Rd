@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline-bin.R
 \name{bin}
 \alias{bin}
-\title{Bin time series data by averaging within time bins}
+\title{Bin pupil time series by averaging within time bins}
 \usage{
 bin(eyeris, bins_per_second, method = "mean")
 }
@@ -40,9 +40,9 @@ Advanced users may call it directly if needed.
 \examples{
 demo_data <- eyelink_asc_demo_dataset()
 
-# bin data into 10 bins per second using the (default) mean method
+# bin data into 10 bins per second using the mean method
 demo_data |>
-  eyeris::glassbox(bin = list(bins_per_second = 10)) |>
+  eyeris::glassbox(bin = list(bins_per_second = 10), method = "mean") |>
   plot(seed = 0)
 
 }
