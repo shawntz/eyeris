@@ -497,6 +497,18 @@ glassbox <- function(file,
           }
         )
 
+        if (
+          verbose &&
+            action == "Running " &&
+            (step_name == "downsample" || step_name == "bin")
+        ) {
+          cli::cli_alert_success(
+            paste("[ INFO ] - Decimating sampling rate from",
+                  temp_file$info$sample.rate, "Hz -->",
+                  temp_file$decimated.sample.rate, "Hz...")
+          )
+        }
+
         if (interactive_preview && !err_thrown && !skip_plot) {
           pupil_steps <- grep("^pupil_",
             colnames(temp_file$timeseries[[block_name]]),
