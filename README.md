@@ -124,11 +124,15 @@ plot(eyeris_preproc)
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
 
 ``` r
+start_time <- min(eyeris_preproc$timeseries$block_1$time_secs)
+end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
+
 plot(eyeris_preproc,
   steps = c(1, 5),
-  preview_window = c(0, max(eyeris_preproc$timeseries$block_1$time_secs))
+  preview_window = c(start_time, end_time)
 )
 #> ! Plotting block 1 from possible blocks: 1
+#> ℹ with sampling rate: 1000 Hz
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
