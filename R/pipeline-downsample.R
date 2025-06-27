@@ -1,4 +1,4 @@
-#' Downsample time series data with anti-aliasing filtering
+#' Downsample pupil time series with anti-aliasing filtering
 #'
 #' This function downsamples pupillometry data by applying an anti-aliasing
 #' filter before decimation. Unlike binning, downsampling preserves the
@@ -38,12 +38,31 @@
 #'
 #' # downsample pupil data recorded at 1000 Hz to 100 Hz
 #' demo_data |>
-#'   eyeris::glassbox(downsample = list(target_fs = 100)) |>
+#'   eyeris::glassbox(downsample = list(target_fs = 100, plot_freqz = TRUE)) |>
 #'   plot(seed = 0)
 #'
 #' @export
 downsample <- function(eyeris, target_fs, plot_freqz = FALSE) {
   current_fs <- eyeris$info$sample.rate
+
+  eyeris |>
+    pipeline_handler(
+      downsample_pupil,
+      "downsample",
+      target_fs,
+      plot_freqz,
+      current_fs
+    )
+}
+
+downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs) {
+  if (any(is.na(x[[prev_op]]))) {
+    cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
+    return(x[[prev_op]])
+  } else {
+    prev_pupil <- x[[prev_op]]
+  }
+
   decimation_factor <- current_fs / target_fs
 
   if (decimation_factor < 1) {
@@ -80,31 +99,6 @@ downsample <- function(eyeris, target_fs, plot_freqz = FALSE) {
         "Consider using a higher target_fs or the binning function instead."
       )
     )
-  }
-
-  eyeris <- eyeris |>
-    pipeline_handler(
-      downsample_pupil,
-      "downsample",
-      target_fs,
-      decimation_factor,
-      wp,
-      ws,
-      current_fs,
-      plot_freqz
-    )
-
-  eyeris$info$decimated.sample.rate <- target_fs
-
-  return(eyeris)
-}
-
-downsample_pupil <- function(x, prev_op, target_fs, decimation_factor, wp, ws,
-                             current_fs, plot_freqz) {
-  if (any(is.na(x[[prev_op]]))) {
-    cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
-  } else {
-    prev_pupil <- x[[prev_op]]
   }
 
   # design anti-aliasing filter
@@ -144,16 +138,11 @@ downsample_pupil <- function(x, prev_op, target_fs, decimation_factor, wp, ws,
   # use every nth sample where n is the decimation factor
   indices <- seq(1, length(filtered_data), by = decimation_factor)
   downsampled_data <- filtered_data[indices]
-
-  downsampled_df <- data.frame(stringsAsFactors = FALSE)
+  downsampled_df <- x[indices, , drop = FALSE]
   downsampled_df[[paste0(prev_op, "_downsample")]] <- downsampled_data
 
-  # downsample timestamps and other columns
-  for (col in names(x)) {
-    if (col != prev_op && is.numeric(x[[col]])) {
-      downsampled_df[[col]] <- x[[col]][indices]
-    }
-  }
-
-  downsampled_df
+  list_out <- list(
+    downsampled_df = downsampled_df,
+    decimated.sample.rate = target_fs
+  )
 }
