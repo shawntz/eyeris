@@ -1,4 +1,4 @@
-#' Bin time series data by averaging within time bins
+#' Bin pupil time series by averaging within time bins
 #'
 #' This function bins pupillometry data by dividing time into equal intervals
 #' and averaging the data within each bin. Unlike downsampling, binning
@@ -33,9 +33,9 @@
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # bin data into 10 bins per second using the (default) mean method
+#' # bin data into 10 bins per second using the mean method
 #' demo_data |>
-#'   eyeris::glassbox(bin = list(bins_per_second = 10)) |>
+#'   eyeris::glassbox(bin = list(bins_per_second = 10), method = "mean") |>
 #'   plot(seed = 0)
 #'
 #' @export
@@ -62,95 +62,119 @@ bin <- function(eyeris, bins_per_second, method = "mean") {
       current_fs
     )
 
-  eyeris$info$binning.sample.rate <- new_fs
-
   return(eyeris)
 }
 
 bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
+  # Debug: Check if prev_op is empty or NULL
+  if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {
+    cli::cli_abort(paste(
+      "Previous operation column name is empty or NULL.",
+      "Expected a valid column name like 'pupil_raw'. This usually means the",
+      "eyeris object's 'latest' pointer is not set correctly.",
+      "Current prev_op value:", deparse(prev_op)
+    ))
+  }
+
+  # Debug: Check if the column exists
+  if (!prev_op %in% colnames(x)) {
+    cli::cli_abort(paste(
+      "Column '", prev_op, "' not found in data.",
+      "Available columns:", paste(colnames(x), collapse = ", ")
+    ))
+  }
+
   if (any(is.na(x[[prev_op]]))) {
     cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
   } else {
     prev_pupil <- x[[prev_op]]
   }
 
-  time_col <- NULL
-  for (col in names(x)) {
-    if (col != prev_op && is.numeric(x[[col]]) &&
-          any(grepl("time", tolower(col)))) {
-      time_col <- col
-      break
-    }
-  }
-
-  # if no time column found, create one based on sample indices
-  # though, this should never happen, hopefully
-  if (is.null(time_col)) {
-    time_secs_inferred <- (1:seq_along(prev_pupil) - 1) / current_fs
-  } else {
-    time_secs_inferred <- x[[time_col]]
-  }
+  time_col <- "time_secs"
+  time_secs_inferred <- x[[time_col]]
 
   # create bin centers (1/2X, 3/2X, 5/2X, ...)
   bin_duration <- 1 / bins_per_second
   max_time <- max(time_secs_inferred, na.rm = TRUE)
   bin_centers <- seq(bin_duration / 2, max_time, by = bin_duration)
-  binned_pupil <- numeric(length(bin_centers))
 
-  for (i in seq_along(bin_centers)) {
-    center <- bin_centers[i]
-    bin_start <- center - bin_duration / 2
-    bin_end <- center + bin_duration / 2
-    bin_indices <- which(
-      time_secs_inferred >= bin_start & time_secs_inferred < bin_end
-    )
-
-    if (length(bin_indices) > 0) {
-      if (method == "mean") {
-        binned_pupil[i] <- mean(prev_pupil[bin_indices], na.rm = TRUE)
-      } else {
-        binned_pupil[i] <- median(prev_pupil[bin_indices], na.rm = TRUE)
-      }
-    } else {
-      binned_pupil[i] <- NA
-    }
-  }
+  # pre-compute bin assignments for all time points
+  bin_assignments <- findInterval(
+    time_secs_inferred, bin_centers - bin_duration / 2
+  )
 
   binned_df <- data.frame(
     time_secs = bin_centers,
     stringsAsFactors = FALSE
   )
 
-  binned_df[[paste0(prev_op, "_bin")]] <- binned_pupil
-
-  for (col in names(x)) {
-    if (col != prev_op && col != time_col && is.numeric(x[[col]]) &&
-          !grepl("_bin$", col)) {
-      binned_values <- numeric(length(bin_centers))
-
-      for (i in seq_along(bin_centers)) {
-        center <- bin_centers[i]
-        bin_start <- center - bin_duration / 2
-        bin_end <- center + bin_duration / 2
-
-        bin_indices <- which(
-          time_secs_inferred >= bin_start & time_secs_inferred < bin_end
-        )
-
-        if (length(bin_indices) > 0) {
-          if (method == "mean") {
-            binned_values[i] <- mean(x[[col]][bin_indices], na.rm = TRUE)
-          } else {
-            binned_values[i] <- median(x[[col]][bin_indices], na.rm = TRUE)
-          }
+  bin_vector <- function(vec, bin_assignments, bin_centers, method) {
+    result <- numeric(length(bin_centers))
+    for (i in seq_along(bin_centers)) {
+      bin_indices <- which(bin_assignments == i)
+      if (length(bin_indices) > 0) {
+        if (method == "mean") {
+          result[i] <- mean(vec[bin_indices], na.rm = TRUE)
         } else {
-          binned_values[i] <- NA
+          result[i] <- median(vec[bin_indices], na.rm = TRUE)
         }
+      } else {
+        result[i] <- NA
       }
+    }
+    result
+  }
 
-      binned_df[[col]] <- binned_values
+  binned_bin_col <- bin_vector(prev_pupil, bin_assignments, bin_centers, method)
+  binned_df <- cbind(
+    binned_df,
+    setNames(
+      list(binned_bin_col), paste0(prev_op, "_bin")
+    )
+  )
+
+  # process all remaining cols from the orig df
+  cols_to_process <- 0
+  for (col in names(x)) {
+    if (col != prev_op && col != time_col && !grepl("_bin$", col)) {
+      cols_to_process <- cols_to_process + 1
     }
   }
 
-  binned_df
+  if (cols_to_process > 0) {
+    pb <- counter_bar(cols_to_process, msg = "Binning columns", width = 70)
+  } else {
+    pb <- NULL
+  }
+
+  for (col in names(x)) {
+    if (col != prev_op && col != time_col && !grepl("_bin$", col)) {
+      if (is.numeric(x[[col]])) {
+        # For numeric columns, apply binning
+        binned_df[[col]] <- bin_vector(
+          x[[col]],
+          bin_assignments,
+          bin_centers,
+          method
+        )
+      } else {
+        # For non-numeric columns, take the first value in each bin
+        # This preserves metadata like eye, hz, type, etc.
+        binned_df[[col]] <- sapply(seq_along(bin_centers), function(i) {
+          bin_indices <- which(bin_assignments == i)
+          if (length(bin_indices) > 0) {
+            x[[col]][bin_indices[1]]  # Take first value in bin
+          } else {
+            NA
+          }
+        })
+      }
+      tick(pb, by = 1)
+    }
+  }
+
+  list_out <- list(
+    downsampled_df = binned_df,
+    decimated.sample.rate = bins_per_second
+  )
 }
