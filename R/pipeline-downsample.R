@@ -25,7 +25,10 @@
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param target_fs The target sampling frequency in Hz after downsampling.
-#' @param plot_freqz Boolean flag for displaying filter frequency response.
+#' @param plot_freqz Boolean flag for displaying filter frequency response
+#' (default FALSE).
+#' @param rp Passband ripple in dB (default 1).
+#' @param rs Stopband attenuation in dB (default 35).
 #'
 #' @return An `eyeris` object with downsampled data and updated sampling rate.
 #'
@@ -36,13 +39,13 @@
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # downsample pupil data recorded at 1000 Hz to 100 Hz
+#' # downsample pupil data recorded at 1000 Hz to 100 Hz with the default params
 #' demo_data |>
-#'   eyeris::glassbox(downsample = list(target_fs = 100, plot_freqz = TRUE)) |>
+#'   eyeris::glassbox(downsample = list(target_fs = 100)) |>
 #'   plot(seed = 0)
 #'
 #' @export
-downsample <- function(eyeris, target_fs, plot_freqz = FALSE) {
+downsample <- function(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35) {
   current_fs <- eyeris$info$sample.rate
 
   eyeris |>
@@ -51,11 +54,14 @@ downsample <- function(eyeris, target_fs, plot_freqz = FALSE) {
       "downsample",
       target_fs,
       plot_freqz,
-      current_fs
+      current_fs,
+      rp,
+      rs
     )
 }
 
-downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs) {
+downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
+                             rp, rs) {
   if (any(is.na(x[[prev_op]]))) {
     cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
     return(x[[prev_op]])
@@ -103,7 +109,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs) {
 
   # design anti-aliasing filter
   fs_nq <- current_fs / 2
-  foo <- gsignal::buttord(wp / fs_nq, ws / fs_nq, 1, 35)  # rp = 1, rs = 35
+  foo <- gsignal::buttord(wp / fs_nq, ws / fs_nq, rp, rs)
   filt <- gsignal::butter(foo, output = "Sos")
 
   # plot frequency response if requested
