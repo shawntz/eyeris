@@ -44,6 +44,9 @@
 #' Set to `FALSE` only when running inside `glassbox()` with
 #' `interactive_preview = TRUE`, where prompting after each step is desired, as
 #' well as in the generation of interactive HTML reports with [eyeris::bidsify].
+#' @param verbose A logical flag to indicate whether to print status messages to
+#' the console. Defaults to `TRUE`. Set to `FALSE` to suppress messages about
+#' the current processing step and run silently.
 #' @param num_previews **(Deprecated)** Use `preview_n` instead.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
@@ -92,7 +95,7 @@
 plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         preview_duration = NULL, preview_window = NULL,
                         seed = NULL, block = 1, plot_distributions = FALSE,
-                        suppress_prompt = TRUE,
+                        suppress_prompt = TRUE, verbose = TRUE,
                         num_previews = deprecated()) {
   # handle deprecated parameters
   if (is_present(num_previews)) {
@@ -185,14 +188,16 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 
     if (block %in% available_blocks) {
       pupil_data <- x$timeseries[[paste0("block_", block)]]
-      cli::cli_alert_warning(sprintf(
-        "Plotting block %d from possible blocks: %s",
-        block,
-        toString(available_blocks)
-      ))
+      if (verbose) {
+        cli::cli_alert_warning(sprintf(
+          "[ INFO ] - Plotting block %d from possible blocks: %s",
+          block,
+          toString(available_blocks)
+        ))
+      }
     } else {
       cli::cli_abort(sprintf(
-        "Block %d does not exist. Available blocks: %d",
+        "[ WARN ] - Block %d does not exist. Available blocks: %d",
         block, toString(available_blocks)
       ))
     }
@@ -200,7 +205,9 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     pupil_data <- x$timeseries$block_1
   }
 
-  alert("info", paste("with sampling rate:", hz, "Hz"))
+  if (verbose) {
+    alert("info", paste("[ INFO ] - Plotting with sampling rate:", hz, "Hz"))
+  }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 

@@ -79,6 +79,7 @@
 #' start_time <- min(output$timeseries$block_1$time_secs)
 #' end_time <- max(output$timeseries$block_1$time_secs)
 #'
+#' # by default, verbose = TRUE. To suppress messages, set verbose = FALSE.
 #' plot(
 #'   output,
 #'   steps = c(1, 5),
@@ -99,7 +100,8 @@
 #'   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 #' )
 #'
-#' plot(output, seed = 0)
+#' # to suppress messages, set verbose = FALSE in plot():
+#' plot(output, seed = 0, verbose = FALSE)
 #'
 #' # (3) examples of disabling certain steps
 #' output <- eyeris::glassbox(
@@ -632,7 +634,8 @@ plot_with_seed <- function(file,
           only_linear_trend = only_linear_trend,
           next_step = next_step,
           block = bn,
-          suppress_prompt = FALSE
+          suppress_prompt = FALSE,
+          verbose = verbose
         )
       } else {
         plot(
@@ -644,7 +647,8 @@ plot_with_seed <- function(file,
           preview_window = preview_window,
           only_linear_trend = only_linear_trend,
           next_step = next_step,
-          suppress_prompt = FALSE
+          suppress_prompt = FALSE,
+          verbose = verbose
         )
       }
     }

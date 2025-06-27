@@ -15,6 +15,7 @@
   block = 1,
   plot_distributions = FALSE,
   suppress_prompt = TRUE,
+  verbose = TRUE,
   num_previews = deprecated()
 )
 }
@@ -66,6 +67,10 @@ non-interactive or automated contexts (e.g., RMarkdown, scripts).
 Set to \code{FALSE} only when running inside \code{glassbox()} with
 \code{interactive_preview = TRUE}, where prompting after each step is desired, as
 well as in the generation of interactive HTML reports with \link{bidsify}.}
+
+\item{verbose}{A logical flag to indicate whether to print status messages to
+the console. Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about
+the current processing step and run silently.}
 
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead.}
 }
