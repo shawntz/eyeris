@@ -76,10 +76,13 @@
 #' ## (a) run an automated pipeline with no real-time inspection of parameters
 #' output <- eyeris::glassbox(demo_data)
 #'
+#' start_time <- min(output$timeseries$block_1$time_secs)
+#' end_time <- max(output$timeseries$block_1$time_secs)
+#'
 #' plot(
 #'   output,
 #'   steps = c(1, 5),
-#'   preview_window = c(0, max(output$timeseries$block_1$time_secs)),
+#'   preview_window = c(start_time, end_time),
 #'   seed = 0
 #' )
 #'
@@ -165,7 +168,7 @@ glassbox <- function(file,
     skip_detransient <- NULL
   }
 
-  # the default parameters
+  # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto"),
     deblink = list(extend = 50),
@@ -181,6 +184,15 @@ glassbox <- function(file,
 
   # override defaults
   params <- utils::modifyList(default_params, list(...))
+
+  # handle method parameter for bin operation
+  if (
+    "method" %in% names(list(...)) &&
+      !is.null(params$bin) &&
+      is.list(params$bin)
+  ) {
+    params$bin$method <- list(...)$method
+  }
 
   # guard params that accept lists in the event a boolean is supplied
   if ("load_asc" %in% names(list(...)) && isTRUE(list(...)$load_asc)) {
@@ -227,7 +239,7 @@ glassbox <- function(file,
       "[ WARN ] - `downsample` expects a list of args (not a boolean)...",
       "using default: `list(target_fs = 100, plot_freqz = verbose)`"
     ))
-    params$downsample <- list(target_fs = 100, plot_freqz = verbose)
+    params$downsample <- default_params$downsample
   }
 
   if ("bin" %in% names(list(...)) && isTRUE(list(...)$bin)) {
@@ -235,15 +247,37 @@ glassbox <- function(file,
       "[ WARN ] - `bin` expects a list of args (not a boolean)...",
       "using default: `list(bins_per_second = 10, method = \"mean\")`"
     ))
-    params$bin <- list(bins_per_second = 10, method = "mean")
+    params$bin <- default_params$bin
+  }
+
+  # abort if both downsample and bin are enabled
+  step_status <- evaluate_pipeline_step_params(
+    list(downsample = params$downsample, bin = params$bin)
+  )
+
+  if (
+    !is.null(params$downsample) &&
+      !is.null(params$bin) &&
+      step_status[1] &&
+      step_status[2]
+  ) {
+    cli::cli_abort(
+      c(
+        "[ ABORT ] - Both 'downsample' and 'bin' steps are enabled.",
+        "x You cannot use both downsampling and binning in the same glassbox.",
+        "i Please enable only one (or neither) of these steps."
+      )
+    )
   }
 
   # evaluate which steps of pipeline to run
   which_steps <- evaluate_pipeline_step_params(params)
 
   if (which_steps[["detrend"]] &&
-        !any(which_steps[c("deblink", "detransient",
-                           "interpolate", "lpfilt")])) {
+    !any(which_steps[c(
+      "deblink", "detransient",
+      "interpolate", "lpfilt"
+    )])) {
     cli::cli_alert_warning(
       paste(
         "[ WARN ] - Detrend is enabled but no other preprocessing steps are",
@@ -407,13 +441,17 @@ glassbox <- function(file,
         if (verbose) {
           if (action == "Running ") {
             cli::cli_alert_success(
-              paste0("[  OK  ] - ", action, "eyeris::",
-                     step_name, "() for ", block_name)
+              paste0(
+                "[  OK  ] - ", action, "eyeris::",
+                step_name, "() for ", block_name
+              )
             )
           } else {
             cli::cli_alert_warning(
-              paste0("[ SKIP ] - ", action, "eyeris::",
-                     step_name, "() for ", block_name)
+              paste0(
+                "[ SKIP ] - ", action, "eyeris::",
+                step_name, "() for ", block_name
+              )
             )
           }
         }
@@ -441,7 +479,7 @@ glassbox <- function(file,
             if (verbose) {
               cli::cli_alert_info(
                 paste0(
-                  "[ INFO ] - ", "Skipping eyeris::",
+                  "[ SKIP ] - ", "Skipping eyeris::",
                   step_name, "() for ", block_name, ": ",
                   e$message
                 )
@@ -499,10 +537,19 @@ glassbox <- function(file,
         }
 
         block_step_counter <- block_step_counter + 1
-
       }
 
       processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
+
+      # preserve decimated.sample.rate from processed blocks
+      if (!is.null(temp_file$decimated.sample.rate)) {
+        file$decimated.sample.rate <- temp_file$decimated.sample.rate
+      }
+
+      # preserve latest pointer from processed blocks
+      if (!is.null(temp_file$latest)) {
+        file$latest <- temp_file$latest
+      }
     }
 
     # recombine processed blocks
@@ -548,7 +595,6 @@ plot_with_seed <- function(file,
                            next_step,
                            block_name = NULL,
                            verbose = TRUE) {
-
   if (is.null(seed)) {
     seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
   }
