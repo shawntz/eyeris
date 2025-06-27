@@ -143,12 +143,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         # update block in S3 eyeris object
         eyeris$timeseries[[i_block]] <- data
         if (new_suffix == "bin" || new_suffix == "downsample") {
-          alert("info",
-                paste("[ INFO ] - Decimating sampling rate from",
-                      eyeris$info$sample.rate, "Hz -->",
-                      list_ds_bin$decimated.sample.rate, "Hz..."))
           eyeris$decimated.sample.rate <- list_ds_bin$decimated.sample.rate
-          # Update latest pointer for bin/downsample operations
+          # update latest pointer for bin/downsample operations
           eyeris$latest <- output_col
         }
       }
