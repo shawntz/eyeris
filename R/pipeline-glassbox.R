@@ -334,9 +334,15 @@ glassbox <- function(file,
     },
     downsample = function(data, params) {
       if (which_steps[["downsample"]]) {
+        if (is.null(params$downsample$plot_freqz))
+          params$downsample$plot_freqz <- verbose
+        if (is.null(params$downsample$rp)) params$downsample$rp <- 1
+        if (is.null(params$downsample$rs)) params$downsample$rs <- 35
         eyeris::downsample(data,
           target_fs = params$downsample$target_fs,
-          plot_freqz = params$downsample$plot_freqz
+          plot_freqz = params$downsample$plot_freqz,
+          rp = params$downsample$rp,
+          rs = params$downsample$rs
         )
       } else {
         data
