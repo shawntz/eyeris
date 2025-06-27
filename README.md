@@ -131,8 +131,8 @@ plot(eyeris_preproc,
   steps = c(1, 5),
   preview_window = c(start_time, end_time)
 )
-#> ! Plotting block 1 from possible blocks: 1
-#> ℹ with sampling rate: 1000 Hz
+#> ! [ INFO ] - Plotting block 1 from possible blocks: 1
+#> ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
