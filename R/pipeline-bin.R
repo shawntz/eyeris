@@ -94,9 +94,11 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   time_secs_inferred <- x[[time_col]]
 
   # create bin centers (1/2X, 3/2X, 5/2X, ...)
+  # anchored to the start of the time vector
   bin_duration <- 1 / bins_per_second
+  min_time <- min(time_secs_inferred, na.rm = TRUE)
   max_time <- max(time_secs_inferred, na.rm = TRUE)
-  bin_centers <- seq(bin_duration / 2, max_time, by = bin_duration)
+  bin_centers <- seq(min_time + bin_duration / 2, max_time, by = bin_duration)
 
   # pre-compute bin assignments for all time points
   bin_assignments <- findInterval(
