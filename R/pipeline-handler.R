@@ -110,9 +110,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
 
     for (i_block in names(eyeris$timeseries)) {
-      if (new_suffix != "epoch" &&
-            new_suffix != "bin" &&
-            new_suffix != "downsample") {
+      if (new_suffix != "epoch") {
         data <- eyeris$timeseries[[i_block]]
 
         # run operation
@@ -125,28 +123,43 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
             eyeris$detrend_coefs <- list()
           }
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
+        } else if (new_suffix == "bin" || new_suffix == "downsample") {
+          list_ds_bin <- operation(data, prev_operation, ...)
+          data <- list_ds_bin$downsampled_df |>
+            dplyr::select(
+              block,
+              time_orig,
+              time_secs,
+              dplyr::everything(),
+              -dplyr::starts_with("pupil_"),
+              dplyr::starts_with("pupil_")
+            ) |>
+            dplyr::relocate(
+              dplyr::ends_with("_bin"), .after = last_col()
+            )
         } else {
           data[[output_col]] <- operation(data, prev_operation, ...)
         }
         # update block in S3 eyeris object
         eyeris$timeseries[[i_block]] <- data
+        if (new_suffix == "bin" || new_suffix == "downsample") {
+          alert("info",
+                paste("[ INFO ] - Decimating sampling rate from",
+                      eyeris$info$sample.rate, "Hz -->",
+                      list_ds_bin$decimated.sample.rate, "Hz..."))
+          eyeris$decimated.sample.rate <- list_ds_bin$decimated.sample.rate
+          # Update latest pointer for bin/downsample operations
+          eyeris$latest <- output_col
+        }
       }
     }
 
-    # handle bin and downsample operations that change data structure
-    if (new_suffix == "bin" || new_suffix == "downsample") {
-      for (i_block in names(eyeris$timeseries)) {
-        data <- eyeris$timeseries[[i_block]]
-
-        # run operation (this will modify the dataframe structure)
-        result <- operation(data, prev_operation, ...)
-
-        eyeris$timeseries[[i_block]] <- result
-      }
-      # update latest pointer for bin and downsample
-      eyeris$latest <- output_col
-    } else {
-      # update log var with latest op
+    # update latest pointer for non-bin/downsample operations
+    if (
+      new_suffix != "bin" &&
+        new_suffix != "downsample" &&
+        new_suffix != "epoch"
+    ) {
       eyeris$latest <- output_col
     }
   } else {
@@ -181,6 +194,21 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
     # update log var with latest op
     eyeris$latest <- output_col
+  }
+
+  # guard: if no downsampling or binning, time_scaled should mirror time_secs
+  if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+    for (i_block in names(eyeris$timeseries)) {
+      data <- eyeris$timeseries[[i_block]]
+      if (!"time_scaled" %in% colnames(data)) {
+        data$time_scaled <- data$time_secs
+        eyeris$timeseries[[i_block]] <- data
+      }
+    }
+  } else {
+    if (!"time_scaled" %in% colnames(eyeris$timeseries)) {
+      eyeris$timeseries$time_scaled <- eyeris$timeseries$time_secs
+    }
   }
 
   eyeris
