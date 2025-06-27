@@ -4,14 +4,19 @@
 \alias{downsample}
 \title{Downsample pupil time series with anti-aliasing filtering}
 \usage{
-downsample(eyeris, target_fs, plot_freqz = FALSE)
+downsample(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
 
 \item{target_fs}{The target sampling frequency in Hz after downsampling.}
 
-\item{plot_freqz}{Boolean flag for displaying filter frequency response.}
+\item{plot_freqz}{Boolean flag for displaying filter frequency response
+(default FALSE).}
+
+\item{rp}{Passband ripple in dB (default 1).}
+
+\item{rs}{Stopband attenuation in dB (default 35).}
 }
 \value{
 An \code{eyeris} object with downsampled data and updated sampling rate.
@@ -44,9 +49,9 @@ Advanced users may call it directly if needed.
 \examples{
 demo_data <- eyelink_asc_demo_dataset()
 
-# downsample pupil data recorded at 1000 Hz to 100 Hz
+# downsample pupil data recorded at 1000 Hz to 100 Hz with the default params
 demo_data |>
-  eyeris::glassbox(downsample = list(target_fs = 100, plot_freqz = TRUE)) |>
+  eyeris::glassbox(downsample = list(target_fs = 100)) |>
   plot(seed = 0)
 
 }
