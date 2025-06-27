@@ -33,9 +33,9 @@
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # bin data into 10 bins per second using the mean method
+#' # bin data into 10 bins per second using the (default) "mean" method
 #' demo_data |>
-#'   eyeris::glassbox(bin = list(bins_per_second = 10), method = "mean") |>
+#'   eyeris::glassbox(bin = list(bins_per_second = 10, method = "mean")) |>
 #'   plot(seed = 0)
 #'
 #' @export
