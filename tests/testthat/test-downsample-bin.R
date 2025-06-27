@@ -28,22 +28,28 @@ test_that("downsample and bin work as expected", {
   expect_true(!any(is.na(binned$timeseries$block_1$pupil_raw_interpolate_bin)))
 
   # test glassbox with downsampling
-  gbox_down <- eyeris::glassbox(
-    demo_data,
-    downsample = list(target_fs = 500, plot_freqz = FALSE),
-    detrend = FALSE,
-    zscore = FALSE
-  )
-  expect_lt(nrow(gbox_down$timeseries$block_1), nrow(data$timeseries$block_1))
-  expect_equal(gbox_down$decimated.sample.rate, 500)
+  expect_silent({
+    gbox_down <- eyeris::glassbox(
+      demo_data,
+      downsample = list(target_fs = 500, plot_freqz = FALSE),
+      detrend = FALSE,
+      zscore = FALSE,
+      verbose = FALSE
+    )
+    expect_lt(nrow(gbox_down$timeseries$block_1), nrow(data$timeseries$block_1))
+    expect_equal(gbox_down$decimated.sample.rate, 500)
+  })
 
   # test glassbox with binning
-  gbox_bin <- eyeris::glassbox(
-    demo_data,
-    bin = list(bins_per_second = 10, method = "mean"),
-    detrend = FALSE,
-    zscore = FALSE
-  )
-  expect_lt(nrow(gbox_bin$timeseries$block_1), nrow(data$timeseries$block_1))
-  expect_equal(gbox_bin$decimated.sample.rate, 10)
+  expect_silent({
+    gbox_bin <- eyeris::glassbox(
+      demo_data,
+      bin = list(bins_per_second = 10, method = "mean"),
+      detrend = FALSE,
+      zscore = FALSE,
+      verbose = FALSE
+    )
+    expect_lt(nrow(gbox_bin$timeseries$block_1), nrow(data$timeseries$block_1))
+    expect_equal(gbox_bin$decimated.sample.rate, 10)
+  })
 })
