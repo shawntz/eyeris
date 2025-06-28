@@ -189,6 +189,7 @@ load_asc <- function(file, block = "auto") {
   list_out$file <- file
   list_out$info <- x$info
   list_out$latest <- "pupil_raw"
+  list_out$decimated.sample.rate <- NA_integer_
   list_out <- normalize_time_orig(list_out)
   class(list_out) <- "eyeris"
 
@@ -257,6 +258,7 @@ normalize_time_orig <- function(eyeris_obj) {
       block_df |>
         dplyr::mutate(
           time_secs = (time_orig - dplyr::first(time_orig)) / 1000,
+          time_scaled = (time_orig - dplyr::first(time_orig)) / 1000,
           .after = "time_orig"
         )
     })
@@ -265,6 +267,7 @@ normalize_time_orig <- function(eyeris_obj) {
     eyeris_obj$timeseries <- eyeris_obj$timeseries |>
       dplyr::mutate(
         time_secs = (time_orig - dplyr::first(time_orig)) / 1000,
+        time_scaled = (time_orig - dplyr::first(time_orig)) / 1000,
         .after = "time_orig"
       )
   }

@@ -100,6 +100,17 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     # handle list of dfs (block) default method
 
+    # time monotonicity check for each block
+    for (i_block in names(eyeris$timeseries)) {
+      data <- eyeris$timeseries[[i_block]]
+      if ("time_secs" %in% colnames(data)) {
+        check_time_monotonic(data$time_secs, "time_secs")
+      }
+      if ("time_orig" %in% colnames(data)) {
+        check_time_monotonic(data$time_orig, "time_orig")
+      }
+    }
+
     # testing:
     if (new_suffix == "epoch") {
       # run op
@@ -123,22 +134,62 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
             eyeris$detrend_coefs <- list()
           }
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
+        } else if (new_suffix == "bin" || new_suffix == "downsample") {
+          list_ds_bin <- operation(data, prev_operation, ...)
+          data <- list_ds_bin$downsampled_df |>
+            dplyr::select(
+              block,
+              time_orig,
+              time_secs,
+              dplyr::everything(),
+              -dplyr::starts_with("pupil_"),
+              dplyr::starts_with("pupil_")
+            ) |>
+            dplyr::relocate(
+              dplyr::ends_with("_bin"), .after = last_col()
+            )
         } else {
           data[[output_col]] <- operation(data, prev_operation, ...)
         }
         # update block in S3 eyeris object
         eyeris$timeseries[[i_block]] <- data
+        if (new_suffix == "bin" || new_suffix == "downsample") {
+          eyeris$decimated.sample.rate <- list_ds_bin$decimated.sample.rate
+          # update latest pointer for bin/downsample operations
+          eyeris$latest <- output_col
+        }
       }
     }
-    # update log var with latest op
-    eyeris$latest <- output_col
+
+    # update latest pointer for non-bin/downsample operations
+    if (
+      new_suffix != "bin" &&
+        new_suffix != "downsample" &&
+        new_suffix != "epoch"
+    ) {
+      eyeris$latest <- output_col
+    }
   } else {
     # handle single dfs fallback case
+    # global time monotonicity check for single dataframe
+    data <- eyeris$timeseries
+    if ("time_secs" %in% colnames(data)) {
+      check_time_monotonic(data$time_secs, "time_secs")
+    }
+    if ("time_orig" %in% colnames(data)) {
+      check_time_monotonic(data$time_orig, "time_orig")
+    }
     if (new_suffix == "epoch") {
       # run op
       data <- operation(eyeris, prev_operation, ...)
       # reset updated S3 eyeris class
       eyeris <- data
+    } else if (new_suffix == "bin" || new_suffix == "downsample") {
+      data <- eyeris$timeseries
+      # run op
+      result <- operation(data, prev_operation, ...)
+      # update S3 eyeris class
+      eyeris$timeseries <- result
     } else {
       data <- eyeris$timeseries
       # run operation
@@ -151,12 +202,27 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       }
       # update S3 eyeris class
       eyeris$timeseries <- data
-      # update log var with latest op
-      eyeris$latest <- output_col
       # update with detrend coefs if detrended
       if (new_suffix == "detrend") {
         eyeris$detrend_coefs <- list_detrend$coefficients
       }
+    }
+    # update log var with latest op
+    eyeris$latest <- output_col
+  }
+
+  # guard: if no downsampling or binning, time_scaled should mirror time_secs
+  if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+    for (i_block in names(eyeris$timeseries)) {
+      data <- eyeris$timeseries[[i_block]]
+      if (!"time_scaled" %in% colnames(data)) {
+        data$time_scaled <- data$time_secs
+        eyeris$timeseries[[i_block]] <- data
+      }
+    }
+  } else {
+    if (!"time_scaled" %in% colnames(eyeris$timeseries)) {
+      eyeris$timeseries$time_scaled <- eyeris$timeseries$time_secs
     }
   }
 

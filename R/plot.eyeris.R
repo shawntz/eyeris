@@ -44,6 +44,9 @@
 #' Set to `FALSE` only when running inside `glassbox()` with
 #' `interactive_preview = TRUE`, where prompting after each step is desired, as
 #' well as in the generation of interactive HTML reports with [eyeris::bidsify].
+#' @param verbose A logical flag to indicate whether to print status messages to
+#' the console. Defaults to `TRUE`. Set to `FALSE` to suppress messages about
+#' the current processing step and run silently.
 #' @param num_previews **(Deprecated)** Use `preview_n` instead.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
@@ -92,7 +95,7 @@
 plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         preview_duration = NULL, preview_window = NULL,
                         seed = NULL, block = 1, plot_distributions = FALSE,
-                        suppress_prompt = TRUE,
+                        suppress_prompt = TRUE, verbose = TRUE,
                         num_previews = deprecated()) {
   # handle deprecated parameters
   if (is_present(num_previews)) {
@@ -165,7 +168,13 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   if (is.null(preview_duration)) {
-    preview_duration <- 5
+    preview_duration <- 5 # seconds
+  }
+
+  hz <- if (!is.na(x$decimated.sample.rate)) {
+    x$decimated.sample.rate
+  } else {
+    x$info$sample.rate
   }
 
   # handle random seed for this plotting session
@@ -179,19 +188,25 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 
     if (block %in% available_blocks) {
       pupil_data <- x$timeseries[[paste0("block_", block)]]
-      cli::cli_alert_warning(sprintf(
-        "Plotting block %d from possible blocks: %s",
-        block,
-        toString(available_blocks)
-      ))
+      if (verbose) {
+        cli::cli_alert_warning(sprintf(
+          "[ INFO ] - Plotting block %d from possible blocks: %s",
+          block,
+          toString(available_blocks)
+        ))
+      }
     } else {
       cli::cli_abort(sprintf(
-        "Block %d does not exist. Available blocks: %d",
+        "[ WARN ] - Block %d does not exist. Available blocks: %d",
         block, toString(available_blocks)
       ))
     }
   } else {
     pupil_data <- x$timeseries$block_1
+  }
+
+  if (verbose) {
+    alert("info", paste("[ INFO ] - Plotting with sampling rate:", hz, "Hz"))
   }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
@@ -223,8 +238,6 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   if (is.null(preview_window)) {
-    hz <- x$info$sample.rate
-
     withr::with_seed(seed, {
       random_epochs <- draw_random_epochs(
         pupil_data, preview_n,
@@ -319,7 +332,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
           )
         } else {
           do.call(robust_plot, c(
-            list(y = plot_data),
+            list(y = plot_data, x = random_epochs[[n]]$time_scaled),
             plot_params,
             list(
               type = "l", col = colors[i], lwd = 2,
@@ -347,7 +360,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     }
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   } else {
-    preview_window_indices <- round(preview_window * x$info$sample.rate) + 1
+    preview_window_indices <- round(preview_window * hz) + 1
     start_index <- preview_window_indices[1]
     end_index <- preview_window_indices[2]
 
@@ -361,9 +374,14 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 
     sliced_pupil_data <- pupil_data[start_index:end_index, ]
 
+    # time axis in ms for proper scaling
+    time_ms <- (
+      sliced_pupil_data$time_scaled - min(sliced_pupil_data$time_scaled)
+    )
+
     for (i in seq_along(pupil_steps)) {
-      st <- min(sliced_pupil_data$time_secs)
-      et <- max(sliced_pupil_data$time_secs)
+      st <- pupil_data$time_orig[start_index]
+      et <- pupil_data$time_orig[end_index]
 
       if (grepl("z", pupil_steps[i])) {
         y_units <- "(z)"
@@ -374,7 +392,8 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
       y_label <- paste("pupil size", y_units)
 
       do.call(robust_plot, c(
-        list(y = sliced_pupil_data[[pupil_steps[i]]]),
+        list(y = sliced_pupil_data[[pupil_steps[i]]],
+             x = sliced_pupil_data$time_scaled),
         plot_params,
         list(
           type = "l",
@@ -387,11 +406,11 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
             } else {
               ""
             },
-            "\n[", st, " - ", et, " seconds] | ",
+            "\n[", st, " - ", et, " ms] | ",
             "[index: ", preview_window_indices[1], " - ",
             preview_window_indices[2], "]"
           ),
-          xlab = "time (ms)",
+          xlab = "time (secs)",
           ylab = y_label
         )
       ))
@@ -422,26 +441,47 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 }
 
 draw_random_epochs <- function(x, n, d, hz) {
-  n_samples <- d * hz
-  min_timestamp <- min(x$time_orig)
-  max_timestamp <- max(x$time_orig)
+  # get number of samples needed for specified duration
+  n_samples <- ceiling(d * hz)
 
-  if ((max_timestamp - min_timestamp) < d) {
+  min_time_secs <- min(x$time_secs, na.rm = TRUE)
+  max_time_secs <- max(x$time_secs, na.rm = TRUE)
+
+  if ((max_time_secs - min_time_secs) < d) {
     cli::cli_abort("Example duration is longer than the duration of data.")
   }
 
+  # get step size and ensure it's valid for the time range
+  step_size <- 1 / hz
+  time_range <- max_time_secs - d - min_time_secs
+
+  # case: if step size is larger than available time range, adjust it
+  if (step_size > time_range) {
+    step_size <- time_range / 10  # use 10 steps as a reasonable minimum?
+    if (step_size <= 0) {
+      step_size <- 0.001  # fallback to 1ms if still invalid?
+    }
+  }
+
   drawn_epochs <- list()
-  max_attempts <- 100 # prevent inf loops
+  max_attempts <- 100 # prevent looping forever
 
   for (i in 1:n) {
     attempts <- 0
     valid_epoch_found <- FALSE
 
     while (attempts < max_attempts && !valid_epoch_found) {
-      rand_start <- sample(min_timestamp:(max_timestamp - n_samples), 1)
-      rand_end <- rand_start + n_samples
+      rand_start_secs <- sample(
+        seq(min_time_secs, max_time_secs - d, by = step_size),
+        1
+      )
+      rand_end_secs <- rand_start_secs + d
+
       epoch_data <- x |>
-        dplyr::filter(time_orig >= rand_start & time_orig < rand_end)
+        dplyr::filter(time_secs >= rand_start_secs & time_secs < rand_end_secs)
+
+      # ensure proper x-axis scaling with the time_orig column in ms
+      epoch_data$time_scaled <- (epoch_data$time_secs - rand_start_secs) * 1000
 
       pupil_cols <- grep("^pupil_", colnames(epoch_data), value = TRUE)
       if (length(pupil_cols) > 0) {
@@ -463,8 +503,9 @@ draw_random_epochs <- function(x, n, d, hz) {
 
     if (!valid_epoch_found) {
       placeholder_data <- data.frame(
-        time_orig = c(rand_start, rand_end),
-        time_secs = c(0, d),
+        time_secs = c(rand_start_secs, rand_end_secs),
+        time_orig = c(rand_start_secs, rand_end_secs),
+        time_scaled = c(0, d * 1000),
         message = c("NO_VALID_SAMPLES", "NO_VALID_SAMPLES")
       )
       drawn_epochs[[i]] <- placeholder_data
@@ -508,10 +549,12 @@ robust_plot <- function(y, x = NULL, ...) {
         ...
       )
 
-      # add vertical lines where there are NAs
+      # add vertical lines where there are NAs (using x values if available)
       na_idx <- which(is.na(y_orig))
       if (length(na_idx) > 0) {
-        abline(v = na_idx, col = "black", lty = 2)
+        abline(
+          v = if (!is.null(x)) x_seq[na_idx] else na_idx, col = "black", lty = 2
+        )
       }
 
       # replace NA with -1 after drawing NA lines for continuity

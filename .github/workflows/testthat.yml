@@ -1,0 +1,36 @@
+name: testthat
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v4
+        with:
+          r-version: 'release'
+
+      - uses: r-lib/actions/setup-pandoc@v4
+
+      - name: Install dependencies
+        run: |
+          install.packages("remotes")
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Run testthat
+        run: |
+          devtools::test()
+        shell: Rscript {0}
+
+      - name: Show testthat output
+        if: always()
+        run: find . -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash 

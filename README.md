@@ -12,6 +12,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
 [![linter](https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/linter.yml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
+[![testthat](https://github.com/shawntz/eyeris/actions/workflows/testthat.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/testthat.yml)
 [![bioRxiv
 Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 <!-- badges: end -->
@@ -101,6 +102,8 @@ eyeris_preproc <- glassbox(
 #> ✔ [  OK  ] - Running eyeris::detransient() for block_1
 #> ✔ [  OK  ] - Running eyeris::interpolate() for block_1
 #> ✔ [  OK  ] - Running eyeris::lpfilt() for block_1
+#> ! [ SKIP ] - Skipping eyeris::downsample() for block_1
+#> ! [ SKIP ] - Skipping eyeris::bin() for block_1
 #> ! [ SKIP ] - Skipping eyeris::detrend() for block_1
 #> ✔ [  OK  ] - Running eyeris::zscore() for block_1
 #> ✔ [  OK  ] - Running eyeris::summarize_confounds()
@@ -121,11 +124,15 @@ plot(eyeris_preproc)
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
 
 ``` r
+start_time <- min(eyeris_preproc$timeseries$block_1$time_secs)
+end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
+
 plot(eyeris_preproc,
   steps = c(1, 5),
-  preview_window = c(0, max(eyeris_preproc$timeseries$block_1$time_secs))
+  preview_window = c(start_time, end_time)
 )
-#> ! Plotting block 1 from possible blocks: 1
+#> ! [ INFO ] - Plotting block 1 from possible blocks: 1
+#> ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
