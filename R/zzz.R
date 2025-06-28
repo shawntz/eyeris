@@ -3,5 +3,5 @@ utils::globalVariables(c(
   "blink.start", "blink.lead", "blink.end", "pupil_deblink", "event",
   "ps", "xp", "yp", "pupil_raw", "type", "block", "timebin", "step", "eyeris",
   "pupil_size", "matched_event", "matching_pattern", "s", "e", "text_unique",
-  "verbose"
+  "verbose", "last_col"
 ))
