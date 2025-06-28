@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
 [![linter](https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/linter.yml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
-[![testthat](https://github.com/shawntz/eyeris/actions/workflows/testthat.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/testthat.yml)
 [![bioRxiv Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 <!-- badges: end -->
 
