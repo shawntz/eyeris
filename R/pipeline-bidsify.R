@@ -1609,7 +1609,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   }
 
-  should_render_report <- html_report || pdf_report
+  should_render_report <- html_report
 
   if (should_render_report) {
     # normalize the bids_dir path
