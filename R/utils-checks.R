@@ -245,3 +245,39 @@ count_epochs <- function(epochs) {
     stop(structure(list(message = err_m, call = match.call()), class = err_c))
   }
 }
+
+check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
+  if (is.null(time_vector) || length(time_vector) == 0) {
+    cli::cli_abort(paste(
+      "Time vector is NULL or empty. Cannot validate monotonicity.",
+      "Time column:", time_col_name
+    ))
+  }
+
+  # remove NA values for the check
+  time_clean <- time_vector[!is.na(time_vector)]
+
+  if (length(time_clean) < 2) {
+    cli::cli_abort(paste(
+      "Insufficient non-NA time points to validate monotonicity.",
+      "Need at least 2 points, got", length(time_clean),
+      "Time column:", time_col_name
+    ))
+  }
+
+  # check if time series is monotonically increasing
+  if (!all(diff(time_clean) >= 0)) {
+    # find first violation
+    diffs <- diff(time_clean)
+    first_violation_idx <- which(diffs < 0)[1]
+
+    cli::cli_abort(paste(
+      "Time series is not monotonically increasing.",
+      "First violation at index", first_violation_idx + 1,
+      "where time decreases from", time_clean[first_violation_idx],
+      "to", time_clean[first_violation_idx + 1],
+      "Time column:", time_col_name,
+      "This may indicate EDF file errors or data corruption."
+    ))
+  }
+}

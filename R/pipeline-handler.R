@@ -100,6 +100,17 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     # handle list of dfs (block) default method
 
+    # time monotonicity check for each block
+    for (i_block in names(eyeris$timeseries)) {
+      data <- eyeris$timeseries[[i_block]]
+      if ("time_secs" %in% colnames(data)) {
+        check_time_monotonic(data$time_secs, "time_secs")
+      }
+      if ("time_orig" %in% colnames(data)) {
+        check_time_monotonic(data$time_orig, "time_orig")
+      }
+    }
+
     # testing:
     if (new_suffix == "epoch") {
       # run op
@@ -160,6 +171,14 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
   } else {
     # handle single dfs fallback case
+    # global time monotonicity check for single dataframe
+    data <- eyeris$timeseries
+    if ("time_secs" %in% colnames(data)) {
+      check_time_monotonic(data$time_secs, "time_secs")
+    }
+    if ("time_orig" %in% colnames(data)) {
+      check_time_monotonic(data$time_orig, "time_orig")
+    }
     if (new_suffix == "epoch") {
       # run op
       data <- operation(eyeris, prev_operation, ...)

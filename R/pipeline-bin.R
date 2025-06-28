@@ -93,6 +93,9 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   time_col <- "time_secs"
   time_secs_inferred <- x[[time_col]]
 
+  # validate that time series is monotonically increasing
+  check_time_monotonic(time_secs_inferred, time_col)
+
   # create bin centers (1/2X, 3/2X, 5/2X, ...)
   # anchored to the start of the time vector
   bin_duration <- 1 / bins_per_second
