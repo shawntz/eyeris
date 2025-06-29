@@ -23,6 +23,8 @@
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param bins_per_second The number of bins to create per second of data.
 #' @param method The binning method: "mean" (default) or "median".
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with binned data and updated sampling rate.
 #'
@@ -39,7 +41,7 @@
 #'   plot(seed = 0)
 #'
 #' @export
-bin <- function(eyeris, bins_per_second, method = "mean") {
+bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
   if (!method %in% c("mean", "median")) {
     cli::cli_abort("Method must be either 'mean' or 'median'")
   }
@@ -53,16 +55,24 @@ bin <- function(eyeris, bins_per_second, method = "mean") {
   current_fs <- eyeris$info$sample.rate
   new_fs <- bins_per_second
 
-  eyeris <- eyeris |>
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(bins_per_second = bins_per_second, method = method)
+    )
+  } else {
+    call_info
+  }
+
+  eyeris |>
     pipeline_handler(
       bin_pupil,
       "bin",
       bins_per_second,
       method,
-      current_fs
+      current_fs,
+      call_info = call_info
     )
-
-  return(eyeris)
 }
 
 bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
