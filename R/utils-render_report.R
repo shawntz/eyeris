@@ -59,7 +59,9 @@ make_report <- function(eyeris, out, plots, ...) {
     "bootstrap.min.css');\n",
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
-    "\n## Preprocessed Data Preview\n\n",
+    "\n## Preprocessing Summaries\n\n",
+    save_progressive_summary_plots(eyeris = eyeris, out_dir = out),
+    "\n\n## Preprocessed Data Previews\n\n",
     save_detrend_plots(eyeris = eyeris, out_dir = out),
     print_plots(plots), "\n",
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
@@ -116,83 +118,58 @@ print_plots <- function(plots) {
       run_plots <- list.files(run_dir, pattern = "*.jpg", full.names = TRUE)
 
       if (length(run_plots) > 0) {
-        run_num <- sub(".*run-(\\d+).*", "\\1", run_dir)
+        run_num <- sub(".*run-(\\d+).*$", "\\1", run_dir)
 
         md_plots <- paste0(
           md_plots,
-          "## Run ", run_num, "\n\n"
+          "### run-", run_num, "\n\n"
         )
 
-        # run's detrend diagnostic path
+        # sort by fig number if possible
+        plot_fig_ids <- suppressWarnings(
+          as.numeric(sub(".*_fig-(\\d+)_.*", "\\1", run_plots))
+        )
+        if (all(!is.na(plot_fig_ids))) {
+          sorted_plot_paths <- run_plots[order(plot_fig_ids)]
+        } else {
+          sorted_plot_paths <- run_plots
+        }
+
+        placeholder_detected <- FALSE
+        placeholder_patterns <- c(
+          "no_data", "placeholder", "error", "No_data", "NoData"
+        )
+        if (length(sorted_plot_paths) == 1 || all(sapply(sorted_plot_paths,
+          function(x) {
+            any(
+              grepl(
+                paste(placeholder_patterns, collapse = "|"),
+                x,
+                ignore.case = TRUE
+              )
+            )
+          }
+        ))) {
+          placeholder_detected <- TRUE
+        }
+
+        if (placeholder_detected) {
+          md_plots <- paste0(
+            md_plots, "> **No data available for this run.**\n\n"
+          )
+        }
+
+        for (fig_path in sorted_plot_paths) {
+          relative_fig_path <- make_relative_path(fig_path)
+          md_plots <- paste0(md_plots, "![](", relative_fig_path, ")\n\n")
+        }
+
+        # Detrend diagnostics (unchanged)
         detrend_plot_path <- file.path(
           run_dir,
           paste0("run-", run_num, "_detrend.png")
         )
         detrend_exists <- file.exists(detrend_plot_path)
-
-        # sort by fig number
-        plot_fig_ids <- as.numeric(sub(".*_fig-(\\d+)_.*", "\\1", run_plots))
-        sorted_plot_paths <- run_plots[order(plot_fig_ids)]
-
-        num_plots <- length(sorted_plot_paths)
-        num_steps <- length(grep("_fig-full-\\d+_", sorted_plot_paths))
-        before_plot_index <- 2 * num_steps + 1
-
-        for (i in seq_along(sorted_plot_paths)) {
-          relative_fig_path <- make_relative_path(sorted_plot_paths[i])
-
-          if (i < before_plot_index) {
-            if (grepl("_fig-full-\\d+_", relative_fig_path)) {
-              md_plots <- paste0(
-                md_plots,
-                "![](", relative_fig_path, ")\n\n"
-              )
-            } else {
-              if (i %% 2 == 1) {
-                md_plots <- paste0(
-                  md_plots,
-                  "### Step ", ceiling(i / 2), ": Preview\n",
-                  "<div style='display: flex;'>",
-                  "<img src='", relative_fig_path, "' width='50%' />"
-                )
-              } else {
-                md_plots <- paste0(
-                  md_plots,
-                  "<img src='", relative_fig_path, "' width='50%' />",
-                  "</div>"
-                )
-              }
-            }
-          } else {
-            # For i >= before_plot_index, only plot full figures
-            if (grepl("_fig-full-\\d+_", relative_fig_path)) {
-              md_plots <- paste0(
-                md_plots,
-                if (i == before_plot_index) {
-                  "### Full Timeseries\n"
-                } else {
-                  ""
-                },
-                "![](", relative_fig_path, ")\n\n"
-              )
-            }
-          }
-          # else if (i == before_plot_index || i == before_plot_index + 1) {
-          #   md_plots <- paste0(
-          #     md_plots,
-          #     if (i == before_plot_index) "### Before", "\n",
-          #     "![](", relative_fig_path, ")\n\n"
-          #   )
-          # }
-          # else if (i == after_plot_index || i == after_plot_index + 1) {
-          #   md_plots <- paste0(
-          #     md_plots,
-          #     if (i == after_plot_index) "### After", "\n",
-          #     "![](", relative_fig_path, ")\n\n"
-          #   )
-          # }
-        }
-
         if (detrend_exists) {
           md_plots <- paste0(
             md_plots,
@@ -249,4 +226,185 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
       message(sprintf("[Skipped] No detrend data found for %s", run_id))
     }
   }
+}
+
+#' Create progressive preprocessing summary plot
+#'
+#' Internal function to create a comprehensive visualization showing the
+#' progressive effects of preprocessing steps on pupil data. This plot displays
+#' multiple preprocessing stages overlaid on the same time series, allowing
+#' users to see how each step modifies the pupil signal.
+#'
+#' @param pupil_data A data frame containing pupil timeseries data with
+#'   multiple preprocessing columns (e.g., `eyeris$timeseries$block_1`)
+#' @param pupil_steps Character vector of column names containing pupil data
+#'   at different preprocessing stages
+#'   (e.g., `c("pupil_raw", "pupil_deblink", "pupil_detrend")`)
+#' @param preview_n Number of columns for subplot layout. Default = 3.
+#' @param plot_params Named list of additional parameters to forward to plotting
+#'   functions. Default = list().
+#' @param run_id Character string identifying the run/block (e.g., "run-01").
+#'   Used for plot titles and file naming. Default = "run-01".
+#'
+#' @return NULL (invisibly). Creates a plot showing progressive preprocessing
+#'   effects with multiple layers overlaid on the same time series.
+#'
+#' @details
+#' This function creates a two-panel visualization:
+#' \itemize{
+#'   \item Top panel: Overlaid time series showing progressive preprocessing
+#'     effects with different colors for each step
+#'   \item Bottom panel: Legend identifying each preprocessing step
+#' }
+#'
+#' The plot excludes z-scored data (columns ending with "_z") and only
+#' includes steps with sufficient valid data points (>100). Each preprocessing
+#' step is displayed with a distinct color, making it easy to see how the
+#' signal changes through the pipeline.
+#'
+#' @keywords internal
+#'
+#' @seealso \code{\link{plot.eyeris}}
+make_prog_summary_plot <- function(pupil_data, pupil_steps,
+                                   preview_n = 3, plot_params = list(),
+                                   run_id = "run-01", cex = 2.0) {
+  plot_steps <- pupil_steps[!grepl("_z$", pupil_steps)]
+
+  time_range <- range(pupil_data$time_secs, na.rm = TRUE)
+  start_idx <- which.min(abs(pupil_data$time_secs - time_range[1]))
+  end_idx <- which.min(abs(pupil_data$time_secs - time_range[2]))
+
+  time_subset <- pupil_data$time_secs[start_idx:end_idx]
+  layer_data <- list()
+  for (i in seq_along(plot_steps)) {
+    step_data <- pupil_data[[plot_steps[i]]][start_idx:end_idx]
+    valid_indices <- is.finite(step_data)
+    if (sum(valid_indices) < 100) next
+    layer_data[[i]] <- list(
+      time = time_subset[valid_indices],
+      signal = step_data[valid_indices],
+      step_name = plot_steps[i]
+    )
+  }
+  if (length(layer_data) < 2) {
+    plot(NA,
+      xlim = c(0, 1), ylim = c(0, 1), type = "n",
+      xlab = "", ylab = "", main = paste("Insufficient data for", run_id)
+    )
+    text(0.5, 0.5, "Not enough preprocessing steps\nfor progressive summary",
+      cex = 1.2, col = "red"
+    )
+    return()
+  }
+
+  all_signals <- unlist(lapply(layer_data, function(x) x$signal))
+  y_range <- range(all_signals, na.rm = TRUE)
+  x_range <- range(unlist(lapply(layer_data, function(x) x$time)), na.rm = TRUE)
+  y_padding <- diff(y_range) * 0.25 + 1e-6
+  x_padding <- diff(x_range) * 0.05 + 1e-6
+  y_range <- y_range + c(-y_padding, y_padding)
+  x_range <- x_range + c(-x_padding, x_padding)
+
+  colorpal <- c(
+    "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628"
+  )
+  colors <- c("black", colorpal)
+  n_layers <- length(layer_data)
+  colors <- colors[seq_len(n_layers)]
+
+  layout(matrix(1:2, nrow = 2), heights = c(7, 2))
+  par(mar = c(4, 5, 4, 2))
+  plot(NA,
+    xlim = x_range, ylim = y_range, type = "n",
+    xlab = "Time (seconds)", ylab = "Pupil Size",
+    main = paste("Progressive Preprocessing Summary -", run_id),
+    cex.main = cex, cex.lab = cex, cex.axis = cex,
+    yaxt = "n", bty = "n"
+  )
+  axis(2, labels = FALSE)
+  for (i in seq_along(layer_data)) {
+    layer <- layer_data[[i]]
+    time_offset <- layer$time + i * 0.1
+    scale_factor <- 1 - i * 0.02
+    signal_scaled <- layer$signal * scale_factor
+    lines(time_offset, signal_scaled,
+      col = colors[i], lwd = 4
+    )
+  }
+
+  par(mar = c(0, 0, 0, 0))
+  plot.new()
+  step_names <- sapply(layer_data, function(x) {
+    clean_name <- gsub("pupil_", "", x$step_name)
+    clean_name <- gsub("_", " > ", clean_name)
+    clean_name
+  })
+  legend("center",
+    legend = step_names, col = colors, lwd = 2, cex = cex - 0.5,
+    title = "Processing Steps", horiz = FALSE, bty = "n"
+  )
+  layout(1)
+}
+
+# generate markdown content for progressive summary plots
+save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
+                                           plot_params = list()) {
+  blocks <- names(eyeris$timeseries)
+  md_content <- ""
+
+  for (block in blocks) {
+    block_number <- sub("block_", "", block)
+    run_id <- sprintf("run-%02d", as.numeric(block_number))
+    run_dir <- file.path(out_dir, "source", "figures", run_id)
+    progressive_path <- file.path(
+      run_dir, paste0(run_id, "_desc-progressive_summary.png")
+    )
+
+    if (!dir.exists(run_dir)) {
+      dir.create(run_dir, recursive = TRUE)
+    }
+
+    pupil_data <- eyeris$timeseries[[block]]
+    pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
+
+    if (length(pupil_steps) < 2) {
+      md_content <- paste0(
+        md_content,
+        "### ", run_id, "\n\n",
+        "*Not enough preprocessing steps for progressive summary*\n\n"
+      )
+      next
+    }
+
+    grDevices::png(
+      filename = progressive_path,
+      width = 7000,
+      height = 6000,
+      res = 300
+    )
+
+    make_prog_summary_plot(
+      pupil_data = pupil_data,
+      pupil_steps = pupil_steps,
+      preview_n = preview_n,
+      plot_params = plot_params,
+      run_id = run_id
+    )
+
+    grDevices::dev.off()
+
+    relative_path <- gsub("^.*?(?=source/)", "", progressive_path, perl = TRUE)
+
+    md_content <- paste0(
+      md_content,
+      "### ", run_id, "\n\n",
+      "This visualization shows how the pupil timeseries changes across",
+      "preprocessing steps. ", "Each layer represents a different",
+      "preprocessing step, with the earliest step at the back ", "and the",
+      "final step at the front (via a subtle horizontal offset effect).\n\n",
+      "![](", relative_path, ")\n\n"
+    )
+  }
+
+  md_content
 }
