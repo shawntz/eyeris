@@ -78,6 +78,8 @@
 #' 2. If \eqn{mad\_thresh} is very small, the user may manually
 #'    adjust the sensitivity by supplying an alternative threshold value
 #'    here directly via this `mad_thresh` parameter.
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_detransient`.
@@ -95,9 +97,24 @@
 #'   plot(seed = 0)
 #'
 #' @export
-detransient <- function(eyeris, n = 16, mad_thresh = NULL) {
+detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(n = n, mad_thresh = mad_thresh)
+    )
+  } else {
+    call_info
+  }
+
   eyeris |>
-    pipeline_handler(detransient_pupil, "detransient", n, mad_thresh)
+    pipeline_handler(
+      detransient_pupil,
+      "detransient",
+      n,
+      mad_thresh,
+      call_info = call_info
+    )
 }
 
 # adapted from:
