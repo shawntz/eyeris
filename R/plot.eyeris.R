@@ -47,6 +47,11 @@
 #' @param verbose A logical flag to indicate whether to print status messages to
 #' the console. Defaults to `TRUE`. Set to `FALSE` to suppress messages about
 #' the current processing step and run silently.
+#' @param add_progressive_summary Logical flag to indicate whether to add a
+#' progressive summary plot after plotting. Defaults to `FALSE`. Set to `TRUE`
+#' to enable the progressive summary plot (useful for interactive exploration).
+#' Set to `FALSE` to disable the progressive summary plot (useful in automated
+#' contexts like bidsify reports).
 #' @param num_previews **(Deprecated)** Use `preview_n` instead.
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
@@ -67,10 +72,15 @@
 #' # controlling the timeseries range (i.e., preview window) in your plots:
 #'
 #' ## example 1: using the default 10000 to 20000 ms time subset
-#' plot(my_eyeris_data, seed = 0)
+#' plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
 #'
 #' ## example 2: using a custom time subset (i.e., 1 to 500 ms)
-#' plot(my_eyeris_data, preview_window = c(0.01, 0.5), seed = 0)
+#' plot(
+#'   my_eyeris_data,
+#'   preview_window = c(0.01, 0.5),
+#'   seed = 0,
+#'   add_progressive_summary = TRUE
+#' )
 #'
 #' # controlling which block of data you would like to plot:
 #'
@@ -96,6 +106,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         preview_duration = NULL, preview_window = NULL,
                         seed = NULL, block = 1, plot_distributions = FALSE,
                         suppress_prompt = TRUE, verbose = TRUE,
+                        add_progressive_summary = FALSE,
                         num_previews = deprecated()) {
   # handle deprecated parameters
   if (is_present(num_previews)) {
@@ -142,7 +153,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     "preview_window", "seed", "steps", "num_previews",
     "preview_n", "preview_duration", "block",
     "suppress_prompt", "plot_distributions",
-    "only_linear_trend", "next_step"
+    "only_linear_trend", "next_step", "add_progressive_summary"
   )
 
   plot_params <- params[!(names(params) %in% non_plot_params)]
@@ -438,6 +449,47 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
+
+  # add progressive summary plot at the end (if requested)
+  if (add_progressive_summary) {
+    if (verbose) {
+      cli::cli_alert_info(
+        sprintf("[ INFO ] - Creating progressive summary plot for block_%d",
+                block)
+      )
+    }
+
+    tryCatch({
+      make_prog_summary_plot(
+        pupil_data = pupil_data,
+        pupil_steps = pupil_steps,
+        preview_n = preview_n,
+        plot_params = plot_params,
+        run_id = if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
+          paste0("run-", sprintf("%02d", block))
+        } else {
+          "run-01"
+        },
+        cex = 1.15
+      )
+
+      if (verbose) {
+        cli::cli_alert_success(
+          "[  OK  ] - Progressive summary plot created successfully!"
+        )
+      }
+    }, error = function(e) {
+      if (verbose) {
+        cli::cli_alert_warning(
+          paste("[ WARN ] - Could not create progressive summary plot:",
+                e$message)
+        )
+      }
+    })
+  }
+
+  # reset plotting parameters to prevent downstream issues
+  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = c(5, 4, 4, 2) + 0.1)
 }
 
 draw_random_epochs <- function(x, n, d, hz) {
