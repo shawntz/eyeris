@@ -125,6 +125,8 @@ glassbox <- function(file,
                      num_previews = deprecated(),
                      detrend_data = deprecated(),
                      skip_detransient = deprecated()) {
+  original_call <- match.call()
+
   # handle deprecated parameters
   if (is_present(confirm)) {
     deprecate_warn(
@@ -293,83 +295,155 @@ glassbox <- function(file,
 
   # eyeris workflow data structure
   pipeline <- list(
-    load_asc = function(data, params) {
+    load_asc = function(data, params, original_call) {
       if (which_steps[["load_asc"]]) {
-        eyeris::load_asc(data, block = params$load_asc$block)
+        call_info <- list(
+          call = original_call,
+          parameters = list(block = params$load_asc$block)
+        )
+        result <- eyeris::load_asc(data, block = params$load_asc$block)
+        if (!is.list(result$params)) result$params <- list()
+        result$params[["load_asc"]] <- call_info
+        result
       } else {
         stop("No data loaded... the glassbox pipeline cannot proceed.")
       }
     },
-    deblink = function(data, params) {
+    deblink = function(data, params, original_call) {
       if (which_steps[["deblink"]]) {
-        eyeris::deblink(data, extend = params$deblink$extend)
+        call_info <- list(
+          call = original_call,
+          parameters = list(extend = params$deblink$extend)
+        )
+        eyeris::deblink(
+          data,
+          extend = params$deblink$extend,
+          call_info = call_info
+        )
       } else {
         data
       }
     },
-    detransient = function(data, params) {
+    detransient = function(data, params, original_call) {
       if (which_steps[["detransient"]]) {
-        eyeris::detransient(data, n = params$detransient$n)
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            n = params$detransient$n,
+            mad_thresh = params$detransient$mad_thresh
+          )
+        )
+        eyeris::detransient(
+          data,
+          n = params$detransient$n,
+          mad_thresh = params$detransient$mad_thresh,
+          call_info = call_info
+        )
       } else {
         data
       }
     },
-    interpolate = function(data, params) {
+    interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
-        eyeris::interpolate(data, verbose = verbose)
+        call_info <- list(
+          call = original_call,
+          parameters = list(verbose = verbose)
+        )
+        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
       } else {
         data
       }
     },
-    lpfilt = function(data, params) {
+    lpfilt = function(data, params, original_call) {
       if (which_steps[["lpfilt"]]) {
-        eyeris::lpfilt(data,
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            wp = params$lpfilt$wp,
+            ws = params$lpfilt$ws,
+            rp = params$lpfilt$rp,
+            rs = params$lpfilt$rs,
+            plot_freqz = params$lpfilt$plot_freqz
+          )
+        )
+        eyeris::lpfilt(
+          data,
           wp = params$lpfilt$wp,
           ws = params$lpfilt$ws,
           rp = params$lpfilt$rp,
           rs = params$lpfilt$rs,
-          plot_freqz = params$lpfilt$plot_freqz
+          plot_freqz = params$lpfilt$plot_freqz,
+          call_info = call_info
         )
       } else {
         data
       }
     },
-    downsample = function(data, params) {
+    downsample = function(data, params, original_call) {
       if (which_steps[["downsample"]]) {
-        if (is.null(params$downsample$plot_freqz))
+        if (is.null(params$downsample$plot_freqz)) {
           params$downsample$plot_freqz <- verbose
+        }
         if (is.null(params$downsample$rp)) params$downsample$rp <- 1
         if (is.null(params$downsample$rs)) params$downsample$rs <- 35
-        eyeris::downsample(data,
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            target_fs = params$downsample$target_fs,
+            plot_freqz = params$downsample$plot_freqz,
+            rp = params$downsample$rp,
+            rs = params$downsample$rs
+          )
+        )
+        eyeris::downsample(
+          data,
           target_fs = params$downsample$target_fs,
           plot_freqz = params$downsample$plot_freqz,
           rp = params$downsample$rp,
-          rs = params$downsample$rs
+          rs = params$downsample$rs,
+          call_info = call_info
         )
       } else {
         data
       }
     },
-    bin = function(data, params) {
+    bin = function(data, params, original_call) {
       if (which_steps[["bin"]]) {
-        eyeris::bin(data,
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            bins_per_second = params$bin$bins_per_second,
+            method = params$bin$method
+          )
+        )
+        eyeris::bin(
+          data,
           bins_per_second = params$bin$bins_per_second,
-          method = params$bin$method
+          method = params$bin$method,
+          call_info = call_info
         )
       } else {
         data
       }
     },
-    detrend = function(data, params) {
+    detrend = function(data, params, original_call) {
       if (which_steps[["detrend"]]) {
-        eyeris::detrend(data)
+        call_info <- list(
+          call = original_call,
+          parameters = list()
+        )
+        eyeris::detrend(data, call_info = call_info)
       } else {
         data
       }
     },
-    zscore = function(data, params) {
+    zscore = function(data, params, original_call) {
       if (which_steps[["zscore"]]) {
-        eyeris::zscore(data)
+        call_info <- list(
+          call = original_call,
+          parameters = list()
+        )
+        eyeris::zscore(data, call_info = call_info)
       } else {
         data
       }
@@ -385,7 +459,7 @@ glassbox <- function(file,
     if (verbose) {
       cli::cli_alert_success("[  OK  ] - Running eyeris::load_asc()")
     }
-    file <- pipeline[["load_asc"]](file, params)
+    file <- pipeline[["load_asc"]](file, params, original_call)
 
     if (interactive_preview) {
       plot_with_seed(
@@ -421,6 +495,13 @@ glassbox <- function(file,
     block_names <- names(file$timeseries)
     processed_blocks <- list()
 
+    # store orig latest pointer to restore it later
+    original_latest <- file$latest
+    final_latest <- NULL
+    block_states <- list()
+    # collect params from all blocks
+    all_params <- list()
+
     for (block_name in block_names) {
       if (verbose) {
         cli::cli_alert_info(paste0("[ INFO ] - Processing block: ", block_name))
@@ -429,6 +510,24 @@ glassbox <- function(file,
       temp_file <- file
       temp_file$timeseries <- list(file$timeseries[[block_name]])
       names(temp_file$timeseries) <- block_name
+
+      # set latest pointer for current block
+      if (is.list(original_latest)) {
+        # multiblock: use pointer for current block
+        temp_file$latest <- list()
+        temp_file$latest[[block_name]] <- original_latest[[block_name]]
+      } else {
+        # single block converted to multiblock: use original pointer
+        temp_file$latest <- list()
+        temp_file$latest[[block_name]] <- original_latest
+      }
+
+      # init block state
+      block_states[[block_name]] <- list(
+        latest_pointer = temp_file$latest[[block_name]],
+        steps_completed = 0,
+        has_errors = FALSE
+      )
 
       block_step_counter <- 2
 
@@ -440,6 +539,16 @@ glassbox <- function(file,
           action <- "Skipping "
           block_step_counter <- block_step_counter - 1
           skip_plot <- TRUE
+
+          if (!is.null(temp_file$latest[[block_name]])) {
+            expected_col <- paste0(
+              temp_file$latest[[block_name]], "_", step_name
+            )
+            block_data <- temp_file$timeseries[[block_name]]
+            if (expected_col %in% colnames(block_data)) {
+              temp_file$latest[[block_name]] <- expected_col
+            }
+          }
         } else {
           if (step_name == "detrend") {
             only_linear_trend <- TRUE
@@ -469,7 +578,7 @@ glassbox <- function(file,
 
         temp_file <- tryCatch(
           {
-            step_to_run(temp_file, params)
+            step_to_run(temp_file, params, original_call)
           },
           error = function(e) {
             if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
@@ -495,6 +604,30 @@ glassbox <- function(file,
             }
             err_thrown <<- TRUE
             block_step_counter <<- block_step_counter - 1
+
+            # mark current block as having errors
+            block_states[[block_name]]$has_errors <- TRUE
+
+            # reset latest pointer to prevent corruption from propagating
+            # find last valid column name in current block
+            block_data <- temp_file$timeseries[[block_name]]
+            pupil_cols <- grep("^pupil_", colnames(block_data), value = TRUE)
+            if (length(pupil_cols) > 0) {
+              # use last valid pupil column
+              temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
+              block_states[[block_name]]$latest_pointer <-
+                temp_file$latest[[block_name]]
+            } else {
+              # fallback to original pointer for this block
+              if (is.list(original_latest)) {
+                temp_file$latest[[block_name]] <- original_latest[[block_name]]
+              } else {
+                temp_file$latest[[block_name]] <- original_latest
+              }
+              block_states[[block_name]]$latest_pointer <-
+                temp_file$latest[[block_name]]
+            }
+
             temp_file
           }
         )
@@ -505,9 +638,11 @@ glassbox <- function(file,
             (step_name == "downsample" || step_name == "bin")
         ) {
           cli::cli_alert_success(
-            paste("[ INFO ] - Decimating sampling rate from",
-                  temp_file$info$sample.rate, "Hz -->",
-                  temp_file$decimated.sample.rate, "Hz...")
+            paste(
+              "[ INFO ] - Decimating sampling rate from",
+              temp_file$info$sample.rate, "Hz -->",
+              temp_file$decimated.sample.rate, "Hz..."
+            )
           )
         }
 
@@ -566,14 +701,52 @@ glassbox <- function(file,
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
       }
 
-      # preserve latest pointer from processed blocks
-      if (!is.null(temp_file$latest)) {
-        file$latest <- temp_file$latest
+      # track latest pointer from successfully processed blocks
+      if (!is.null(temp_file$latest[[block_name]]) &&
+            !grepl("_([^_]+)_\\1", temp_file$latest[[block_name]])) {
+        final_latest <- temp_file$latest[[block_name]]
+      }
+
+      # update block state with final state
+      block_states[[block_name]]$latest_pointer <-
+        temp_file$latest[[block_name]]
+      block_states[[block_name]]$steps_completed <- block_step_counter - 1
+
+      # update main file's latest pointer for current block
+      if (is.list(file$latest)) {
+        file$latest[[block_name]] <- temp_file$latest[[block_name]]
+      } else {
+        # Convert to list if it wasn't already
+        file$latest <- list()
+        file$latest[[block_name]] <- temp_file$latest[[block_name]]
+      }
+
+      # collect params from this block
+      if (!is.null(temp_file$params) && is.list(temp_file$params)) {
+        all_params <- modifyList(all_params, temp_file$params)
       }
     }
 
     # recombine processed blocks
     file$timeseries <- processed_blocks
+
+    # preserve params from processed blocks
+    if (length(all_params) > 0) {
+      file$params <- all_params
+    }
+
+    if (verbose) {
+      cat("\nBlock processing summary:\n")
+      for (block_name in names(block_states)) {
+        state <- block_states[[block_name]]
+        status <- if (state$has_errors) "ERRORS" else "OK"
+        cat(sprintf(
+          "  %s: %s (steps: %d, latest: %s)\n",
+          block_name, status, state$steps_completed, state$latest_pointer
+        ))
+      }
+      cat("\n")
+    }
   } else {
     cli::cli_abort("No data blocks found error.")
   }
