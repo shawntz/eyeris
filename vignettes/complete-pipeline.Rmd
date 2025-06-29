@@ -107,10 +107,10 @@ and pipeline recipe:
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
 
-# Preview first and last steps of the pipeline
+# Preview first and second steps of the pipeline
 plot(
   output,
-  steps = c(1, 5),
+  steps = c(1, 2),
   preview_window = c(0, max(output$timeseries$block_1$time_secs)),
   seed = 0
 )
