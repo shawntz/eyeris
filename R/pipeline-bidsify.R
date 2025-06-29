@@ -118,7 +118,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                     merge_epochs = FALSE, bids_dir = NULL,
                     participant_id = NULL, session_num = NULL,
                     task_name = NULL, run_num = NULL, merge_runs = FALSE,
-                    save_raw = TRUE, html_report = FALSE, report_seed = 0,
+                    save_raw = TRUE, html_report = TRUE, report_seed = 0,
                     report_epoch_grouping_var_col = "matched_event",
                     verbose = TRUE, pdf_report = deprecated()) {
   # deprecation warning for pdf_report
