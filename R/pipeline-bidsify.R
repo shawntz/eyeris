@@ -1671,7 +1671,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               steps = ceiling(i / 2),
               seed = report_seed,
               block = i_run,
-              plot_distributions = plot_dist
+              plot_distributions = plot_dist,
+              add_progressive_summary = FALSE
             )
           },
           error = function(e) {
