@@ -28,6 +28,8 @@
 #' pad forward/backward around each missing sample, or, a vector of length two
 #' indicating different numbers of milliseconds pad forward/backward around each
 #' missing sample, in the format `c(backward, forward)`.
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with a new column: `pupil_raw_{...}_deblink`.
 #'
@@ -50,9 +52,23 @@
 #'   plot(seed = 0)
 #'
 #' @export
-deblink <- function(eyeris, extend = 50) {
+deblink <- function(eyeris, extend = 50, call_info = NULL) {
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(extend = extend)
+    )
+  } else {
+    call_info
+  }
+
   eyeris |>
-    pipeline_handler(deblink_pupil, "deblink", extend)
+    pipeline_handler(
+      deblink_pupil,
+      "deblink",
+      extend = extend,
+      call_info = call_info
+    )
 }
 
 # based on https://github.com/dr-JT/pupillometry/blob/main/R/pupil_deblink.R
