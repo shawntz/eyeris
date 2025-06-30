@@ -24,7 +24,7 @@
 #' (i.e., the name of the previous pupil column -- which you DO NOT need to
 #' supply as a literal string as this is inferred from the `latest` pointer
 #' within the `eyeris` object), and any custom parameters you would like
-#' @param new_suffix A chracter string indicating the suffix you would like
+#' @param new_suffix A character string indicating the suffix you would like
 #' to be appended to the name of the previous operation's column, which will
 #' be used for the new column name in the updated preprocessed dataframe(s)
 #' @param ... Additional (optional) arguments passed to the `operation` method

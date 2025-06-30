@@ -18,7 +18,7 @@ This custom function should accept a dataframe \code{x}, a string \code{prev_op}
 supply as a literal string as this is inferred from the \code{latest} pointer
 within the \code{eyeris} object), and any custom parameters you would like}
 
-\item{new_suffix}{A chracter string indicating the suffix you would like
+\item{new_suffix}{A character string indicating the suffix you would like
 to be appended to the name of the previous operation's column, which will
 be used for the new column name in the updated preprocessed dataframe(s)}
 
