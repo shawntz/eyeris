@@ -180,12 +180,12 @@ This makes it easy to keep a record of your preprocessing runs and debug any iss
 ---
 
 ## `eyeris` dependency graph :see_no_evil:
-```{r, eval=TRUE, echo=FALSE, fig.width=8.5, fig.height=10, fig.dpi=120}
+```{r, eval=TRUE, echo=FALSE, fig.width=8.5, fig.height=10, fig.dpi=120, warning=FALSE}
 depgraph::plot_dependency_graph(
   pkg = ".",
   suggests = FALSE,
-  option = "cividis",
-  ggrepel_opts = list(max.overlaps = 100)
+  option = "turbo",
+  ggrepel_opts = list(max.overlaps = 150)
 )
 ```
 

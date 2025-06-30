@@ -211,9 +211,6 @@ any issues that arise.
 
 ## `eyeris` dependency graph :see_no_evil:
 
-    #> Warning: ggrepel: 6 unlabeled data points (too many overlaps). Consider
-    #> increasing max.overlaps
-
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ------------------------------------------------------------------------
