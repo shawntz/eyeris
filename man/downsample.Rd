@@ -4,7 +4,14 @@
 \alias{downsample}
 \title{Downsample pupil time series with anti-aliasing filtering}
 \usage{
-downsample(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35)
+downsample(
+  eyeris,
+  target_fs,
+  plot_freqz = FALSE,
+  rp = 1,
+  rs = 35,
+  call_info = NULL
+)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -17,6 +24,9 @@ downsample(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35)
 \item{rp}{Passband ripple in dB (default 1).}
 
 \item{rs}{Stopband attenuation in dB (default 35).}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with downsampled data and updated sampling rate.

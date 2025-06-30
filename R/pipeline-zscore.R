@@ -48,6 +48,8 @@
 #' take the mean of the z-scored timeseries as a function of condition variable.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_z`.
@@ -63,9 +65,18 @@
 #'   plot(seed = 0)
 #'
 #' @export
-zscore <- function(eyeris) {
+zscore <- function(eyeris, call_info = NULL) {
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list()
+    )
+  } else {
+    call_info
+  }
+
   eyeris |>
-    pipeline_handler(zscore_pupil, "z")
+    pipeline_handler(zscore_pupil, "z", call_info = call_info)
 }
 
 zscore_pupil <- function(x, prev_op) {

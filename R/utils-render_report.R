@@ -66,8 +66,8 @@ make_report <- function(eyeris, out, plots, ...) {
     print_plots(plots), "\n",
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
-    "\n\n---\n\n## eyeris call stack\n\n",
-    make_md_table(format_call_stack(eyeris$params)), "\n",
+    "\n\n---\n\n## `eyeris` call stack\n\n",
+    make_md_table_multiline(format_call_stack(eyeris$params)), "\n",
     "\n\n---\n\n## Citation\n\n",
     "```{r citation, echo=FALSE, comment=NA}\n",
     "citation('eyeris')\n",
@@ -94,6 +94,22 @@ make_md_table <- function(df) {
     )
   }
 
+  md_table
+}
+
+make_md_table_multiline <- function(df) {
+  md_table <- paste0("| ", paste(colnames(df), collapse = " | "), " |\n")
+  md_table <- paste0(md_table, "|",
+                     paste(rep("---", ncol(df)), collapse = "|"), "|\n")
+  for (i in seq_len(nrow(df))) {
+    row <- df[i, ]
+    md_table <- paste0(
+      md_table,
+      "| ",
+      paste(as.character(row), collapse = " | "),
+      " |\n"
+    )
+  }
   md_table
 }
 

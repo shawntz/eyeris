@@ -29,6 +29,8 @@
 #' (default FALSE).
 #' @param rp Passband ripple in dB (default 1).
 #' @param rs Stopband attenuation in dB (default 35).
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with downsampled data and updated sampling rate.
 #'
@@ -45,8 +47,28 @@
 #'   plot(seed = 0)
 #'
 #' @export
-downsample <- function(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35) {
+downsample <- function(
+    eyeris,
+    target_fs,
+    plot_freqz = FALSE,
+    rp = 1,
+    rs = 35,
+    call_info = NULL) {
   current_fs <- eyeris$info$sample.rate
+
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(
+        target_fs = target_fs,
+        plot_freqz = plot_freqz,
+        rp = rp,
+        rs = rs
+      )
+    )
+  } else {
+    call_info
+  }
 
   eyeris |>
     pipeline_handler(
@@ -56,7 +78,8 @@ downsample <- function(eyeris, target_fs, plot_freqz = FALSE, rp = 1, rs = 35) {
       plot_freqz,
       current_fs,
       rp,
-      rs
+      rs,
+      call_info = call_info
     )
 }
 
@@ -90,8 +113,8 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   }
 
   # filter parameters
-  fs_nq <- target_fs / 2  # Nyquist freq of new sampling rate
-  ws <- fs_nq  # stopband freq
+  fs_nq <- target_fs / 2 # Nyquist freq of new sampling rate
+  ws <- fs_nq # stopband freq
 
   # passband freq with safety margin
   wt <- max(5, fs_nq * 0.2)

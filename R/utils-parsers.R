@@ -5,19 +5,85 @@ parse_call_stack <- function(call_str) {
 
 format_call_stack <- function(callstack) {
   params_parsed <- do.call(rbind, lapply(names(callstack), function(step) {
-    parsed <- parse_call_stack(callstack[[step]])
-    args <- deparse(parsed$Arguments)
-    args <- paste(args, collapse = "")
+    step_data <- callstack[[step]]
 
-    data.frame(
-      step = step,
-      callstack = args,
-      stringsAsFactors = FALSE
-    )
+    if (is.list(step_data) && "call" %in% names(step_data)) {
+      call_obj <- step_data$call
+      params <- step_data$parameters
+
+      call_str <- deparse(call_obj)
+      call_str <- paste(call_str, collapse = "")
+
+      if (length(params) > 0) {
+        param_strs <- sapply(names(params), function(name) {
+          val <- params[[name]]
+          if (is.null(val)) {
+            paste0(name, " = NULL")
+          } else if (is.character(val)) {
+            paste0(name, " = '", val, "'")
+          } else if (is.logical(val)) {
+            paste0(name, " = ", val)
+          } else {
+            paste0(name, " = ", deparse(val))
+          }
+        })
+        param_str <- paste(param_strs, collapse = ", ")
+      } else {
+        param_str <- "no parameters"
+      }
+
+      data.frame(
+        step = step,
+        callstack = call_str,
+        parameters = param_str,
+        stringsAsFactors = FALSE
+      )
+    } else if (is.list(step_data) && "call_stack" %in% names(step_data)) {
+      call_obj <- step_data$call_stack
+      params <- step_data$parameters
+
+      call_str <- deparse(call_obj)
+      call_str <- paste(call_str, collapse = "")
+
+      if (length(params) > 0) {
+        param_strs <- sapply(names(params), function(name) {
+          val <- params[[name]]
+          if (is.null(val)) {
+            paste0(name, " = NULL")
+          } else if (is.character(val)) {
+            paste0(name, " = '", val, "'")
+          } else if (is.logical(val)) {
+            paste0(name, " = ", val)
+          } else {
+            paste0(name, " = ", deparse(val))
+          }
+        })
+        param_str <- paste(param_strs, collapse = ", ")
+      } else {
+        param_str <- "no parameters"
+      }
+
+      data.frame(
+        step = step,
+        callstack = call_str,
+        parameters = param_str,
+        stringsAsFactors = FALSE
+      )
+    } else {
+      parsed <- parse_call_stack(step_data)
+      args <- deparse(parsed$Arguments)
+      args <- paste(args, collapse = "")
+
+      data.frame(
+        step = step,
+        callstack = args,
+        parameters = "not available",
+        stringsAsFactors = FALSE
+      )
+    }
   }))
 
   rownames(params_parsed) <- NULL
-
   params_parsed
 }
 
@@ -25,7 +91,6 @@ get_block_numbers <- function(x) {
   if (is.character(x)) {
     block_nums <- as.numeric(gsub("block_", "", x))
   } else if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
-    # extract numbers from names like "block_4"
     block_nums <- as.numeric(gsub("block_", "", names(x$timeseries)))
   } else {
     return(NULL)
@@ -33,7 +98,6 @@ get_block_numbers <- function(x) {
   block_nums
 }
 
-# keep letters, numbers and spaces
 clean_string <- function(str) {
   gsub("[^[:alnum:]\\s]", "", str)
 }

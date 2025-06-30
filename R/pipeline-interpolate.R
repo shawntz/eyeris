@@ -26,6 +26,8 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `FALSE` to suppress messages about the current
 #' processing step and run silently.
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_interpolate`.
@@ -42,9 +44,23 @@
 #'   plot(seed = 0)
 #'
 #' @export
-interpolate <- function(eyeris, verbose = TRUE) {
+interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(verbose = verbose)
+    )
+  } else {
+    call_info
+  }
+
   eyeris |>
-    pipeline_handler(interpolate_pupil, "interpolate", verbose)
+    pipeline_handler(
+      interpolate_pupil,
+      "interpolate",
+      verbose,
+      call_info = call_info
+    )
 }
 
 interpolate_pupil <- function(x, prev_op, verbose) {

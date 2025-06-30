@@ -4,7 +4,7 @@
 \alias{bin}
 \title{Bin pupil time series by averaging within time bins}
 \usage{
-bin(eyeris, bins_per_second, method = "mean")
+bin(eyeris, bins_per_second, method = "mean", call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -12,6 +12,9 @@ bin(eyeris, bins_per_second, method = "mean")
 \item{bins_per_second}{The number of bins to create per second of data.}
 
 \item{method}{The binning method: "mean" (default) or "median".}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with binned data and updated sampling rate.

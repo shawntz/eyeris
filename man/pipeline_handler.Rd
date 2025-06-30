@@ -59,13 +59,24 @@ winsorize_pupil <- function(x, prev_op, lower = 0.01, upper = 0.99) {
 }
 
 # second, construct your `pipeline_handler` method wrapper
-winsorize <- function(eyeris, lower = 0.01, upper = 0.99) {
+winsorize <- function(eyeris, lower = 0.01, upper = 0.99, call_info = NULL) {
+  # create call_info if not provided
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(lower = lower, upper = upper)
+    )
+  } else {
+    call_info
+  }
+
   pipeline_handler(
     eyeris,
     winsorize_pupil,
     "winsorize",
     lower = lower,
-    upper = upper
+    upper = upper,
+    call_info = call_info
   )
 }
 

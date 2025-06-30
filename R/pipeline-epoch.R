@@ -87,6 +87,8 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `False` to suppress messages about the current
 #' processing step and run silently.
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #' @param calc_baseline **(Deprecated)** Use `baseline` instead.
 #' @param apply_baseline **(Deprecated)** Use `baseline` instead.
 #'
@@ -204,21 +206,25 @@
 epoch <- function(eyeris, events, limits = NULL, label = NULL,
                   baseline = FALSE, baseline_type = c("sub", "div"),
                   baseline_events = NULL, baseline_period = NULL,
-                  hz = NULL, verbose = TRUE,
+                  hz = NULL, verbose = TRUE, call_info = NULL,
                   calc_baseline = deprecated(),
                   apply_baseline = deprecated()) {
   # Handle deprecated parameters
   if (is_present(calc_baseline)) {
-    lifecycle::deprecate_warn("1.3.0",
-                              "epoch(calc_baseline)", "epoch(baseline)")
+    lifecycle::deprecate_warn(
+      "1.3.0",
+      "epoch(calc_baseline)", "epoch(baseline)"
+    )
     if (isTRUE(calc_baseline)) {
       baseline <- TRUE
     }
   }
 
   if (is_present(apply_baseline)) {
-    lifecycle::deprecate_warn("1.3.0",
-                              "epoch(apply_baseline)", "epoch(baseline)")
+    lifecycle::deprecate_warn(
+      "1.3.0",
+      "epoch(apply_baseline)", "epoch(baseline)"
+    )
     if (isTRUE(apply_baseline)) {
       baseline <- TRUE
     }
@@ -227,11 +233,25 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
   calc_baseline <- baseline
   apply_baseline <- baseline
 
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(
+        events = events, limits = limits, label = label,
+        baseline = baseline, baseline_type = baseline_type,
+        baseline_events = baseline_events, baseline_period = baseline_period,
+        hz = hz, verbose = verbose
+      )
+    )
+  } else {
+    call_info
+  }
   eyeris |>
     pipeline_handler(
       epoch_pupil, "epoch", events, limits, label, calc_baseline,
       apply_baseline, baseline_type, baseline_events, baseline_period, hz,
-      verbose
+      verbose,
+      call_info = call_info
     )
 }
 
