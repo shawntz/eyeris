@@ -12,7 +12,7 @@ test_that("bin() validates time series monotonicity", {
   # create mock eyeris object for testing
   mock_eyeris <- list(
     timeseries = list(block_1 = valid_data),
-    latest = "pupil_raw",
+    latest = list(block_1 = "pupil_raw"),
     info = list(sample.rate = 10)
   )
   class(mock_eyeris) <- "eyeris"
@@ -34,7 +34,7 @@ test_that("bin() validates time series monotonicity", {
 
   mock_eyeris_bad <- list(
     timeseries = list(block_1 = non_monotonic_data),
-    latest = "pupil_raw",
+    latest = list(block_1 = "pupil_raw"),
     info = list(sample.rate = 10)
   )
   class(mock_eyeris_bad) <- "eyeris"
