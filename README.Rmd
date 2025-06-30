@@ -105,7 +105,7 @@ eyeris_preproc <- glassbox(
 
 ### step-wise correction of pupillary signal
 ```{r glassbox-plot, echo=TRUE, eval=FALSE, results='hide', fig.show='hide', warning=TRUE, message=TRUE, fig.width=12, fig.height=7, fig.dpi=300}
-plot(eyeris_preproc)
+plot(eyeris_preproc, add_progressive_summary = TRUE)
 ```
 
 <div style="display: flex; justify-content: center; gap: 20px;"><span><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"></span><span><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></span></div>
@@ -117,7 +117,8 @@ end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
 
 plot(eyeris_preproc,
   steps = c(1, 5),
-  preview_window = c(start_time, end_time)
+  preview_window = c(start_time, end_time),
+  add_progressive_summary = TRUE
 )
 ```
 

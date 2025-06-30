@@ -16,6 +16,7 @@
   plot_distributions = FALSE,
   suppress_prompt = TRUE,
   verbose = TRUE,
+  add_progressive_summary = FALSE,
   num_previews = deprecated()
 )
 }
@@ -72,6 +73,12 @@ well as in the generation of interactive HTML reports with \link{bidsify}.}
 the console. Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about
 the current processing step and run silently.}
 
+\item{add_progressive_summary}{Logical flag to indicate whether to add a
+progressive summary plot after plotting. Defaults to \code{FALSE}. Set to \code{TRUE}
+to enable the progressive summary plot (useful for interactive exploration).
+Set to \code{FALSE} to disable the progressive summary plot (useful in automated
+contexts like bidsify reports).}
+
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead.}
 }
 \value{
@@ -98,10 +105,15 @@ my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
 # controlling the timeseries range (i.e., preview window) in your plots:
 
 ## example 1: using the default 10000 to 20000 ms time subset
-plot(my_eyeris_data, seed = 0)
+plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
-plot(my_eyeris_data, preview_window = c(0.01, 0.5), seed = 0)
+plot(
+  my_eyeris_data,
+  preview_window = c(0.01, 0.5),
+  seed = 0,
+  add_progressive_summary = TRUE
+)
 
 # controlling which block of data you would like to plot:
 

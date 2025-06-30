@@ -111,7 +111,7 @@ eyeris_preproc <- glassbox(
 ### step-wise correction of pupillary signal
 
 ``` r
-plot(eyeris_preproc)
+plot(eyeris_preproc, add_progressive_summary = TRUE)
 ```
 
 <div style="display: flex; justify-content: center; gap: 20px;">
@@ -128,13 +128,20 @@ end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
 
 plot(eyeris_preproc,
   steps = c(1, 5),
-  preview_window = c(start_time, end_time)
+  preview_window = c(start_time, end_time),
+  add_progressive_summary = TRUE
 )
 #> ! [ INFO ] - Plotting block 1 from possible blocks: 1
 #> ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
+
+    #> ℹ [ INFO ] - Creating progressive summary plot for block_1
+
+<img src="man/figures/README-timeseries-plot-3.png" width="100%" />
+
+    #> ✔ [  OK  ] - Progressive summary plot created successfully!
 
 ------------------------------------------------------------------------
 

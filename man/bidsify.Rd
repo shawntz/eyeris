@@ -16,7 +16,7 @@ bidsify(
   run_num = NULL,
   merge_runs = FALSE,
   save_raw = TRUE,
-  html_report = FALSE,
+  html_report = TRUE,
   report_seed = 0,
   report_epoch_grouping_var_col = "matched_event",
   verbose = TRUE,
