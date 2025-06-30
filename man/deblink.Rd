@@ -7,18 +7,18 @@
 deblink(eyeris, extend = 50, call_info = NULL)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{extend}{Either a single number indicating the number of milliseconds to
 pad forward/backward around each missing sample, or, a vector of length two
 indicating different numbers of milliseconds pad forward/backward around each
-missing sample, in the format \code{c(backward, forward)}.}
+missing sample, in the format \code{c(backward, forward)}}
 
 \item{call_info}{A list of call information and parameters. If not provided,
-it will be generated from the function call.}
+it will be generated from the function call}
 }
 \value{
-An \code{eyeris} object with a new column: \verb{pupil_raw_\{...\}_deblink}.
+An \code{eyeris} object with a new column: \verb{pupil_raw_\{...\}_deblink}
 }
 \description{
 Deblinking (a.k.a. NA-padding) of time series data. The intended use of
@@ -62,5 +62,5 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.
+part of the full eyeris glassbox preprocessing pipeline
 }
