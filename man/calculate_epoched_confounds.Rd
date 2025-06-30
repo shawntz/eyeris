@@ -7,16 +7,16 @@
 calculate_epoched_confounds(eyeris, epoch_names, hz, verbose = TRUE)
 }
 \arguments{
-\item{eyeris}{An eyeris object}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{epoch_names}{Vector of epoch names to process}
+\item{epoch_names}{A vector of epoch names to process}
 
-\item{hz}{Sampling rate}
+\item{hz}{The sampling rate}
 
-\item{verbose}{Whether to print progress messages}
+\item{verbose}{A flag to indicate whether to print progress messages}
 }
 \value{
-Updated eyeris object with epoched confounds
+An updated \code{eyeris} object with epoched confounds
 }
 \description{
 Helper function to calculate confounds for epoched timeseries data.
