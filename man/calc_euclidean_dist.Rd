@@ -11,12 +11,12 @@ calc_euclidean_dist(x1, y1, x2 = 0, y2 = 0)
 
 \item{y1}{First y coordinate or vector of y coordinates}
 
-\item{x2}{Second x coordinate or vector of x coordinates (defaults to 0)}
+\item{x2}{Second x coordinate or vector of x coordinates (defaults to \code{0})}
 
-\item{y2}{Second y coordinate or vector of y coordinates (defaults to 0)}
+\item{y2}{Second y coordinate or vector of y coordinates (defaults to \code{0})}
 }
 \value{
-Numeric vector of Euclidean distances
+A numeric vector of Euclidean distances
 }
 \description{
 Calculate Euclidean distance between points
