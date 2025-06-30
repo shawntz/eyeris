@@ -45,13 +45,24 @@
 #' }
 #'
 #' # second, construct your `pipeline_handler` method wrapper
-#' winsorize <- function(eyeris, lower = 0.01, upper = 0.99) {
+#' winsorize <- function(eyeris, lower = 0.01, upper = 0.99, call_info = NULL) {
+#'   # create call_info if not provided
+#'   call_info <- if (is.null(call_info)) {
+#'     list(
+#'       call_stack = match.call(),
+#'       parameters = list(lower = lower, upper = upper)
+#'     )
+#'   } else {
+#'     call_info
+#'   }
+#'
 #'   pipeline_handler(
 #'     eyeris,
 #'     winsorize_pupil,
 #'     "winsorize",
 #'     lower = lower,
-#'     upper = upper
+#'     upper = upper,
+#'     call_info = call_info
 #'   )
 #' }
 #'
@@ -76,10 +87,21 @@
 #'
 #' @export
 pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
-  call_stack <- sys.calls()[[1]]
-
+  # extract call_info from ... if it was passed that way
+  dots <- list(...)
+  if ("call_info" %in% names(dots)) {
+    call_info <- dots$call_info
+    dots$call_info <- NULL # Remove call_info from dots
+  }
   if (!is.list(eyeris$params)) eyeris$params <- list()
-  eyeris$params[[new_suffix]] <- call_stack
+  # ensure call_info is a list with call_stack and parameters
+  if (!is.null(call_info) && !is.list(call_info)) {
+    call_info <- list(call_stack = call_info, parameters = dots)
+  }
+  if (is.null(call_info)) {
+    call_info <- list(call_stack = sys.calls(), parameters = dots)
+  }
+  eyeris$params[[new_suffix]] <- call_info
 
   tryCatch(
     {
