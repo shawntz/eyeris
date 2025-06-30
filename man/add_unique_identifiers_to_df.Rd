@@ -13,6 +13,6 @@ add_unique_identifiers_to_df(events_df)
 Updated events data frame with \code{text_unique} column
 }
 \description{
-Add unique identifiers to a single events data frame
+This function is called by the exposed wrapper \code{\link[=load_asc]{load_asc()}}
 }
 \keyword{internal}
