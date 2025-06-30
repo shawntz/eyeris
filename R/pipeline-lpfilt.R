@@ -26,6 +26,8 @@
 #' @param rp Required maximal ripple within passband in dB.
 #' @param rs Required minimal attenuation within stopband in dB.
 #' @param plot_freqz Boolean flag for displaying filter frequency response.
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
 #' `pupil_raw_{...}_lpfilt`.
@@ -43,15 +45,40 @@
 #'
 #' @export
 lpfilt <- function(eyeris, wp = 4, ws = 8,
-                   rp = 1, rs = 35, plot_freqz = FALSE) {
+                   rp = 1, rs = 35, plot_freqz = FALSE, call_info = NULL) {
   # safely handle user's current options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 
   fs <- eyeris$info$sample.rate
 
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(
+        wp = wp,
+        ws = ws,
+        rp = rp,
+        rs = rs,
+        plot_freqz = plot_freqz
+      )
+    )
+  } else {
+    call_info
+  }
+
   eyeris |>
-    pipeline_handler(lpfilt_pupil, "lpfilt", wp, ws, rp, rs, fs, plot_freqz)
+    pipeline_handler(
+      lpfilt_pupil,
+      "lpfilt",
+      wp,
+      ws,
+      rp,
+      rs,
+      fs,
+      plot_freqz,
+      call_info = call_info
+    )
 }
 
 lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
