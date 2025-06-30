@@ -115,14 +115,38 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   # getters
   prev_operation <- eyeris$latest
 
-  # setters
-  output_col <- paste0(prev_operation, "_", new_suffix)
-
-  # handle either list of dataframes per block or a single df
+  # handle per-block pointers for multiblock data
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
-    # handle list of dfs (block) default method
+    is_multiblock <- TRUE
+  } else {
+    if (is.null(prev_operation) ||
+          length(prev_operation) == 0 ||
+          prev_operation == "") {
+      cli::cli_abort(
+        paste0(
+          "Latest pointer is empty or NULL.",
+          "This indicates a pipeline initialization error."
+        )
+      )
+    }
+    if (grepl("_([^_]+)_\\1", prev_operation)) {
+      cli::cli_abort(paste(
+        "Corrupted latest pointer detected:", prev_operation,
+        "This indicates a pipeline error. Please restart the pipeline."
+      ))
+    }
+    is_multiblock <- FALSE
+  }
 
-    # time monotonicity check for each block
+  output_col <- paste0(prev_operation, "_", new_suffix)
+  if (grepl("_([^_]+)_\\1", output_col)) {
+    cli::cli_abort(paste(
+      "Attempting to create corrupted column name:", output_col,
+      "This indicates a pipeline processing error. Please check your data."
+    ))
+  }
+
+  if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     for (i_block in names(eyeris$timeseries)) {
       data <- eyeris$timeseries[[i_block]]
       if ("time_secs" %in% colnames(data)) {
@@ -132,32 +156,52 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         check_time_monotonic(data$time_orig, "time_orig")
       }
     }
-
-    # testing:
     if (new_suffix == "epoch") {
-      # run op
-      data <- operation(eyeris, prev_operation, ...)
-
-      # reset updated S3 eyeris class
+      data <- do.call(operation, c(list(eyeris, prev_operation), dots))
       eyeris <- data
     }
-
     for (i_block in names(eyeris$timeseries)) {
       if (new_suffix != "epoch") {
         data <- eyeris$timeseries[[i_block]]
-
-        # run operation
+        block_prev_operation <- eyeris$latest[[i_block]]
+        if (is.null(block_prev_operation) ||
+              length(block_prev_operation) == 0 ||
+              block_prev_operation == "") {
+          cli::cli_abort(paste(
+            "Latest pointer for block",
+            i_block,
+            "is empty or NULL."
+          ))
+        }
+        if (grepl("_([^_]+)_\\1", block_prev_operation)) {
+          cli::cli_abort(paste(
+            "Corrupted latest pointer detected for block",
+            i_block, ":", block_prev_operation,
+            "This indicates a pipeline error. Please restart the pipeline."
+          ))
+        }
+        block_output_col <- paste0(block_prev_operation, "_", new_suffix)
+        if (grepl("_([^_]+)_\\1", block_output_col)) {
+          cli::cli_abort(paste(
+            "Attempting to create corrupted column name for block",
+            i_block, ":", block_output_col,
+            "This indicates a pipeline error. Please check your data."
+          ))
+        }
         if (new_suffix == "detrend") {
-          list_detrend <- operation(data, prev_operation, ...)
+          list_detrend <- do.call(
+            operation, c(list(data, block_prev_operation), dots)
+          )
           data["detrend_fitted_values"] <- list_detrend$fitted_values
-          data[[output_col]] <- list_detrend$residuals
-          # store detrend coefficients per block
+          data[[block_output_col]] <- list_detrend$residuals
           if (!exists("detrend_coefs", eyeris)) {
             eyeris$detrend_coefs <- list()
           }
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
         } else if (new_suffix == "bin" || new_suffix == "downsample") {
-          list_ds_bin <- operation(data, prev_operation, ...)
+          list_ds_bin <- do.call(
+            operation, c(list(data, block_prev_operation), dots)
+          )
           data <- list_ds_bin$downsampled_df |>
             dplyr::select(
               block,
@@ -168,32 +212,33 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
               dplyr::starts_with("pupil_")
             ) |>
             dplyr::relocate(
-              dplyr::ends_with("_bin"), .after = last_col()
+              dplyr::ends_with("_bin"),
+              .after = last_col()
             )
         } else {
-          data[[output_col]] <- operation(data, prev_operation, ...)
+          data[[block_output_col]] <- do.call(
+            operation, c(list(data, block_prev_operation), dots)
+          )
         }
-        # update block in S3 eyeris object
         eyeris$timeseries[[i_block]] <- data
         if (new_suffix == "bin" || new_suffix == "downsample") {
           eyeris$decimated.sample.rate <- list_ds_bin$decimated.sample.rate
-          # update latest pointer for bin/downsample operations
-          eyeris$latest <- output_col
+          eyeris$latest[[i_block]] <- block_output_col
         }
       }
     }
-
-    # update latest pointer for non-bin/downsample operations
     if (
       new_suffix != "bin" &&
         new_suffix != "downsample" &&
         new_suffix != "epoch"
     ) {
-      eyeris$latest <- output_col
+      for (i_block in names(eyeris$timeseries)) {
+        block_prev_operation <- eyeris$latest[[i_block]]
+        block_output_col <- paste0(block_prev_operation, "_", new_suffix)
+        eyeris$latest[[i_block]] <- block_output_col
+      }
     }
   } else {
-    # handle single dfs fallback case
-    # global time monotonicity check for single dataframe
     data <- eyeris$timeseries
     if ("time_secs" %in% colnames(data)) {
       check_time_monotonic(data$time_secs, "time_secs")
@@ -202,34 +247,28 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       check_time_monotonic(data$time_orig, "time_orig")
     }
     if (new_suffix == "epoch") {
-      # run op
-      data <- operation(eyeris, prev_operation, ...)
-      # reset updated S3 eyeris class
+      data <- do.call(operation, c(list(eyeris, prev_operation), dots))
       eyeris <- data
     } else if (new_suffix == "bin" || new_suffix == "downsample") {
       data <- eyeris$timeseries
-      # run op
-      result <- operation(data, prev_operation, ...)
-      # update S3 eyeris class
+      result <- do.call(operation, c(list(data, prev_operation), dots))
       eyeris$timeseries <- result
     } else {
       data <- eyeris$timeseries
-      # run operation
       if (new_suffix == "detrend") {
-        list_detrend <- operation(data, prev_operation, ...)
+        list_detrend <- do.call(operation, c(list(data, prev_operation), dots))
         data["detrend_fitted_values"] <- list_detrend$fitted_values
         data[[output_col]] <- list_detrend$residuals
       } else {
-        data[[output_col]] <- operation(data, prev_operation, ...)
+        data[[output_col]] <- do.call(
+          operation, c(list(data, prev_operation), dots)
+        )
       }
-      # update S3 eyeris class
       eyeris$timeseries <- data
-      # update with detrend coefs if detrended
       if (new_suffix == "detrend") {
         eyeris$detrend_coefs <- list_detrend$coefficients
       }
     }
-    # update log var with latest op
     eyeris$latest <- output_col
   }
 
@@ -247,6 +286,5 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       eyeris$timeseries$time_scaled <- eyeris$timeseries$time_secs
     }
   }
-
   eyeris
 }
