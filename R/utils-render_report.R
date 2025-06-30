@@ -31,6 +31,21 @@ make_report <- function(eyeris, out, plots, ...) {
   )
 
   # eyeris report markdown content
+  block_heatmaps_md <- "\n## Gaze Heatmaps\n\n"
+  for (run_id in run_ids) {
+    heatmap_path <- file.path(
+      "source", "figures", sprintf("run-%02d", run_id),
+      sprintf("run-%02d_gaze_heatmap.png", run_id)
+    )
+    if (file.exists(file.path(out, heatmap_path))) {
+      block_heatmaps_md <- paste0(
+        block_heatmaps_md,
+        "### run-", sprintf("%02d", run_id), "\n\n",
+        "![](", heatmap_path, ")\n\n"
+      )
+    }
+  }
+
   content <- paste0(
     "---\n",
     "title: '`eyeris` report'\n",
@@ -64,6 +79,7 @@ make_report <- function(eyeris, out, plots, ...) {
     "\n\n## Preprocessed Data Previews\n\n",
     save_detrend_plots(eyeris = eyeris, out_dir = out),
     print_plots(plots), "\n",
+    block_heatmaps_md,
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
     "\n\n---\n\n## `eyeris` call stack\n\n",
