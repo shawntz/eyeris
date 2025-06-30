@@ -7,18 +7,19 @@
 normalize_gaze_coords(pupil_df, screen_width, screen_height)
 }
 \arguments{
-\item{pupil_df}{Dataframe containing raw gaze coordinates (eye_x, eye_y)}
+\item{pupil_df}{A data frame containing raw gaze
+coordinates (\code{eye_x}, \code{eye_y})}
 
-\item{screen_width}{Screen width in pixels}
+\item{screen_width}{The screen width in pixels}
 
-\item{screen_height}{Screen height in pixels}
+\item{screen_height}{The screen height in pixels}
 }
 \value{
-Dataframe with added columns:
+A data frame with added columns:
 \itemize{
-\item eye_x_norm: Normalized x coordinate [-1,1]
-\item eye_y_norm: Normalized y coordinate [-1,1]
-\item gaze_dist_from_center: Normalized distance from screen center
+\item \code{eye_x_norm}: Normalized x coordinate [-1,1]
+\item \code{eye_y_norm}: Normalized y coordinate [-1,1]
+\item \code{gaze_dist_from_center}: Normalized distance from screen center
 }
 }
 \description{
