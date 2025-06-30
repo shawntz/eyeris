@@ -18,25 +18,26 @@ plot_with_seed(
 )
 }
 \arguments{
-\item{file}{The eyeris object to plot}
+\item{file}{The \code{eyeris} object to plot}
 
 \item{step_counter}{Current step counter}
 
-\item{seed}{Seed for reproducible plotting}
+\item{seed}{A random seed for reproducible plotting}
 
 \item{preview_n}{Number of preview epochs}
 
-\item{preview_duration}{Duration of each preview}
+\item{preview_duration}{Duration of each preview in seconds}
 
 \item{preview_window}{Preview window specification}
 
-\item{only_linear_trend}{Whether to show only linear trend}
+\item{only_linear_trend}{A flag to indicate whether to show only linear
+trend}
 
 \item{next_step}{Next step information}
 
 \item{block_name}{Block name (optional, for multi-block processing)}
 
-\item{verbose}{Whether to show verbose output}
+\item{verbose}{A flag to indicate whether to show verbose output}
 }
 \description{
 Internal function to handle plotting with consistent seed management
