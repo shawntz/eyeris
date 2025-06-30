@@ -38,6 +38,11 @@ Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).
 derivative (preprocessed) pupillometry data, as well as an intuitive
 workflow for inspecting preprocessed pupillometry epochs within
 beautiful, interactive HTML report files (see demonstration below ⬇️)!
+The package also includes gaze heatmaps that show the distribution of
+eye coordinates across the entire screen area, helping you assess data
+quality and participant attention patterns. These heatmaps are
+automatically generated in the BIDS reports and can also be created
+manually.
 
 <img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%" />
 
@@ -146,6 +151,9 @@ plot(eyeris_preproc,
 ------------------------------------------------------------------------
 
 ## `eyeris` dependency graph :see_no_evil:
+
+    #> Warning: ggrepel: 6 unlabeled data points (too many overlaps). Consider
+    #> increasing max.overlaps
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 

@@ -755,3 +755,99 @@ plot_detrend_overlay <- function(pupil_data,
 
   return(TRUE)
 }
+
+#' Create gaze heatmap of eye coordinates
+#'
+#' Creates a heatmap showing the distribution of eye_x and eye_y coordinates
+#' across the entire screen area. The heatmap shows where the participant
+#' looked most frequently during the recording period.
+#'
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
+#' @param block Block number to plot (default: 1)
+#' @param screen_width Screen width in pixels from eyeris$info$screen.x
+#' @param screen_height Screen height in pixels from eyeris$info$screen.y
+#' @param n_bins Number of bins for the heatmap grid (default: 50)
+#' @param col_palette Color palette for the heatmap (default: "viridis")
+#' @param main Title for the plot (default: "Fixation Heatmap")
+#' @param xlab X-axis label (default: "Screen X (pixels)")
+#' @param ylab Y-axis label (default: "Screen Y (pixels)")
+#' @param sample_rate Sample rate in Hz (optional)
+#'
+#' @return No return value; creates a heatmap plot
+#'
+#' @export
+plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
+                              screen_height = NULL,
+                              n_bins = 50, col_palette = "viridis",
+                              main = "Gaze Heatmap",
+                              xlab = "Screen X (pixels)",
+                              ylab = "Screen Y (pixels)",
+                              sample_rate = NULL) {
+  if (inherits(eyeris, "eyeris")) {
+    block_str <- paste0("block_", block)
+    if (is.null(screen_width)) screen_width <- eyeris$info$screen.x
+    if (is.null(screen_height)) screen_height <- eyeris$info$screen.y
+
+    df <- eyeris$timeseries[[block_str]]
+    if (!is.data.frame(df)) {
+      warning("Block not found in eyeris object.")
+      return(invisible(NULL))
+    }
+  } else {
+    df <- eyeris
+    if (is.null(screen_width) || is.null(screen_height)) {
+      stop("screen width and height must be provided with dataframe inputs.")
+    }
+  }
+
+  if (!all(c("eye_x", "eye_y") %in% colnames(df))) {
+    warning("eye_x and/or eye_y columns not found in input data.")
+    return(invisible(NULL))
+  }
+
+  valid_coords <- !is.na(df$eye_x) & !is.na(df$eye_y)
+  if (sum(valid_coords) == 0) {
+    warning("No valid eye coordinates found")
+    return(invisible(NULL))
+  }
+
+  x_coords <- df$eye_x[valid_coords]
+  y_coords <- df$eye_y[valid_coords]
+
+  tryCatch({
+    dens <- MASS::kde2d(x_coords, y_coords, n = n_bins,
+                        lims = c(0, screen_width, 0, screen_height))
+    norm_density <- dens$z / max(dens$z, na.rm = TRUE)
+
+    if (col_palette == "viridis") {
+      colors <- viridis::viridis(100)
+    } else if (col_palette == "plasma") {
+      colors <- viridis::plasma(100)
+    } else if (col_palette == "inferno") {
+      colors <- viridis::inferno(100)
+    } else if (col_palette == "magma") {
+      colors <- viridis::magma(100)
+    } else {
+      colors <- grDevices::heat.colors(100)
+    }
+
+    fields::image.plot(
+      x = dens$x, y = dens$y,
+      z = t(norm_density)[, rev(seq_len(nrow(norm_density)))],
+      col = colors, main = main, xlab = xlab, ylab = ylab,
+      xlim = c(0, screen_width), ylim = c(screen_height, 0),
+      legend.lab = "Normalized density", legend.line = 2.5,
+      zlim = c(0, 1)
+    )
+    rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
+    points(screen_width / 2, screen_height / 2, pch = 3, col = "red", cex = 1.5)
+  }, error = function(e) {
+    plot(x_coords, y_coords,
+         pch = 16, cex = 0.5,
+         col = grDevices::adjustcolor("blue", alpha.f = 0.6),
+         main = main, xlab = xlab, ylab = ylab,
+         xlim = c(0, screen_width), ylim = c(screen_height, 0))
+    rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
+    points(screen_width / 2, screen_height / 2, pch = 3, col = "red", cex = 1.5)
+  })
+}
