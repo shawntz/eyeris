@@ -15,14 +15,14 @@ export_confounds_to_csv(
 \arguments{
 \item{confounds_list}{A nested list structure containing confounds data}
 
-\item{output_dir}{Directory where CSV files will be saved}
+\item{output_dir}{The directory where CSV files will be saved}
 
 \item{filename_prefix}{Either a string prefix for filenames or a function
 that takes a block name and returns a prefix}
 
-\item{verbose}{Whether to print progress messages}
+\item{verbose}{A flag to indicate whether to print progress messages}
 
-\item{run_num}{Run number}
+\item{run_num}{The run number}
 }
 \value{
 Invisibly returns a vector of created file paths
