@@ -23,18 +23,18 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param extend Either a single number indicating the number of milliseconds to
 #' pad forward/backward around each missing sample, or, a vector of length two
 #' indicating different numbers of milliseconds pad forward/backward around each
-#' missing sample, in the format `c(backward, forward)`.
+#' missing sample, in the format `c(backward, forward)`
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call
 #'
-#' @return An `eyeris` object with a new column: `pupil_raw_{...}_deblink`.
+#' @return An `eyeris` object with a new column: `pupil_raw_{...}_deblink`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full eyeris glassbox preprocessing pipeline
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -71,7 +71,39 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
     )
 }
 
-# based on https://github.com/dr-JT/pupillometry/blob/main/R/pupil_deblink.R
+#' Internal function to remove blink artifacts from pupil data
+#'
+#' @description This function implements blink artifact removal by extending
+#' the duration of detected blinks (missing samples) by a specified number of
+#' milliseconds both forward and backward in time. This helps to remove
+#' deflections in pupil size that occur due to eyelid movements during and
+#' around actual blink periods.
+#'
+#' This function is called by the exposed wrapper [eyeris::deblink()].
+#'
+#' @details The function works by:
+#' \itemize{
+#'   \item Identifying missing samples as blink periods
+#'   \item Extending these periods by the specified number of milliseconds
+#'   \item Setting all samples within the extended blink periods to NA
+#'   \item Preserving all other samples unchanged
+#' }
+#'
+#' This implementation is based on the approach described in the pupillometry
+#' package by dr-JT
+#' (\url{https://github.com/dr-JT/pupillometry/blob/main/R/pupil_deblink.R}).
+#'
+#' @param x A data frame containing pupil data with columns `time_orig` and
+#'   the previous operation's pupil column
+#' @param prev_op The name of the previous operation's pupil column
+#' @param extend Either a single number indicating symmetric padding in both
+#'   directions, or a vector of length 2 indicating asymmetric padding in the
+#'   format `c(backward, forward)` in milliseconds. Defaults to `50`
+#'
+#' @return A numeric vector of the same length as the input data with blink
+#'   artifacts removed (set to NA)
+#'
+#' @keywords internal
 deblink_pupil <- function(x, prev_op, extend) {
   column <- dplyr::sym(prev_op)
 
