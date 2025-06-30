@@ -1,3 +1,17 @@
+#' Create interactive epoch gallery report
+#'
+#' Generates an interactive HTML gallery report for epoch data with lightbox
+#' functionality.
+#'
+#' @param eyeris An `eyeris` object containing preprocessing results
+#' @param epochs Vector of epoch plot file paths
+#' @param out Output directory for the report
+#' @param epoch_name Name of the epoch for the report
+#' @param ... Additional parameters passed from bidsify
+#'
+#' @return No return value; creates and renders an HTML gallery report
+#'
+#' @keywords internal
 make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   params <- list(...)
 
@@ -67,6 +81,15 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   unlink(rmd_f)
 }
 
+#' Print lightbox image HTML
+#'
+#' Generates HTML code for lightbox image gallery functionality.
+#'
+#' @param images Vector of image file paths
+#'
+#' @return A character string containing HTML code for the lightbox gallery
+#'
+#' @keywords internal
 print_lightbox_img_html <- function(images) {
   html_out <- ""
 
