@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>QC with Interactive Reports</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/vignettes/reports.Rmd" class="external-link"><code>vignettes/reports.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/vignettes/reports.Rmd" class="external-link"><code>vignettes/reports.Rmd</code></a></small>
       <div class="d-none name"><code>reports.Rmd</code></div>
     </div>
 
@@ -215,7 +215,63 @@ signal-to-noise ratio</strong> <strong>with as little overhead as
 possible!</strong></p>
 </blockquote>
 <p><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="gaze-heatmaps">3️⃣ Gaze Heatmaps<a class="anchor" aria-label="anchor" href="#gaze-heatmaps"></a>
+</h2>
+<p>In addition to the standard pupil timeseries plots,
+<code>eyeris</code> now includes gaze heatmaps that show the
+distribution of eye coordinates across the entire screen area. These
+heatmaps are automatically generated in the BIDS reports and can also be
+created manually.</p>
+<div class="section level3">
+<h3 id="standalone-gaze-heatmaps">Standalone Gaze Heatmaps<a class="anchor" aria-label="anchor" href="#standalone-gaze-heatmaps"></a>
+</h3>
+<p>When you run <code><a href="../reference/bidsify.html">bidsify()</a></code> with
+<code>html_report = TRUE</code>, <code>eyeris</code> automatically
+creates standalone gaze heatmaps for each block of data. These heatmaps
+show:</p>
+<ul>
+<li>The distribution of eye coordinates (x and y) across the entire
+screen area</li>
+<li>Screen boundaries marked with solid lines</li>
+<li>The screen center marked with a red cross</li>
+<li>Color-coded density showing where the participant looked most
+frequently</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="manual-gaze-heatmap-creation">Manual Gaze Heatmap Creation<a class="anchor" aria-label="anchor" href="#manual-gaze-heatmap-creation"></a>
+</h3>
+<p>You can also create gaze heatmaps manually using the
+<code><a href="../reference/plot_gaze_heatmap.html">plot_gaze_heatmap()</a></code> function:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_gaze_heatmap.html">plot_gaze_heatmap</a></span><span class="op">(</span></span>
+<span>  pupil_data <span class="op">=</span> <span class="va">eyeris_data</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span>,</span>
+<span>  screen_width <span class="op">=</span> <span class="va">eyeris_data</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="va">screen.x</span>,</span>
+<span>  screen_height <span class="op">=</span> <span class="va">eyeris_data</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="va">screen.y</span>,</span>
+<span>  n_bins <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  col_palette <span class="op">=</span> <span class="st">"viridis"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="epoch-level-gaze-heatmaps">Epoch-Level Gaze Heatmaps<a class="anchor" aria-label="anchor" href="#epoch-level-gaze-heatmaps"></a>
+</h3>
+<p>For epoched data, each epoch automatically generates a gaze heatmap
+showing the distribution of eye coordinates during that specific epoch.
+These are saved as separate files in the epoch directories and help you
+quickly assess:</p>
+<ul>
+<li>Whether the participant was looking at the screen during the
+epoch</li>
+<li>The spatial distribution of gaze within the epoch</li>
+<li>Any systematic biases in gaze position</li>
+</ul>
+<p>The gaze heatmaps use the screen dimensions stored in the
+<code>eyeris$info</code> object to properly show the full screen area
+and use color-coded density to visualize gaze patterns.</p>
 <hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="citing-eyeris">📚 Citing <code>eyeris</code><a class="anchor" aria-label="anchor" href="#citing-eyeris"></a>
@@ -225,7 +281,7 @@ possible!</strong></p>
 cite it!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
