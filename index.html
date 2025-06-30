@@ -174,7 +174,7 @@
 <h3 id="step-wise-correction-of-pupillary-signal">step-wise correction of pupillary signal<a class="anchor" aria-label="anchor" href="#step-wise-correction-of-pupillary-signal"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span>, add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div style="display: flex; justify-content: center; gap: 20px;">
 <p><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></p>
 </div>
@@ -188,11 +188,15 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span>,</span>
 <span>  steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">end_time</span><span class="op">)</span></span>
+<span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">end_time</span><span class="op">)</span>,</span>
+<span>  add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ! [ INFO ] - Plotting block 1 from possible blocks: 1</span></span>
 <span><span class="co">#&gt; ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [ INFO ] - Creating progressive summary plot for block_1</span></span></code></pre></div>
+<p><img src="reference/figures/README-timeseries-plot-3.png" width="100%"></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [  OK  ] - Progressive summary plot created successfully!</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -229,7 +233,7 @@
 <p>If you use the <code>eyeris</code> package in your research, please consider citing our preprint!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -304,7 +308,6 @@
 <li><a href="https://github.com/shawntz/eyeris/actions/workflows/build.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="build"></a></li>
 <li><a href="https://github.com/shawntz/eyeris/actions/workflows/linter.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg" alt="linter"></a></li>
 <li><a href="https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg" alt="pkgdown"></a></li>
-<li><a href="https://github.com/shawntz/eyeris/actions/workflows/testthat.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/testthat.yml/badge.svg" alt="testthat"></a></li>
 <li><a href="https://doi.org/10.1101/2025.06.01.657312" class="external-link"><img src="https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen" alt="bioRxiv Preprint"></a></li>
 </ul>
 </div>
