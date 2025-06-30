@@ -1,8 +1,29 @@
+#' Render R Markdown report
+#'
+#' Renders an R Markdown file to HTML and cleans up the temporary file.
+#'
+#' @param rmd_f Path to the R Markdown file to render
+#'
+#' @return No return value; renders HTML report and removes temporary file
+#'
+#' @keywords internal
 render_report <- function(rmd_f) {
   rmarkdown::render(rmd_f, output_format = "html_document")
   unlink(rmd_f)
 }
 
+#' Create eyeris report
+#'
+#' Generates a comprehensive HTML report for eyeris preprocessing results.
+#'
+#' @param eyeris An `eyeris` object containing preprocessing results
+#' @param out Output directory for the report
+#' @param plots Vector of plot file paths to include in the report
+#' @param ... Additional parameters passed from bidsify
+#'
+#' @return Path to the generated R Markdown file
+#'
+#' @keywords internal
 make_report <- function(eyeris, out, plots, ...) {
   # get extra subject params from bidsify.R
   params <- list(...)
@@ -79,7 +100,15 @@ make_report <- function(eyeris, out, plots, ...) {
   rmd_f
 }
 
-# parse eyelink `info` metadata into a markdown table
+#' Create markdown table from dataframe
+#'
+#' Converts a dataframe into a markdown table.
+#'
+#' @param df The dataframe to convert
+#'
+#' @return A character string containing the markdown table content
+#'
+#' @keywords internal
 make_md_table <- function(df) {
   md_table <- "| Property | Value |\n|----|----|\n"
   for (prop in colnames(df)) {
@@ -97,6 +126,15 @@ make_md_table <- function(df) {
   md_table
 }
 
+#' Create multiline markdown table from dataframe
+#'
+#' Converts a dataframe into a multiline markdown table.
+#'
+#' @param df The dataframe to convert
+#'
+#' @return A character string containing the markdown table content
+#'
+#' @keywords internal
 make_md_table_multiline <- function(df) {
   md_table <- paste0("| ", paste(colnames(df), collapse = " | "), " |\n")
   md_table <- paste0(md_table, "|",
@@ -113,6 +151,15 @@ make_md_table_multiline <- function(df) {
   md_table
 }
 
+#' Print plots in markdown format
+#'
+#' Generates markdown code to display plots in the report.
+#'
+#' @param plots Vector of plot file paths
+#'
+#' @return A character string containing markdown plot references
+#'
+#' @keywords internal
 print_plots <- function(plots) {
   md_plots <- ""
 
@@ -199,6 +246,19 @@ print_plots <- function(plots) {
   }
 }
 
+#' Save detrend plots for each block
+#'
+#' Generates and saves detrend diagnostic plots for each block in the eyeris
+#' object.
+#'
+#' @param eyeris An `eyeris` object containing preprocessing results
+#' @param out_dir Output directory for saving plots
+#' @param preview_n Number of preview samples for plotting
+#' @param plot_params Additional plotting parameters
+#'
+#' @return No return value; saves detrend plots to the specified directory
+#'
+#' @keywords internal
 save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
                                plot_params = list()) {
   blocks <- names(eyeris$timeseries)
@@ -256,14 +316,15 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
 #' @param pupil_steps Character vector of column names containing pupil data
 #'   at different preprocessing stages
 #'   (e.g., `c("pupil_raw", "pupil_deblink", "pupil_detrend")`)
-#' @param preview_n Number of columns for subplot layout. Default = 3.
+#' @param preview_n Number of columns for subplot layout. Defaults to `3`
 #' @param plot_params Named list of additional parameters to forward to plotting
-#'   functions. Default = list().
+#'   functions. Defaults to `list()`
 #' @param run_id Character string identifying the run/block (e.g., "run-01").
-#'   Used for plot titles and file naming. Default = "run-01".
+#'   Used for plot titles and file naming. Defaults to `"run-01"`
+#' @param cex Character expansion factor for plot elements. Defaults to `2.0`
 #'
 #' @return NULL (invisibly). Creates a plot showing progressive preprocessing
-#'   effects with multiple layers overlaid on the same time series.
+#'   effects with multiple layers overlaid on the same time series
 #'
 #' @details
 #' This function creates a two-panel visualization:
@@ -321,9 +382,7 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
   y_range <- y_range + c(-y_padding, y_padding)
   x_range <- x_range + c(-x_padding, x_padding)
 
-  colorpal <- c(
-    "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628"
-  )
+  colorpal <- eyeris_color_palette()
   colors <- c("black", colorpal)
   n_layers <- length(layer_data)
   colors <- colors[seq_len(n_layers)]
@@ -362,7 +421,19 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
   layout(1)
 }
 
-# generate markdown content for progressive summary plots
+#' Save progressive summary plots for each block
+#'
+#' Generates and saves progressive summary plots for each block in the eyeris
+#' object.
+#'
+#' @param eyeris An `eyeris` object containing preprocessing results
+#' @param out_dir Output directory for saving plots
+#' @param preview_n Number of preview samples for plotting
+#' @param plot_params Additional plotting parameters
+#'
+#' @return A character string containing markdown references to the saved plots
+#'
+#' @keywords internal
 save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
                                            plot_params = list()) {
   blocks <- names(eyeris$timeseries)
