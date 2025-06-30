@@ -188,7 +188,19 @@ load_asc <- function(file, block = "auto") {
 
   list_out$file <- file
   list_out$info <- x$info
-  list_out$latest <- "pupil_raw"
+
+  # set latest pointer based on block structure
+  if (is.list(list_out$timeseries) && !is.data.frame(list_out$timeseries)) {
+    # multiblock: set a named list of pointers
+    list_out$latest <- setNames(
+      as.list(rep("pupil_raw", length(list_out$timeseries))),
+      names(list_out$timeseries)
+    )
+  } else {
+    # single block: set a single pointer
+    list_out$latest <- "pupil_raw"
+  }
+
   list_out$decimated.sample.rate <- NA_integer_
   list_out <- normalize_time_orig(list_out)
   class(list_out) <- "eyeris"
@@ -248,7 +260,7 @@ add_unique_identifiers_to_df <- function(events_df) {
 # normalize "time_orig" to seconds and to start at 0
 any_block_entries <- function(eyeris_obj) {
   is.list(eyeris_obj$timeseries) &&
-    any(grepl("^block_", names(eyeris_obj$timeseries)))
+    any(grepl("^block_", names(eyeris_obj$timeseries)), na.rm = TRUE)
 }
 
 normalize_time_orig <- function(eyeris_obj) {
