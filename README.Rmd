@@ -124,9 +124,14 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
+
+plot_gaze_heatmap(
+  eyeris = eyeris_preproc,
+  block = 1
+)
 ```
 
-## Logging eyeris Commands with `eyelogger()`
+## Logging `eyeris` commands with `eyelogger()`
 
 The `eyelogger()` utility lets you run any `eyeris` command (or block of R code) while automatically capturing all console output and errors to timestamped log files. This is especially useful for reproducibility, debugging, or running batch jobs.
 

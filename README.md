@@ -148,7 +148,14 @@ plot(eyeris_preproc,
 
     #> ✔ [  OK  ] - Progressive summary plot created successfully!
 
-## Logging eyeris Commands with `eyelogger()`
+    plot_gaze_heatmap(
+      eyeris = eyeris_preproc,
+      block = 1
+    )
+
+<img src="man/figures/README-timeseries-plot-4.png" width="100%" />
+
+## Logging `eyeris` commands with `eyelogger()`
 
 The `eyelogger()` utility lets you run any `eyeris` command (or block of
 R code) while automatically capturing all console output and errors to
@@ -194,8 +201,8 @@ eyelogger({
 
 After running, you’ll find log files in your specified directory, e.g.:
 
-    20240614_153012.out   # Console output
-    20240614_153012.err   # Warnings and errors
+    20240614_153012.out   # console output
+    20240614_153012.err   # warnings and errors
 
 This makes it easy to keep a record of your preprocessing runs and debug
 any issues that arise.
