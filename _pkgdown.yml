@@ -93,6 +93,7 @@ reference:
       - bidsify
       - summarize_confounds
       - plot.eyeris
+      - plot_gaze_heatmap
 
   - title: "🔧 Preprocessing Steps"
     desc: >
