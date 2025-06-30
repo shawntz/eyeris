@@ -71,7 +71,7 @@ as well. However, only lowpass filtering should be done on pupillometry data."><
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Lowpass filtering of time series data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/146-feat-progressive-preprocessing-pipeline/R/pipeline-lpfilt.R" class="external-link"><code>R/pipeline-lpfilt.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-lpfilt.R" class="external-link"><code>R/pipeline-lpfilt.R</code></a></small>
       <div class="d-none name"><code>lpfilt.Rd</code></div>
     </div>
 
@@ -83,7 +83,15 @@ as well. However, only lowpass filtering should be done on pupillometry data.</p
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lpfilt</span><span class="op">(</span><span class="va">eyeris</span>, wp <span class="op">=</span> <span class="fl">4</span>, ws <span class="op">=</span> <span class="fl">8</span>, rp <span class="op">=</span> <span class="fl">1</span>, rs <span class="op">=</span> <span class="fl">35</span>, plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lpfilt</span><span class="op">(</span></span>
+<span>  <span class="va">eyeris</span>,</span>
+<span>  wp <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  ws <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  rp <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rs <span class="op">=</span> <span class="fl">35</span>,</span>
+<span>  plot_freqz <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  call_info <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -112,6 +120,11 @@ as well. However, only lowpass filtering should be done on pupillometry data.</p
 
 <dt id="arg-plot-freqz">plot_freqz<a class="anchor" aria-label="anchor" href="#arg-plot-freqz"></a></dt>
 <dd><p>Boolean flag for displaying filter frequency response.</p></dd>
+
+
+<dt id="arg-call-info">call_info<a class="anchor" aria-label="anchor" href="#arg-call-info"></a></dt>
+<dd><p>A list of call information and parameters. If not provided,
+it will be generated from the function call.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -160,6 +173,10 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Block processing summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ INFO ] - Plotting block 1 from possible blocks: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Plotting with sampling rate: 1000 Hz</span>

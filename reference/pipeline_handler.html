@@ -79,7 +79,7 @@ functions we provide."><meta property="og:image" content="https://shawnschwartz.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Build a generic operation (extension) for the <code>eyeris</code> pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/146-feat-progressive-preprocessing-pipeline/R/pipeline-handler.R" class="external-link"><code>R/pipeline-handler.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-handler.R" class="external-link"><code>R/pipeline-handler.R</code></a></small>
       <div class="d-none name"><code>pipeline_handler.Rd</code></div>
     </div>
 
@@ -160,13 +160,24 @@ timeseries data frame.</p></li>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># second, construct your `pipeline_handler` method wrapper</span></span></span>
-<span class="r-in"><span><span class="va">winsorize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">lower</span> <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">upper</span> <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">winsorize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">lower</span> <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">upper</span> <span class="op">=</span> <span class="fl">0.99</span>, <span class="va">call_info</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># create call_info if not provided</span></span></span>
+<span class="r-in"><span>  <span class="va">call_info</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">call_info</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      call_stack <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.call.html" class="external-link">match.call</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="va">lower</span>, upper <span class="op">=</span> <span class="va">upper</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">call_info</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="fu">pipeline_handler</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">eyeris</span>,</span></span>
 <span class="r-in"><span>    <span class="va">winsorize_pupil</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"winsorize"</span>,</span></span>
 <span class="r-in"><span>    lower <span class="op">=</span> <span class="va">lower</span>,</span></span>
-<span class="r-in"><span>    upper <span class="op">=</span> <span class="va">upper</span></span></span>
+<span class="r-in"><span>    upper <span class="op">=</span> <span class="va">upper</span>,</span></span>
+<span class="r-in"><span>    call_info <span class="op">=</span> <span class="va">call_info</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

@@ -75,7 +75,7 @@ be identified and joined into the resulting epoched data frames."><meta property
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Epoch (and baseline) pupil data based on custom event message structure</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/146-feat-progressive-preprocessing-pipeline/R/pipeline-epoch.R" class="external-link"><code>R/pipeline-epoch.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-epoch.R" class="external-link"><code>R/pipeline-epoch.R</code></a></small>
       <div class="d-none name"><code>epoch.Rd</code></div>
     </div>
 
@@ -100,6 +100,7 @@ be identified and joined into the resulting epoched data frames.</p>
 <span>  baseline_period <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hz <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  call_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  calc_baseline <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  apply_baseline <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -217,6 +218,11 @@ Defaults to <code>TRUE</code>. Set to <code>False</code> to suppress messages ab
 processing step and run silently.</p></dd>
 
 
+<dt id="arg-call-info">call_info<a class="anchor" aria-label="anchor" href="#arg-call-info"></a></dt>
+<dd><p>A list of call information and parameters. If not provided,
+it will be generated from the function call.</p></dd>
+
+
 <dt id="arg-calc-baseline">calc_baseline<a class="anchor" aria-label="anchor" href="#arg-calc-baseline"></a></dt>
 <dd><p><strong>(Deprecated)</strong> Use <code>baseline</code> instead.</p></dd>
 
@@ -254,6 +260,10 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Block processing summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># example 1: select 1 second before/after matched event message "PROBE*"</span></span></span>
@@ -263,7 +273,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.26 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.10 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -326,10 +336,122 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "PROBE*", limits = c(-1, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROBE*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -1016,11 +1138,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_probe</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_probe$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20,000 × 21</span></span>
@@ -1074,7 +1191,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 5 matching events for TRIALIDtrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.07 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.09 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -1137,10 +1254,121 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "TRIALID {trial}")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TRIALID {trial}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -1547,11 +1775,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_trialidTrial</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_trialidTrial$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20,650 × 21</span></span>
@@ -1608,7 +1831,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 5 matching events for PROBESTARTtrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.07 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.06 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -1671,10 +1894,122 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "PROBE_START_{trial}", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     limits = c(0, 1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROBE_START_{trial}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -2081,11 +2416,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_probeStartTrial</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_probeStartTrial$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5,000 × 21</span></span>
@@ -2206,10 +2536,122 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "PROBE_START_{trial}", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     limits = c(-1, 1), label = "prePostProbe")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROBE_START_{trial}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "prePostProbe"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -2616,11 +3058,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10,000 × 21</span></span>
@@ -2685,7 +3122,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Please be sure to explicitly indicate the block number in yourinput list! (see example #9 in the documentation for more details).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 0 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.02 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.01 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `matched_event`.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
@@ -2749,10 +3186,133 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = list(data.frame(time = c(11334491), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     msg = c("TRIALID 22")), data.frame(time = c(11337158), msg = c("RESPONSE_22")), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1), label = "example5")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time        msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11334491 TRIALID 22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time         msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11337158 RESPONSE_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "example5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -2864,11 +3424,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$epoched_epoch_wide$epoch_example5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_example5</span>
@@ -3009,10 +3564,133 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = list(data.frame(time = c(11334491), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     msg = NA), data.frame(time = c(11337158), msg = NA), 1), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     label = "example6")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11334491  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11337158  NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "example6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -3126,11 +3804,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_example6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_example6$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2,667 × 20</span></span>
@@ -3206,7 +3879,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: 9 epochs baselined</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.08 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.07 secs</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -3269,10 +3942,124 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "PROBE_START_{trial}", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     limits = c(0, 1), label = "prePostProbe", baseline = TRUE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     baseline_type = "sub", baseline_events = "DELAY_STOP_*", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     baseline_period = c(-1, 0))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROBE_START_{trial}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "prePostProbe"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DELAY_STOP_*"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -3767,11 +4554,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26                     NA               999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
@@ -4798,7 +5580,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: 9 epochs baselined</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.09 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.08 secs</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -4861,10 +5643,124 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = "PROBE_START_{trial}", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     limits = c(0, 1), label = "prePostProbe", baseline = TRUE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     baseline_type = "sub", baseline_events = c("DELAY_START_*", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "DELAY_STOP_*"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROBE_START_{trial}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "prePostProbe"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DELAY_START_*" "DELAY_STOP_*" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -5359,11 +6255,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROBE_START_26                     NA               999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_prePostProbe</span>
@@ -6456,10 +7347,134 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         GAZE        GAZE    DIAMETER    FALSE      FALSE FALSE  TRUE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "auto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$deblink$parameters$extend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$detransient$parameters$mad_thresh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$interpolate$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$wp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$ws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$lpfilt$parameters$plot_freqz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::glassbox(file = demo_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$z$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$call_stack</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eyeris::epoch(eyeris = eye_preproc, events = list(start_events, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     end_events, block_number), label = "example9")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time        msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11334491 TRIALID 22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 11338691 TRIALID 23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       time         msg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11337158 RESPONSE_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 11341292 RESPONSE_23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$events[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "example9"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sub" "div"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$baseline_period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$hz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch$parameters$verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$unepoched_timeseries</span>
@@ -6571,11 +7586,6 @@ epoch and baseline event information for clarity.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $confounds$epoched_epoch_wide$epoch_example9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $params$epoch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $epoch_example9</span>

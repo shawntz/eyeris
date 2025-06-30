@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Building Your Own Custom Pipeline Extensions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/146-feat-progressive-preprocessing-pipeline/vignettes/custom-extensions.Rmd" class="external-link"><code>vignettes/custom-extensions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/vignettes/custom-extensions.Rmd" class="external-link"><code>vignettes/custom-extensions.Rmd</code></a></small>
       <div class="d-none name"><code>custom-extensions.Rmd</code></div>
     </div>
 
@@ -185,29 +185,80 @@ list of data frames, and</li>
 <span><span class="co">#' @param eyeris An `eyeris` object created by [load_asc()].</span></span>
 <span><span class="co">#' @param lower Lower quantile threshold. Default is 0.01.</span></span>
 <span><span class="co">#' @param upper Upper quantile threshold. Default is 0.99.</span></span>
+<span><span class="co">#' @param call_info A list of call information and parameters. If not provided,</span></span>
+<span><span class="co">#'   it will be generated from the function call.</span></span>
 <span><span class="co">#'</span></span>
 <span><span class="co">#' @return Updated `eyeris` object with new winsorized pupil column.</span></span>
-<span><span class="va">winsorize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">lower</span> <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">upper</span> <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">winsorize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">lower</span> <span class="op">=</span> <span class="fl">0.01</span>, <span class="va">upper</span> <span class="op">=</span> <span class="fl">0.99</span>, <span class="va">call_info</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># create call_info if not provided</span></span>
+<span>  <span class="va">call_info</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">call_info</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      call_stack <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.call.html" class="external-link">match.call</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="va">lower</span>, upper <span class="op">=</span> <span class="va">upper</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="va">call_info</span></span>
+<span>  <span class="op">}</span></span>
 <span>  <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
 <span>    <span class="va">eyeris</span>,</span>
 <span>    <span class="va">winsorize_pupil</span>,</span>
 <span>    <span class="st">"winsorize"</span>,</span>
 <span>    lower <span class="op">=</span> <span class="va">lower</span>,</span>
-<span>    upper <span class="op">=</span> <span class="va">upper</span></span>
+<span>    upper <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>    call_info <span class="op">=</span> <span class="va">call_info</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<ol style="list-style-type: decimal">
-<li>Here, the first argument is always the <code>eyeris</code> class
-object.</li>
-<li>Then, is the name of the function (the one you created in step 1
-above).</li>
-<li>Third, is the internal label you want <code>eyeris</code> to refer
-to (i.e., the one for the column name, plots, etc.).</li>
-<li>Fourth position++ are the parameters you created after
-<code>prev_op</code> when creating the function
-<code>winsorize_pupil</code> in step 1.</li>
-</ol>
 </div>
+</div>
+<div class="section level3">
+<h3 id="understanding-call-stack-tracking">3) Understanding Call Stack Tracking<a class="anchor" aria-label="anchor" href="#understanding-call-stack-tracking"></a>
+</h3>
+<p>The <code>call_info</code> parameter is crucial for maintaining
+reproducibility and debugging in <code>eyeris</code>. It captures:</p>
+<ul>
+<li>
+<strong><code>call_stack</code></strong>: The exact function call
+that was made (using <code><a href="https://rdrr.io/r/base/match.call.html" class="external-link">match.call()</a></code>)</li>
+<li>
+<strong><code>parameters</code></strong>: A list of all parameters
+passed to your function</li>
+</ul>
+<p>This information is automatically stored in
+<code>eyeris$params[[new_suffix]]</code> and can be used for: -
+Generating reproducible reports - Debugging pipeline issues - Tracking
+parameter changes across different runs</p>
+<p><strong>Important Notes:</strong> - Always include
+<code>call_info = NULL</code> as the last parameter in your function
+signature - Use <code><a href="https://rdrr.io/r/base/match.call.html" class="external-link">match.call()</a></code> to capture the function call -
+Pass all your function parameters in the <code>parameters</code> list -
+Always pass <code>call_info = call_info</code> as the last argument to
+<code><a href="../reference/pipeline_handler.html">pipeline_handler()</a></code></p>
+</div>
+<div class="section level3">
+<h3 id="function-structure-breakdown">4) Function Structure Breakdown<a class="anchor" aria-label="anchor" href="#function-structure-breakdown"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Function signature</strong>: Always include
+<code>call_info = NULL</code> as the last parameter</li>
+<li>
+<strong>Call info creation</strong>: Create the call_info list if
+not provided</li>
+<li>
+<strong>Pipeline handler call</strong>: Pass all parameters
+including call_info</li>
+<li>
+<strong>Parameter order</strong>:
+<ul>
+<li>First: <code>eyeris</code> object</li>
+<li>Second: your core operation function name</li>
+<li>Third: the suffix for column naming</li>
+<li>Fourth+: your function parameters</li>
+<li>Last: <code>call_info = call_info</code>
+</li>
+</ul>
+</li>
+</ol>
 </div>
 </div>
 <div class="section level2">
@@ -260,7 +311,43 @@ it can transpose into the new column that will be added to the
 function logic on a single data block (e.g.,
 <code>eyeris$timeseries[[1]]</code>) to debug before integrating it with
 the <code>eyeris</code> pipeline protocol.</li>
+<li>
+<strong>Include call stack tracking:</strong> Always implement
+proper <code>call_info</code> handling for reproducibility and debugging
+capabilities.</li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="advanced-custom-call-info-handling">🔍 Advanced: Custom Call Info Handling<a class="anchor" aria-label="anchor" href="#advanced-custom-call-info-handling"></a>
+</h2>
+<p>For more complex functions, you might want to customize the
+<code>call_info</code> structure:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">custom_function</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">param1</span>, <span class="va">param2</span>, <span class="va">call_info</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># custom call_info with additional metadata</span></span>
+<span>  <span class="va">call_info</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">call_info</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      call_stack <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.call.html" class="external-link">match.call</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>param1 <span class="op">=</span> <span class="va">param1</span>, param2 <span class="op">=</span> <span class="va">param2</span><span class="op">)</span>,</span>
+<span>      metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        timestamp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        version <span class="op">=</span> <span class="st">"1.0.0"</span>,</span>
+<span>        description <span class="op">=</span> <span class="st">"Custom processing step"</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="va">call_info</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
+<span>    <span class="va">eyeris</span>,</span>
+<span>    <span class="va">custom_pupil_function</span>,</span>
+<span>    <span class="st">"custom"</span>,</span>
+<span>    param1 <span class="op">=</span> <span class="va">param1</span>,</span>
+<span>    param2 <span class="op">=</span> <span class="va">param2</span>,</span>
+<span>    call_info <span class="op">=</span> <span class="va">call_info</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="summary">✨ Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -283,7 +370,7 @@ free to open a pull request or discussion on <a href="https://github.com/shawntz
 cite it!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
