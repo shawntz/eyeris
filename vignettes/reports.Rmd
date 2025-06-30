@@ -127,10 +127,46 @@ gif_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
 knitr::include_graphics(gif_url)
 ```
 
+## 3️⃣ Gaze Heatmaps
+
+In addition to the standard pupil timeseries plots, `eyeris` now includes gaze heatmaps that show the distribution of eye coordinates across the entire screen area. These heatmaps are automatically generated in the BIDS reports and can also be created manually.
+
+### Standalone Gaze Heatmaps
+
+When you run `bidsify()` with `html_report = TRUE`, `eyeris` automatically creates standalone gaze heatmaps for each block of data. These heatmaps show:
+
+- The distribution of eye coordinates (x and y) across the entire screen area
+- Screen boundaries marked with solid lines
+- The screen center marked with a red cross
+- Color-coded density showing where the participant looked most frequently
+
+### Manual Gaze Heatmap Creation
+
+You can also create gaze heatmaps manually using the `plot_gaze_heatmap()` function:
+
+```{r eval=FALSE}
+plot_gaze_heatmap(
+  pupil_data = eyeris_data$timeseries$block_1,
+  screen_width = eyeris_data$info$screen.x,
+  screen_height = eyeris_data$info$screen.y,
+  n_bins = 50,
+  col_palette = "viridis"
+)
+```
+
+### Epoch-Level Gaze Heatmaps
+
+For epoched data, each epoch automatically generates a gaze heatmap showing the distribution of eye coordinates during that specific epoch. These are saved as separate files in the epoch directories and help you quickly assess:
+
+- Whether the participant was looking at the screen during the epoch
+- The spatial distribution of gaze within the epoch
+- Any systematic biases in gaze position
+
+The gaze heatmaps use the screen dimensions stored in the `eyeris$info` object to properly show the full screen area and use color-coded density to visualize gaze patterns.
+
 ---
 
 ## 📚 Citing `eyeris`
-
 <div class="alert alert-light" style="padding-bottom: 0;">
   If you use the `eyeris` package in your research, please cite it!
   

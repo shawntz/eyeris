@@ -1744,6 +1744,54 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
       fig_paths <- c(fig_paths, run_fig_paths)
     }
 
+    for (i_run in block_numbers) {
+      current_data <- eyeris
+
+      if (all(c("eye_x", "eye_y") %in% colnames(current_data$timeseries[[paste0("block_", i_run)]])) &&
+          all(c("screen.x", "screen.y") %in% colnames(eyeris$info))) {
+        
+        run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+        check_and_create_dir(run_dir, verbose = verbose)
+        
+        heatmap_filename <- file.path(
+          run_dir,
+          sprintf("run-%02d_gaze_heatmap.png", i_run)
+        )
+        
+        png(heatmap_filename,
+          width = 8, height = 6, units = "in", res = 300, pointsize = 12
+        )
+        
+        tryCatch({
+          plot_gaze_heatmap(
+            eyeris = current_data,
+            block = i_run,
+            screen_width = eyeris$info$screen.x,
+            screen_height = eyeris$info$screen.y,
+            n_bins = 50,
+            col_palette = "viridis",
+            main = sprintf("Gaze Heatmap (run-%02d)", i_run)
+          )
+        }, error = function(e) {
+          plot(NA,
+            xlim = c(0, 1), ylim = c(0, 1), type = "n",
+            xlab = "", ylab = "",
+            main = sprintf("Error creating gaze heatmap for run-%02d", i_run)
+          )
+          text(0.5, 0.5,
+               paste("Error:", e$message),
+            cex = 0.8, col = "red"
+          )
+        })
+        
+        dev.off()
+        
+        if (verbose) {
+          alert("info", "Created gaze heatmap for run-%02d", i_run)
+        }
+      }
+    }
+
     # now handle epochs (if present)
     if (!is.null(report_epoch_grouping_var_col)) {
       for (i in seq_along(epochs_to_save)) {
@@ -1855,6 +1903,57 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               dev.off()
             }
           }
+          
+          for (group in epoch_groups) {
+            group_df <- epochs_to_save[[i]][[bn]]
+            group_df <- group_df[
+              group_df[[report_epoch_grouping_var_col]] == group,
+            ]
+            
+            if (all(c("eye_x", "eye_y") %in% colnames(group_df)) &&
+                all(c("screen.x", "screen.y") %in% colnames(eyeris$info))) {
+              
+              heatmap_filename <- file.path(epochs_out, sprintf(
+                "run-%02d_%s_gaze_heatmap.png",
+                get_block_numbers(bn), group
+              ))
+              
+              png(heatmap_filename,
+                width = 6, height = 4, units = "in", res = 300, pointsize = 10
+              )
+              
+              tryCatch({
+                plot_gaze_heatmap(
+                  eyeris = group_df,
+                  block = get_block_numbers(bn),
+                  screen_width = eyeris$info$screen.x,
+                  screen_height = eyeris$info$screen.y,
+                  n_bins = 30,
+                  col_palette = "viridis",
+                  main = sprintf("%s\nGaze Heatmap (run-%02d)", 
+                                group, get_block_numbers(bn))
+                )
+              }, error = function(e) {
+                plot(NA,
+                  xlim = c(0, 1), ylim = c(0, 1), type = "n",
+                  xlab = "", ylab = "",
+                  main = paste("Error creating gaze heatmap for epoch", group)
+                )
+                text(0.5, 0.5,
+                     paste("Error:", e$message),
+                  cex = 0.8, col = "red"
+                )
+              })
+              
+              dev.off()
+              
+              if (verbose) {
+                alert("info", "Created gaze heatmap for epoch %s (run-%02d)", 
+                      group, get_block_numbers(bn))
+              }
+            }
+          }
+          
           if (any_epochs) {
             epochs <- list.files(epochs_out,
                                  full.names = FALSE,
