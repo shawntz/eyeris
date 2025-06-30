@@ -166,8 +166,8 @@ eyelogger({
 After running, you'll find log files in your specified directory, e.g.:
 
 ```
-20240614_153012.out   # Console output
-20240614_153012.err   # Warnings and errors
+20240614_153012.out   # console output
+20240614_153012.err   # warnings and errors
 ```
 
 This makes it easy to keep a record of your preprocessing runs and debug any issues that arise.
