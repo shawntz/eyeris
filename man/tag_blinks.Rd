@@ -7,14 +7,14 @@
 tag_blinks(pupil_df, pupil_vec)
 }
 \arguments{
-\item{pupil_df}{Dataframe containing pupil data}
+\item{pupil_df}{A data frame containing pupil data}
 
-\item{pupil_vec}{Numeric vector containing pupil diameter values}
+\item{pupil_vec}{A numeric vector containing pupil diameter values}
 }
 \value{
-Dataframe with added column:
+A data frame with added column:
 \itemize{
-\item is_blink: Logical indicating if pupil data corresponds to a
+\item \code{is_blink}: Logical indicating if pupil data corresponds to a
 blink (NA values)
 }
 }

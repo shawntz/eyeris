@@ -20,20 +20,24 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param wp The end of passband frequency in Hz (desired lowpass cutoff).
+#' Defaults to `4`
 #' @param ws The start of stopband frequency in Hz (required lowpass cutoff).
-#' @param rp Required maximal ripple within passband in dB.
+#' Defaults to `8`
+#' @param rp Required maximal ripple within passband in dB. Defaults to `1`
 #' @param rs Required minimal attenuation within stopband in dB.
-#' @param plot_freqz Boolean flag for displaying filter frequency response.
+#' Defaults to `35`
+#' @param plot_freqz A flag to indicate whether to display the filter frequency
+#' response. Defaults to `FALSE`
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call. Defaults to `NULL`
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
-#' `pupil_raw_{...}_lpfilt`.
+#' `pupil_raw_{...}_lpfilt`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full eyeris glassbox preprocessing pipeline
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -81,6 +85,26 @@ lpfilt <- function(eyeris, wp = 4, ws = 8,
     )
 }
 
+#' Internal function to lowpass filter pupil data
+#'
+#' @description This function lowpass filters pupil data using a Butterworth
+#' filter.
+#'
+#' This function is called by the exposed wrapper [eyeris::lpfilt()]
+#'
+#' @param x A data frame containing pupil data
+#' @param prev_op The name of the previous operation in the pipeline
+#' @param wp The end of passband frequency in Hz (desired lowpass cutoff)
+#' @param ws The start of stopband frequency in Hz (required lowpass cutoff)
+#' @param rp Required maximal ripple within passband in dB
+#' @param rs Required minimal attenuation within stopband in dB
+#' @param fs The sample rate of the data
+#' @param plot_freqz A flag to indicate whether to display the filter frequency
+#' response
+#'
+#' @return A vector of filtered pupil data
+#'
+#' @keywords internal
 lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
   if (any(is.na(x[[prev_op]]))) {
     cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")

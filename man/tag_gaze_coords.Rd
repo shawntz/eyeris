@@ -7,21 +7,21 @@
 tag_gaze_coords(pupil_df, screen_width, screen_height, overshoot_buffer = 0.05)
 }
 \arguments{
-\item{pupil_df}{Dataframe containing gaze coordinates}
+\item{pupil_df}{A data frame containing gaze coordinates}
 
-\item{screen_width}{Screen width in pixels}
+\item{screen_width}{The screen width in pixels}
 
-\item{screen_height}{Screen height in pixels}
+\item{screen_height}{The screen height in pixels}
 
 \item{overshoot_buffer}{Additional buffer zone beyond screen edges
-(default: 0.05). Expressed as proportion of screen size.
-For example, 0.05 means 5\% beyond screen edges will still be
-considered "on screen".}
+(default: \code{0.05}). Expressed as proportion of screen size.
+For example, \code{0.05} means 5\% beyond screen edges will still be
+considered "on screen"}
 }
 \value{
-Dataframe with added column:
+A data frame with added column:
 \itemize{
-\item is_offscreen: Logical indicating if gaze is outside screen boundaries
+\item \code{is_offscreen}: Logical indicating if gaze is outside screen boundaries
 }
 }
 \description{

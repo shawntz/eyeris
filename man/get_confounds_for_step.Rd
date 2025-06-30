@@ -7,18 +7,18 @@
 get_confounds_for_step(pupil_df, pupil_vec, screen_width, screen_height, hz)
 }
 \arguments{
-\item{pupil_df}{Dataframe containing pupil data}
+\item{pupil_df}{A data frame containing pupil data}
 
-\item{pupil_vec}{Vector of pupil data for current step}
+\item{pupil_vec}{A vector of pupil data for the current step}
 
-\item{screen_width}{Screen width in pixels}
+\item{screen_width}{The screen width in pixels}
 
-\item{screen_height}{Screen height in pixels}
+\item{screen_height}{The screen height in pixels}
 
-\item{hz}{Sampling rate in Hz}
+\item{hz}{The sampling rate in Hz}
 }
 \value{
-Dataframe containing confounds metrics for the current step
+A data frame containing confounds metrics for the current step
 }
 \description{
 Computes various metrics from pupil data including:

@@ -6,16 +6,16 @@
 #' qualitatively assessing the consequences of the preprocessing recipe and
 #' parameters on the raw pupillary signal.
 #'
-#' @param x An object of class `eyeris` derived from [eyeris::load_asc()].
-#' @param ... Additional arguments to be passed to `plot`.
+#' @param x An object of class `eyeris` derived from [eyeris::load_asc()]
+#' @param ... Additional arguments to be passed to `plot`
 #' @param steps Which steps to plot; defaults to `all` (i.e., plot all steps).
 #' Otherwise, pass in a vector containing the index of the step(s) you want to
-#' plot, with index `1` being the original raw pupil timeseries.
+#' plot, with index `1` being the original raw pupil timeseries
 #' @param preview_n Number of random example "epochs" to generate for
-#' previewing the effect of each preprocessing step on the pupil timeseries.
-#' @param preview_duration Time in seconds of each randomly selected preview.
+#' previewing the effect of each preprocessing step on the pupil timeseries
+#' @param preview_duration Time in seconds of each randomly selected preview
 #' @param preview_window The start and stop raw timestamps used to subset the
-#' preprocessed data from each step of the `eyeris` workflow for visualization.
+#' preprocessed data from each step of the `eyeris` workflow for visualization
 #' Defaults to NULL, meaning random epochs as defined by `preview_n` and
 #' `preview_duration` will be plotted. To override the random epochs, set
 #' `preview_window` here to a vector with relative start and stop times (in
@@ -23,39 +23,39 @@
 #' on data that were recorded at 1000 Hz). Note, the start/stop time values
 #' indicated here are in seconds because `eyeris` automatically computes the
 #' indices for the supplied range of seconds using the `$info$sample.rate`
-#' metadata in the `eyeris` S3 class object.
+#' metadata in the `eyeris` S3 class object
 #' @param seed Random seed for current plotting session. Leave NULL to select
 #' `preview_n` number of random preview "epochs" (of `preview_duration`) each
 #' time. Otherwise, choose any seed-integer as you would normally select for
 #' [base::set.seed()], and you will be able to continue re-plotting the same
 #' random example pupil epochs each time -- which is helpful when adjusting
-#' parameters within and across `eyeris` workflow steps.
+#' parameters within and across `eyeris` workflow steps
 #' @param block For multi-block recordings, specifies which block to plot.
 #' Defaults to 1. When a single `.asc` data file contains multiple
 #' recording blocks, this parameter determines which block's timeseries to
 #' visualize. Must be a positive integer not exceeding the total number of
-#' blocks in the recording.
+#' blocks in the recording
 #' @param plot_distributions Logical flag to indicate whether to plot both
 #' diagnostic pupil timeseries *and* accompanying histograms of the pupil
-#' samples at each processing step. Defaults to `FALSE`.
+#' samples at each processing step. Defaults to `FALSE`
 #' @param suppress_prompt Logical flag to disable interactive confirmation
 #' prompts during plotting. Defaults to `TRUE`, which avoids hanging behavior in
-#' non-interactive or automated contexts (e.g., RMarkdown, scripts).
+#' non-interactive or automated contexts (e.g., RMarkdown, scripts)
 #' Set to `FALSE` only when running inside `glassbox()` with
 #' `interactive_preview = TRUE`, where prompting after each step is desired, as
-#' well as in the generation of interactive HTML reports with [eyeris::bidsify].
+#' well as in the generation of interactive HTML reports with [eyeris::bidsify]
 #' @param verbose A logical flag to indicate whether to print status messages to
 #' the console. Defaults to `TRUE`. Set to `FALSE` to suppress messages about
-#' the current processing step and run silently.
+#' the current processing step and run silently
 #' @param add_progressive_summary Logical flag to indicate whether to add a
 #' progressive summary plot after plotting. Defaults to `FALSE`. Set to `TRUE`
 #' to enable the progressive summary plot (useful for interactive exploration).
 #' Set to `FALSE` to disable the progressive summary plot (useful in automated
-#' contexts like bidsify reports).
-#' @param num_previews **(Deprecated)** Use `preview_n` instead.
+#' contexts like bidsify reports)
+#' @param num_previews **(Deprecated)** Use `preview_n` instead
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
-#' from each preprocessing step run.
+#' from each preprocessing step run
 #'
 #' @seealso [lifecycle::deprecate_warn()]
 #'
@@ -222,10 +222,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
-  # modified from `RColorBrewer`: Set1
-  colorpal <- c(
-    "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628"
-  )
+  colorpal <- eyeris_color_palette()
   colors <- c("black", colorpal)
 
   transparent_colors <- sapply(colors, function(x) {
@@ -492,6 +489,18 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = c(5, 4, 4, 2) + 0.1)
 }
 
+#' Draw random epochs for plotting
+#'
+#' Generates random time segments from the timeseries data for preview plotting.
+#'
+#' @param x A dataframe containing timeseries data
+#' @param n Number of random epochs to draw
+#' @param d Duration of each epoch in seconds
+#' @param hz Sampling rate in Hz
+#'
+#' @return A list of dataframes, each containing a random epoch segment
+#'
+#' @keywords internal
 draw_random_epochs <- function(x, n, d, hz) {
   # get number of samples needed for specified duration
   n_samples <- ceiling(d * hz)
@@ -574,6 +583,18 @@ draw_random_epochs <- function(x, n, d, hz) {
   drawn_epochs
 }
 
+#' Robust plotting function with error handling
+#'
+#' A wrapper around base plotting functions that handles errors and missing
+#' data gracefully.
+#'
+#' @param y The y-axis data to plot
+#' @param x The x-axis data (optional, defaults to sequence)
+#' @param ... Additional arguments passed to plot()
+#'
+#' @return No return value; creates a plot or displays warning messages
+#'
+#' @keywords internal
 robust_plot <- function(y, x = NULL, ...) {
   tryCatch(
     {
@@ -627,6 +648,19 @@ robust_plot <- function(y, x = NULL, ...) {
   )
 }
 
+#' Plot pupil distribution histogram
+#'
+#' Creates a histogram of pupil size distribution with customizable parameters.
+#'
+#' @param data The pupil data to plot
+#' @param color The color for the histogram bars
+#' @param main The main title for the plot
+#' @param xlab The x-axis label
+#' @param backuplab A backup label if xlab is NULL
+#'
+#' @return No return value; creates a histogram plot
+#'
+#' @keywords internal
 plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
   # safely handle user's current options
   oldpar <- par(no.readonly = TRUE)
@@ -653,6 +687,17 @@ plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
   )
 }
 
+#' Draw vertical lines at NA positions
+#'
+#' Adds vertical dashed lines at positions where y values are NA.
+#'
+#' @param x The x-axis values
+#' @param y The y-axis values
+#' @param ... Additional arguments passed to abline()
+#'
+#' @return No return value; adds lines to the current plot
+#'
+#' @keywords internal
 draw_na_lines <- function(x, y, ...) {
   na_idx <- which(is.na(y))
   abline(v = x[na_idx], col = "black", lty = 2, ...)

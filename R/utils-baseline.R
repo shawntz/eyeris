@@ -1,3 +1,13 @@
+#' Create baseline label for epoch data
+#'
+#' Generates a standardized label for baseline-corrected epoch data.
+#'
+#' @param baselined_data A list containing baseline correction information
+#' @param epoch_id The identifier for the epoch
+#'
+#' @return A character string with the baseline label
+#'
+#' @keywords internal
 make_baseline_label <- function(baselined_data, epoch_id) {
   paste0(
     "baseline_", baselined_data$baseline_cor_col_name,
@@ -5,6 +15,21 @@ make_baseline_label <- function(baselined_data, epoch_id) {
   )
 }
 
+#' Extract baseline epochs from timeseries data
+#'
+#' Extracts baseline periods from timeseries data based on event messages
+#' and time ranges or start/end messages.
+#'
+#' @param x An `eyeris` object containing the latest pupil column pointer
+#' @param df The timeseries dataframe
+#' @param evs Event messages for baseline extraction
+#' @param time_range Time range for baseline extraction
+#' @param matched_epochs Matched epoch start/end times
+#' @param hz Sampling rate in Hz
+#'
+#' @return A list of baseline epoch dataframes
+#'
+#' @keywords internal
 extract_baseline_epochs <- function(x, df, evs, time_range,
                                     matched_epochs, hz) {
   check_baseline_inputs(evs, time_range)
@@ -45,6 +70,22 @@ extract_baseline_epochs <- function(x, df, evs, time_range,
   baselines
 }
 
+#' Compute baseline correction for epoch data
+#'
+#' Applies baseline correction to epoch data using either subtractive or
+#' divisive methods.
+#'
+#' @param x An `eyeris` object containing the latest pupil column pointer
+#' @param epochs A list of epoch dataframes
+#' @param baseline_epochs A list of baseline epoch dataframes
+#' @param mode The baseline correction mode ("sub" for subtractive,
+#' "div" for divisive)
+#' @param epoch_events Event messages for epochs (optional)
+#' @param baseline_events Event messages for baselines (optional)
+#'
+#' @return A list containing baseline correction results and metadata
+#'
+#' @keywords internal
 compute_baseline <- function(x, epochs,
                              baseline_epochs, mode,
                              epoch_events = NULL, baseline_events = NULL) {

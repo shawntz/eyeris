@@ -21,7 +21,7 @@ epoch(
 )
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{events}{Either (1) a single string representing the event message to
 perform trial extraction around, using specified \code{limits} to center the epoch
@@ -45,7 +45,7 @@ string pairs, and the second data.frame indicates the \code{end} event timestamp
 and message string pairs. Additionally, manual epoching only words with
 1 block at a time for event-modes \code{2} and \code{3}; thus, please be sure to
 explicitly indicate the block number in your input list (for examples,
-see above as well as example #9 below for more details).
+see above as well as example #9 below for more details)
 
 For event-modes \code{1} and \code{2}, the way in which you pass in the event message
 string must conform to a standardized protocol so that \code{eyeris} knows how to
@@ -58,11 +58,11 @@ using the \code{eyeris} syntax: (e.g., \code{"PROBE_{type}_{trial}"}), which wil
 the messages that follow a structure like this "PROBE_START_1" and
 "PROBE_STOP_1", and generate two additional metadata columns: \code{type} and
 \code{trial}, which would contain the following values based on these two example
-strings: \code{type}: \verb{('START', 'STOP')}, and \code{trial}: \verb{(1, 1)}.}
+strings: \code{type}: \verb{('START', 'STOP')}, and \code{trial}: \verb{(1, 1)}}
 
 \item{limits}{A vector of 2 values (start, end) in seconds, indicating where
 trial extraction should occur centered around any given \code{start} message
-string in the \code{events} parameter.}
+string in the \code{events} parameter}
 
 \item{label}{An (optional) string you can provide to customize the name of
 the resulting \code{eyeris} class object containing the epoched data frame. If
@@ -75,15 +75,15 @@ sanitize, then you may obtain a strange-looking epoch list element in
 your output object (e.g., \verb{$epoch_}, or \verb{$epoch_nana}, etc.). The data
 should still be accessible within this nested lists, however, to avoid
 ambiguous list objects, we recommend you provide an \code{epoch} label here
-to be safe.}}
+to be safe}}
 
 \item{baseline}{\strong{(New)} A single parameter that controls baseline
 correction. Set to \code{TRUE} to both calculate and apply baseline correction, or
 \code{FALSE} to skip it. This replaces the deprecated \code{calc_baseline} and
-\code{apply_baseline} parameters.}
+\code{apply_baseline} parameters}
 
 \item{baseline_type}{Whether to perform \emph{subtractive} (\code{sub}) or \emph{divisive}
-(\code{div}) baseline correction. Defaults to \code{sub}.}
+(\code{div}) baseline correction. Defaults to \code{sub}}
 
 \item{baseline_events}{Similar to \code{events}, \code{baseline_events}, you can supply
 either (1) a single string representing the event message to center the
@@ -103,21 +103,21 @@ indicating the window of data that will be used to perform the baseline
 correction, which will be centered around the single string "start" message
 string provided in \code{baseline_events}. Again, \code{baseline_period} will be
 ignored if both a "start" \strong{and} "end" message string are provided to the
-\code{baseline_events} argument.}
+\code{baseline_events} argument}
 
 \item{hz}{Data sampling rate. If not specified, will use the value contained
-within the tracker's metadata.}
+within the tracker's metadata}
 
-\item{verbose}{A flag to indicate whether to print detailed logging messages.
+\item{verbose}{A flag to indicate whether to print detailed logging messages
 Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
-processing step and run silently.}
+processing step and run silently}
 
 \item{call_info}{A list of call information and parameters. If not provided,
-it will be generated from the function call.}
+it will be generated from the function call}
 
-\item{calc_baseline}{\strong{(Deprecated)} Use \code{baseline} instead.}
+\item{calc_baseline}{\strong{(Deprecated)} Use \code{baseline} instead}
 
-\item{apply_baseline}{\strong{(Deprecated)} Use \code{baseline} instead.}
+\item{apply_baseline}{\strong{(Deprecated)} Use \code{baseline} instead}
 }
 \value{
 An \code{eyeris} object with a new nested list of data frames: \verb{$epoch_*}.

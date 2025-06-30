@@ -24,23 +24,23 @@ bidsify(
 )
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{save_all}{Logical flag indicating whether all epochs are to be saved
-or only a subset of them. Defaults to TRUE.}
+or only a subset of them. Defaults to \code{TRUE}}
 
-\item{epochs_list}{List of epochs to be saved. Defaults to NULL.}
+\item{epochs_list}{List of epochs to be saved. Defaults to \code{NULL}}
 
 \item{merge_epochs}{Logical flag indicating whether epochs should be saved
-as one file or as separate files. Defaults to FLASE (no merge).}
+as one file or as separate files. Defaults to \code{FALSE} (no merge)}
 
-\item{bids_dir}{Base bids_directory.}
+\item{bids_dir}{Base bids_directory. Defaults to \code{NULL}}
 
-\item{participant_id}{BIDS subject ID.}
+\item{participant_id}{BIDS subject ID. Defaults to \code{NULL}}
 
-\item{session_num}{BIDS session ID.}
+\item{session_num}{BIDS session ID. Defaults to \code{NULL}}
 
-\item{task_name}{BIDS task ID.}
+\item{task_name}{BIDS task ID. Defaults to \code{NULL}}
 
 \item{run_num}{BIDS run ID. Optional override for the run number when there's
 only one block of data present in a given \code{.asc} file. This allows you to
@@ -50,40 +50,40 @@ number in \code{.asc} files (1). This is especially useful if you have a single
 be labeled correctly. However, for files with multiple recording blocks
 embedded within the \strong{same} \code{.asc} file, this parameter is ignored and
 blocks are automatically numbered as runs (block 1 = run-01, block 2 =
-run-02, etc.) in the order they appeared/were recorded. Defaults to NULL
-(no override).}
+run-02, etc.) in the order they appeared/were recorded. Defaults to \code{NULL}
+(no override)}
 
 \item{merge_runs}{Logical flag indicating whether multiple runs (either
 from multiple recording blocks existing within the \strong{same} \code{.asc} file
 (see above), or manually specified) should be combined into a single
-output file. When TRUE, adds a 'run' column to identify the source run.
-Defaults to FALSE (i.e., separate files per block/run -- the standard
-BIDS-like-behavior).}
+output file. When \code{TRUE}, adds a 'run' column to identify the source run
+Defaults to \code{FALSE} (i.e., separate files per block/run -- the standard
+BIDS-like-behavior)}
 
 \item{save_raw}{Logical flag indicating whether to save_raw pupil data in
-addition to epoched data. Defaults to TRUE.}
+addition to epoched data. Defaults to \code{TRUE}}
 
 \item{html_report}{Logical flag indicating whether to save out the \code{eyeris}
-preprocessing summary report as an HTML file. Defaults to \code{TRUE}.}
+preprocessing summary report as an HTML file. Defaults to \code{TRUE}}
 
-\item{report_seed}{Random seed for the plots that will appear in the report.
-Defaults to 0. See \code{\link[=plot]{plot()}} for a more detailed description.}
+\item{report_seed}{Random seed for the plots that will appear in the report
+Defaults to \code{0}. See \code{\link[=plot]{plot()}} for a more detailed description}
 
 \item{report_epoch_grouping_var_col}{String name of grouping column to use
 for epoch-by-epoch diagnostic plots in an interactive rendered HTML report.
 Column name must exist (i.e., be a custom grouping variable name set within
-the metadata template of your \code{epoch()} call). Defaults to \code{"matched_event"},
-which all epoched dataframes have as a valid column name. To disable these
-epoch-level diagnostic plots, set to \code{NULL}.}
+the metadata template of your \code{epoch()} call).
+Defaults to \code{"matched_event"}, which all epoched dataframes have as a valid
+column name. To disable these epoch-level diagnostic plots, set to \code{NULL}}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
-Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
-processing step and run silently.}
+Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current
+processing step and run silently}
 
-\item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead.}
+\item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead}
 }
 \value{
-Invisibly returns \code{NULL}. Called for its side effects.
+Invisibly returns \code{NULL}. Called for its side effects
 }
 \description{
 This method provides a structured way to save out pupil data in a BIDS-like

@@ -47,15 +47,15 @@
 #' on the entire pupil timeseries (before epoching the data), and then split and
 #' take the mean of the z-scored timeseries as a function of condition variable.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
-#' `pupil_raw_{...}_z`.
+#' `pupil_raw_{...}_z`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full eyeris glassbox preprocessing pipeline
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -79,6 +79,19 @@ zscore <- function(eyeris, call_info = NULL) {
     pipeline_handler(zscore_pupil, "z", call_info = call_info)
 }
 
+#' Internal function to z-score pupil data
+#'
+#' @description This function z-scores pupil data by subtracting the mean and
+#' dividing by the standard deviation.
+#'
+#' This function is called by the exposed wrapper [eyeris::zscore()]
+#'
+#' @param x A data frame containing pupil data
+#' @param prev_op The name of the previous operation in the pipeline
+#'
+#' @return A vector of z-scored pupil data
+#'
+#' @keywords internal
 zscore_pupil <- function(x, prev_op) {
   # validate the previous operation column name
   if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {

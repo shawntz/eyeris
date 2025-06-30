@@ -5,10 +5,10 @@
 #' confounds are calculated separately for each preprocessing step, recording
 #' block, and epoched timeseries in the eyeris object.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #'
 #' @return An `eyeris` object with a new nested list of data frames:
-#' `$confounds`.
+#' `$confounds`
 #'   The confounds are organized hierarchically by block and preprocessing step.
 #'   Each step contains metrics such as:
 #'   - Blink rate and duration statistics
@@ -17,10 +17,10 @@
 #'   - Missing data percentage
 #'
 #' @examples
-#' # Load demo dataset
+#' # load demo dataset
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # Calculate confounds for all blocks and preprocessing steps
+#' # calculate confounds for all blocks and preprocessing steps
 #' confounds <- demo_data |>
 #'   eyeris::glassbox() |>
 #'   eyeris::epoch(
@@ -30,10 +30,10 @@
 #'   ) |>
 #'   eyeris::summarize_confounds()
 #'
-#' # Access confounds for entire timeseries for a specific block and step
+#' # access confounds for entire timeseries for a specific block and step
 #' confounds$confounds$unepoched_timeseries
 #'
-#' # Access confounds for a specific epoched timeseries
+#' # access confounds for a specific epoched timeseries
 #' # for a specific block and step
 #' confounds$confounds$epoched_timeseries
 #' confounds$confounds$epoched_epoch_wide
@@ -109,13 +109,13 @@ summarize_confounds <- function(eyeris) {
 #' - Blink duration
 #' - Blink time
 #'
-#' @param pupil_df Dataframe containing pupil data
-#' @param pupil_vec Vector of pupil data for current step
-#' @param screen_width Screen width in pixels
-#' @param screen_height Screen height in pixels
-#' @param hz Sampling rate in Hz
+#' @param pupil_df A data frame containing pupil data
+#' @param pupil_vec A vector of pupil data for the current step
+#' @param screen_width The screen width in pixels
+#' @param screen_height The screen height in pixels
+#' @param hz The sampling rate in Hz
 #'
-#' @return Dataframe containing confounds metrics for the current step
+#' @return A data frame containing confounds metrics for the current step
 #'
 #' @keywords internal
 get_confounds_for_step <- function(
@@ -198,11 +198,11 @@ get_confounds_for_step <- function(
 #' Identifies when pupil data corresponds to eye blinks based on missing values
 #' in the pupil vector.
 #'
-#' @param pupil_df Dataframe containing pupil data
-#' @param pupil_vec Numeric vector containing pupil diameter values
+#' @param pupil_df A data frame containing pupil data
+#' @param pupil_vec A numeric vector containing pupil diameter values
 #'
-#' @return Dataframe with added column:
-#'   - is_blink: Logical indicating if pupil data corresponds to a
+#' @return A data frame with added column:
+#'   - `is_blink`: Logical indicating if pupil data corresponds to a
 #'     blink (NA values)
 #'
 #' @keywords internal
@@ -215,10 +215,10 @@ tag_blinks <- function(pupil_df, pupil_vec) {
 #'
 #' @param x1 First x coordinate or vector of x coordinates
 #' @param y1 First y coordinate or vector of y coordinates
-#' @param x2 Second x coordinate or vector of x coordinates (defaults to 0)
-#' @param y2 Second y coordinate or vector of y coordinates (defaults to 0)
+#' @param x2 Second x coordinate or vector of x coordinates (defaults to `0`)
+#' @param y2 Second y coordinate or vector of y coordinates (defaults to `0`)
 #'
-#' @return Numeric vector of Euclidean distances
+#' @return A numeric vector of Euclidean distances
 #'
 #' @keywords internal
 calc_euclidean_dist <- function(x1, y1, x2 = 0, y2 = 0) {
@@ -232,14 +232,15 @@ calc_euclidean_dist <- function(x1, y1, x2 = 0, y2 = 0) {
 #' - Coordinates are scaled to \[-1,1\] range
 #' - Also calculates the normalized distance from screen center
 #'
-#' @param pupil_df Dataframe containing raw gaze coordinates (eye_x, eye_y)
-#' @param screen_width Screen width in pixels
-#' @param screen_height Screen height in pixels
+#' @param pupil_df A data frame containing raw gaze
+#' coordinates (`eye_x`, `eye_y`)
+#' @param screen_width The screen width in pixels
+#' @param screen_height The screen height in pixels
 #'
-#' @return Dataframe with added columns:
-#'   - eye_x_norm: Normalized x coordinate \[-1,1\]
-#'   - eye_y_norm: Normalized y coordinate \[-1,1\]
-#'   - gaze_dist_from_center: Normalized distance from screen center
+#' @return A data frame with added columns:
+#'   - `eye_x_norm`: Normalized x coordinate \[-1,1\]
+#'   - `eye_y_norm`: Normalized y coordinate \[-1,1\]
+#'   - `gaze_dist_from_center`: Normalized distance from screen center
 #'
 #' @keywords internal
 normalize_gaze_coords <- function(pupil_df, screen_width, screen_height) {
@@ -257,16 +258,16 @@ normalize_gaze_coords <- function(pupil_df, screen_width, screen_height) {
 #' Identifies when gaze coordinates fall outside the screen boundaries, with an
 #' optional buffer zone to account for potential overshoot in eye tracking.
 #'
-#' @param pupil_df Dataframe containing gaze coordinates
-#' @param screen_width Screen width in pixels
-#' @param screen_height Screen height in pixels
+#' @param pupil_df A data frame containing gaze coordinates
+#' @param screen_width The screen width in pixels
+#' @param screen_height The screen height in pixels
 #' @param overshoot_buffer Additional buffer zone beyond screen edges
-#'   (default: 0.05). Expressed as proportion of screen size.
-#'   For example, 0.05 means 5% beyond screen edges will still be
-#'   considered "on screen".
+#'   (default: `0.05`). Expressed as proportion of screen size.
+#'   For example, `0.05` means 5% beyond screen edges will still be
+#'   considered "on screen"
 #'
-#' @return Dataframe with added column:
-#'   - is_offscreen: Logical indicating if gaze is outside screen boundaries
+#' @return A data frame with added column:
+#'   - `is_offscreen`: Logical indicating if gaze is outside screen boundaries
 #'
 #' @keywords internal
 tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
@@ -291,13 +292,14 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
 #' as columns.
 #'
 #' @param confounds_list A nested list structure containing confounds data
-#' @param output_dir Directory where CSV files will be saved
+#' @param output_dir The directory where CSV files will be saved
 #' @param filename_prefix Either a string prefix for filenames or a function
 #' that takes a block name and returns a prefix
-#' @param verbose Whether to print progress messages
-#' @param run_num Run number
+#' @param verbose A flag to indicate whether to print progress messages
+#' @param run_num The run number
 #'
 #' @return Invisibly returns a vector of created file paths
+#'
 #' @keywords internal
 export_confounds_to_csv <- function(confounds_list,
                                     output_dir, filename_prefix, verbose,
@@ -362,12 +364,12 @@ export_confounds_to_csv <- function(confounds_list,
 #' This function is used internally by both `summarize_confounds()`
 #' and `epoch()`.
 #'
-#' @param eyeris An eyeris object
-#' @param epoch_names Vector of epoch names to process
-#' @param hz Sampling rate
-#' @param verbose Whether to print progress messages
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
+#' @param epoch_names A vector of epoch names to process
+#' @param hz The sampling rate
+#' @param verbose A flag to indicate whether to print progress messages
 #'
-#' @return Updated eyeris object with epoched confounds
+#' @return An updated `eyeris` object with epoched confounds
 #'
 #' @keywords internal
 calculate_epoched_confounds <- function(eyeris, epoch_names, hz,

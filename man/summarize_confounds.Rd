@@ -7,11 +7,11 @@
 summarize_confounds(eyeris)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 }
 \value{
 An \code{eyeris} object with a new nested list of data frames:
-\verb{$confounds}.
+\verb{$confounds}
 The confounds are organized hierarchically by block and preprocessing step.
 Each step contains metrics such as:
 \itemize{
@@ -28,10 +28,10 @@ confounds are calculated separately for each preprocessing step, recording
 block, and epoched timeseries in the eyeris object.
 }
 \examples{
-# Load demo dataset
+# load demo dataset
 demo_data <- eyelink_asc_demo_dataset()
 
-# Calculate confounds for all blocks and preprocessing steps
+# calculate confounds for all blocks and preprocessing steps
 confounds <- demo_data |>
   eyeris::glassbox() |>
   eyeris::epoch(
@@ -41,10 +41,10 @@ confounds <- demo_data |>
   ) |>
   eyeris::summarize_confounds()
 
-# Access confounds for entire timeseries for a specific block and step
+# access confounds for entire timeseries for a specific block and step
 confounds$confounds$unepoched_timeseries
 
-# Access confounds for a specific epoched timeseries
+# access confounds for a specific epoched timeseries
 # for a specific block and step
 confounds$confounds$epoched_timeseries
 confounds$confounds$epoched_epoch_wide

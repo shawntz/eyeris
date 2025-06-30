@@ -18,21 +18,21 @@
 #' @param eyeris An object of class `eyeris` containing timeseries data
 #' in a list of dataframes (one per block), various metadata collected
 #' by the tracker, and `eyeris` specific pointers for tracking the
-#' preprocessing history for that specific instance of the `eyeris` object.
+#' preprocessing history for that specific instance of the `eyeris` object
 #' @param operation The name of the function to apply to the timeseries data.
 #' This custom function should accept a dataframe `x`, a string `prev_op`
 #' (i.e., the name of the previous pupil column -- which you DO NOT need to
 #' supply as a literal string as this is inferred from the `latest` pointer
-#' within the `eyeris` object), and any custom parameters you would like.
-#' @param new_suffix A chracter string indicating the suffix you would like
+#' within the `eyeris` object), and any custom parameters you would like
+#' @param new_suffix A character string indicating the suffix you would like
 #' to be appended to the name of the previous operation's column, which will
-#' be used for the new column name in the updated preprocessed dataframe(s).
-#' @param ... Additional (optional) arguments passed to the `operation` method.
+#' be used for the new column name in the updated preprocessed dataframe(s)
+#' @param ... Additional (optional) arguments passed to the `operation` method
 #'
 #' @return An updated `eyeris` object with the new column added to the
 #' `timeseries` dataframe and the `latest` pointer updated to the name of the
 #' most recently added column plus all previous columns (ie, the history "trace"
-#' of preprocessing steps from start-to-present).
+#' of preprocessing steps from start-to-present)
 #'
 #' @examples
 #' # first, define your custom data preprocessing function

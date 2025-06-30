@@ -15,24 +15,28 @@ lpfilt(
 )
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{wp}{The end of passband frequency in Hz (desired lowpass cutoff).}
+\item{wp}{The end of passband frequency in Hz (desired lowpass cutoff).
+Defaults to \code{4}}
 
-\item{ws}{The start of stopband frequency in Hz (required lowpass cutoff).}
+\item{ws}{The start of stopband frequency in Hz (required lowpass cutoff).
+Defaults to \code{8}}
 
-\item{rp}{Required maximal ripple within passband in dB.}
+\item{rp}{Required maximal ripple within passband in dB. Defaults to \code{1}}
 
-\item{rs}{Required minimal attenuation within stopband in dB.}
+\item{rs}{Required minimal attenuation within stopband in dB.
+Defaults to \code{35}}
 
-\item{plot_freqz}{Boolean flag for displaying filter frequency response.}
+\item{plot_freqz}{A flag to indicate whether to display the filter frequency
+response. Defaults to \code{FALSE}}
 
 \item{call_info}{A list of call information and parameters. If not provided,
-it will be generated from the function call.}
+it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:
-\verb{pupil_raw_\{...\}_lpfilt}.
+\verb{pupil_raw_\{...\}_lpfilt}
 }
 \description{
 The intended use of this method is for smoothing, although by specifying
@@ -66,5 +70,5 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.
+part of the full eyeris glassbox preprocessing pipeline
 }

@@ -11,16 +11,16 @@ eyelogger(
 )
 }
 \arguments{
-\item{eyeris_cmd}{An \code{eyeris} command, wrapped in \code{{}} if multiline.}
+\item{eyeris_cmd}{An \code{eyeris} command, wrapped in \code{{}} if multiline}
 
 \item{log_dir}{Character path to the desired log directory. Is set to the
-temporary directory given by \code{\link[=tempdir]{tempdir()}} by default.}
+temporary directory given by \code{\link[=tempdir]{tempdir()}} by default}
 
 \item{timestamp_format}{Format string passed to \code{format(Sys.time())} for
-naming the log files. Defaults to \code{"\%Y\%m\%d_\%H\%M\%S"}.}
+naming the log files. Defaults to \code{"\%Y\%m\%d_\%H\%M\%S"}}
 }
 \value{
-The result of the evaluated \code{eyeris} command (invisibly).
+The result of the evaluated \code{eyeris} command (invisibly)
 }
 \description{
 This utility function evaluates \code{eyeris} commands while automatically
