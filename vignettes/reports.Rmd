@@ -146,7 +146,7 @@ You can also create gaze heatmaps manually using the `plot_gaze_heatmap()` funct
 
 ```{r eval=FALSE}
 plot_gaze_heatmap(
-  pupil_data = eyeris_data$timeseries$block_1,
+  eyeris = eyeris_data$timeseries$block_1,
   screen_width = eyeris_data$info$screen.x,
   screen_height = eyeris_data$info$screen.y,
   n_bins = 50,
