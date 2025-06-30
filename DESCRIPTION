@@ -67,7 +67,10 @@ Imports:
     progress,
     data.table,
     withr,
-    lifecycle
+    lifecycle,
+    MASS,
+    viridis,
+    fields
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
