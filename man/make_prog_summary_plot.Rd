@@ -21,17 +21,19 @@ multiple preprocessing columns (e.g., \code{eyeris$timeseries$block_1})}
 at different preprocessing stages
 (e.g., \code{c("pupil_raw", "pupil_deblink", "pupil_detrend")})}
 
-\item{preview_n}{Number of columns for subplot layout. Default = 3.}
+\item{preview_n}{Number of columns for subplot layout. Defaults to \code{3}}
 
 \item{plot_params}{Named list of additional parameters to forward to plotting
-functions. Default = list().}
+functions. Defaults to \code{list()}}
 
 \item{run_id}{Character string identifying the run/block (e.g., "run-01").
-Used for plot titles and file naming. Default = "run-01".}
+Used for plot titles and file naming. Defaults to \code{"run-01"}}
+
+\item{cex}{Character expansion factor for plot elements. Defaults to \code{2.0}}
 }
 \value{
 NULL (invisibly). Creates a plot showing progressive preprocessing
-effects with multiple layers overlaid on the same time series.
+effects with multiple layers overlaid on the same time series
 }
 \description{
 Internal function to create a comprehensive visualization showing the
