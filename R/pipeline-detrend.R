@@ -16,15 +16,15 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call. Defaults to `NULL`
 #'
 #' @return An `eyeris` object with two new columns in `timeseries`:
-#' `detrend_fitted_betas`, and `pupil_raw_{...}_detrend`.
+#' `detrend_fitted_betas`, and `pupil_raw_{...}_detrend`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full eyeris glassbox preprocessing pipeline
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -52,6 +52,21 @@ detrend <- function(eyeris, call_info = NULL) {
   eyeris_out
 }
 
+#' Internal function to detrend pupil data
+#'
+#' @description This function detrends pupil data by fitting a linear model
+#' of `pupil_data ~ time`, and returning the fitted betas and the residuals
+#' (`pupil_data - fitted_values`).
+#'
+#' This function is called by the exposed wrapper [eyeris::detrend()].
+#'
+#' @param x A data frame containing pupil data with columns `time_secs` and
+#'   the previous operation's pupil column
+#' @param prev_op The name of the previous operation's pupil column
+#'
+#' @return A list containing the fitted values, coefficients, and residuals
+#'
+#' @keywords internal
 detrend_pupil <- function(x, prev_op) {
   pupil <- x[[prev_op]]
   timeseries <- x[["time_secs"]]
