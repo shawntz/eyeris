@@ -143,6 +143,58 @@ plot(eyeris_preproc,
 
     #> ✔ [  OK  ] - Progressive summary plot created successfully!
 
+## Logging eyeris Commands with `eyelogger()`
+
+The `eyelogger()` utility lets you run any `eyeris` command (or block of
+R code) while automatically capturing all console output and errors to
+timestamped log files. This is especially useful for reproducibility,
+debugging, or running batch jobs.
+
+**How it works:** - All standard output (`stdout`) and standard error
+(`stderr`) are saved to log files in a directory you specify (or a
+temporary directory by default). - Each run produces two log files: -
+`<timestamp>.out`: all console output - `<timestamp>.err`: all warnings
+and errors
+
+### Usage
+
+You can wrap any `eyeris` command or block of code in
+`eyelogger({ ... })`:
+
+``` r
+library(eyeris)
+
+# log a simple code block with messages, warnings, and prints
+eyelogger({
+  message("eyeris `glassbox()` completed successfully.")
+  warning("eyeris `glassbox()` completed with warnings.")
+  print("some eyeris-related information.")
+})
+
+# log a real eyeris pipeline run, saving logs to a custom directory
+log_dir <- file.path(tempdir(), "eyeris_logs")
+eyelogger({
+  glassbox(eyelink_asc_demo_dataset(), interactive_preview = FALSE)
+}, log_dir = log_dir)
+```
+
+### Parameters
+
+- `eyeris_cmd`: The code to run (wrap in `{}` for multiple lines).
+- `log_dir`: Directory to save logs (default: a temporary directory).
+- `timestamp_format`: Format for log file names (default:
+  `"%Y%m%d_%H%M%S"`).
+
+### What you get
+
+After running, you’ll find log files in your specified directory, e.g.:
+
+    20240614_153012.out   # Console output
+    20240614_153012.err   # Warnings and errors
+
+This makes it easy to keep a record of your preprocessing runs and debug
+any issues that arise.
+
 ------------------------------------------------------------------------
 
 ## `eyeris` dependency graph :see_no_evil:
