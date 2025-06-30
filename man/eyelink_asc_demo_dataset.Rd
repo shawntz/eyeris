@@ -8,7 +8,7 @@ eyelink_asc_demo_dataset()
 }
 \value{
 A character string giving the full file path to the demo \code{.asc}
-EyeLink pupil data file.
+EyeLink pupil data file
 }
 \description{
 Returns the file path to the demo \code{.asc} EyeLink pupil data file
