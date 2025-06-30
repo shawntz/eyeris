@@ -54,9 +54,9 @@
 #'   using a constant multiplier \eqn{n} (default value: 16):
 #'   \deqn{mad\_thresh = median\_speed + (n \times mad\_val)}
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param n A constant used to compute the median absolute deviation (MAD)
-#' threshold.
+#' threshold. Defaults to `16`
 #' @param mad_thresh Default `NULL`. This parameter provides
 #' alternative options for handling edge cases where the computed
 #' properties here within [eyeris::detransient()]  \eqn{mad\_val}
@@ -79,10 +79,10 @@
 #'    adjust the sensitivity by supplying an alternative threshold value
 #'    here directly via this `mad_thresh` parameter.
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call. Defaults to `NULL`
 #'
 #' @return An `eyeris` object with a new column in `timeseries`:
-#' `pupil_raw_{...}_detransient`.
+#' `pupil_raw_{...}_detransient`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
 #' part of the full eyeris glassbox preprocessing pipeline.
@@ -117,8 +117,34 @@ detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
     )
 }
 
-# adapted from:
-# https://github.com/dr-JT/pupillometry/blob/main/R/pupil_artifact.R
+#' Internal function to remove transient artifacts from pupil data
+#'
+#' @description This function implements transient artifact removal by
+#' identifying and removing samples that exceed a speed-based threshold.
+#' The threshold is computed based on the constant `n`, which defaults to
+#' the value `16`.
+#'
+#' This function is called by the exposed wrapper [eyeris::detransient()].
+#'
+#' @details The function works by:
+#' \itemize{
+#'   \item Calculating the speed of pupil changes using finite differences
+#'   \item Identifying samples that exceed a speed-based threshold
+#'   \item Removing these samples from the pupil data
+#' }
+#'
+#' @param x A data frame containing pupil data with columns `time_secs` and
+#'   the previous operation's pupil column
+#' @param prev_op The name of the previous operation's pupil column
+#' @param n The constant used to compute the median absolute deviation (MAD)
+#'   threshold. Defaults to `16`
+#' @param mad_thresh The threshold used to identify transient artifacts.
+#'   Defaults to `NULL`
+#'
+#' @return A numeric vector of the same length as the input data with transient
+#'   artifacts removed (set to NA)
+#'
+#' @keywords internal
 detransient_pupil <- function(x, prev_op, n, mad_thresh) {
   pupil <- x[[prev_op]]
   timeseries <- x[["time_secs"]]
@@ -205,6 +231,17 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
   ifelse(comparison, as.numeric(NA), pupil)
 }
 
+#' Calculate pupil speed using finite differences
+#'
+#' Computes the speed of pupil changes using finite differences between
+#' consecutive time points. This is a helper function for the detransient step.
+#'
+#' @param x A numeric vector of pupil data
+#' @param y A numeric vector of time data
+#'
+#' @return A vector of pupil speeds at each time point
+#'
+#' @keywords internal
 speed <- function(x, y) {
   delta <- diff(x) / diff(y)
   pupil <- abs(cbind(c(NA, delta), c(delta, NA))) # matrix of differences
