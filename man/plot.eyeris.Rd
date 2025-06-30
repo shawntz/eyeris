@@ -21,21 +21,21 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{x}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{...}{Additional arguments to be passed to \code{plot}.}
+\item{...}{Additional arguments to be passed to \code{plot}}
 
 \item{steps}{Which steps to plot; defaults to \code{all} (i.e., plot all steps).
 Otherwise, pass in a vector containing the index of the step(s) you want to
-plot, with index \code{1} being the original raw pupil timeseries.}
+plot, with index \code{1} being the original raw pupil timeseries}
 
 \item{preview_n}{Number of random example "epochs" to generate for
-previewing the effect of each preprocessing step on the pupil timeseries.}
+previewing the effect of each preprocessing step on the pupil timeseries}
 
-\item{preview_duration}{Time in seconds of each randomly selected preview.}
+\item{preview_duration}{Time in seconds of each randomly selected preview}
 
 \item{preview_window}{The start and stop raw timestamps used to subset the
-preprocessed data from each step of the \code{eyeris} workflow for visualization.
+preprocessed data from each step of the \code{eyeris} workflow for visualization
 Defaults to NULL, meaning random epochs as defined by \code{preview_n} and
 \code{preview_duration} will be plotted. To override the random epochs, set
 \code{preview_window} here to a vector with relative start and stop times (in
@@ -43,47 +43,47 @@ seconds), for example -- \code{c(5,6)} -- to indicate the raw data from 5-6 secs
 on data that were recorded at 1000 Hz). Note, the start/stop time values
 indicated here are in seconds because \code{eyeris} automatically computes the
 indices for the supplied range of seconds using the \verb{$info$sample.rate}
-metadata in the \code{eyeris} S3 class object.}
+metadata in the \code{eyeris} S3 class object}
 
 \item{seed}{Random seed for current plotting session. Leave NULL to select
 \code{preview_n} number of random preview "epochs" (of \code{preview_duration}) each
 time. Otherwise, choose any seed-integer as you would normally select for
 \code{\link[base:Random]{base::set.seed()}}, and you will be able to continue re-plotting the same
 random example pupil epochs each time -- which is helpful when adjusting
-parameters within and across \code{eyeris} workflow steps.}
+parameters within and across \code{eyeris} workflow steps}
 
 \item{block}{For multi-block recordings, specifies which block to plot.
 Defaults to 1. When a single \code{.asc} data file contains multiple
 recording blocks, this parameter determines which block's timeseries to
 visualize. Must be a positive integer not exceeding the total number of
-blocks in the recording.}
+blocks in the recording}
 
 \item{plot_distributions}{Logical flag to indicate whether to plot both
 diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
-samples at each processing step. Defaults to \code{FALSE}.}
+samples at each processing step. Defaults to \code{FALSE}}
 
 \item{suppress_prompt}{Logical flag to disable interactive confirmation
 prompts during plotting. Defaults to \code{TRUE}, which avoids hanging behavior in
-non-interactive or automated contexts (e.g., RMarkdown, scripts).
+non-interactive or automated contexts (e.g., RMarkdown, scripts)
 Set to \code{FALSE} only when running inside \code{glassbox()} with
 \code{interactive_preview = TRUE}, where prompting after each step is desired, as
-well as in the generation of interactive HTML reports with \link{bidsify}.}
+well as in the generation of interactive HTML reports with \link{bidsify}}
 
 \item{verbose}{A logical flag to indicate whether to print status messages to
 the console. Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about
-the current processing step and run silently.}
+the current processing step and run silently}
 
 \item{add_progressive_summary}{Logical flag to indicate whether to add a
 progressive summary plot after plotting. Defaults to \code{FALSE}. Set to \code{TRUE}
 to enable the progressive summary plot (useful for interactive exploration).
 Set to \code{FALSE} to disable the progressive summary plot (useful in automated
-contexts like bidsify reports).}
+contexts like bidsify reports)}
 
-\item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead.}
+\item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead}
 }
 \value{
 No return value; iteratively plots a subset of the pupil timeseries
-from each preprocessing step run.
+from each preprocessing step run
 }
 \description{
 S3 plotting method for objects of class \code{eyeris}. Plots a single-panel
