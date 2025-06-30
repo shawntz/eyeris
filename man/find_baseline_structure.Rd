@@ -7,12 +7,12 @@
 find_baseline_structure(eyeris, epoch_label)
 }
 \arguments{
-\item{eyeris}{An eyeris object}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{epoch_label}{The epoch label (without "epoch_" prefix)}
 }
 \value{
-The baseline structure name or NULL if not found
+The baseline structure name or \code{NULL} if not found
 }
 \description{
 Helper function to find the correct baseline structure name that matches
