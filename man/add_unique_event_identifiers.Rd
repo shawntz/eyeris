@@ -10,12 +10,15 @@ add_unique_event_identifiers(events_list)
 \item{events_list}{A list of event data frames (one per block)}
 }
 \value{
-Updated events list with \code{text_unique} column added
+Updated events list with \code{text_unique} column added to each dataframe
 }
 \description{
 This function adds a new column \code{text_unique} to each events table that
 creates unique identifiers for each occurrence of the same event message
 by appending a count number. This prevents events like "GOAL" from being
 merged across all separate goals.
+}
+\details{
+This function is called by the exposed wrapper \code{\link[=load_asc]{load_asc()}}
 }
 \keyword{internal}
