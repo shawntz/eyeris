@@ -17,6 +17,8 @@
 #' manually.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
+#' @param call_info A list of call information and parameters. If not provided,
+#' it will be generated from the function call.
 #'
 #' @return An `eyeris` object with two new columns in `timeseries`:
 #' `detrend_fitted_betas`, and `pupil_raw_{...}_detrend`.
@@ -32,9 +34,18 @@
 #'   plot(seed = 0)
 #'
 #' @export
-detrend <- function(eyeris) {
+detrend <- function(eyeris, call_info = NULL) {
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list()
+    )
+  } else {
+    call_info
+  }
+
   eyeris_out <- eyeris |>
-    pipeline_handler(detrend_pupil, "detrend")
+    pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
 
   eyeris_out$metadata$detrended <- TRUE
 
