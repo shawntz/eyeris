@@ -83,6 +83,27 @@ downsample <- function(
     )
 }
 
+#' Internal function to downsample pupil data
+#'
+#' @description This function downsamples pupil data by applying an
+#' anti-aliasing filter before decimation. Unlike binning, downsampling
+#' preserves the original temporal dynamics without averaging within bins.
+#'
+#' This function is called by the exposed wrapper [eyeris::downsample()].
+#'
+#' @param x A data frame containing pupil data with columns `time_secs` and
+#'   the previous operation's pupil column
+#' @param prev_op The name of the previous operation's pupil column
+#' @param target_fs The target sampling frequency in Hz after downsampling
+#' @param plot_freqz A flag to indicate whether to display the filter frequency
+#' response. Defaults to `FALSE`
+#' @param current_fs The current sampling frequency in Hz. Defaults to `NULL`
+#' @param rp Passband ripple in dB. Defaults to `1`
+#' @param rs Stopband attenuation in dB. Defaults to `35`
+#'
+#' @return A list containing the downsampled data and the decimated sample rate
+#'
+#' @keywords internal
 downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
                              rp, rs) {
   if (any(is.na(x[[prev_op]]))) {
