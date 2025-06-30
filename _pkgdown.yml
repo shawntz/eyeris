@@ -93,6 +93,7 @@ reference:
       - bidsify
       - summarize_confounds
       - plot.eyeris
+      - eyeris_color_palette
 
   - title: "🔧 Preprocessing Steps"
     desc: >
