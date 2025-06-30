@@ -61,6 +61,17 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
     prev_pupil <- x[[prev_op]]
   }
 
+  # additional validation to prevent "non-numeric matrix extent" error
+  if (!is.numeric(prev_pupil) || length(prev_pupil) == 0) {
+    cli::cli_abort("Invalid pupil data: data must be numeric and non-empty.")
+  }
+
+  if (any(!is.finite(prev_pupil))) {
+    cli::cli_abort(
+      "Non-finite values detected in pupil data. Need to clean data first."
+    )
+  }
+
   # design a Butterworth filter with minimum order to meet requirements
   fs_nq <- fs / 2
   foo <- gsignal::buttord(wp / fs_nq, ws / fs_nq, rp, rs)
