@@ -8,13 +8,13 @@
 #' - `<timestamp>.out`: records all console output
 #' - `<timestamp>.err`: records all warnings and errors
 #'
-#' @param eyeris_cmd An `eyeris` command, wrapped in `{}` if multiline.
+#' @param eyeris_cmd An `eyeris` command, wrapped in `{}` if multiline
 #' @param log_dir Character path to the desired log directory. Is set to the
-#' temporary directory given by [tempdir()] by default.
+#' temporary directory given by [tempdir()] by default
 #' @param timestamp_format Format string passed to `format(Sys.time())` for
-#' naming the log files. Defaults to `"%Y%m%d_%H%M%S"`.
+#' naming the log files. Defaults to `"%Y%m%d_%H%M%S"`
 #'
-#' @return The result of the evaluated `eyeris` command (invisibly).
+#' @return The result of the evaluated `eyeris` command (invisibly)
 #'
 #' @examples
 #' eyelogger({
