@@ -75,7 +75,7 @@ parameters on the raw pupillary signal."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot pre-processed pupil data from <code>eyeris</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
       <div class="d-none name"><code>plot.eyeris.Rd</code></div>
     </div>
 
@@ -112,31 +112,31 @@ parameters on the raw pupillary signal.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
+<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code></p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments to be passed to <code>plot</code>.</p></dd>
+<dd><p>Additional arguments to be passed to <code>plot</code></p></dd>
 
 
 <dt id="arg-steps">steps<a class="anchor" aria-label="anchor" href="#arg-steps"></a></dt>
 <dd><p>Which steps to plot; defaults to <code>all</code> (i.e., plot all steps).
 Otherwise, pass in a vector containing the index of the step(s) you want to
-plot, with index <code>1</code> being the original raw pupil timeseries.</p></dd>
+plot, with index <code>1</code> being the original raw pupil timeseries</p></dd>
 
 
 <dt id="arg-preview-n">preview_n<a class="anchor" aria-label="anchor" href="#arg-preview-n"></a></dt>
 <dd><p>Number of random example "epochs" to generate for
-previewing the effect of each preprocessing step on the pupil timeseries.</p></dd>
+previewing the effect of each preprocessing step on the pupil timeseries</p></dd>
 
 
 <dt id="arg-preview-duration">preview_duration<a class="anchor" aria-label="anchor" href="#arg-preview-duration"></a></dt>
-<dd><p>Time in seconds of each randomly selected preview.</p></dd>
+<dd><p>Time in seconds of each randomly selected preview</p></dd>
 
 
 <dt id="arg-preview-window">preview_window<a class="anchor" aria-label="anchor" href="#arg-preview-window"></a></dt>
 <dd><p>The start and stop raw timestamps used to subset the
-preprocessed data from each step of the <code>eyeris</code> workflow for visualization.
+preprocessed data from each step of the <code>eyeris</code> workflow for visualization
 Defaults to NULL, meaning random epochs as defined by <code>preview_n</code> and
 <code>preview_duration</code> will be plotted. To override the random epochs, set
 <code>preview_window</code> here to a vector with relative start and stop times (in
@@ -144,7 +144,7 @@ seconds), for example – <code>c(5,6)</code> – to indicate the raw data from 
 on data that were recorded at 1000 Hz). Note, the start/stop time values
 indicated here are in seconds because <code>eyeris</code> automatically computes the
 indices for the supplied range of seconds using the <code>$info$sample.rate</code>
-metadata in the <code>eyeris</code> S3 class object.</p></dd>
+metadata in the <code>eyeris</code> S3 class object</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -153,7 +153,7 @@ metadata in the <code>eyeris</code> S3 class object.</p></dd>
 time. Otherwise, choose any seed-integer as you would normally select for
 <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">base::set.seed()</a></code>, and you will be able to continue re-plotting the same
 random example pupil epochs each time – which is helpful when adjusting
-parameters within and across <code>eyeris</code> workflow steps.</p></dd>
+parameters within and across <code>eyeris</code> workflow steps</p></dd>
 
 
 <dt id="arg-block">block<a class="anchor" aria-label="anchor" href="#arg-block"></a></dt>
@@ -161,28 +161,28 @@ parameters within and across <code>eyeris</code> workflow steps.</p></dd>
 Defaults to 1. When a single <code>.asc</code> data file contains multiple
 recording blocks, this parameter determines which block's timeseries to
 visualize. Must be a positive integer not exceeding the total number of
-blocks in the recording.</p></dd>
+blocks in the recording</p></dd>
 
 
 <dt id="arg-plot-distributions">plot_distributions<a class="anchor" aria-label="anchor" href="#arg-plot-distributions"></a></dt>
 <dd><p>Logical flag to indicate whether to plot both
 diagnostic pupil timeseries <em>and</em> accompanying histograms of the pupil
-samples at each processing step. Defaults to <code>FALSE</code>.</p></dd>
+samples at each processing step. Defaults to <code>FALSE</code></p></dd>
 
 
 <dt id="arg-suppress-prompt">suppress_prompt<a class="anchor" aria-label="anchor" href="#arg-suppress-prompt"></a></dt>
 <dd><p>Logical flag to disable interactive confirmation
 prompts during plotting. Defaults to <code>TRUE</code>, which avoids hanging behavior in
-non-interactive or automated contexts (e.g., RMarkdown, scripts).
+non-interactive or automated contexts (e.g., RMarkdown, scripts)
 Set to <code>FALSE</code> only when running inside <code><a href="glassbox.html">glassbox()</a></code> with
 <code>interactive_preview = TRUE</code>, where prompting after each step is desired, as
-well as in the generation of interactive HTML reports with <a href="bidsify.html">bidsify</a>.</p></dd>
+well as in the generation of interactive HTML reports with <a href="bidsify.html">bidsify</a></p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A logical flag to indicate whether to print status messages to
 the console. Defaults to <code>TRUE</code>. Set to <code>FALSE</code> to suppress messages about
-the current processing step and run silently.</p></dd>
+the current processing step and run silently</p></dd>
 
 
 <dt id="arg-add-progressive-summary">add_progressive_summary<a class="anchor" aria-label="anchor" href="#arg-add-progressive-summary"></a></dt>
@@ -190,17 +190,17 @@ the current processing step and run silently.</p></dd>
 progressive summary plot after plotting. Defaults to <code>FALSE</code>. Set to <code>TRUE</code>
 to enable the progressive summary plot (useful for interactive exploration).
 Set to <code>FALSE</code> to disable the progressive summary plot (useful in automated
-contexts like bidsify reports).</p></dd>
+contexts like bidsify reports)</p></dd>
 
 
 <dt id="arg-num-previews">num_previews<a class="anchor" aria-label="anchor" href="#arg-num-previews"></a></dt>
-<dd><p><strong>(Deprecated)</strong> Use <code>preview_n</code> instead.</p></dd>
+<dd><p><strong>(Deprecated)</strong> Use <code>preview_n</code> instead</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>No return value; iteratively plots a subset of the pupil timeseries
-from each preprocessing step run.</p>
+from each preprocessing step run</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

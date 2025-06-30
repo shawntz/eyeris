@@ -69,7 +69,7 @@ and return the fitted betas and the residuals (pupil_data - fitted_values)."><me
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Detrend the pupil time series</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-detrend.R" class="external-link"><code>R/pipeline-detrend.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-detrend.R" class="external-link"><code>R/pipeline-detrend.R</code></a></small>
       <div class="d-none name"><code>detrend.Rd</code></div>
     </div>
 
@@ -88,18 +88,18 @@ and return the fitted betas and the residuals (<code>pupil_data - fitted_values<
 
 
 <dl><dt id="arg-eyeris">eyeris<a class="anchor" aria-label="anchor" href="#arg-eyeris"></a></dt>
-<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
+<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code></p></dd>
 
 
 <dt id="arg-call-info">call_info<a class="anchor" aria-label="anchor" href="#arg-call-info"></a></dt>
 <dd><p>A list of call information and parameters. If not provided,
-it will be generated from the function call.</p></dd>
+it will be generated from the function call. Defaults to <code>NULL</code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An <code>eyeris</code> object with two new columns in <code>timeseries</code>:
-<code>detrend_fitted_betas</code>, and <code>pupil_raw_{...}_detrend</code>.</p>
+<code>detrend_fitted_betas</code>, and <code>pupil_raw_{...}_detrend</code></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -117,7 +117,7 @@ intended for direct use in most cases. Use <code>glassbox(detrend = TRUE)</code>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="glassbox.html">glassbox()</a></code> for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.</p></div>
+part of the full eyeris glassbox preprocessing pipeline</p></div>
     </div>
 
     <div class="section level2">

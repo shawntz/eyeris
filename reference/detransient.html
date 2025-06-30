@@ -75,7 +75,7 @@ on the constant n, which defaults to the value 16.'><meta property="og:image" co
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Remove pupil samples that are physiologically unlikely</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-detransient.R" class="external-link"><code>R/pipeline-detransient.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-detransient.R" class="external-link"><code>R/pipeline-detransient.R</code></a></small>
       <div class="d-none name"><code>detransient.Rd</code></div>
     </div>
 
@@ -97,12 +97,12 @@ on the constant <code>n</code>, which defaults to the value <code>16</code>.</p>
 
 
 <dl><dt id="arg-eyeris">eyeris<a class="anchor" aria-label="anchor" href="#arg-eyeris"></a></dt>
-<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
+<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code></p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>A constant used to compute the median absolute deviation (MAD)
-threshold.</p></dd>
+threshold. Defaults to <code>16</code></p></dd>
 
 
 <dt id="arg-mad-thresh">mad_thresh<a class="anchor" aria-label="anchor" href="#arg-mad-thresh"></a></dt>
@@ -129,13 +129,13 @@ here directly via this <code>mad_thresh</code> parameter.</p></li>
 
 <dt id="arg-call-info">call_info<a class="anchor" aria-label="anchor" href="#arg-call-info"></a></dt>
 <dd><p>A list of call information and parameters. If not provided,
-it will be generated from the function call.</p></dd>
+it will be generated from the function call. Defaults to <code>NULL</code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An <code>eyeris</code> object with a new column in <code>timeseries</code>:
-<code>pupil_raw_{...}_detransient</code>.</p>
+<code>pupil_raw_{...}_detransient</code></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

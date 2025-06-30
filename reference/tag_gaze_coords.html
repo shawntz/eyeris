@@ -69,7 +69,7 @@ optional buffer zone to account for potential overshoot in eye tracking."><meta 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Tag gaze coordinates as on/off screen</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
       <div class="d-none name"><code>tag_gaze_coords.Rd</code></div>
     </div>
 
@@ -88,27 +88,27 @@ optional buffer zone to account for potential overshoot in eye tracking.</p>
 
 
 <dl><dt id="arg-pupil-df">pupil_df<a class="anchor" aria-label="anchor" href="#arg-pupil-df"></a></dt>
-<dd><p>Dataframe containing gaze coordinates</p></dd>
+<dd><p>A data frame containing gaze coordinates</p></dd>
 
 
 <dt id="arg-screen-width">screen_width<a class="anchor" aria-label="anchor" href="#arg-screen-width"></a></dt>
-<dd><p>Screen width in pixels</p></dd>
+<dd><p>The screen width in pixels</p></dd>
 
 
 <dt id="arg-screen-height">screen_height<a class="anchor" aria-label="anchor" href="#arg-screen-height"></a></dt>
-<dd><p>Screen height in pixels</p></dd>
+<dd><p>The screen height in pixels</p></dd>
 
 
 <dt id="arg-overshoot-buffer">overshoot_buffer<a class="anchor" aria-label="anchor" href="#arg-overshoot-buffer"></a></dt>
 <dd><p>Additional buffer zone beyond screen edges
-(default: 0.05). Expressed as proportion of screen size.
-For example, 0.05 means 5% beyond screen edges will still be
-considered "on screen".</p></dd>
+(default: <code>0.05</code>). Expressed as proportion of screen size.
+For example, <code>0.05</code> means 5% beyond screen edges will still be
+considered "on screen"</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Dataframe with added column:</p><ul><li><p>is_offscreen: Logical indicating if gaze is outside screen boundaries</p></li>
+    <p>A data frame with added column:</p><ul><li><p><code>is_offscreen</code>: Logical indicating if gaze is outside screen boundaries</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

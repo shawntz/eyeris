@@ -79,7 +79,7 @@ functions we provide."><meta property="og:image" content="https://shawnschwartz.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Build a generic operation (extension) for the <code>eyeris</code> pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-handler.R" class="external-link"><code>R/pipeline-handler.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-handler.R" class="external-link"><code>R/pipeline-handler.R</code></a></small>
       <div class="d-none name"><code>pipeline_handler.Rd</code></div>
     </div>
 
@@ -106,7 +106,7 @@ functions we provide.</p>
 <dd><p>An object of class <code>eyeris</code> containing timeseries data
 in a list of dataframes (one per block), various metadata collected
 by the tracker, and <code>eyeris</code> specific pointers for tracking the
-preprocessing history for that specific instance of the <code>eyeris</code> object.</p></dd>
+preprocessing history for that specific instance of the <code>eyeris</code> object</p></dd>
 
 
 <dt id="arg-operation">operation<a class="anchor" aria-label="anchor" href="#arg-operation"></a></dt>
@@ -114,17 +114,17 @@ preprocessing history for that specific instance of the <code>eyeris</code> obje
 This custom function should accept a dataframe <code>x</code>, a string <code>prev_op</code>
 (i.e., the name of the previous pupil column – which you DO NOT need to
 supply as a literal string as this is inferred from the <code>latest</code> pointer
-within the <code>eyeris</code> object), and any custom parameters you would like.</p></dd>
+within the <code>eyeris</code> object), and any custom parameters you would like</p></dd>
 
 
 <dt id="arg-new-suffix">new_suffix<a class="anchor" aria-label="anchor" href="#arg-new-suffix"></a></dt>
 <dd><p>A chracter string indicating the suffix you would like
 to be appended to the name of the previous operation's column, which will
-be used for the new column name in the updated preprocessed dataframe(s).</p></dd>
+be used for the new column name in the updated preprocessed dataframe(s)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional (optional) arguments passed to the <code>operation</code> method.</p></dd>
+<dd><p>Additional (optional) arguments passed to the <code>operation</code> method</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -132,7 +132,7 @@ be used for the new column name in the updated preprocessed dataframe(s).</p></d
     <p>An updated <code>eyeris</code> object with the new column added to the
 <code>timeseries</code> dataframe and the <code>latest</code> pointer updated to the name of the
 most recently added column plus all previous columns (ie, the history "trace"
-of preprocessing steps from start-to-present).</p>
+of preprocessing steps from start-to-present)</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

@@ -77,7 +77,7 @@ Also calculates the normalized distance from screen center
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Normalize gaze coordinates to screen-relative units</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
       <div class="d-none name"><code>normalize_gaze_coords.Rd</code></div>
     </div>
 
@@ -97,22 +97,23 @@ Also calculates the normalized distance from screen center
 
 
 <dl><dt id="arg-pupil-df">pupil_df<a class="anchor" aria-label="anchor" href="#arg-pupil-df"></a></dt>
-<dd><p>Dataframe containing raw gaze coordinates (eye_x, eye_y)</p></dd>
+<dd><p>A data frame containing raw gaze
+coordinates (<code>eye_x</code>, <code>eye_y</code>)</p></dd>
 
 
 <dt id="arg-screen-width">screen_width<a class="anchor" aria-label="anchor" href="#arg-screen-width"></a></dt>
-<dd><p>Screen width in pixels</p></dd>
+<dd><p>The screen width in pixels</p></dd>
 
 
 <dt id="arg-screen-height">screen_height<a class="anchor" aria-label="anchor" href="#arg-screen-height"></a></dt>
-<dd><p>Screen height in pixels</p></dd>
+<dd><p>The screen height in pixels</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Dataframe with added columns:</p><ul><li><p>eye_x_norm: Normalized x coordinate [-1,1]</p></li>
-<li><p>eye_y_norm: Normalized y coordinate [-1,1]</p></li>
-<li><p>gaze_dist_from_center: Normalized distance from screen center</p></li>
+    <p>A data frame with added columns:</p><ul><li><p><code>eye_x_norm</code>: Normalized x coordinate [-1,1]</p></li>
+<li><p><code>eye_y_norm</code>: Normalized y coordinate [-1,1]</p></li>
+<li><p><code>gaze_dist_from_center</code>: Normalized distance from screen center</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

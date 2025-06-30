@@ -75,7 +75,7 @@ be identified and joined into the resulting epoched data frames."><meta property
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Epoch (and baseline) pupil data based on custom event message structure</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/176-NF-fixation-density-plot/R/pipeline-epoch.R" class="external-link"><code>R/pipeline-epoch.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/docs-cleaning/R/pipeline-epoch.R" class="external-link"><code>R/pipeline-epoch.R</code></a></small>
       <div class="d-none name"><code>epoch.Rd</code></div>
     </div>
 
@@ -111,7 +111,7 @@ be identified and joined into the resulting epoched data frames.</p>
 
 
 <dl><dt id="arg-eyeris">eyeris<a class="anchor" aria-label="anchor" href="#arg-eyeris"></a></dt>
-<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code>.</p></dd>
+<dd><p>An object of class <code>eyeris</code> derived from <code><a href="load_asc.html">load_asc()</a></code></p></dd>
 
 
 <dt id="arg-events">events<a class="anchor" aria-label="anchor" href="#arg-events"></a></dt>
@@ -135,7 +135,7 @@ string pairs, and the second data.frame indicates the <code>end</code> event tim
 and message string pairs. Additionally, manual epoching only words with
 1 block at a time for event-modes <code>2</code> and <code>3</code>; thus, please be sure to
 explicitly indicate the block number in your input list (for examples,
-see above as well as example #9 below for more details).</p>
+see above as well as example #9 below for more details)</p>
 <p>For event-modes <code>1</code> and <code>2</code>, the way in which you pass in the event message
 string must conform to a standardized protocol so that <code>eyeris</code> knows how to
 find your events and (optionally) parse any included metadata into the tidy
@@ -147,13 +147,13 @@ using the <code>eyeris</code> syntax: (e.g., <code>"PROBE_{type}_{trial}"</code>
 the messages that follow a structure like this "PROBE_START_1" and
 "PROBE_STOP_1", and generate two additional metadata columns: <code>type</code> and
 <code>trial</code>, which would contain the following values based on these two example
-strings: <code>type</code>: <code>('START', 'STOP')</code>, and <code>trial</code>: <code>(1, 1)</code>.</p></dd>
+strings: <code>type</code>: <code>('START', 'STOP')</code>, and <code>trial</code>: <code>(1, 1)</code></p></dd>
 
 
 <dt id="arg-limits">limits<a class="anchor" aria-label="anchor" href="#arg-limits"></a></dt>
 <dd><p>A vector of 2 values (start, end) in seconds, indicating where
 trial extraction should occur centered around any given <code>start</code> message
-string in the <code>events</code> parameter.</p></dd>
+string in the <code>events</code> parameter</p></dd>
 
 
 <dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
@@ -168,19 +168,19 @@ sanitize, then you may obtain a strange-looking epoch list element in
 your output object (e.g., <code>$epoch_</code>, or <code>$epoch_nana</code>, etc.). The data
 should still be accessible within this nested lists, however, to avoid
 ambiguous list objects, we recommend you provide an <code>epoch</code> label here
-to be safe.</strong></p></dd>
+to be safe</strong></p></dd>
 
 
 <dt id="arg-baseline">baseline<a class="anchor" aria-label="anchor" href="#arg-baseline"></a></dt>
 <dd><p><strong>(New)</strong> A single parameter that controls baseline
 correction. Set to <code>TRUE</code> to both calculate and apply baseline correction, or
 <code>FALSE</code> to skip it. This replaces the deprecated <code>calc_baseline</code> and
-<code>apply_baseline</code> parameters.</p></dd>
+<code>apply_baseline</code> parameters</p></dd>
 
 
 <dt id="arg-baseline-type">baseline_type<a class="anchor" aria-label="anchor" href="#arg-baseline-type"></a></dt>
 <dd><p>Whether to perform <em>subtractive</em> (<code>sub</code>) or <em>divisive</em>
-(<code>div</code>) baseline correction. Defaults to <code>sub</code>.</p></dd>
+(<code>div</code>) baseline correction. Defaults to <code>sub</code></p></dd>
 
 
 <dt id="arg-baseline-events">baseline_events<a class="anchor" aria-label="anchor" href="#arg-baseline-events"></a></dt>
@@ -204,31 +204,31 @@ indicating the window of data that will be used to perform the baseline
 correction, which will be centered around the single string "start" message
 string provided in <code>baseline_events</code>. Again, <code>baseline_period</code> will be
 ignored if both a "start" <strong>and</strong> "end" message string are provided to the
-<code>baseline_events</code> argument.</p></dd>
+<code>baseline_events</code> argument</p></dd>
 
 
 <dt id="arg-hz">hz<a class="anchor" aria-label="anchor" href="#arg-hz"></a></dt>
 <dd><p>Data sampling rate. If not specified, will use the value contained
-within the tracker's metadata.</p></dd>
+within the tracker's metadata</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>A flag to indicate whether to print detailed logging messages.
+<dd><p>A flag to indicate whether to print detailed logging messages
 Defaults to <code>TRUE</code>. Set to <code>False</code> to suppress messages about the current
-processing step and run silently.</p></dd>
+processing step and run silently</p></dd>
 
 
 <dt id="arg-call-info">call_info<a class="anchor" aria-label="anchor" href="#arg-call-info"></a></dt>
 <dd><p>A list of call information and parameters. If not provided,
-it will be generated from the function call.</p></dd>
+it will be generated from the function call</p></dd>
 
 
 <dt id="arg-calc-baseline">calc_baseline<a class="anchor" aria-label="anchor" href="#arg-calc-baseline"></a></dt>
-<dd><p><strong>(Deprecated)</strong> Use <code>baseline</code> instead.</p></dd>
+<dd><p><strong>(Deprecated)</strong> Use <code>baseline</code> instead</p></dd>
 
 
 <dt id="arg-apply-baseline">apply_baseline<a class="anchor" aria-label="anchor" href="#arg-apply-baseline"></a></dt>
-<dd><p><strong>(Deprecated)</strong> Use <code>baseline</code> instead.</p></dd>
+<dd><p><strong>(Deprecated)</strong> Use <code>baseline</code> instead</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -273,7 +273,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.12 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.10 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -1191,7 +1191,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 5 matching events for TRIALIDtrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.07 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.09 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -1831,7 +1831,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 5 matching events for PROBESTARTtrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.08 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.07 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -2473,7 +2473,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 5 matching events for PROBESTARTtrial</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.06 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.07 seconds</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -3879,7 +3879,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: 9 epochs baselined</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.08 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.09 secs</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
@@ -5580,7 +5580,7 @@ epoch and baseline event information for clarity.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 5 unique event messages extracted</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: 9 epochs baselined</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.08 secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching and baselining completed in 0.10 secs</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
