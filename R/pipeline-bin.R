@@ -20,17 +20,17 @@
 #' dynamics of pupil dilatory response; however, it should be used with caution
 #' (as averaging within bins can distort the pupillary dynamics).
 #'
-#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
-#' @param bins_per_second The number of bins to create per second of data.
-#' @param method The binning method: "mean" (default) or "median".
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
+#' @param bins_per_second The number of bins to create per second of data
+#' @param method The binning method: "mean" (default) or "median"
 #' @param call_info A list of call information and parameters. If not provided,
-#' it will be generated from the function call.
+#' it will be generated from the function call. Defaults to `NULL`
 #'
-#' @return An `eyeris` object with binned data and updated sampling rate.
+#' @return An `eyeris` object with binned data and updated sampling rate
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
-#' [eyeris::downsample()] for downsampling functionality.
+#' part of the full eyeris glassbox preprocessing pipeline
+#' [eyeris::downsample()] for downsampling functionality
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -75,8 +75,27 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
     )
 }
 
+#' Bin pupil data into specified time bins
+#'
+#' This function bins pupil data into specified time bins using either mean or
+#' median aggregation. It creates evenly spaced bins across the time series and
+#' aggregates pupil values within each bin.
+#'
+#' This function is called by the exposed wrapper [eyeris::bin()].
+#'
+#' @param x A data frame containing the pupil time series data
+#' @param prev_op The name of the previous operation's output column
+#' @param bins_per_second Number of bins per second (positive integer)
+#' @param method Aggregation method: "mean" or "median"
+#' @param current_fs Current sampling rate in Hz
+#'
+#' @return A data frame with binned pupil data containing columns:
+#'   - `time_secs`: Bin center timestamps
+#'   - `pupil_binned_{method}_{bins_per_second}hz`: Binned pupil values
+#'
+#' @keywords internal
 bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
-  # Debug: Check if prev_op is empty or NULL
+  # debug: check if prev_op is empty or NULL
   if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {
     cli::cli_abort(paste(
       "Previous operation column name is empty or NULL.",
@@ -86,10 +105,10 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
     ))
   }
 
-  # Debug: Check if the column exists
+  # debug: check if the column exists
   if (!prev_op %in% colnames(x)) {
     cli::cli_abort(paste(
-      "Column '", prev_op, "' not found in data.",
+      "Column '", prev_op, "' not found in eyeris data object.",
       "Available columns:", paste(colnames(x), collapse = ", ")
     ))
   }
@@ -123,6 +142,16 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
     stringsAsFactors = FALSE
   )
 
+  # Helper function to bin a vector according to pre-computed bin
+  # assignments and bin centers using either mean or median aggregation.
+  #
+  # Args:
+  #   vec: The vector to bin
+  #   bin_assignments: Vector indicating which bin each element belongs to
+  #   bin_centers: Vector of bin center values
+  #   method: The aggregation method: "mean" or "median"
+  #
+  # Returns: A vector of binned values with length equal to bin_centers
   bin_vector <- function(vec, bin_assignments, bin_centers, method) {
     result <- numeric(length(bin_centers))
     for (i in seq_along(bin_centers)) {
@@ -165,7 +194,6 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   for (col in names(x)) {
     if (col != prev_op && col != time_col && !grepl("_bin$", col)) {
       if (is.numeric(x[[col]])) {
-        # For numeric columns, apply binning
         binned_df[[col]] <- bin_vector(
           x[[col]],
           bin_assignments,
@@ -173,12 +201,10 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
           method
         )
       } else {
-        # For non-numeric columns, take the first value in each bin
-        # This preserves metadata like eye, hz, type, etc.
         binned_df[[col]] <- sapply(seq_along(bin_centers), function(i) {
           bin_indices <- which(bin_assignments == i)
           if (length(bin_indices) > 0) {
-            x[[col]][bin_indices[1]]  # Take first value in bin
+            x[[col]][bin_indices[1]]
           } else {
             NA
           }
