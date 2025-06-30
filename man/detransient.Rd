@@ -7,10 +7,10 @@
 detransient(eyeris, n = 16, mad_thresh = NULL, call_info = NULL)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{n}{A constant used to compute the median absolute deviation (MAD)
-threshold.}
+threshold. Defaults to \code{16}}
 
 \item{mad_thresh}{Default \code{NULL}. This parameter provides
 alternative options for handling edge cases where the computed
@@ -35,11 +35,11 @@ here directly via this \code{mad_thresh} parameter.
 }}
 
 \item{call_info}{A list of call information and parameters. If not provided,
-it will be generated from the function call.}
+it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:
-\verb{pupil_raw_\{...\}_detransient}.
+\verb{pupil_raw_\{...\}_detransient}
 }
 \description{
 The intended use of this method is for removing pupil samples that emerge
