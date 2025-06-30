@@ -7,14 +7,14 @@
 detrend(eyeris, call_info = NULL)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+\item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{call_info}{A list of call information and parameters. If not provided,
-it will be generated from the function call.}
+it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
 An \code{eyeris} object with two new columns in \code{timeseries}:
-\code{detrend_fitted_betas}, and \verb{pupil_raw_\{...\}_detrend}.
+\code{detrend_fitted_betas}, and \verb{pupil_raw_\{...\}_detrend}
 }
 \description{
 Linearly detrend_pupil data by fitting a linear model of \code{pupil_data ~ time},
@@ -43,5 +43,5 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.
+part of the full eyeris glassbox preprocessing pipeline
 }
