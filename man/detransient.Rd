@@ -4,7 +4,7 @@
 \alias{detransient}
 \title{Remove pupil samples that are physiologically unlikely}
 \usage{
-detransient(eyeris, n = 16, mad_thresh = NULL)
+detransient(eyeris, n = 16, mad_thresh = NULL, call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -33,6 +33,9 @@ to
 adjust the sensitivity by supplying an alternative threshold value
 here directly via this \code{mad_thresh} parameter.
 }}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:

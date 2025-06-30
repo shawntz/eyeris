@@ -4,7 +4,15 @@
 \alias{lpfilt}
 \title{Lowpass filtering of time series data}
 \usage{
-lpfilt(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE)
+lpfilt(
+  eyeris,
+  wp = 4,
+  ws = 8,
+  rp = 1,
+  rs = 35,
+  plot_freqz = FALSE,
+  call_info = NULL
+)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -18,6 +26,9 @@ lpfilt(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE)
 \item{rs}{Required minimal attenuation within stopband in dB.}
 
 \item{plot_freqz}{Boolean flag for displaying filter frequency response.}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:

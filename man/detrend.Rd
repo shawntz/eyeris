@@ -4,10 +4,13 @@
 \alias{detrend}
 \title{Detrend the pupil time series}
 \usage{
-detrend(eyeris)
+detrend(eyeris, call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with two new columns in \code{timeseries}:

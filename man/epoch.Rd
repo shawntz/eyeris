@@ -15,6 +15,7 @@ epoch(
   baseline_period = NULL,
   hz = NULL,
   verbose = TRUE,
+  call_info = NULL,
   calc_baseline = deprecated(),
   apply_baseline = deprecated()
 )
@@ -110,6 +111,9 @@ within the tracker's metadata.}
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{False} to suppress messages about the current
 processing step and run silently.}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 
 \item{calc_baseline}{\strong{(Deprecated)} Use \code{baseline} instead.}
 

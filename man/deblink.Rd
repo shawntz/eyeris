@@ -4,7 +4,7 @@
 \alias{deblink}
 \title{NA-pad blink events / missing data}
 \usage{
-deblink(eyeris, extend = 50)
+deblink(eyeris, extend = 50, call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -13,6 +13,9 @@ deblink(eyeris, extend = 50)
 pad forward/backward around each missing sample, or, a vector of length two
 indicating different numbers of milliseconds pad forward/backward around each
 missing sample, in the format \code{c(backward, forward)}.}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with a new column: \verb{pupil_raw_\{...\}_deblink}.

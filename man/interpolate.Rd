@@ -4,7 +4,7 @@
 \alias{interpolate}
 \title{Interpolate missing pupil samples}
 \usage{
-interpolate(eyeris, verbose = TRUE)
+interpolate(eyeris, verbose = TRUE, call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}.}
@@ -12,6 +12,9 @@ interpolate(eyeris, verbose = TRUE)
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current
 processing step and run silently.}
+
+\item{call_info}{A list of call information and parameters. If not provided,
+it will be generated from the function call.}
 }
 \value{
 An \code{eyeris} object with a new column in \code{timeseries}:
