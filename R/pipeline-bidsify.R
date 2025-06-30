@@ -1776,7 +1776,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           plot(NA,
             xlim = c(0, 1), ylim = c(0, 1), type = "n",
             xlab = "", ylab = "",
-            main = paste("Error creating gaze heatmap for run-%02d", i_run)
+            main = sprintf("Error creating gaze heatmap for run-%02d", i_run)
           )
           text(0.5, 0.5,
                paste("Error:", e$message),
