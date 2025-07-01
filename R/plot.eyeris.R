@@ -820,6 +820,11 @@ plot_detrend_overlay <- function(pupil_data,
 #'
 #' @return No return value; creates a heatmap plot
 #'
+#' @examples
+#' demo_data <- eyelink_asc_demo_dataset()
+#' eyeris_preproc <- glassbox(demo_data)
+#' plot_gaze_heatmap(eyeris = eyeris_preproc, block = 1)
+#'
 #' @export
 plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
                               screen_height = NULL,
