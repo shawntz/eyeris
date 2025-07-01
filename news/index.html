@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,16 +39,16 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASES</h6></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-130">v1.3.0 (DEV)</a></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-200">v2.0.0 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-121">v1.2.1 (CRAN)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-120">v1.2.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-110">v1.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-101">v1.0.1 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-100">v1.0.0 (CRAN)</a></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-0109001">v0.1.0.9001 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-0119000">v0.1.1.9000 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-0109000">v0.1.0.9000 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-0009000">v0.0.0.9000 (devel)</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -71,20 +71,62 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0" id="eyeris-200-lumpy-space-princess-lumpy-space-princess">eyeris 2.0.0 “Lumpy Space Princess” <img src="inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-200-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.0.0" id="eyeris-200-lumpy-space-princess-lumpy-space-princess">eyeris 2.0.0 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-200-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<p>This is the largest update yet for <code>eyeris</code>, introducing a wealth of new features and addressing numerous small issues to significantly enhance functionality, robustness, and user experience (<a href="https://github.com/shawntz/eyeris/issues/215" class="external-link">#215</a>).</p>
 <div class="section level4">
 <h4 id="id_-new-features-2-0-0">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-2-0-0"></a></h4>
-<ul><li>tbd…</li>
+<div class="section level5">
+<h5 id="enhanced-reporting-and-visualization-2-0-0">Enhanced reporting and visualization:<a class="anchor" aria-label="anchor" href="#enhanced-reporting-and-visualization-2-0-0"></a></h5>
+<ul><li><p><strong>Progressive preprocessing summary plots</strong> can now be generated and saved, visualizing the effects of each preprocessing step on pupil data and updating report structures to include these visualizations. The <code><a href="../reference/plot.eyeris.html">plot.eyeris()</a></code> function now includes an <code>add_progressive_summary</code> parameter to optionally generate these plots by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/212" class="external-link">#212</a>.</p></li>
+<li><p><strong>Gaze heatmap generation</strong> is added for both runs and epoch groups within <code><a href="../reference/bidsify.html">bidsify()</a></code>, enabling visualizations of eye coordinate distributions, data quality, and participant attention when eye tracking and screen dimension data are available. A new <code><a href="../reference/plot_gaze_heatmap.html">plot_gaze_heatmap()</a></code> function is introduced for this purpose by <a href="https://github.com/gustxsr" class="external-link">@gustxsr</a> and <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/213" class="external-link">#213</a>.</p></li>
+<li><p><strong>Interactive HTML reports</strong> now include a floating table of contents, enhancing navigation for longer reports by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/182" class="external-link">#182</a>.</p></li>
+<li><p>The <code>html_report</code> parameter in <code><a href="../reference/bidsify.html">bidsify()</a></code> now <strong>defaults to <code>TRUE</code></strong> by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/212" class="external-link">#212</a>.</p></li>
 </ul></div>
+<div class="section level5">
+<h5 id="core-data-processing-functions-2-0-0">Core data processing functions:<a class="anchor" aria-label="anchor" href="#core-data-processing-functions-2-0-0"></a></h5>
+<ul><li><p>New <code><a href="../reference/bin.html">bin()</a></code> and <code><a href="../reference/downsample.html">downsample()</a></code> functions are introduced for <strong>pupil time series data processing</strong>, including anti-aliasing filtering for downsampling and averaging for binning. Both functions are integrated into the <code><a href="../reference/glassbox.html">eyeris::glassbox()</a></code> pipeline by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> and <a href="https://github.com/mh105" class="external-link">@mh105</a> in <a href="https://github.com/shawntz/eyeris/issues/204" class="external-link">#204</a>.</p></li>
+<li><p><strong>Unique identifiers (<code>text_unique</code>)</strong> are now added to event messages in <code><a href="../reference/load_asc.html">eyeris::load_asc()</a></code> to prevent duplicate event merges, and the <code><a href="../reference/merge_events_with_timeseries.html">merge_events_with_timeseries()</a></code> function is updated to utilize these for correct event matching and merging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/181" class="external-link">#181</a>.</p></li>
+<li><p><strong>Confounds calculation and export</strong> are integrated into the processing pipelines, with <code><a href="../reference/summarize_confounds.html">eyeris::summarize_confounds()</a></code> now included in <code><a href="../reference/glassbox.html">eyeris::glassbox()</a></code> and <code><a href="../reference/epoch.html">eyeris::epoch()</a></code> pipelines by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/182" class="external-link">#182</a>.</p></li>
+</ul></div>
+<div class="section level5">
+<h5 id="pipeline-robustness-and-reproducibility-2-0-0">Pipeline robustness and reproducibility:<a class="anchor" aria-label="anchor" href="#pipeline-robustness-and-reproducibility-2-0-0"></a></h5>
+<ul><li><p><strong>Tracking of pipeline step provenance</strong> is improved, adding the original function call and parameters for each step via a new <code>call_info</code> argument. This metadata is passed to <code>eyeris</code> functions to enhance reproducibility and debugging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/209" class="external-link">#209</a>.</p></li>
+<li><p>The <code><a href="../reference/eyelogger.html">eyelogger()</a></code> utility documentation has been <strong>updated with a new section in the README</strong>, detailing its purpose, usage examples, parameters, and generated log files for improved reproducibility and debugging by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/214" class="external-link">#214</a>.</p></li>
+</ul></div>
+</div>
 <div class="section level4">
 <h4 id="id_-minor-improvements-and-fixes-2-0-0">🔧 Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-2-0-0"></a></h4>
-<ul><li>RF: Deprecated the <code>pdf_report</code> parameter in <code><a href="../reference/bidsify.html">bidsify()</a></code>.
-<ul><li>Please use <code>html_report = TRUE</code> instead.</li>
-</ul></li>
+<div class="section level5">
+<h5 id="robustness-and-error-handling-2-0-0">Robustness and error handling:<a class="anchor" aria-label="anchor" href="#robustness-and-error-handling-2-0-0"></a></h5>
+<ul><li><p><strong>Enhanced plotting robustness</strong> includes <code>tryCatch</code> blocks to handle errors and display informative messages in plots, and time series plotting now iterates over all intermediate steps to ensure plots are generated even with missing or incomplete data by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/181" class="external-link">#181</a>, <a href="https://github.com/shawntz/eyeris/issues/183" class="external-link">#183</a>.</p></li>
+<li><p><strong>Handling of missing valid samples</strong> in random epoch plotting has been improved in <code><a href="../reference/plot.eyeris.html">plot.eyeris()</a></code>, adding warning messages and placeholder plots when no valid samples are found by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/181" class="external-link">#181</a>, <a href="https://github.com/shawntz/eyeris/issues/183" class="external-link">#183</a>.</p></li>
+<li><p><strong>Stricter validation checks</strong> are added for the <code>prev_op</code> argument in the <code><a href="../reference/zscore_pupil.html">eyeris::zscore_pupil()</a></code> internal function to catch missing, non-existent, or corrupted column names early, improving error handling by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/207" class="external-link">#207</a>.</p></li>
+<li><p><strong>Validation for pupil data</strong> in the <code><a href="../reference/lpfilt_pupil.html">eyeris::lpfilt_pupil()</a></code> internal function ensures data is numeric, non-empty, and contains only finite values before filtering, preventing errors related to invalid matrix extents by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/210" class="external-link">#210</a>.</p></li>
+<li><p><strong>Stricter checks for corrupted or empty <code>latest</code> pointers and output column names</strong> are added in <code><a href="../reference/pipeline_handler.html">eyeris::pipeline_handler()</a></code>, improving error handling and transitioning operation calls to use <code>do.call</code> for flexible argument passing by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/211" class="external-link">#211</a>.</p></li>
+<li><p>The <code><a href="../reference/load_asc.html">eyeris::load_asc()</a></code> function now <strong>correctly sets the <code>latest</code> pointer</strong> as a named list for <em>multi-block structures</em> and as a single value for <em>single block data</em>, enhancing multi-block support by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/211" class="external-link">#211</a>.</p></li>
+<li><p>Fixes an <strong>edge case</strong> where <code>mad_val</code> is <code>NA</code> in the <code><a href="../reference/detransient_pupil.html">eyeris::detransient_pupil()</a></code> internal function (occurring when all pupil data is <code>NA</code>), ensuring the original pupil data is returned unchanged and preventing comparison to <code>zero</code> when <code>mad_val</code> is <code>NA</code> by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/193" class="external-link">#193</a>.</p></li>
+<li><p><strong>Baseline handling in <code><a href="../reference/epoch.html">eyeris::epoch()</a></code></strong> is simplified by <strong><em>deprecating</em></strong> <code>calc_baseline</code> and <code>apply_baseline</code> in favor of a single <code>baseline</code> parameter, also resolving bugs related to baseline computation and event mismatches by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/177" class="external-link">#177</a>.</p></li>
+</ul></div>
+<div class="section level5">
+<h5 id="pipeline-and-data-logic-2-0-0">Pipeline and data logic:<a class="anchor" aria-label="anchor" href="#pipeline-and-data-logic-2-0-0"></a></h5>
+<ul><li><p>The <code><a href="../reference/glassbox.html">eyeris::glassbox()</a></code> function has been <strong>refactored to process each block</strong> in the time series <em>individually</em> (except <code>load_asc</code>), improving modularity and ensuring correct error handling of multi-block data by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/189" class="external-link">#189</a>.</p></li>
+<li><p>The calculation of <code>mean_gaze_distance_from_center_px</code> now <strong>correctly uses the screen center coordinates (<code>cx</code>, <code>cy</code>)</strong> instead of defaulting to the origin, ensuring the metric reflects distance from the actual screen center by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/199" class="external-link">#199</a>.</p></li>
+<li><p>The <code><a href="../reference/bidsify.html">eyeris::bidsify()</a></code> function is <strong>refactored to handle cases where no epochs are present</strong>, preventing errors and unnecessary processing for users who want summary reports of the entire pupil time series without prior epoching by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/201" class="external-link">#201</a>.</p></li>
+<li><p>The <code><a href="../reference/bidsify.html">eyeris::bidsify()</a></code> function now <strong>properly allows manual specification of the <code>run_num</code></strong> for single-block data, while still auto-numbering multi-block files for improved naming consistency by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/203" class="external-link">#203</a>.</p></li>
+<li><p>The <strong>recalculation of epoched confounding variables</strong> is now performed <em>when new epochs are created</em> by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/182" class="external-link">#182</a>.</p></li>
+</ul></div>
+<div class="section level5">
+<h5 id="documentation-and-internal-clean-up-2-0-0">Documentation and internal clean-up:<a class="anchor" aria-label="anchor" href="#documentation-and-internal-clean-up-2-0-0"></a></h5>
+<ul><li><p><strong>Extensive documentation cleanup</strong> has been performed, including fixing various spelling errors/typos in multiple function documentations by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/179" class="external-link">#179</a>, <a href="https://github.com/shawntz/eyeris/issues/214" class="external-link">#214</a>.</p></li>
+<li><p>The <code>pdf_report</code> parameter is <code><a href="../reference/bidsify.html">eyeris::bidsify()</a></code> has been <strong><em>deprecated</em></strong> in favor of <code>html_report = TRUE</code>, with associated removal of PDF rendering logic from the <code><a href="../reference/render_report.html">render_report()</a></code> internal function by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/197" class="external-link">#197</a>.</p></li>
+<li><p>Updates to <code>_pkgdown.yml</code>, <code>README</code>, <code>NAMESPACE</code>, and <code>R/zzz.R</code> to support new features and functionality, including exposing the <code><a href="../reference/eyeris_color_palette.html">eyeris_color_palette()</a></code> and other global variables by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/214" class="external-link">#214</a>.</p></li>
+<li><p>The structure of the <code>latest</code> field in mock data for unit tests was fixed to be a named list to ensure tests do not fail due to incorrectly specified data structures by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/208" class="external-link">#208</a>.</p></li>
+<li><p>Added <code>MASS</code>, <code>viridis</code>, and <code>fields</code> package dependencies to <code>Imports</code> to support new gaze heatmaps functionality by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/213" class="external-link">#213</a>.</p></li>
 </ul><hr></div>
 </div>
+</div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.1" id="eyeris-121-tree-trunks-tree-trunks">eyeris 1.2.1 “Tree Trunks” <img src="inst/figures/adventure-time/tree-trunks.png" width="50" alt="Tree Trunks"><a class="anchor" aria-label="anchor" href="#eyeris-121-tree-trunks-tree-trunks"></a></h2><p class="text-muted">CRAN release: 2025-06-13</p>
+<h2 class="pkg-version" data-toc-text="1.2.1" id="eyeris-121-tree-trunks-tree-trunks">eyeris 1.2.1 “Tree Trunks” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png" width="50" alt="Tree Trunks"><a class="anchor" aria-label="anchor" href="#eyeris-121-tree-trunks-tree-trunks"></a></h2><p class="text-muted">CRAN release: 2025-06-13</p>
 <div class="section level4">
 <h4 id="id_-new-features-1-2-1">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-1-2-1"></a></h4>
 <ul><li>
@@ -112,7 +154,7 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.0" id="eyeris-120-tree-trunks-tree-trunks">eyeris 1.2.0 “Tree Trunks” <img src="inst/figures/adventure-time/tree-trunks.png" alt="Tree Trunks" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-120-tree-trunks-tree-trunks"></a></h2><p class="text-muted">CRAN release: 2025-06-07</p>
+<h2 class="pkg-version" data-toc-text="1.2.0" id="eyeris-120-tree-trunks-tree-trunks">eyeris 1.2.0 “Tree Trunks” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png" alt="Tree Trunks" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-120-tree-trunks-tree-trunks"></a></h2><p class="text-muted">CRAN release: 2025-06-07</p>
 <div class="section level4">
 <h4 id="id_-new-features-1-2-0">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-1-2-0"></a></h4>
 <ul><li>NF: Add vertical lines to plots to indicate where missing data (such as blinks and/or removed artifacts) are located in the time series</li>
@@ -148,7 +190,7 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.0" id="eyeris-110-princess-bubblegum-princess-bubblegum">eyeris 1.1.0 “Princess Bubblegum” <img src="inst/figures/adventure-time/princess-bubblegum.png" alt="Princess Bubblegum" width="25"><a class="anchor" aria-label="anchor" href="#eyeris-110-princess-bubblegum-princess-bubblegum"></a></h2><p class="text-muted">CRAN release: 2025-04-24</p>
+<h2 class="pkg-version" data-toc-text="1.1.0" id="eyeris-110-princess-bubblegum-princess-bubblegum">eyeris 1.1.0 “Princess Bubblegum” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/princess-bubblegum.png" alt="Princess Bubblegum" width="25"><a class="anchor" aria-label="anchor" href="#eyeris-110-princess-bubblegum-princess-bubblegum"></a></h2><p class="text-muted">CRAN release: 2025-04-24</p>
 <div class="section level4">
 <h4 id="id_-new-features-1-1-0">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-1-1-0"></a></h4>
 <ul><li>NF: Simplify <code><a href="../reference/glassbox.html">glassbox()</a></code> caller with redesigned parameters that enhance continuity across all pipeline steps (<a href="https://github.com/shawntz/eyeris/issues/148" class="external-link">#148</a>)</li>
@@ -167,12 +209,12 @@
 <li>RF: Deprecated the <code>num_previews</code> parameter in <code><a href="../reference/glassbox.html">glassbox()</a></code>.
 <ul><li>Please use <code>preview_n</code> instead.</li>
 </ul></li>
-<li>BF: Random seed assignment was not behaving as expcted within the <code><a href="../reference/glassbox.html">glassbox()</a></code> pipeline.</li>
+<li>BF: Random seed assignment was not behaving as expected within the <code><a href="../reference/glassbox.html">glassbox()</a></code> pipeline.</li>
 <li>RF: Modify paths to documentation assets to fix broken links at build.</li>
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.1" id="eyeris-101-ice-king-ice-king">eyeris 1.0.1 “Ice King” <img src="inst/figures/adventure-time/ice-king.png" alt="Ice King" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-101-ice-king-ice-king"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.0.1" id="eyeris-101-ice-king-ice-king">eyeris 1.0.1 “Ice King” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png" alt="Ice King" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-101-ice-king-ice-king"></a></h2>
 <p>This non-CRAN release patches a small handful of documentation-related chores that have no direct impact on the functionality of <code>eyeris</code> for the end user. The minor improvements and fixes contained within this release will soon be bundled with a more substantial feature upgrade when submitted to CRAN to reduce burden on the CRAN reviewers at this time. Stay tuned!</p>
 <div class="section level4">
 <h4 id="id_-minor-improvements-and-fixes-1-0-1">🔧 Minor improvements and fixes (<a href="https://github.com/shawntz/eyeris/issues/159" class="external-link">#159</a>)<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-1-0-1"></a></h4>
@@ -188,7 +230,7 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.0" id="eyeris-100-ice-king-ice-king">eyeris 1.0.0 “Ice King” <img src="inst/figures/adventure-time/ice-king.png" alt="Ice King" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-100-ice-king-ice-king"></a></h2><p class="text-muted">CRAN release: 2025-03-31</p>
+<h2 class="pkg-version" data-toc-text="1.0.0" id="eyeris-100-ice-king-ice-king">eyeris 1.0.0 “Ice King” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png" alt="Ice King" width="50"><a class="anchor" aria-label="anchor" href="#eyeris-100-ice-king-ice-king"></a></h2><p class="text-muted">CRAN release: 2025-03-31</p>
 <div class="section level3">
 <h3 id="id_-first-cran-release-1-0-0">🎉 <strong>First CRAN release!</strong> (<a href="https://github.com/shawntz/eyeris/issues/144" class="external-link">#144</a>)<a class="anchor" aria-label="anchor" href="#id_-first-cran-release-1-0-0"></a></h3>
 <p>This version marks the official launch of the <code>eyeris</code> package on CRAN.</p>
@@ -210,8 +252,74 @@
 <ul><li>Improved function documentation across the package</li>
 <li>Added citation guidance and reproducibility tips</li>
 </ul><p>Thanks for checking out <code>eyeris</code>! 🧠👁️</p>
-<hr></div>
+<hr><p><strong>Pre-CRAN <code>dev</code> GitHub releases:</strong></p>
 </div>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1.9000" id="eyeris-0119000-jake-the-dogjake-the-dog">eyeris 0.1.1.9000 “Jake the Dog”<img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png" alt="Jake the Dog" width="40"><a class="anchor" aria-label="anchor" href="#eyeris-0119000-jake-the-dogjake-the-dog"></a></h2>
+<div class="section level4">
+<h4 id="id_-minor-improvements-and-fixes-0-1-1-9000">🔧 Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-0-1-1-9000"></a></h4>
+<ul><li>FF (<a href="https://github.com/shawntz/eyeris/issues/115" class="external-link">#115</a>): add more aggressive handling of edge cases in <code><a href="../reference/detransient.html">eyeris::detransient()</a></code> (<a href="https://github.com/shawntz/eyeris/issues/121" class="external-link">#121</a>)
+<ul><li>Specifically, situations where pupil data appear to have already undergone some type of online filtering directly from the EyeLink Host PC machine.</li>
+<li>There is now detailed instructions on what to do if this exception is raised.</li>
+<li>Furthermore, a new <code>mad_thresh</code> override parameter has been added to <code><a href="../reference/detransient.html">eyeris::detransient()</a></code> for advanced users to override the <code>mad_thresh</code> computed property. <em>Note:</em> this new <code>mad_thresh</code> parameter defaults to <code>NULL</code> (and should pretty much always stay as such).</li>
+</ul></li>
+<li>FF (<a href="https://github.com/shawntz/eyeris/issues/122" class="external-link">#122</a>): fixed issue with incompatible unicode character in plot titles (<a href="https://github.com/shawntz/eyeris/issues/123" class="external-link">#123</a>)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0.9000" id="eyeris-0109000-jake-the-dogjake-the-dog">eyeris 0.1.0.9000 “Jake the Dog”<img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png" width="40" alt="Jake the Dog"><a class="anchor" aria-label="anchor" href="#eyeris-0109000-jake-the-dogjake-the-dog"></a></h2>
+<div class="section level4">
+<h4 id="id_-breaking-changes-0-1-0-9000">💥 Breaking changes<a class="anchor" aria-label="anchor" href="#id_-breaking-changes-0-1-0-9000"></a></h4>
+<ul><li>NF (<a href="https://github.com/shawntz/eyeris/issues/10" class="external-link">#10</a>): add support for <code>.asc</code> files containing multiple recording segments within the same file (<a href="https://github.com/shawntz/eyeris/issues/120" class="external-link">#120</a>)
+<ul><li>There is a new <code>block</code> argument added to the <code><a href="../reference/load_asc.html">load_asc()</a></code> function</li>
+<li>The default setting is “auto”, which aims to automatically handle multiple recording segments within the same <code>.asc</code> file. We recommend using this default as this is likely the <em>safer choice</em> rather than assuming a single-block recording. <strong>Furthermore, add downstream functions are intentionally designed to support any <em>N</em> number of blocks; using the “auto” setting automatically enables this support for <code>.asc</code> files containing single recording blocks by labeling the single recording session as <code>block_1</code></strong>
+</li>
+<li>You can also manually specify a different block value (numeric) instead of “auto”, which can be helpful for multi-block experiments where each block/run was recorded to a separate <code>.asc</code> file. This is especially important to consider when running the downstream <code><a href="../reference/epoch.html">epoch()</a></code> and <code><a href="../reference/bidsify.html">bidsify()</a></code> functions so that derived files and summary reports are properly labeled with the correction block/run number</li>
+<li>Currently, there is also a <code>NULL</code> option; however, this is likely going to just be a part of <code>beta</code> testing and will probably be removed in a future version given the foregoing 2 options should cover most (if not all) use cases</li>
+</ul></li>
+</ul></div>
+<div class="section level4">
+<h4 id="id_-new-features-0-1-0-9000">✨ New features<a class="anchor" aria-label="anchor" href="#id_-new-features-0-1-0-9000"></a></h4>
+<ul><li>NF: robust HTML and PDF output summary sidecar reports within <code><a href="../reference/bidsify.html">bidsify()</a></code> (<a href="https://github.com/shawntz/eyeris/issues/120" class="external-link">#120</a>)
+<ul><li>Here, reports are well-organized both by block/run and any specific event message epochs that have been processed using the <code><a href="../reference/epoch.html">epoch()</a></code> function</li>
+<li>For epoched data, we now provide a useful <em>interactive utility</em> within the epoch-specific HTML reports: you can now use your mouse and/or keyboard to swiftly navigate through an interactive gallery of pupil plot segments from every single trial from any given subject, right out-of-the-box! We hope this alleviates some of the complexities/roadblocks users might face when needing to perform manual inspections of their data for quality assurance and/or diagnostic purposes.</li>
+</ul></li>
+</ul></div>
+<div class="section level4">
+<h4 id="id_-minor-improvements-and-fixes-0-1-0-9000">🔧 Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-0-1-0-9000"></a></h4>
+<ul><li>FF (<a href="https://github.com/shawntz/eyeris/issues/118" class="external-link">#118</a>): resolved a minor bug in the EyeLink EDF header <code>model</code> and <code>version</code> fields for data collected on newer EyeLink hardware/software (<a href="https://github.com/shawntz/eyeris/issues/120" class="external-link">#120</a>)</li>
+<li>ENH: event epoching is now both <strong>more robust</strong> and <strong>super fast</strong> (<a href="https://github.com/shawntz/eyeris/issues/120" class="external-link">#120</a>)
+<ul><li>We have implemented more efficient data structures to swiftly handle large sets of pupil samples in rapid time</li>
+<li>We have also added in better visual feedback within the console regarding epoching progress</li>
+<li>Similarly, these added benefits coincide nicely with the new multi-block support (<a href="https://github.com/shawntz/eyeris/issues/10" class="external-link">#10</a>)</li>
+</ul></li>
+<li>General bug fixes and enhancements to codebase and front-end UX (<a href="https://github.com/shawntz/eyeris/issues/120" class="external-link">#120</a>)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9000" id="eyeris-0009000-finn-the-human-finn-the-human">eyeris 0.0.0.9000 “Finn the Human” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/finn.png" width="35" alt="Finn the Human"><a class="anchor" aria-label="anchor" href="#eyeris-0009000-finn-the-human-finn-the-human"></a></h2>
+<ul><li>Initial beta release</li>
+</ul><hr><div class="section level4">
+<h4 id="commit-message-tags-reference-0-0-0-9000">Commit message tags reference:<a class="anchor" aria-label="anchor" href="#commit-message-tags-reference-0-0-0-9000"></a></h4>
+<ul><li>
+<strong>BF:</strong> bug fix (in the <em>release</em> branch)</li>
+<li>
+<strong>FF:</strong> feature fix (bug fixes in the <em>dev</em> branch)</li>
+<li>
+<strong>RF:</strong> refactoring</li>
+<li>
+<strong>NF:</strong> new feature</li>
+<li>
+<strong>ENH:</strong> enhancement</li>
+<li>
+<strong>DOC:</strong> for documentation-related updates and changes</li>
+<li>
+<strong>TEST:</strong> for commits that add or change unit tests</li>
+<li>
+<strong>CHORE:</strong> like <strong>RF</strong> but usually less important changes</li>
+</ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
