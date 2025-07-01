@@ -196,11 +196,17 @@
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [ INFO ] - Creating progressive summary plot for block_1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-3.png" width="100%"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [  OK  ] - Progressive summary plot created successfully!</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [  OK  ] - Progressive summary plot created successfully!</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">plot_gaze_heatmap</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">eyeris =</span> eyeris_preproc,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">block =</span> <span class="dv">1</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="reference/figures/README-timeseries-plot-4.png" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="logging-eyeris-commands-with-eyelogger">Logging eyeris Commands with <code>eyelogger()</code>
+<h2 id="logging-eyeris-commands-with-eyelogger">Logging <code>eyeris</code> commands with <code>eyelogger()</code>
 <a class="anchor" aria-label="anchor" href="#logging-eyeris-commands-with-eyelogger"></a>
 </h2>
 <p>The <code><a href="reference/eyelogger.html">eyelogger()</a></code> utility lets you run any <code>eyeris</code> command (or block of R code) while automatically capturing all console output and errors to timestamped log files. This is especially useful for reproducibility, debugging, or running batch jobs.</p>
@@ -241,8 +247,8 @@
 <h3 id="what-you-get">What you get<a class="anchor" aria-label="anchor" href="#what-you-get"></a>
 </h3>
 <p>After running, you’ll find log files in your specified directory, e.g.:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="dv">20240614</span>_153012.out   <span class="co"># Console output</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="dv">20240614</span>_153012.err   <span class="co"># Warnings and errors</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="dv">20240614</span>_153012.out   <span class="co"># console output</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="dv">20240614</span>_153012.err   <span class="co"># warnings and errors</span></span></code></pre></div>
 <p>This makes it easy to keep a record of your preprocessing runs and debug any issues that arise.</p>
 <hr>
 </div>
@@ -252,8 +258,6 @@
 <code>eyeris</code> dependency graph <span class="emoji" data-emoji="see_no_evil">🙈</span>
 <a class="anchor" aria-label="anchor" href="#eyeris-dependency-graph-see_no_evil"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co">#&gt; Warning: ggrepel: 6 unlabeled data points (too many overlaps). Consider</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; increasing max.overlaps</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <hr>
 </div>
@@ -282,7 +286,7 @@
 <p>If you use the <code>eyeris</code> package in your research, please consider citing our preprint!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
