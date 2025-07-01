@@ -3,23 +3,23 @@ url: https://shawnschwartz.com/eyeris/
 news:
     cran_dates: true
     releases:
-    - text: "LATEST RELEASES"
-    - text: "v1.3.0 (DEV)"
-      href: news/index.html#eyeris-130
+    - text: "LATEST RELEASE"
+    - text: "v2.0.0 (CRAN)"
+      href: news/index.html#eyeris-200
+    - text: -------
+    - text: "Previous Releases"
     - text: "v1.2.1 (CRAN)"
       href: news/index.html#eyeris-121
-    - text: -------
     - text: "v1.2.0 (CRAN)"
       href: news/index.html#eyeris-120
-    - text: "Previous Releases"
     - text: "v1.1.0 (CRAN)"
       href: news/index.html#eyeris-110
     - text: "v1.0.1 (devel)"
       href: news/index.html#eyeris-101
     - text: "v1.0.0 (CRAN)"
       href: news/index.html#eyeris-100
-    - text: "v0.1.0.9001 (devel)"
-      href: news/index.html#eyeris-0109001
+    - text: "v0.1.1.9000 (devel)"
+      href: news/index.html#eyeris-0119000
     - text: "v0.1.0.9000 (devel)"
       href: news/index.html#eyeris-0109000
     - text: "v0.0.0.9000 (devel)"
