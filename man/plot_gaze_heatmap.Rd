@@ -46,3 +46,9 @@ Creates a heatmap showing the distribution of eye_x and eye_y coordinates
 across the entire screen area. The heatmap shows where the participant
 looked most frequently during the recording period.
 }
+\examples{
+demo_data <- eyelink_asc_demo_dataset()
+eyeris_preproc <- glassbox(demo_data)
+plot_gaze_heatmap(eyeris = eyeris_preproc, block = 1)
+
+}
