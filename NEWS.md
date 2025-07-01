@@ -1,17 +1,80 @@
-## eyeris 2.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](inst/figures/adventure-time/lsp.png){width="50"}
+## eyeris 2.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png){width="50"}
+
+This is the largest update yet for `eyeris`, introducing a wealth of new features and addressing numerous small issues to significantly enhance functionality, robustness, and user experience (#215).
 
 #### ✨ New features
 
--   tbd...
+##### Enhanced reporting and visualization:
+
+-   **Progressive preprocessing summary plots** can now be generated and saved, visualizing the effects of each preprocessing step on pupil data and updating report structures to include these visualizations. The `plot.eyeris()` function now includes an `add_progressive_summary` parameter to optionally generate these plots by @shawntz in #212.
+
+-   **Gaze heatmap generation** is added for both runs and epoch groups within `bidsify()`, enabling visualizations of eye coordinate distributions, data quality, and participant attention when eye tracking and screen dimension data are available. A new `plot_gaze_heatmap()` function is introduced for this purpose by @gustxsr and @shawntz in #213.
+
+-   **Interactive HTML reports** now include a floating table of contents, enhancing navigation for longer reports by @shawntz in #182.
+
+-   The `html_report` parameter in `bidsify()` now **defaults to `TRUE`** by @shawntz in #212.
+
+##### Core data processing functions:
+
+-   New `bin()` and `downsample()` functions are introduced for **pupil time series data processing**, including anti-aliasing filtering for downsampling and averaging for binning. Both functions are integrated into the `eyeris::glassbox()` pipeline by @shawntz and @mh105 in #204.
+
+-   **Unique identifiers (`text_unique`)** are now added to event messages in `eyeris::load_asc()` to prevent duplicate event merges, and the `merge_events_with_timeseries()` function is updated to utilize these for correct event matching and merging by @shawntz in #181.
+
+-   **Confounds calculation and export** are integrated into the processing pipelines, with `eyeris::summarize_confounds()` now included in `eyeris::glassbox()` and `eyeris::epoch()` pipelines by @shawntz in #182.
+
+##### Pipeline robustness and reproducibility:
+
+-   **Tracking of pipeline step provenance** is improved, adding the original function call and parameters for each step via a new `call_info` argument. This metadata is passed to `eyeris` functions to enhance reproducibility and debugging by @shawntz in #209.
+
+-   The `eyelogger()` utility documentation has been **updated with a new section in the README**, detailing its purpose, usage examples, parameters, and generated log files for improved reproducibility and debugging by @shawntz in #214.
 
 #### 🔧 Minor improvements and fixes
 
--   RF: Deprecated the `pdf_report` parameter in `bidsify()`.
-    -   Please use `html_report = TRUE` instead.
+##### Robustness and error handling:
+
+-   **Enhanced plotting robustness** includes `tryCatch` blocks to handle errors and display informative messages in plots, and time series plotting now iterates over all intermediate steps to ensure plots are generated even with missing or incomplete data by @shawntz in #181, #183.
+
+-   **Handling of missing valid samples** in random epoch plotting has been improved in `plot.eyeris()`, adding warning messages and placeholder plots when no valid samples are found by @shawntz in #181, #183.
+
+-   **Stricter validation checks** are added for the `prev_op` argument in the `eyeris::zscore_pupil()` internal function to catch missing, non-existent, or corrupted column names early, improving error handling by @shawntz in #207.
+
+-   **Validation for pupil data** in the `eyeris::lpfilt_pupil()` internal function ensures data is numeric, non-empty, and contains only finite values before filtering, preventing errors related to invalid matrix extents by @shawntz in #210.
+
+-   **Stricter checks for corrupted or empty `latest` pointers and output column names** are added in `eyeris::pipeline_handler()`, improving error handling and transitioning operation calls to use `do.call` for flexible argument passing by @shawntz in #211.
+
+-   The `eyeris::load_asc()` function now **correctly sets the `latest` pointer** as a named list for _multi-block structures_ and as a single value for _single block data_, enhancing multi-block support by @shawntz in #211.
+
+-   Fixes an **edge case** where `mad_val` is `NA` in the `eyeris::detransient_pupil()` internal function (occurring when all pupil data is `NA`), ensuring the original pupil data is returned unchanged and preventing comparison to `zero` when `mad_val` is `NA` by @shawntz in #193.
+
+-   **Baseline handling in `eyeris::epoch()`** is simplified by **_deprecating_** `calc_baseline` and `apply_baseline` in favor of a single `baseline` parameter, also resolving bugs related to baseline computation and event mismatches by @shawntz in #177.
+
+##### Pipeline and data logic:
+
+-   The `eyeris::glassbox()` function has been **refactored to process each block** in the time series _individually_ (except `load_asc`), improving modularity and ensuring correct error handling of multi-block data by @shawntz in #189.
+
+-   The calculation of `mean_gaze_distance_from_center_px` now **correctly uses the screen center coordinates (`cx`, `cy`)** instead of defaulting to the origin, ensuring the metric reflects distance from the actual screen center by @shawntz in #199.
+
+-   The `eyeris::bidsify()` function is **refactored to handle cases where no epochs are present**, preventing errors and unnecessary processing for users who want summary reports of the entire pupil time series without prior epoching by @shawntz in #201.
+
+-   The `eyeris::bidsify()` function now **properly allows manual specification of the `run_num`** for single-block data, while still auto-numbering multi-block files for improved naming consistency by @shawntz in #203.
+
+-   The **recalculation of epoched confounding variables** is now performed _when new epochs are created_ by @shawntz in #182.
+
+##### Documentation and internal clean-up:
+
+-   **Extensive documentation cleanup** has been performed, including fixing various spelling errors/typos in multiple function documentations by @shawntz in #179, #214.
+
+-   The `pdf_report` parameter is `eyeris::bidsify()` has been **_deprecated_** in favor of `html_report = TRUE`, with associated removal of PDF rendering logic from the `render_report()` internal function by @shawntz in #197.
+
+-   Updates to `_pkgdown.yml`, `README`, `NAMESPACE`, and `R/zzz.R` to support new features and functionality, including exposing the `eyeris_color_palette()` and other global variables by @shawntz in #214.
+
+-   The structure of the `latest` field in mock data for unit tests was fixed to be a named list to ensure tests do not fail due to incorrectly specified data structures by @shawntz in #208.
+
+-   Added `MASS`, `viridis`, and `fields` package dependencies to `Imports` to support new gaze heatmaps functionality by @shawntz in #213.
 
 ------------------------------------------------------------------------
 
-## eyeris 1.2.1 "Tree Trunks" ![Tree Trunks](inst/figures/adventure-time/tree-trunks.png){width="50"}
+## eyeris 1.2.1 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png){width="50"}
 
 #### ✨ New features
 
@@ -39,7 +102,7 @@
 -   FF: missing x-axis labels on histograms in rendered reports by @shawntz in #169
 -   NF: add detrend fitted values diagnostic plot to rendered reports by @shawntz in #169
 
-## eyeris 1.2.0 "Tree Trunks" ![Tree Trunks](inst/figures/adventure-time/tree-trunks.png){alt="Tree Trunks" width="50"}
+## eyeris 1.2.0 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png){alt="Tree Trunks" width="50"}
 
 #### ✨ New features
 
@@ -75,7 +138,7 @@ plot(eyeris_preproc,
     -   Update funders and contributors list
     -   Add funders disclaimer statement to the footer
 
-## eyeris 1.1.0 "Princess Bubblegum" ![Princess Bubblegum](inst/figures/adventure-time/princess-bubblegum.png){alt="Princess Bubblegum" width="25"}
+## eyeris 1.1.0 "Princess Bubblegum" ![Princess Bubblegum](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/princess-bubblegum.png){alt="Princess Bubblegum" width="25"}
 
 #### ✨ New features
 
@@ -93,10 +156,10 @@ plot(eyeris_preproc,
     -   Please use `interactive_preview` instead.
 -   RF: Deprecated the `num_previews` parameter in `glassbox()`.
     -   Please use `preview_n` instead.
--   BF: Random seed assignment was not behaving as expcted within the `glassbox()` pipeline.
+-   BF: Random seed assignment was not behaving as expected within the `glassbox()` pipeline.
 -   RF: Modify paths to documentation assets to fix broken links at build.
 
-## eyeris 1.0.1 "Ice King" ![Ice King](inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
+## eyeris 1.0.1 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
 
 This non-CRAN release patches a small handful of documentation-related chores that have no direct impact on the functionality of `eyeris` for the end user. The minor improvements and fixes contained within this release will soon be bundled with a more substantial feature upgrade when submitted to CRAN to reduce burden on the CRAN reviewers at this time. Stay tuned!
 
@@ -112,7 +175,7 @@ This non-CRAN release patches a small handful of documentation-related chores th
 -   DOC: add `CONTRIBUTING.md` guidelines file for GitHub (#157)
 -   DOC: fix `/man/figures/...` image ref issues which is leading to broken links on the `R CRAN read-only` [GitHub mirror repo](https://github.com/cran/eyeris) (#158)
 
-## eyeris 1.0.0 "Ice King" ![Ice King](inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
+## eyeris 1.0.0 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
 
 ### 🎉 **First CRAN release!** (#144)
 
@@ -135,9 +198,9 @@ Thanks for checking out `eyeris`! 🧠👁️
 
 ------------------------------------------------------------------------
 
-## Pre-CRAN `dev` GitHub releases
+**Pre-CRAN `dev` GitHub releases:**
 
-### eyeris 0.1.1.9000 "Jake the Dog"![Jake the Dog](inst/figures/adventure-time/jake.png){alt="Jake the Dog" width="40"}
+## eyeris 0.1.1.9000 "Jake the Dog"![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png){alt="Jake the Dog" width="40"}
 
 #### 🔧 Minor improvements and fixes
 
@@ -147,7 +210,7 @@ Thanks for checking out `eyeris`! 🧠👁️
     -   Furthermore, a new `mad_thresh` override parameter has been added to `eyeris::detransient()` for advanced users to override the `mad_thresh` computed property. *Note:* this new `mad_thresh` parameter defaults to `NULL` (and should pretty much always stay as such).
 -   FF (#122): fixed issue with incompatible unicode character in plot titles (#123)
 
-### eyeris 0.1.0.9000 "Jake the Dog"![Jake the Dog](inst/figures/adventure-time/jake.png){width="40"}
+## eyeris 0.1.0.9000 "Jake the Dog"![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png){width="40"}
 
 #### 💥 Breaking changes
 
@@ -172,7 +235,7 @@ Thanks for checking out `eyeris`! 🧠👁️
     -   Similarly, these added benefits coincide nicely with the new multi-block support (#10)
 -   General bug fixes and enhancements to codebase and front-end UX (#120)
 
-### eyeris 0.0.0.9000 "Finn the Human" ![Finn the Human](inst/figures/adventure-time/finn.png){width="35"}
+## eyeris 0.0.0.9000 "Finn the Human" ![Finn the Human](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/finn.png){width="35"}
 
 -   Initial beta release
 
