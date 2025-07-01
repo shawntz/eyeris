@@ -93,6 +93,9 @@ We hope you enjoy! -shawn
 set.seed(32)
 
 library(eyeris)
+#> 
+#> eyeris v2.0.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> Welcome! Type ?`eyeris` to get started.
 
 demo_data <- eyelink_asc_demo_dataset()
 
@@ -132,7 +135,7 @@ start_time <- min(eyeris_preproc$timeseries$block_1$time_secs)
 end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
 
 plot(eyeris_preproc,
-  steps = c(1, 5),
+  # steps = c(1, 5), # uncomment to specify a subset of preprocessing steps to plot; by default, all steps will plot in the order in which they were executed by eyeris
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
@@ -140,11 +143,11 @@ plot(eyeris_preproc,
 #> ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz
 ```
 
-<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" width="100%" />
 
     #> ℹ [ INFO ] - Creating progressive summary plot for block_1
 
-<img src="man/figures/README-timeseries-plot-3.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-7.png" width="100%" />
 
     #> ✔ [  OK  ] - Progressive summary plot created successfully!
 
@@ -153,7 +156,7 @@ plot(eyeris_preproc,
       block = 1
     )
 
-<img src="man/figures/README-timeseries-plot-4.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-8.png" width="100%" />
 
 ## Logging `eyeris` commands with `eyelogger()`
 

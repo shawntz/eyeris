@@ -94,7 +94,7 @@ to flexibly construct and compare different pipelines.
 
 We hope you enjoy! -shawn
 
-```{r glassbox-example, echo=TRUE, results='hide', fig.show='hide', fig.dpi=300}
+```{r glassbox-example, echo=TRUE, results='hide', fig.show='hide', fig.dpi=120}
 set.seed(32)
 
 library(eyeris)
@@ -115,12 +115,12 @@ plot(eyeris_preproc, add_progressive_summary = TRUE)
 <div style="display: flex; justify-content: center; gap: 20px;"><span><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/ts_coalesced.gif" width="49%" alt="glassbox timeseries animation"></span><span><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesced.gif" width="49%" alt="glassbox histograms animation"></span></div>
 
 ### final pre-post correction of pupillary signal (raw ➡ preprocessed)
-```{r timeseries-plot, echo=TRUE, fig.width=10, fig.height=4, fig.dpi=300}
+```{r timeseries-plot, echo=TRUE, fig.width=7, fig.height=4, fig.dpi=120}
 start_time <- min(eyeris_preproc$timeseries$block_1$time_secs)
 end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
 
 plot(eyeris_preproc,
-  steps = c(1, 5),
+  # steps = c(1, 5), # uncomment to specify a subset of preprocessing steps to plot; by default, all steps will plot in the order in which they were executed by eyeris
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
