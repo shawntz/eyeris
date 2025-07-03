@@ -45,7 +45,7 @@ step is appended to the previous columns name
 - `blinks`: a list of data frames containing start/stop/durations for blinks
 - `info`: EyeLink EDF header data parsed into a data frame
 - `latest`: internal tracker used for assessing which steps have been run so far
-- `confounds`: a list of data frames containing confounding variables for each preprocessing step (see: [📊 Summarize Confounds](summarize_confounds.html))
+- `confounds`: a list of data frames containing confounding variables for each preprocessing step (see: 📊 `summarize_confounds()`)
 - `params`: detailed list of steps run and parameters passed to each step
 - `epoch_{name}`: list of data frames for any given epoched timeseries
 
