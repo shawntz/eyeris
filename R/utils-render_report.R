@@ -44,7 +44,17 @@ make_report <- function(eyeris, out, plots, ...) {
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
-  run_ids <- get_block_numbers(eyeris)
+  run_ids <- list.dirs(
+    file.path(out, "source", "figures"),
+    recursive = FALSE,
+    full.names = FALSE
+  )
+  run_ids <- sort(
+    as.integer(
+      gsub("run-", "", grep("^run-\\d+$", run_ids, value = TRUE))
+    )
+  )
+
   run_info <- paste(
     " - Runs: ",
     paste(paste0("0", as.character(run_ids)), collapse = ", "),
@@ -64,6 +74,69 @@ make_report <- function(eyeris, out, plots, ...) {
         "### run-", sprintf("%02d", run_id), "\n\n",
         "![](", heatmap_path, ")\n\n"
       )
+    }
+  }
+
+  logs_dir <- file.path(out, "source", "logs")
+  callstack_md <- ""
+
+  for (run_id in run_ids) {
+    metadata_dir <- file.path(out, "source", "logs")
+    if (!dir.exists(metadata_dir)) dir.create(metadata_dir, recursive = TRUE)
+
+    run_metadata <- list(
+      run = run_id,
+      source_file = eyeris$file,
+      call_stack = sanitize_call_stack(eyeris$params)
+    )
+
+    meta_path <- file.path(metadata_dir,
+                           sprintf("run-%02d_metadata.json", run_id))
+
+    if (!file.exists(meta_path)) {
+      jsonlite::write_json(
+        run_metadata,
+        meta_path,
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
+    } else {
+      cli::cli_alert_info(
+        sprintf("[Skipped] Metadata file already exists for %s: %s",
+                run_id,
+                meta_path)
+      )
+    }
+
+    if (file.exists(meta_path)) {
+      meta <- jsonlite::read_json(meta_path)
+
+      callstack_md <- paste0(
+        callstack_md,
+        "### run-", sprintf("%02d", run_id), "\n\n",
+        "**Source `.asc` file**: ", meta$source_file, "\n\n",
+        "**Call stack**:\n\n",
+        make_md_table_multiline(format_call_stack(meta$call_stack)), "\n\n"
+      )
+    } else {
+      callstack_md <- paste0(
+        callstack_md,
+        "### run-", sprintf("%02d", run_id), "\n\n",
+        "*No metadata found for this run*\n\n"
+      )
+    }
+  }
+
+  source_files_md <- ""
+
+  for (run_id in run_ids) {
+    block <- paste0("block_", run_id)
+    file <- if (!is.null(attr(eyeris$timeseries[[block]], "source_file"))) {
+      attr(eyeris$timeseries[[block]], "source_file")
+    } else if (!is.null(eyeris$file)) {
+      eyeris$file
+    } else {
+      "Unknown"
     }
   }
 
@@ -87,7 +160,6 @@ make_report <- function(eyeris, out, plots, ...) {
     " - Task: ", params$task, "\n",
     run_info,
     " - BIDS Directory: ", out, "\n",
-    " - Source `.asc` file: ", eyeris$file, "\n",
     " - [`eyeris` version](https://github.com/shawntz/eyeris): ",
     package_version, "\n",
     "\n\n<style type='text/css'>\n",
@@ -104,7 +176,7 @@ make_report <- function(eyeris, out, plots, ...) {
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
     "\n\n---\n\n## `eyeris` call stack\n\n",
-    make_md_table_multiline(format_call_stack(eyeris$params)), "\n",
+    callstack_md,
     "\n\n---\n\n## Citation\n\n",
     "```{r citation, echo=FALSE, comment=NA}\n",
     "citation('eyeris')\n",
@@ -165,6 +237,16 @@ make_md_table_multiline <- function(df) {
     )
   }
   md_table
+}
+
+sanitize_call_stack <- function(x) {
+  if (is.call(x)) {
+    deparse(x)
+  } else if (is.list(x)) {
+    lapply(x, sanitize_call_stack)
+  } else {
+    x
+  }
 }
 
 #' Print plots in markdown format
@@ -452,12 +534,25 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
 #' @keywords internal
 save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
                                            plot_params = list()) {
-  blocks <- names(eyeris$timeseries)
-  md_content <- ""
+  run_dirs <- list.dirs(
+    file.path(out_dir, "source", "figures"),
+    recursive = FALSE,
+    full.names = FALSE
+  )
+  run_ids <- sort(as.integer(
+    gsub("run-", "", grep("^run-\\d+$", run_dirs, value = TRUE))
+  ))
 
-  for (block in blocks) {
-    block_number <- sub("block_", "", block)
-    run_id <- sprintf("run-%02d", as.numeric(block_number))
+  md_content <- paste(
+    "This visualization shows how the pupil timeseries changes across",
+    "preprocessing steps. ", "Each layer represents a different",
+    "preprocessing step, with the earliest step at the back ", "and the",
+    "final step at the front (via a subtle horizontal offset effect).\n\n"
+  )
+
+  for (run_id in run_ids) {
+    block <- paste0("block_", run_id)
+    run_id <- sprintf("run-%02d", run_id)
     run_dir <- file.path(out_dir, "source", "figures", run_id)
     progressive_path <- file.path(
       run_dir, paste0(run_id, "_desc-progressive_summary.png")
@@ -467,7 +562,30 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
       dir.create(run_dir, recursive = TRUE)
     }
 
+    # if the progressive plot already exists, just include it
+    if (file.exists(progressive_path)) {
+      relative_path <- gsub(
+        "^.*?(?=source/)",
+        "",
+        progressive_path,
+        perl = TRUE
+      )
+      md_content <- paste0(
+        md_content,
+        "### ", run_id, "\n\n",
+        "![](", relative_path, ")\n\n"
+      )
+      next
+    }
+
     pupil_data <- eyeris$timeseries[[block]]
+    if (is.null(pupil_data)) {
+      cli::cli_alert_info(
+        sprintf("[Skipped] No pupil data for %s", run_id)
+      )
+      next
+    }
+
     pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
     if (length(pupil_steps) < 2) {
@@ -501,10 +619,6 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
     md_content <- paste0(
       md_content,
       "### ", run_id, "\n\n",
-      "This visualization shows how the pupil timeseries changes across",
-      "preprocessing steps. ", "Each layer represents a different",
-      "preprocessing step, with the earliest step at the back ", "and the",
-      "final step at the front (via a subtle horizontal offset effect).\n\n",
       "![](", relative_path, ")\n\n"
     )
   }
