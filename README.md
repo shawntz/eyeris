@@ -94,7 +94,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v2.0.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v2.0.0.9000 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 
 demo_data <- eyelink_asc_demo_dataset()
