@@ -127,7 +127,7 @@ make_report <- function(eyeris, out, plots, ...) {
     }
   }
 
-  source_files_md <- ""
+  
 
   for (run_id in run_ids) {
     block <- paste0("block_", run_id)
