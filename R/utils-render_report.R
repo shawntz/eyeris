@@ -127,8 +127,6 @@ make_report <- function(eyeris, out, plots, ...) {
     }
   }
 
-  
-
   for (run_id in run_ids) {
     block <- paste0("block_", run_id)
     file <- if (!is.null(attr(eyeris$timeseries[[block]], "source_file"))) {
