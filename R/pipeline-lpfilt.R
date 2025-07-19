@@ -71,18 +71,56 @@ lpfilt <- function(eyeris, wp = 4, ws = 8,
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      lpfilt_pupil,
-      "lpfilt",
-      wp,
-      ws,
-      rp,
-      rs,
-      fs,
-      plot_freqz,
-      call_info = call_info
-    )
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        lpfilt_pupil,
+        "lpfilt",
+        wp,
+        ws,
+        rp,
+        rs,
+        fs,
+        plot_freqz,
+        call_info = call_info
+      )
+    
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        lpfilt_pupil,
+        "lpfilt",
+        wp,
+        ws,
+        rp,
+        rs,
+        fs,
+        plot_freqz,
+        call_info = call_info
+      )
+    
+    # return combined structure
+    return(list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file
+    ))
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        lpfilt_pupil,
+        "lpfilt",
+        wp,
+        ws,
+        rp,
+        rs,
+        fs,
+        plot_freqz,
+        call_info = call_info
+      )
+  }
 }
 
 #' Internal function to lowpass filter pupil data
