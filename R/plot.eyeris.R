@@ -178,7 +178,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     "preview_window", "seed", "steps", "num_previews",
     "preview_n", "preview_duration", "block",
     "suppress_prompt", "plot_distributions",
-    "only_linear_trend", "next_step", "add_progressive_summary"
+    "only_linear_trend", "next_step", "add_progressive_summary", "eye"
   )
 
   plot_params <- params[!(names(params) %in% non_plot_params)]
@@ -966,17 +966,16 @@ plot_binocular_correlation <- function(eyeris, block = 1,
                                        sample_rate = NULL,
                                        verbose = TRUE) {
 
-  has_binocular <- isTRUE(eyeris$binocular)
-
   # check if a binocular object (from binocular_mode = "both")
-  if (is.list(eyeris) && has_binocular &&
-       eyeris$binocular_mode == "both") {
+  if (is_binocular_object(eyeris)) {
     left_data <- eyeris$left
     right_data <- eyeris$right
+    has_binocular <- TRUE
   } else {
     # check if a regular eyeris object with binocular columns
     left_data <- eyeris
     right_data <- eyeris
+    has_binocular <- isTRUE(eyeris$binocular)
   }
 
   block_str <- paste0("block_", block)
@@ -1100,9 +1099,21 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     cor_value <- cor(left_clean, right_clean, use = "complete.obs")
 
     tryCatch({
-      ## TODO: enable in a future version after more testing --------------
-      stop()
-      dens <- MASS::kde2d(left_clean, right_clean, n = 50)
+      # fallback to simple scatter plot (density estimation disabled for now)
+      plot(left_clean, right_clean,
+           pch = 16, cex = 0.5,
+           main = sprintf("%s\nr = %.3f", title, cor_value),
+           xlab = xlab, ylab = ylab,
+           xlim = c(min(min(left_clean), min(right_clean)),
+                    max(max(left_clean), max(right_clean))),
+           ylim = c(min(min(left_clean), min(right_clean)),
+                    max(max(left_clean), max(right_clean))),
+           col = grDevices::adjustcolor("blue", alpha.f = 0.6))
+      abline(0, 1, col = "red", lwd = 2, lty = 2)
+      
+      ## TODO: enable density estimation in a future version after more testing --------------
+      # dens <- MASS::kde2d(left_clean, right_clean, n = 50)
+      # fields::image.plot(...)
 
       fields::image.plot(
         x = dens$x, y = dens$y, z = dens$z,
@@ -1123,19 +1134,11 @@ plot_binocular_correlation <- function(eyeris, block = 1,
                pch = 16, cex = 0.5,
                col = grDevices::adjustcolor("black", alpha.f = 0.3))
       }
-      ## TODO: enable in a future version after more testing --------------
+      ## TODO: enable density estimation in a future version after more testing --------------
     }, error = function(e) {
-      # fallback to simple scatter plot if density estimation fails
-      plot(left_clean, right_clean,
-           pch = 16, cex = 0.5,
-           main = sprintf("%s\nr = %.3f", title, cor_value),
-           xlab = xlab, ylab = ylab,
-           xlim = c(min(min(left_clean), min(right_clean)),
-                    max(max(left_clean), max(right_clean))),
-           ylim = c(min(min(left_clean), min(right_clean)),
-                    max(max(left_clean), max(right_clean))),
-           col = grDevices::adjustcolor("blue", alpha.f = 0.6))
-      abline(0, 1, col = "red", lwd = 2, lty = 2)
+      cli::cli_alert_warning(
+        sprintf("Error creating correlation plot for %s: %s", var, e$message)
+      )
     })
   }
 
