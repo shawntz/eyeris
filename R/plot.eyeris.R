@@ -52,6 +52,9 @@
 #' to enable the progressive summary plot (useful for interactive exploration).
 #' Set to `FALSE` to disable the progressive summary plot (useful in automated
 #' contexts like bidsify reports)
+#' @param eye For binocular data, specifies which eye to plot: "left", "right", 
+#' or "both". Defaults to "left". For "both", currently plots left eye data 
+#' (use eye="right" for right eye data)
 #' @param num_previews **(Deprecated)** Use `preview_n` instead
 #'
 #' @return No return value; iteratively plots a subset of the pupil timeseries
@@ -107,6 +110,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
                         seed = NULL, block = 1, plot_distributions = FALSE,
                         suppress_prompt = TRUE, verbose = TRUE,
                         add_progressive_summary = FALSE,
+                        eye = c("left", "right", "both"),
                         num_previews = deprecated()) {
   # handle deprecated parameters
   if (is_present(num_previews)) {
@@ -116,6 +120,27 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
       "plot(preview_n)"
     )
     preview_n <- num_previews
+  }
+
+  # handle binocular eyeris objects
+  eye <- match.arg(eye)
+  if (is_binocular_object(x)) {
+    if (eye == "left") {
+      x <- x$left
+      if (verbose) {
+        cli::cli_alert_info("Plotting left eye data")
+      }
+    } else if (eye == "right") {
+      x <- x$right
+      if (verbose) {
+        cli::cli_alert_info("Plotting right eye data")
+      }
+    } else if (eye == "both") {
+      x <- x$left
+      if (verbose) {
+        cli::cli_alert_info("Plotting left eye data (use eye='right' for right eye)")
+      }
+    }
   }
 
   # safely handle user's current options
