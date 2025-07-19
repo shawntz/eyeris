@@ -901,3 +901,227 @@ plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
     points(screen_width / 2, screen_height / 2, pch = 3, col = "red", cex = 1.5)
   })
 }
+
+#' Plot binocular correlation between left and right eye data
+#'
+#' Creates correlation plots showing the relationship between left and right eye
+#' measurements for pupil size, x-coordinates, and y-coordinates. This function
+#' is useful for validating binocular data quality and assessing the correlation
+#' between the two eyes.
+#'
+#' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
+#'   with binocular data, or a list containing `left` and `right` eyeris objects
+#'   (from `binocular_mode = "both"`)
+#' @param block Block number to plot (default: 1)
+#' @param variables Variables to plot correlations for. Defaults to
+#'   `c("pupil", "x", "y")` for pupil size, x-coordinates, and y-coordinates
+#' @param main Title for the overall plot (default: "Binocular Correlation")
+#' @param col_palette Color palette for the plots (default: "viridis")
+#' @param sample_rate Sample rate in Hz (optional, for time-based sampling)
+#' @param verbose Logical flag to indicate whether to print status messages
+#'   (default: TRUE)
+#'
+#' @return No return value; creates correlation plots
+#'
+#' @examples
+#' # For binocular data loaded with binocular_mode = "both"
+#' binocular_data <- load_asc("data.asc", binocular_mode = "both")
+#' plot_binocular_correlation(binocular_data)
+#'
+#' # For binocular data loaded with binocular_mode = "average"
+#' # (correlation plot will show original left vs right before averaging)
+#' avg_data <- load_asc("data.asc", binocular_mode = "average")
+#' plot_binocular_correlation(avg_data)
+#'
+#' @export
+plot_binocular_correlation <- function(eyeris, block = 1,
+                                       variables = c("pupil", "x", "y"),
+                                       main = "",
+                                       col_palette = "viridis",
+                                       sample_rate = NULL,
+                                       verbose = TRUE) {
+
+  has_binocular <- isTRUE(eyeris$binocular)
+
+  # check if a binocular object (from binocular_mode = "both")
+  if (is.list(eyeris) && has_binocular &&
+       eyeris$binocular_mode == "both") {
+    left_data <- eyeris$left
+    right_data <- eyeris$right
+  } else {
+    # check if a regular eyeris object with binocular columns
+    left_data <- eyeris
+    right_data <- eyeris
+  }
+
+  block_str <- paste0("block_", block)
+
+  if (has_binocular) {
+    if (!block_str %in% names(left_data$timeseries)) {
+      cli::cli_alert_danger(
+        sprintf("Block %d not found in left eye data", block)
+      )
+    }
+    if (!block_str %in% names(right_data$timeseries)) {
+      cli::cli_alert_danger(
+        sprintf("Block %d not found in right eye data", block)
+      )
+    }
+
+    left_df <- left_data$timeseries[[block_str]]
+    right_df <- right_data$timeseries[[block_str]]
+
+    # use same pupil column for both (they should be standardized)
+    pupil_col <- grep("^pupil_", colnames(left_df), value = TRUE)
+    if (length(pupil_col) == 0) {
+      cli::cli_alert_danger("No pupil columns found in left eye data")
+    }
+    pupil_col <- pupil_col[1] # use the first pupil column
+
+    left_pupil <- left_df[[pupil_col]]
+    right_pupil <- right_df[[pupil_col]]
+    left_x <- left_df$eye_x
+    left_y <- left_df$eye_y
+    right_x <- right_df$eye_x
+    right_y <- right_df$eye_y
+  } else {
+    # for regular eyeris objects, check for binocular columns
+    if (!block_str %in% names(left_data$timeseries)) {
+      cli::cli_alert_danger(
+        sprintf("Block %d not found in eyeris data", block)
+      )
+    }
+
+    df <- left_data$timeseries[[block_str]]
+
+    if (!has_binocular) {
+      cli::cli_alert_danger(
+        paste(
+          "No binocular columns (psl, psr, xpl, xpr, ypl, ypr) found in",
+          "data. Use binocular_mode = 'both' when loading data to enable",
+          "this function."
+        )
+      )
+    }
+
+    left_pupil <- df$psl
+    right_pupil <- df$psr
+    left_x <- df$xpl
+    left_y <- df$ypl
+    right_x <- df$xpr
+    right_y <- df$ypr
+  }
+
+  n_vars <- length(variables)
+  if (n_vars == 1) {
+    par(mfrow = c(1, 1))
+  } else if (n_vars == 2) {
+    par(mfrow = c(1, 2))
+  } else {
+    par(mfrow = c(1, 3))
+  }
+
+  if (col_palette == "viridis") {
+    colors <- viridis::viridis(100)
+  } else if (col_palette == "plasma") {
+    colors <- viridis::plasma(100)
+  } else if (col_palette == "inferno") {
+    colors <- viridis::inferno(100)
+  } else if (col_palette == "magma") {
+    colors <- viridis::magma(100)
+  } else {
+    colors <- grDevices::heat.colors(100)
+  }
+
+  # create correlation plots for each variable
+  for (var in variables) {
+    if (var == "pupil") {
+      left_var <- left_pupil
+      right_var <- right_pupil
+      xlab <- "Left Eye Pupil Size\n"
+      ylab <- "Right Eye Pupil Size"
+      title <- ""
+    } else if (var == "x") {
+      left_var <- left_x
+      right_var <- right_x
+      xlab <- "Left Eye X-Coordinate\n"
+      ylab <- "Right Eye X-Coordinate"
+      title <- ""
+    } else if (var == "y") {
+      left_var <- left_y
+      right_var <- right_y
+      xlab <- "Left Eye Y-Coordinate\n"
+      ylab <- "Right Eye Y-Coordinate"
+      title <- ""
+    } else {
+      cli::cli_alert_warning(
+        sprintf("Unknown variable '%s', skipping", var)
+      )
+      next
+    }
+
+    # remove NA values for correlation calculation
+    valid_data <- !is.na(left_var) & !is.na(right_var)
+    if (sum(valid_data) == 0) {
+      cli::cli_alert_warning(
+        sprintf("No valid data for %s correlation", var)
+      )
+      next
+    }
+
+    left_clean <- left_var[valid_data]
+    right_clean <- right_var[valid_data]
+
+    cor_value <- cor(left_clean, right_clean, use = "complete.obs")
+
+    tryCatch({
+      ## TODO: enable in a future version after more testing --------------
+      stop()
+      dens <- MASS::kde2d(left_clean, right_clean, n = 50)
+
+      fields::image.plot(
+        x = dens$x, y = dens$y, z = dens$z,
+        col = colors,
+        main = sprintf("%s\nr = %.3f", title, cor_value),
+        xlab = xlab, ylab = ylab,
+        xlim = c(min(min(left_clean), min(right_clean)),
+                 max(max(left_clean), max(right_clean))),
+        ylim = c(min(min(left_clean), min(right_clean)),
+                 max(max(left_clean), max(right_clean))),
+        legend.lab = "Density", legend.line = 2.5
+      )
+
+      abline(0, 1, col = "red", lwd = 2, lty = 2)
+
+      if (length(left_clean) <= 1000) {
+        points(left_clean, right_clean,
+               pch = 16, cex = 0.5,
+               col = grDevices::adjustcolor("black", alpha.f = 0.3))
+      }
+      ## TODO: enable in a future version after more testing --------------
+    }, error = function(e) {
+      # fallback to simple scatter plot if density estimation fails
+      plot(left_clean, right_clean,
+           pch = 16, cex = 0.5,
+           main = sprintf("%s\nr = %.3f", title, cor_value),
+           xlab = xlab, ylab = ylab,
+           xlim = c(min(min(left_clean), min(right_clean)),
+                    max(max(left_clean), max(right_clean))),
+           ylim = c(min(min(left_clean), min(right_clean)),
+                    max(max(left_clean), max(right_clean))),
+           col = grDevices::adjustcolor("blue", alpha.f = 0.6))
+      abline(0, 1, col = "red", lwd = 2, lty = 2)
+    })
+  }
+
+  mtext(main, outer = TRUE, cex = 1.25, font = 2, line = -1)
+
+  # reset plotting parameters
+  par(mfrow = c(1, 1))
+
+  if (verbose) {
+    cli::cli_alert_success(
+      sprintf("Created binocular correlation plots for block %d", block)
+    )
+  }
+}
