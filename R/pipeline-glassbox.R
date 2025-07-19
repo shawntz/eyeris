@@ -174,7 +174,7 @@ glassbox <- function(file,
 
   # the default glassbox pipeline parameters
   default_params <- list(
-    load_asc = list(block = "auto"),
+    load_asc = list(block = "auto", binocular_mode = "average"),
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
@@ -188,6 +188,7 @@ glassbox <- function(file,
 
   # override defaults
   params <- utils::modifyList(default_params, list(...))
+  print(params)
 
   # handle method parameter for bin operation
   if (
@@ -299,9 +300,16 @@ glassbox <- function(file,
       if (which_steps[["load_asc"]]) {
         call_info <- list(
           call = original_call,
-          parameters = list(block = params$load_asc$block)
+          parameters = list(
+            block = params$load_asc$block,
+            binocular_mode = params$load_asc$binocular_mode
+          )
         )
-        result <- eyeris::load_asc(data, block = params$load_asc$block)
+        result <- eyeris::load_asc(
+          data,
+          block = params$load_asc$block,
+          binocular_mode = params$load_asc$binocular_mode
+        )
         if (!is.list(result$params)) result$params <- list()
         result$params[["load_asc"]] <- call_info
         result
