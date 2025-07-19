@@ -246,13 +246,41 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
   } else {
     call_info
   }
-  eyeris |>
-    pipeline_handler(
-      epoch_pupil, "epoch", events, limits, label, calc_baseline,
-      apply_baseline, baseline_type, baseline_events, baseline_period, hz,
-      verbose,
-      call_info = call_info
-    )
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        epoch_pupil, "epoch", events, limits, label, calc_baseline,
+        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        verbose,
+        call_info = call_info
+      )
+    
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        epoch_pupil, "epoch", events, limits, label, calc_baseline,
+        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        verbose,
+        call_info = call_info
+      )
+    
+    # return combined structure
+    return(list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file
+    ))
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        epoch_pupil, "epoch", events, limits, label, calc_baseline,
+        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        verbose,
+        call_info = call_info
+      )
+  }
 }
 
 #' Main epoching and baselining logic
