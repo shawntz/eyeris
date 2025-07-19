@@ -54,7 +54,6 @@ containing:
 \enumerate{
 \item \code{left}: An \code{eyeris} object for the left eye data.
 \item \code{right}: An \code{eyeris} object for the right eye data.
-\item \code{binocular_mode}: Set to "both".
 \item \code{original_file}: Path to the original \code{.asc} file.
 }
 }
