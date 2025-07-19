@@ -57,7 +57,6 @@
 #' \enumerate{
 #'   \item `left`: An `eyeris` object for the left eye data.
 #'   \item `right`: An `eyeris` object for the right eye data.
-#'   \item `binocular_mode`: Set to "both".
 #'   \item `original_file`: Path to the original `.asc` file.
 #' }
 #'
@@ -212,7 +211,6 @@ load_asc <- function(file,
       return(list(
         left = left_eyeris,
         right = right_eyeris,
-        binocular_mode = "both",
         original_file = file
       ))
     }
@@ -221,7 +219,7 @@ load_asc <- function(file,
 
   return(
     process_eyeris_data(
-      x, block, eye, hz, pupil_type, file, binocular, binocular_mode
+      x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
     )
   )
 }
