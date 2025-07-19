@@ -57,7 +57,13 @@ make_report <- function(eyeris, out, plots, ...) {
 
   run_info <- paste(
     " - Runs: ",
-    paste(paste0("0", as.character(run_ids)), collapse = ", "),
+    paste(
+      sapply(run_ids, function(x) {
+        x_chr <- as.character(x)
+        if (x < 10) paste0("0", x_chr) else x_chr
+      }),
+      collapse = ", "
+    ),
     "\n"
   )
 
