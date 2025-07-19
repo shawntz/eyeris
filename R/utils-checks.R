@@ -436,3 +436,23 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
     ))
   }
 }
+
+#' Check if object is a binocular eyeris object
+#'
+#' Detects whether an object is a binocular eyeris object created with
+#' `binocular_mode = "both"`.
+#'
+#' @param x Object to check
+#'
+#' @return Logical indicating whether the object is a binocular eyeris object
+#'
+#' @keywords internal
+is_binocular_object <- function(x) {
+  is.list(x) && 
+  "left" %in% names(x) && 
+  "right" %in% names(x) && 
+  "binocular_mode" %in% names(x$left) && 
+  "binocular_mode" %in% names(x$right) && 
+  x$left$binocular_mode == "both" && 
+  x$right$binocular_mode == "both"
+}
