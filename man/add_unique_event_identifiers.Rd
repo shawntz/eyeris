@@ -10,7 +10,8 @@ add_unique_event_identifiers(events_list)
 \item{events_list}{A list of event data frames (one per block)}
 }
 \value{
-Updated events list with \code{text_unique} column added to each dataframe
+Updated events list with \code{text_unique} column added to each
+data frame
 }
 \description{
 This function adds a new column \code{text_unique} to each events table that
