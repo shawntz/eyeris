@@ -94,6 +94,7 @@ reference:
       - summarize_confounds
       - plot.eyeris
       - plot_gaze_heatmap
+      - plot_binocular_correlation
       - eyeris_color_palette
 
   - title: "🔧 Preprocessing Steps"
