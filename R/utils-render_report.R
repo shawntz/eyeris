@@ -77,6 +77,22 @@ make_report <- function(eyeris, out, plots, ...) {
     }
   }
 
+  # add binocular correlation plots to the report
+  binocular_correlations_md <- "\n## Binocular Correlations\n\n"
+  for (run_id in run_ids) {
+    correlation_path <- file.path(
+      "source", "figures", sprintf("run-%02d", run_id),
+      sprintf("run-%02d_binocular_correlation.png", run_id)
+    )
+    if (file.exists(file.path(out, correlation_path))) {
+      binocular_correlations_md <- paste0(
+        binocular_correlations_md,
+        "### run-", sprintf("%02d", run_id), "\n\n",
+        "![](", correlation_path, ")\n\n"
+      )
+    }
+  }
+
   logs_dir <- file.path(out, "source", "logs")
   callstack_md <- ""
 
@@ -171,6 +187,7 @@ make_report <- function(eyeris, out, plots, ...) {
     save_detrend_plots(eyeris = eyeris, out_dir = out),
     print_plots(plots), "\n",
     block_heatmaps_md,
+    binocular_correlations_md,
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
     "\n\n---\n\n## `eyeris` call stack\n\n",
