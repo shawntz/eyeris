@@ -208,7 +208,7 @@ load_asc <- function(file,
         binocular_mode
       )
 
-      return(list(
+      list_out <- list(
         left = left_eyeris,
         right = right_eyeris,
         original_file = file
