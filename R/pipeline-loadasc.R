@@ -212,16 +212,22 @@ load_asc <- function(file,
         left = left_eyeris,
         right = right_eyeris,
         original_file = file
-      ))
+      )
+
+      class(list_out) <- "eyeris"
+
+      return(list_out)
     }
   }
   # binocular handling end ------------------------------------------------
 
-  return(
-    process_eyeris_data(
-      x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
+  if (binocular_mode != "both") {
+    return(
+      process_eyeris_data(
+        x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
+      )
     )
-  )
+  }
 }
 
 #' Process eyeris data and create eyeris object
@@ -245,6 +251,7 @@ process_eyeris_data <- function(x,
                                 file,
                                 binoc,
                                 binoc_mode) {
+
   # raw data processing
   raw_df <- x$raw |>
     dplyr::select(
