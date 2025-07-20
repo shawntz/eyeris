@@ -456,3 +456,18 @@ is_binocular_object <- function(x) {
   x$left$binocular_mode == "both" && 
   x$right$binocular_mode == "both"
 }
+
+#' Check if binocular correlations should be plotted
+#'
+#' Validates that binocular correlations should be plotted.
+#'
+#' @param x The `eyeris` object to check
+#'
+#' @return Logical indicating whether binocular correlations should be plotted
+#'
+#' @keywords internal
+should_plot_binoc_cors <- function(x) {
+  is.list(x) && 
+  ("left" %in% names(x) && "right" %in% names(x)) ||
+  (isTRUE(x$binocular))
+}
