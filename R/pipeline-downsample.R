@@ -98,11 +98,15 @@ downsample <- function(
       )
     
     # return combined structure
-    return(list(
+    list_out <- list(
       left = left_result,
       right = right_result,
       original_file = eyeris$original_file
-    ))
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
   } else {
     # regular eyeris object, process normally
     eyeris |>
