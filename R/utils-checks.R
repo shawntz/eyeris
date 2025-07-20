@@ -442,7 +442,7 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
 #' Detects whether an object is a binocular eyeris object created with
 #' `binocular_mode = "both"`.
 #'
-#' @param x Object to check
+#' @param x The `eyeris` object to check
 #'
 #' @return Logical indicating whether the object is a binocular eyeris object
 #'
