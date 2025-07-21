@@ -554,7 +554,8 @@ run_bidsify <- function(eyeris,
 
           f <- make_bids_fname(
             sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
-            desc = paste0("preproc_pupil_allruns_", current_label)
+            desc = paste0("preproc_pupil_all", current_label),
+            eye_suffix = eye_suffix
           )
 
           if (verbose) {
@@ -565,10 +566,7 @@ run_bidsify <- function(eyeris,
             )
           }
 
-          write.csv(epochs_with_runs,
-            file = file.path(bids_dir, p, f),
-            row.names = FALSE
-          )
+          write.csv(epochs_with_runs, file.path(dir, p, f), row.names = FALSE)
 
           if (verbose) {
             alert(
@@ -644,7 +642,9 @@ run_bidsify <- function(eyeris,
                     } else {
                       result <- paste(epoch_events, collapse = ", ")
                     }
-                    message("Found epoch events in epoch structure: ", result)
+
+                    escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                    cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
                   }
                 }
               }
@@ -777,7 +777,9 @@ run_bidsify <- function(eyeris,
                   } else {
                     result <- paste(epoch_events, collapse = ", ")
                   }
-                  message("Found epoch events in epoch structure: ", result)
+
+                  escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                  cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
                 }
               }
             }
@@ -829,7 +831,8 @@ run_bidsify <- function(eyeris,
             epoch_name = current_label,
             epoch_events = evs,
             baseline_events = bline_evs,
-            baseline_type = bline_type
+            baseline_type = bline_type,
+            eye_suffix = eye_suffix
           )
 
           if (verbose) {
@@ -919,7 +922,9 @@ run_bidsify <- function(eyeris,
                   } else {
                     result <- paste(epoch_events, collapse = ", ")
                   }
-                  message("Found epoch events in epoch structure: ", result)
+
+                  escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                  cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
                 }
               }
             }
@@ -979,7 +984,8 @@ run_bidsify <- function(eyeris,
           }
         } else {
           NULL
-        }
+        },
+        eye_suffix = NULL
       )
     } else {
       merged_epochs <- do.call(
@@ -1037,7 +1043,9 @@ run_bidsify <- function(eyeris,
                   } else {
                     result <- paste(epoch_events, collapse = ", ")
                   }
-                  message("Found epoch events in epoch structure: ", result)
+
+                  escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                  cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
                 }
               }
             }
@@ -1137,7 +1145,8 @@ run_bidsify <- function(eyeris,
 
         f <- make_bids_fname(
           sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
-          desc = "timeseries_pupil_allruns"
+          desc = "timeseries_all",
+          eye_suffix = eye_suffix
         )
 
         if (verbose) {
@@ -1173,7 +1182,8 @@ run_bidsify <- function(eyeris,
             ses_id = ses,
             task_name = task,
             run_num = sprintf("%02d", i),
-            desc = "timeseries_pupil"
+            desc = "timeseries",
+            eye_suffix = eye_suffix
           )
 
           if (verbose) {
@@ -1214,7 +1224,6 @@ run_bidsify <- function(eyeris,
             run_data
           })
         )
-      }
 
         f <- make_bids_fname(
           sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
@@ -1345,8 +1354,9 @@ run_bidsify <- function(eyeris,
                               function(epoch_name) {
                                 epoch_label <- sub("^epoch_", "", epoch_name)
           baseline_structure <- find_baseline_structure(eyeris, epoch_label)
-          message("Processing epoch: ", epoch_name, " -> label: ",
-                  epoch_label, " -> baseline: ", baseline_structure)
+          cli::cli_alert_info(
+            paste0("[INFO] Processing epoch: ", epoch_name, " -> label: ",
+                  epoch_label, " -> baseline: ", baseline_structure))
 
                                if (!is.null(baseline_structure) &&
             !is.null(eyeris[[baseline_structure]][[
@@ -1362,12 +1372,15 @@ run_bidsify <- function(eyeris,
             } else {
               result <- paste(epoch_events, collapse = ", ")
             }
-            message("Found epoch events in baseline structure: ", result)
+            escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+            cli::cli_alert_info(paste0("[INFO] Found epoch events in baseline structure: ", escaped_result))
             return(result)
           } else {
             epoch_data <- eyeris[[epoch_name]]
+
             if (is.list(epoch_data) && !is.null(epoch_data$info)) {
               block_name <- paste0("block_", block)
+
               if (block_name %in% names(epoch_data$info) &&
                   !is.null(epoch_data$info[[block_name]]$epoch_events)) {
                 epoch_events <- epoch_data$info[[block_name]]$epoch_events
@@ -1380,7 +1393,8 @@ run_bidsify <- function(eyeris,
                 } else {
                   result <- paste(epoch_events, collapse = ", ")
                 }
-                message("Found epoch events in epoch structure: ", result)
+                escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
                 return(result)
               }
             }
@@ -1572,7 +1586,8 @@ run_bidsify <- function(eyeris,
                 } else {
                   result <- paste(epoch_events, collapse = ", ")
                 }
-                message("Found epoch events in epoch structure: ", result)
+                escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
+                cli::cli_alert_info(paste0("[INFO] Found epoch events in epoch structure: ", escaped_result))
               }
             }
           }
@@ -1644,7 +1659,7 @@ run_bidsify <- function(eyeris,
               task_name = task,
               run_num = sprintf("%02d", get_block_numbers(block_name)),
               epoch_name = epoch_label,
-              desc = paste0("confounds_epoch_wide_", event_unique),
+              desc = paste0("confounds_summary_", event_unique),
               epoch_events = epoch_events_info,
               baseline_events = baseline_events_info,
               baseline_type = baseline_type_info,
@@ -1843,11 +1858,11 @@ run_bidsify <- function(eyeris,
     }
 
     for (i_run in block_numbers) {
-      current_data <- if (has_multiple_runs) {
-        eyeris$timeseries[[paste0("block_", i_run)]]
-      } else {
-        eyeris$timeseries
-      }
+      # current_data <- if (has_multiple_runs) {
+        current_data <- eyeris$timeseries[[paste0("block_", i_run)]]
+      # } else {
+        # eyeris$timeseries
+      # }
 
       pupil_steps <- grep("^pupil_", colnames(current_data), value = TRUE)
       run_fig_paths <- rep(NA, length(pupil_steps) * 2)
@@ -1976,7 +1991,7 @@ run_bidsify <- function(eyeris,
 
         run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
         check_and_create_dir(run_dir, verbose = verbose)
-        
+
         heatmap_filename <- file.path(
           run_dir,
           sprintf("run-%02d_gaze_heatmap", i_run)
