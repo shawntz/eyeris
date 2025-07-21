@@ -7,7 +7,7 @@
 is_binocular_object(x)
 }
 \arguments{
-\item{x}{Object to check}
+\item{x}{The \code{eyeris} object to check}
 }
 \value{
 Logical indicating whether the object is a binocular eyeris object
