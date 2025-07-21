@@ -122,6 +122,7 @@ reference:
       Example eye-tracking / pupil datasets for testing and demonstrating pipeline functionality.
     contents:
       - eyelink_asc_demo_dataset
+      - eyelink_asc_binocular_demo_dataset
 
 articles:
   - title: Start Here
