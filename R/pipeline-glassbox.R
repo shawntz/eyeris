@@ -897,3 +897,468 @@ evaluate_pipeline_step_params <- function(params) {
     }
   })
 }
+
+#' Internal glassbox function for processing individual eyes
+#'
+#' @param file The `eyeris` object to process
+#' @param interactive_preview A flag to indicate whether to show interactive previews
+#' @param preview_n Number of preview epochs
+#' @param preview_duration Duration of each preview in seconds
+#' @param preview_window Preview window specification
+#' @param verbose A flag to indicate whether to show verbose output
+#' @param params A list of pipeline step parameters
+#' @param original_call The original call to the glassbox function
+#' @param seed A random seed for reproducible plotting
+#' 
+#' @return An `eyeris` object with the processed data lists
+#' 
+#' @keywords internal
+glassbox_internal <- function(file,
+                              interactive_preview = FALSE,
+                              preview_n = 3,
+                              preview_duration = 5,
+                              preview_window = NULL,
+                              verbose = TRUE,
+                              params,
+                              original_call,
+                              seed) {
+
+  # the default glassbox pipeline parameters
+  default_params <- list(
+    load_asc = list(block = "auto", binocular_mode = "average"),
+    deblink = list(extend = 50),
+    detransient = list(n = 16, mad_thresh = NULL),
+    interpolate = TRUE,
+    lpfilt = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose),
+    downsample = FALSE,
+    bin = FALSE,
+    detrend = FALSE,
+    zscore = TRUE,
+    seed = 123
+  )
+
+  # override defaults
+  params <- utils::modifyList(default_params, params)
+
+  # evaluate which steps of pipeline to run
+  which_steps <- evaluate_pipeline_step_params(params)
+
+  # eyeris workflow data structure
+  pipeline <- list(
+    deblink = function(data, params, original_call) {
+      if (which_steps[["deblink"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list(extend = params$deblink$extend)
+        )
+        eyeris::deblink(
+          data,
+          extend = params$deblink$extend,
+          call_info = call_info
+        )
+      } else {
+        data
+      }
+    },
+    detransient = function(data, params, original_call) {
+      if (which_steps[["detransient"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            n = params$detransient$n,
+            mad_thresh = params$detransient$mad_thresh
+          )
+        )
+        eyeris::detransient(
+          data,
+          n = params$detransient$n,
+          mad_thresh = params$detransient$mad_thresh,
+          call_info = call_info
+        )
+      } else {
+        data
+      }
+    },
+    interpolate = function(data, params, original_call) {
+      if (which_steps[["interpolate"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list(verbose = verbose)
+        )
+        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
+      } else {
+        data
+      }
+    },
+    lpfilt = function(data, params, original_call) {
+      if (which_steps[["lpfilt"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            wp = params$lpfilt$wp,
+            ws = params$lpfilt$ws,
+            rp = params$lpfilt$rp,
+            rs = params$lpfilt$rs,
+            plot_freqz = params$lpfilt$plot_freqz
+          )
+        )
+        eyeris::lpfilt(
+          data,
+          wp = params$lpfilt$wp,
+          ws = params$lpfilt$ws,
+          rp = params$lpfilt$rp,
+          rs = params$lpfilt$rs,
+          plot_freqz = params$lpfilt$plot_freqz,
+          call_info = call_info
+        )
+      } else {
+        data
+      }
+    },
+    downsample = function(data, params, original_call) {
+      if (which_steps[["downsample"]]) {
+        if (is.null(params$downsample$plot_freqz)) {
+          params$downsample$plot_freqz <- verbose
+        }
+        if (is.null(params$downsample$rp)) params$downsample$rp <- 1
+        if (is.null(params$downsample$rs)) params$downsample$rs <- 35
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            target_fs = params$downsample$target_fs,
+            plot_freqz = params$downsample$plot_freqz,
+            rp = params$downsample$rp,
+            rs = params$downsample$rs
+          )
+        )
+        eyeris::downsample(
+          data,
+          target_fs = params$downsample$target_fs,
+          plot_freqz = params$downsample$plot_freqz,
+          rp = params$downsample$rp,
+          rs = params$downsample$rs,
+          call_info = call_info
+        )
+      } else {
+        data
+      }
+    },
+    bin = function(data, params, original_call) {
+      if (which_steps[["bin"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list(
+            bins_per_second = params$bin$bins_per_second,
+            method = params$bin$method
+          )
+        )
+        eyeris::bin(
+          data,
+          bins_per_second = params$bin$bins_per_second,
+          method = params$bin$method,
+          call_info = call_info
+        )
+      } else {
+        data
+      }
+    },
+    detrend = function(data, params, original_call) {
+      if (which_steps[["detrend"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list()
+        )
+        eyeris::detrend(data, call_info = call_info)
+      } else {
+        data
+      }
+    },
+    zscore = function(data, params, original_call) {
+      if (which_steps[["zscore"]]) {
+        call_info <- list(
+          call = original_call,
+          parameters = list()
+        )
+        eyeris::zscore(data, call_info = call_info)
+      } else {
+        data
+      }
+    }
+  )
+
+  step_counter <- 1
+  only_linear_trend <- FALSE
+  next_step <- c()
+
+  has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 0
+
+  # process each block individually through all steps (except load_asc)
+  if (has_multiple_blocks) {
+    block_names <- names(file$timeseries)
+    processed_blocks <- list()
+
+    # store orig latest pointer to restore it later
+    original_latest <- file$latest
+    final_latest <- NULL
+    block_states <- list()
+    # collect params from all blocks
+    all_params <- list()
+
+    for (block_name in block_names) {
+      if (verbose) {
+        cli::cli_alert_info(paste0("[INFO] Processing block: ", block_name))
+      }
+
+      temp_file <- file
+      temp_file$timeseries <- list(file$timeseries[[block_name]])
+      names(temp_file$timeseries) <- block_name
+
+      # set latest pointer for current block
+      if (is.list(original_latest)) {
+        # multiblock: use pointer for current block
+        temp_file$latest <- list()
+        temp_file$latest[[block_name]] <- original_latest[[block_name]]
+      } else {
+        # single block converted to multiblock: use original pointer
+        temp_file$latest <- list()
+        temp_file$latest[[block_name]] <- original_latest
+      }
+
+      # init block state
+      block_states[[block_name]] <- list(
+        latest_pointer = temp_file$latest[[block_name]],
+        steps_completed = 0,
+        has_errors = FALSE
+      )
+
+      block_step_counter <- 2
+
+      for (step_name in names(pipeline)) {
+        action <- "Running "
+        skip_plot <- FALSE
+
+        if (!which_steps[[step_name]]) {
+          action <- "Skipping "
+          block_step_counter <- block_step_counter - 1
+          skip_plot <- TRUE
+
+          if (!is.null(temp_file$latest[[block_name]])) {
+            expected_col <- paste0(
+              temp_file$latest[[block_name]], "_", step_name
+            )
+            block_data <- temp_file$timeseries[[block_name]]
+            if (expected_col %in% colnames(block_data)) {
+              temp_file$latest[[block_name]] <- expected_col
+            }
+          }
+        } else {
+          if (step_name == "detrend") {
+            only_linear_trend <- TRUE
+          }
+        }
+
+        if (verbose) {
+          if (action == "Running ") {
+            cli::cli_alert_success(
+              paste0(
+                "[OKAY] ", action, "eyeris::",
+                step_name, "() for ", block_name
+              )
+            )
+          } else {
+            cli::cli_alert_warning(
+              paste0(
+                "[SKIP] ", action, "eyeris::",
+                step_name, "() for ", block_name
+              )
+            )
+          }
+        }
+
+        step_to_run <- pipeline[[step_name]]
+        err_thrown <- FALSE
+
+        temp_file <- tryCatch(
+          {
+            step_to_run(temp_file, params, original_call)
+          },
+          error = function(e) {
+            if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
+              cli::cli_alert_danger(
+                paste0(
+                  "[WARN] ", "Because missing pupil samples were not ",
+                  "interpolated, there is a mismatch in the number of samples ",
+                  "in the detrended data. Please set `interpolate` to `TRUE` ",
+                  "before detrending data OR disable detrending by setting ",
+                  "`detrend` to `FALSE`."
+                )
+              )
+            }
+
+            if (verbose) {
+              cli::cli_alert_warning(
+                paste0(
+                  "[WARN] ", "Skipping eyeris::",
+                  step_name, "() for ", block_name, ": ",
+                  e$message
+                )
+              )
+            }
+            err_thrown <<- TRUE
+            block_step_counter <<- block_step_counter - 1
+
+            # mark current block as having errors
+            block_states[[block_name]]$has_errors <- TRUE
+
+            # reset latest pointer to prevent corruption from propagating
+            # find last valid column name in current block
+            block_data <- temp_file$timeseries[[block_name]]
+            pupil_cols <- grep("^pupil_", colnames(block_data), value = TRUE)
+            if (length(pupil_cols) > 0) {
+              # use last valid pupil column
+              temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
+              block_states[[block_name]]$latest_pointer <-
+                temp_file$latest[[block_name]]
+            } else {
+              # fallback to original pointer for this block
+              if (is.list(original_latest)) {
+                temp_file$latest[[block_name]] <- original_latest[[block_name]]
+              } else {
+                temp_file$latest[[block_name]] <- original_latest
+              }
+              block_states[[block_name]]$latest_pointer <-
+                temp_file$latest[[block_name]]
+            }
+
+            temp_file
+          }
+        )
+
+        if (
+          verbose &&
+          action == "Running " &&
+          (step_name == "downsample" || step_name == "bin")
+        ) {
+          cli::cli_alert_success(
+            paste(
+              "[OKAY] Decimating sampling rate from",
+              temp_file$info$sample.rate, "Hz -->",
+              temp_file$decimated.sample.rate, "Hz..."
+            )
+          )
+        }
+
+        if (interactive_preview && !err_thrown && !skip_plot) {
+          pupil_steps <- grep("^pupil_",
+                              colnames(temp_file$timeseries[[block_name]]),
+                              value = TRUE
+          )
+
+          if (block_step_counter + 1 <= length(names(pipeline))) {
+            next_step <- c(next_step, pupil_steps[block_step_counter])
+          } else {
+            next_step <- NULL
+          }
+
+          plot_with_seed(
+            file = temp_file,
+            step_counter = block_step_counter,
+            seed = seed,
+            preview_n = preview_n,
+            preview_duration = preview_duration,
+            preview_window = preview_window,
+            only_linear_trend = only_linear_trend,
+            next_step = next_step,
+            block_name = block_name,
+            verbose = verbose
+          )
+
+          if (step_name == "detrend") {
+            only_linear_trend <- FALSE
+          }
+
+          if (step_name != "zscore") {
+            if (!prompt_user()) {
+              if (verbose) {
+                cli::cli_alert_info(
+                  paste(
+                    "Process cancelled after running the",
+                    step_name, "step for", block_name, ".",
+                    "Adjust your parameters and re-run!\n"
+                  )
+                )
+              }
+              break
+            }
+          }
+        }
+
+        block_step_counter <- block_step_counter + 1
+      }
+
+      processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
+
+      # preserve decimated.sample.rate from processed blocks
+      if (!is.null(temp_file$decimated.sample.rate)) {
+        file$decimated.sample.rate <- temp_file$decimated.sample.rate
+      }
+
+      # track latest pointer from successfully processed blocks
+      if (!is.null(temp_file$latest[[block_name]]) &&
+          !grepl("_([^_]+)_\\1", temp_file$latest[[block_name]])) {
+        final_latest <- temp_file$latest[[block_name]]
+      }
+
+      # update block state with final state
+      block_states[[block_name]]$latest_pointer <-
+        temp_file$latest[[block_name]]
+      block_states[[block_name]]$steps_completed <- block_step_counter - 1
+
+      # update main file's latest pointer for current block
+      if (is.list(file$latest)) {
+        file$latest[[block_name]] <- temp_file$latest[[block_name]]
+      } else {
+        # Convert to list if it wasn't already
+        file$latest <- list()
+        file$latest[[block_name]] <- temp_file$latest[[block_name]]
+      }
+
+      # collect params from this block
+      if (!is.null(temp_file$params) && is.list(temp_file$params)) {
+        all_params <- modifyList(all_params, temp_file$params)
+      }
+    }
+
+    # recombine processed blocks
+    file$timeseries <- processed_blocks
+
+    # preserve params from processed blocks
+    if (length(all_params) > 0) {
+      file$params <- all_params
+    }
+
+    if (verbose) {
+      cat("\nBlock processing summary:\n")
+      for (block_name in names(block_states)) {
+        state <- block_states[[block_name]]
+        status <- if (state$has_errors) "ERRORS" else "OK"
+        cat(sprintf(
+          "  %s: %s (steps: %d, latest: %s)\n",
+          block_name, status, state$steps_completed, state$latest_pointer
+        ))
+      }
+      cat("\n")
+    }
+  } else {
+    cli::cli_abort("No data blocks found error.")
+  }
+
+  # generate confounds after all other steps
+  if (verbose) {
+    cli::cli_alert_success("[OKAY] Running eyeris::summarize_confounds()")
+  }
+
+  file <- eyeris::summarize_confounds(file)
+
+  return(file)
+}
