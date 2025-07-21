@@ -52,8 +52,8 @@
 #' to enable the progressive summary plot (useful for interactive exploration).
 #' Set to `FALSE` to disable the progressive summary plot (useful in automated
 #' contexts like bidsify reports)
-#' @param eye For binocular data, specifies which eye to plot: "left", "right", 
-#' or "both". Defaults to "left". For "both", currently plots left eye data 
+#' @param eye For binocular data, specifies which eye to plot: "left", "right",
+#' or "both". Defaults to "left". For "both", currently plots left eye data
 #' (use eye="right" for right eye data)
 #' @param num_previews **(Deprecated)** Use `preview_n` instead
 #'
@@ -122,16 +122,19 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     preview_n <- num_previews
   }
 
+  eye_suffix <- NULL
   # handle binocular eyeris objects
   eye <- match.arg(eye)
   if (is_binocular_object(x)) {
     if (eye == "left") {
       x <- x$left
+      eye_suffix <- "eye-L"
       if (verbose) {
         cli::cli_alert_info("Plotting left eye data")
       }
     } else if (eye == "right") {
       x <- x$right
+      eye_suffix <- "eye-R"
       if (verbose) {
         cli::cli_alert_info("Plotting right eye data")
       }
@@ -842,6 +845,7 @@ plot_detrend_overlay <- function(pupil_data,
 #' @param xlab X-axis label (default: "Screen X (pixels)")
 #' @param ylab Y-axis label (default: "Screen Y (pixels)")
 #' @param sample_rate Sample rate in Hz (optional)
+#' @param eye_suffix Eye suffix for binocular data (default: NULL)
 #'
 #' @return No return value; creates a heatmap plot
 #'
@@ -857,7 +861,8 @@ plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
                               main = "Gaze Heatmap",
                               xlab = "Screen X (pixels)",
                               ylab = "Screen Y (pixels)",
-                              sample_rate = NULL) {
+                              sample_rate = NULL,
+                              eye_suffix = NULL) {
   if (inherits(eyeris, "eyeris")) {
     block_str <- paste0("block_", block)
     if (is.null(screen_width)) screen_width <- eyeris$info$screen.x
@@ -888,6 +893,10 @@ plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
 
   x_coords <- df$eye_x[valid_coords]
   y_coords <- df$eye_y[valid_coords]
+
+  if (!is.null(eye_suffix)) {
+    main <- paste0(main, " - ", eye_suffix)
+  }
 
   tryCatch({
     dens <- MASS::kde2d(x_coords, y_coords, n = n_bins,
@@ -950,12 +959,12 @@ plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
 #'
 #' @examples
 #' # For binocular data loaded with binocular_mode = "both"
-#' binocular_data <- load_asc("data.asc", binocular_mode = "both")
+#' binocular_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "both")
 #' plot_binocular_correlation(binocular_data)
 #'
 #' # For binocular data loaded with binocular_mode = "average"
 #' # (correlation plot will show original left vs right before averaging)
-#' avg_data <- load_asc("data.asc", binocular_mode = "average")
+#' avg_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "average")
 #' plot_binocular_correlation(avg_data)
 #'
 #' @export
@@ -973,9 +982,15 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     has_binocular <- TRUE
   } else {
     # check if a regular eyeris object with binocular columns
-    left_data <- eyeris
-    right_data <- eyeris
-    has_binocular <- isTRUE(eyeris$binocular)
+    if (all(c("left", "right") %in% names(eyeris))) {
+      left_data <- eyeris$left
+      right_data <- eyeris$right
+      has_binocular <- TRUE
+    } else {
+      left_data <- eyeris
+      right_data <- eyeris
+      has_binocular <- isTRUE(eyeris$binocular)
+    }
   }
 
   block_str <- paste0("block_", block)
@@ -995,7 +1010,13 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     left_df <- left_data$timeseries[[block_str]]
     right_df <- right_data$timeseries[[block_str]]
 
-    # use same pupil column for both (they should be standardized)
+    # require exact match for pupil_raw; if not present, skip plot with message
+    if (!"pupil_raw" %in% colnames(left_df)) {
+      plot.new()
+      title(main = "Skipped: No pupil_raw column found in left eye data")
+      cli::cli_alert_warning("[WARN] Skipped: No pupil_raw column found in left eye data")
+      return(invisible(NULL))
+    }
     pupil_col <- grep("^pupil_", colnames(left_df), value = TRUE)
     if (length(pupil_col) == 0) {
       cli::cli_alert_danger("No pupil columns found in left eye data")
@@ -1099,7 +1120,6 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     cor_value <- cor(left_clean, right_clean, use = "complete.obs")
 
     tryCatch({
-      # fallback to simple scatter plot (density estimation disabled for now)
       plot(left_clean, right_clean,
            pch = 16, cex = 0.5,
            main = sprintf("%s\nr = %.3f", title, cor_value),
@@ -1110,31 +1130,6 @@ plot_binocular_correlation <- function(eyeris, block = 1,
                     max(max(left_clean), max(right_clean))),
            col = grDevices::adjustcolor("blue", alpha.f = 0.6))
       abline(0, 1, col = "red", lwd = 2, lty = 2)
-      
-      ## TODO: enable density estimation in a future version after more testing --------------
-      # dens <- MASS::kde2d(left_clean, right_clean, n = 50)
-      # fields::image.plot(...)
-
-      fields::image.plot(
-        x = dens$x, y = dens$y, z = dens$z,
-        col = colors,
-        main = sprintf("%s\nr = %.3f", title, cor_value),
-        xlab = xlab, ylab = ylab,
-        xlim = c(min(min(left_clean), min(right_clean)),
-                 max(max(left_clean), max(right_clean))),
-        ylim = c(min(min(left_clean), min(right_clean)),
-                 max(max(left_clean), max(right_clean))),
-        legend.lab = "Density", legend.line = 2.5
-      )
-
-      abline(0, 1, col = "red", lwd = 2, lty = 2)
-
-      if (length(left_clean) <= 1000) {
-        points(left_clean, right_clean,
-               pch = 16, cex = 0.5,
-               col = grDevices::adjustcolor("black", alpha.f = 0.3))
-      }
-      ## TODO: enable density estimation in a future version after more testing --------------
     }, error = function(e) {
       cli::cli_alert_warning(
         sprintf("Error creating correlation plot for %s: %s", var, e$message)
