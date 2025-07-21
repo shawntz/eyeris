@@ -447,8 +447,81 @@ run_bidsify <- function(eyeris,
   report_path <- file.path(bids_dir, p)
   report_path <- normalizePath(report_path, winslash = "/", mustWork = FALSE)
 
-  p <- file.path(p, "eye")
-  check_and_create_dir(dir, p, verbose = verbose)
+  # set run_num for blinks/events files
+  run_num_for_blinks_events <- if (has_multiple_runs) "all" else run_num
+
+  # for binocular data, create left/right subdirectories within the eye directory
+  if (!is.null(eye_suffix)) {
+    if (eye_suffix == "eye-L") {
+      p <- file.path(p, eye_suffix)
+      check_and_create_dir(dir, p, verbose = verbose)
+    } else if (eye_suffix == "eye-R") {
+      p <- file.path(p, eye_suffix)
+      check_and_create_dir(dir, p, verbose = verbose)
+    }
+  } else {
+    p <- file.path(p, "eye")
+    check_and_create_dir(dir, p, verbose = verbose)
+  }
+
+  if (!is.null(eyeris$blinks)) {
+    bids_fname <- make_bids_fname(
+      sub_id = sub, ses_id = ses, task_name = task, run_num = run_num_for_blinks_events,
+      desc = "blinks",
+      eye_suffix = eye_suffix
+    )
+
+    if (verbose) {
+      cli::cli_alert_info("[INFO] Writing blinks data to '%s'...", file.path(dir, p, bids_fname))
+    }
+
+    if (is_binocular_object(eyeris)) {
+      if (eye_suffix == "eye-L") {
+        blinks_df <- purrr::imap_dfr(eyeris$left$blinks, ~ dplyr::mutate(.x))
+        write.csv(blinks_df, file.path(dir, p, bids_fname), row.names = FALSE)
+      } else if (eye_suffix == "eye-R") {
+        blinks_df <- purrr::imap_dfr(eyeris$right$blinks, ~ dplyr::mutate(.x))
+        write.csv(blinks_df, file.path(dir, p, bids_fname), row.names = FALSE)
+      }
+    } else {
+      blinks_df <- purrr::imap_dfr(eyeris$blinks, ~ dplyr::mutate(.x))
+      write.csv(blinks_df, file.path(dir, p, bids_fname), row.names = FALSE)
+    }
+
+    if (verbose) {
+      cli::cli_alert_success("[OKAY] Blinks data written to: '%s'", file.path(dir, p, bids_fname))
+    }
+  }
+
+  if (!is.null(eyeris$events)) {
+    bids_fname <- make_bids_fname(
+      sub_id = sub, ses_id = ses, task_name = task, run_num = run_num_for_blinks_events,
+      desc = "events",
+      eye_suffix = eye_suffix
+    )
+
+    if (verbose) {
+      cli::cli_alert_info("[INFO] Writing events data to '%s'...", file.path(dir, p, bids_fname))
+    }
+
+    if (is_binocular_object(eyeris)) {
+      if (eye_suffix == "eye-L") {
+        events_df <- purrr::imap_dfr(eyeris$left$events, ~ dplyr::mutate(.x))
+        write.csv(events_df, file.path(dir, p, bids_fname), row.names = FALSE)
+      } else if (eye_suffix == "eye-R") {
+        events_df <- purrr::imap_dfr(eyeris$right$events, ~ dplyr::mutate(.x))
+        write.csv(events_df, file.path(dir, p, bids_fname), row.names = FALSE)
+      }
+    } else {
+      events_df <- purrr::imap_dfr(eyeris$events, ~ dplyr::mutate(.x))
+      write.csv(events_df, file.path(dir, p, bids_fname), row.names = FALSE)
+    }
+
+    if (verbose) {
+      cli::cli_alert_success("[OKAY] Events data written to: '%s'", file.path(dir, p, bids_fname))
+    }
+  }
+
   block_numbers <- get_block_numbers(eyeris)
   block_numbers <- block_numbers[block_numbers > 0]
 
