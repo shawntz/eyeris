@@ -30,6 +30,6 @@ Invisibly returns a vector of created file paths
 \description{
 Exports each block's confounds data to a separate CSV file.
 Each file will contain all pupil steps (e.g., pupil_raw, pupil_clean)
-as columns.
+as rows, with confound metrics as columns.
 }
 \keyword{internal}
