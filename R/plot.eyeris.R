@@ -228,15 +228,15 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
     if (block %in% available_blocks) {
       pupil_data <- x$timeseries[[paste0("block_", block)]]
       if (verbose) {
-        cli::cli_alert_warning(sprintf(
-          "[ INFO ] - Plotting block %d from possible blocks: %s",
+        cli::cli_alert_info(sprintf(
+          "[INFO] Plotting block %d from possible blocks: %s",
           block,
           toString(available_blocks)
         ))
       }
     } else {
       cli::cli_abort(sprintf(
-        "[ WARN ] - Block %d does not exist. Available blocks: %d",
+        "[EXIT] Block %d does not exist. Available blocks: %d",
         block, toString(available_blocks)
       ))
     }
@@ -245,7 +245,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   }
 
   if (verbose) {
-    alert("info", paste("[ INFO ] - Plotting with sampling rate:", hz, "Hz"))
+    alert("info", paste("[INFO] Plotting with sampling rate:", hz, "Hz"))
   }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
@@ -291,12 +291,11 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
         header <- paste0(
           gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
           if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
-            sprintf(" (Run %d)", block)
+            paste(sprintf(" (Run %d)", block), if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else "")
           } else {
             ""
           }
         )
-
         if (grepl("z", pupil_steps[i])) {
           y_units <- "(z)"
         } else {
@@ -479,7 +478,7 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
   if (add_progressive_summary) {
     if (verbose) {
       cli::cli_alert_info(
-        sprintf("[ INFO ] - Creating progressive summary plot for block_%d",
+        sprintf("[INFO] Creating progressive summary plot for block_%d",
                 block)
       )
     }
@@ -500,13 +499,13 @@ plot.eyeris <- function(x, ..., steps = NULL, preview_n = NULL,
 
       if (verbose) {
         cli::cli_alert_success(
-          "[  OK  ] - Progressive summary plot created successfully!"
+          "[OKAY] Progressive summary plot created successfully!"
         )
       }
     }, error = function(e) {
       if (verbose) {
         cli::cli_alert_warning(
-          paste("[ WARN ] - Could not create progressive summary plot:",
+          paste("[WARN] Could not create progressive summary plot:",
                 e$message)
         )
       }
@@ -870,24 +869,24 @@ plot_gaze_heatmap <- function(eyeris, block = 1, screen_width = NULL,
 
     df <- eyeris$timeseries[[block_str]]
     if (!is.data.frame(df)) {
-      warning("Block not found in eyeris object.")
+      cli::cli_alert_warning("[WARN] Block not found in eyeris object.")
       return(invisible(NULL))
     }
   } else {
     df <- eyeris
     if (is.null(screen_width) || is.null(screen_height)) {
-      stop("screen width and height must be provided with dataframe inputs.")
+      cli::cli_abort("[EXIT] Screen width and height must be provided with dataframe inputs.")
     }
   }
 
   if (!all(c("eye_x", "eye_y") %in% colnames(df))) {
-    warning("eye_x and/or eye_y columns not found in input data.")
+    cli::cli_alert_warning("[WARN] eye_x and/or eye_y columns not found in input data.")
     return(invisible(NULL))
   }
 
   valid_coords <- !is.na(df$eye_x) & !is.na(df$eye_y)
   if (sum(valid_coords) == 0) {
-    warning("No valid eye coordinates found")
+    cli::cli_alert_warning("[WARN] No valid eye coordinates found")
     return(invisible(NULL))
   }
 
@@ -999,6 +998,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     if (!block_str %in% names(left_data$timeseries)) {
       cli::cli_alert_danger(
         sprintf("Block %d not found in left eye data", block)
+        sprintf("[WARN] Block %d not found in left eye data", block)
       )
     }
     if (!block_str %in% names(right_data$timeseries)) {
@@ -1023,6 +1023,9 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     }
     pupil_col <- pupil_col[1] # use the first pupil column
 
+      cli::cli_alert_danger("[WARN] No pupil columns found in left eye data")
+    }
+    pupil_col <- "pupil_raw"
     left_pupil <- left_df[[pupil_col]]
     right_pupil <- right_df[[pupil_col]]
     left_x <- left_df$eye_x
@@ -1034,6 +1037,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     if (!block_str %in% names(left_data$timeseries)) {
       cli::cli_alert_danger(
         sprintf("Block %d not found in eyeris data", block)
+        sprintf("[WARN] Block %d not found in eyeris data", block)
       )
     }
 
@@ -1043,6 +1047,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
       cli::cli_alert_danger(
         paste(
           "No binocular columns (psl, psr, xpl, xpr, ypl, ypr) found in",
+          "[WARN] No binocular columns (psl, psr, xpl, xpr, ypl, ypr) found in",
           "data. Use binocular_mode = 'both' when loading data to enable",
           "this function."
         )
@@ -1101,6 +1106,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     } else {
       cli::cli_alert_warning(
         sprintf("Unknown variable '%s', skipping", var)
+        sprintf("[WARN] Unknown variable '%s', skipping", var)
       )
       next
     }
@@ -1110,6 +1116,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     if (sum(valid_data) == 0) {
       cli::cli_alert_warning(
         sprintf("No valid data for %s correlation", var)
+        sprintf("[WARN] No valid data for %s correlation", var)
       )
       next
     }
@@ -1133,6 +1140,7 @@ plot_binocular_correlation <- function(eyeris, block = 1,
     }, error = function(e) {
       cli::cli_alert_warning(
         sprintf("Error creating correlation plot for %s: %s", var, e$message)
+        sprintf("[WARN] Error creating correlation plot for %s: %s", var, e$message)
       )
     })
   }
@@ -1145,6 +1153,10 @@ plot_binocular_correlation <- function(eyeris, block = 1,
   if (verbose) {
     cli::cli_alert_success(
       sprintf("Created binocular correlation plots for block %d", block)
+    )
+  }
+}
+      sprintf("[OKAY] Created binocular correlation plots for block %d", block)
     )
   }
 }
