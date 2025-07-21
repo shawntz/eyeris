@@ -33,6 +33,9 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   # temp file - include eye_suffix in filename if provided
   report_filename <- paste0("sub-", params$sub)
+  if (!is.null(eye_suffix)) {
+    report_filename <- paste0(report_filename, "_", eye_suffix)
+  }
   report_filename <- paste0(report_filename, ".Rmd")
   rmd_f <- file.path(out, report_filename)
 
@@ -81,8 +84,13 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   for (run_id in run_ids) {
     heatmap_path <- file.path(
       "source", "figures", sprintf("run-%02d", run_id),
-      sprintf("run-%02d_gaze_heatmap.png", run_id)
+      sprintf("run-%02d_gaze_heatmap", run_id)
     )
+    if (!is.null(eye_suffix)) {
+      heatmap_path <- paste0(heatmap_path, "_", eye_suffix)
+    }
+    heatmap_path <- paste0(heatmap_path, ".png")
+
     if (file.exists(file.path(out, heatmap_path))) {
       block_heatmaps_md <- paste0(
         block_heatmaps_md,
@@ -311,6 +319,10 @@ print_plots <- function(plots, eye_suffix = NULL) {
   if (length(run_dirs) > 0) {
     for (run_dir in run_dirs) {
       run_plots <- list.files(run_dir, pattern = "*.jpg", full.names = TRUE)
+
+      if (!is.null(eye_suffix)) {
+        run_plots <- run_plots[grepl(eye_suffix, run_plots)]
+      }
 
       if (length(run_plots) > 0) {
         run_num <- sub(".*run-(\\d+).*$", "\\1", run_dir)
