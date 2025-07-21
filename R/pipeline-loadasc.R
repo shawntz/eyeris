@@ -131,6 +131,63 @@ load_asc <- function(file,
       "Binocular data detected. Processing {.val {binocular_mode}} mode."
     )
 
+    # create left and right eye data frames to store original binocular data before merging
+    x_left <- x
+    x_right <- x
+
+    # left eye
+    x_left$raw$ps <- x$raw$psl
+    x_left$raw$xp <- x$raw$xpl
+    x_left$raw$yp <- x$raw$ypl
+    x_left$raw$psl <- NULL
+    x_left$raw$psr <- NULL
+    x_left$raw$xpl <- NULL
+    x_left$raw$xpr <- NULL
+    x_left$raw$ypl <- NULL
+    x_left$raw$ypr <- NULL
+
+    # right eye
+    x_right$raw$ps <- x$raw$psr
+    x_right$raw$xp <- x$raw$xpr
+    x_right$raw$yp <- x$raw$ypr
+    x_right$raw$psl <- NULL
+    x_right$raw$psr <- NULL
+    x_right$raw$xpl <- NULL
+    x_right$raw$xpr <- NULL
+    x_right$raw$ypl <- NULL
+    x_right$raw$ypr <- NULL
+
+    left_eyeris <- process_eyeris_data(
+      x_left,
+      block,
+      "left",
+      hz,
+      pupil_type,
+      file,
+      binocular,
+      binocular_mode
+    )
+
+    right_eyeris <- process_eyeris_data(
+      x_right,
+      block,
+      "right",
+      hz,
+      pupil_type,
+      file,
+      binocular,
+      binocular_mode
+    )
+
+    list_out <- list(
+      left = left_eyeris,
+      right = right_eyeris,
+      original_file = file,
+      raw_binocular_object = -1
+    )
+
+    class(list_out) <- "eyeris"
+
     if (binocular_mode == "average") {
       x$raw$ps <- rowMeans(cbind(x$raw$psl, x$raw$psr), na.rm = TRUE)
       x$raw$xp <- rowMeans(cbind(x$raw$xpl, x$raw$xpr), na.rm = TRUE)
@@ -162,72 +219,29 @@ load_asc <- function(file,
       x$raw$ypl <- NULL
       x$raw$ypr <- NULL
     } else if (binocular_mode == "both") {
-      x_left <- x
-      x_right <- x
-
-      # left eye
-      x_left$raw$ps <- x$raw$psl
-      x_left$raw$xp <- x$raw$xpl
-      x_left$raw$yp <- x$raw$ypl
-      x_left$raw$psl <- NULL
-      x_left$raw$psr <- NULL
-      x_left$raw$xpl <- NULL
-      x_left$raw$xpr <- NULL
-      x_left$raw$ypl <- NULL
-      x_left$raw$ypr <- NULL
-
-      # right eye
-      x_right$raw$ps <- x$raw$psr
-      x_right$raw$xp <- x$raw$xpr
-      x_right$raw$yp <- x$raw$ypr
-      x_right$raw$psl <- NULL
-      x_right$raw$psr <- NULL
-      x_right$raw$xpl <- NULL
-      x_right$raw$xpr <- NULL
-      x_right$raw$ypl <- NULL
-      x_right$raw$ypr <- NULL
-
-      left_eyeris <- process_eyeris_data(
-        x_left,
-        block,
-        "left",
-        hz,
-        pupil_type,
-        file,
-        binocular,
-        binocular_mode
-      )
-      right_eyeris <- process_eyeris_data(
-        x_right,
-        block,
-        "right",
-        hz,
-        pupil_type,
-        file,
-        binocular,
-        binocular_mode
-      )
-
-      list_out <- list(
+      list_out$raw_binocular_object <- list(
         left = left_eyeris,
-        right = right_eyeris,
-        original_file = file
+        right = right_eyeris
+      )
+      return(list_out)
+    }
+
+    if (binocular_mode != "both") {
+      other_binocular_list_out <- process_eyeris_data(
+        x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
       )
 
-      class(list_out) <- "eyeris"
+      other_binocular_list_out$raw_binocular_object$left <- left_eyeris
+      other_binocular_list_out$raw_binocular_object$right <- right_eyeris
 
-      return(list_out)
+      return(other_binocular_list_out)
     }
   }
   # binocular handling end ------------------------------------------------
-
-  if (binocular_mode != "both") {
-    return(
-      process_eyeris_data(
-        x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
-      )
-    )
-  }
+  list_out <- process_eyeris_data(
+    x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
+  )
+  return(list_out)
 }
 
 #' Process eyeris data and create eyeris object
