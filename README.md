@@ -158,6 +158,126 @@ plot(eyeris_preproc,
 
 <img src="man/figures/README-timeseries-plot-8.png" width="100%" />
 
+## BIDS-like file structure
+
+`eyeris` organizes preprocessed data using a BIDS-like directory
+structure that supports both monocular and binocular eye-tracking data.
+The `bidsify()` function creates a standardized directory hierarchy with
+separate organization for different data types.
+
+### Monocular data structure
+
+For single-eye recordings, data are organized in the main eye directory:
+
+    bids_dir/
+    └── derivatives/
+        └── sub-001/
+            └── ses-01/
+                ├── sub-001.html
+                └── eye/
+                    ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye.csv
+                    ├── sub-001_ses-01_task-test_run-01_desc-confounds.csv
+                    ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil.csv
+                    ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil.csv
+                    ├── sub-001_ses-01_task-test_run-01_events.csv
+                    ├── sub-001_ses-01_task-test_run-01_blinks.csv
+                    ├── sub-001_ses-01_task-test_run-01_summary.csv
+                    ├── sub-001_ses-01_task-test_run-01.html
+                    └── source/
+                        ├── figures/
+                        │   └── run-01/
+                        │       ├── run-01_fig-1_deblink.jpg
+                        │       ├── run-01_fig-2_detrend.jpg
+                        │       ├── run-01_fig-3_interpolate.jpg
+                        │       ├── run-01_fig-4_lpfilt.jpg
+                        │       ├── run-01_fig-5_zscore.jpg
+                        │       ├── run-01_gaze_heatmap.png
+                        │       ├── run-01_detrend.png
+                        │       └── run-01_desc-progressive_summary.png
+                        └── logs/
+                            └── run-01_metadata.json
+
+### Binocular data structure
+
+For binocular recordings, data are organized into separate `left` and
+`right` eye subdirectories:
+
+    bids_dir/
+    └── derivatives/
+        └── sub-001/
+            └── ses-01/
+                ├── sub-001-L.html
+                ├── sub-001-R.html
+                ├── eye-L/
+                │   ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_events_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_blinks_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_summary_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_eye-L.html
+                │   └── source/
+                │       ├── figures/
+                │       │   └── run-01/
+                │       └── logs/
+                │           └── run-01_metadata.json
+                └── eye-R/
+                    ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_events_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_blinks_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_summary_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_eye-R.html
+                    └── source/
+                        ├── figures/
+                        │   └── run-01/
+                        └── logs/
+                            └── run-01_metadata.json
+
+### File naming convention
+
+All files follow a consistent BIDS-like naming pattern:
+
+- **Timeseries data**: `desc-timeseries_eye` (with `_eye-L` or `_eye-R`
+  suffix for binocular data)
+- **Confounds**: `desc-confounds` (with eye suffix for binocular data)
+- **Epochs**: `epoch-{event}_desc-preproc_pupil` (with eye suffix for
+  binocular data)
+- **Baselines**: `baseline-{event}_desc-preproc_pupil` (with eye suffix
+  for binocular data)
+- **Events**: `events` (with eye suffix for binocular data)
+- **Blinks**: `blinks` (with eye suffix for binocular data)
+- **Reports**: HTML files with eye suffix for binocular data
+
+### Events and blinks data
+
+The events and blinks CSV files contain the raw event markers and blink
+detection data as stored in the eyeris object:
+
+**Events file structure:** - `block`: Block/run number - `time`:
+Timestamp of the event - `text`: Raw event text from the ASC file -
+`text_unique`: Unique event identifier
+
+**Blinks file structure:** - `block`: Block/run number - `stime`: Start
+time of the blink - `etime`: End time of the blink - `dur`: Duration of
+the blink in milliseconds - `eye`: Eye identifier (L/R for binocular
+data)
+
+### Key features
+
+- **Organized Structure**: Clear separation between monocular and
+  binocular data
+- **Consistent Naming**: Standardized file naming across all data types
+- **Complete Documentation**: HTML reports with preprocessing summaries
+  and visualizations
+- **Quality Assessment**: Gaze heatmaps and binocular correlation plots
+  for data quality evaluation
+- **Reproducibility**: Metadata files documenting preprocessing
+  parameters and call stacks
+
 ## Logging `eyeris` commands with `eyelogger()`
 
 The `eyelogger()` utility lets you run any `eyeris` command (or block of
