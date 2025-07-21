@@ -138,12 +138,15 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     is_multiblock <- FALSE
   }
 
-  output_col <- paste0(prev_operation, "_", new_suffix)
-  if (grepl("_([^_]+)_\\1", output_col)) {
-    cli::cli_abort(paste(
-      "Attempting to create corrupted column name:", output_col,
-      "This indicates a pipeline processing error. Please check your data."
-    ))
+  # only create output_col and check for single-block data
+  if (!is_multiblock) {
+    output_col <- paste0(prev_operation, "_", new_suffix)
+    if (grepl("_([^_]+)_\\1", output_col)) {
+      cli::cli_abort(paste(
+        "Attempting to create corrupted column name:", output_col,
+        "This indicates a pipeline processing error. Please check your data."
+      ))
+    }
   }
 
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
