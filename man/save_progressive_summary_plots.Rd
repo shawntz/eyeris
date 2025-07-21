@@ -8,7 +8,8 @@ save_progressive_summary_plots(
   eyeris,
   out_dir,
   preview_n = 3,
-  plot_params = list()
+  plot_params = list(),
+  eye_suffix = NULL
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ save_progressive_summary_plots(
 \item{preview_n}{Number of preview samples for plotting}
 
 \item{plot_params}{Additional plotting parameters}
+
+\item{eye_suffix}{Optional eye suffix for binocular data}
 }
 \value{
 A character string containing markdown references to the saved plots
