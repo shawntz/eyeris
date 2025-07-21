@@ -4,7 +4,7 @@
 \alias{make_report}
 \title{Create eyeris report}
 \usage{
-make_report(eyeris, out, plots, ...)
+make_report(eyeris, out, plots, eye_suffix = NULL, ...)
 }
 \arguments{
 \item{eyeris}{An \code{eyeris} object containing preprocessing results}
@@ -12,6 +12,8 @@ make_report(eyeris, out, plots, ...)
 \item{out}{Output directory for the report}
 
 \item{plots}{Vector of plot file paths to include in the report}
+
+\item{eye_suffix}{Optional eye suffix (e.g., "eye-L", "eye-R") for binocular data}
 
 \item{...}{Additional parameters passed from bidsify}
 }
