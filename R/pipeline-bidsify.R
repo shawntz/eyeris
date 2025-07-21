@@ -324,6 +324,8 @@ run_bidsify <- function(eyeris,
           if (original_block_name %in% names(eyeris$confounds$epoched_timeseries[[epoch_name]])) {
             names(eyeris$confounds$epoched_timeseries[[epoch_name]])[names(eyeris$confounds$epoched_timeseries[[epoch_name]]) == original_block_name] <- new_block_name
           }
+        }
+      }
 
       if (!is.null(eyeris$confounds$epoched_epoch_wide)) {
         for (epoch_name in names(eyeris$confounds$epoched_epoch_wide)) {
