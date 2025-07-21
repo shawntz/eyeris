@@ -44,12 +44,12 @@ between the two eyes.
 }
 \examples{
 # For binocular data loaded with binocular_mode = "both"
-binocular_data <- load_asc("data.asc", binocular_mode = "both")
+binocular_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "both")
 plot_binocular_correlation(binocular_data)
 
 # For binocular data loaded with binocular_mode = "average"
 # (correlation plot will show original left vs right before averaging)
-avg_data <- load_asc("data.asc", binocular_mode = "average")
+avg_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "average")
 plot_binocular_correlation(avg_data)
 
 }
