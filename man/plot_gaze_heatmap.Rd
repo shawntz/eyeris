@@ -14,7 +14,8 @@ plot_gaze_heatmap(
   main = "Gaze Heatmap",
   xlab = "Screen X (pixels)",
   ylab = "Screen Y (pixels)",
-  sample_rate = NULL
+  sample_rate = NULL,
+  eye_suffix = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plot_gaze_heatmap(
 \item{ylab}{Y-axis label (default: "Screen Y (pixels)")}
 
 \item{sample_rate}{Sample rate in Hz (optional)}
+
+\item{eye_suffix}{Eye suffix for binocular data (default: NULL)}
 }
 \value{
 No return value; creates a heatmap plot
