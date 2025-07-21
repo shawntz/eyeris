@@ -1759,7 +1759,8 @@ run_bidsify <- function(eyeris,
     fig_paths <- c()
 
     # first check if there are multiple runs
-    if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+    # if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
+    if (actual_block_count > 1) {
       has_multiple_runs <- TRUE
       num_runs <- length(eyeris$timeseries)
     } else {
@@ -1777,7 +1778,9 @@ run_bidsify <- function(eyeris,
       pupil_steps <- grep("^pupil_", colnames(current_data), value = TRUE)
       run_fig_paths <- rep(NA, length(pupil_steps) * 2)
 
-      run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+      # use run_num override for single block
+      run_dir_num <- if (!has_multiple_runs && !is.null(run_num)) as.numeric(run_num) else i_run
+      run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
       check_and_create_dir(run_dir, verbose = verbose)
 
       # make step-by-step plots
@@ -1786,9 +1789,13 @@ run_bidsify <- function(eyeris,
       for (i in seq_along(pupil_steps)) {
         for (p in seq_along(plot_types)) {
           fig_name <- sprintf(
-            "run-%02d_fig-%d_desc-%s.jpg",
-            i_run, i, plot_types[p]
+            "run-%02d_fig-%d_desc-%s",
+            run_dir_num, i, plot_types[p]
           )
+          if (!is.null(eye_suffix)) {
+            fig_name <- paste0(fig_name, "_", eye_suffix)
+          }
+          fig_name <- paste0(fig_name, ".jpg")
           run_fig_paths[(i - 1) * 2 + p] <- file.path(run_dir, fig_name)
         }
       }
@@ -1834,12 +1841,17 @@ run_bidsify <- function(eyeris,
           fig_filename <- file.path(
             run_dir,
             sprintf(
-              "run-%02d_fig-full-%d_desc-%s.jpg",
-              i_run,
+              "run-%02d_fig-full-%d_desc-%s",
+              run_dir_num,
               i_step,
               plot_types[p]
             )
           )
+          if (!is.null(eye_suffix)) {
+            fig_filename <- paste0(fig_filename, "_", eye_suffix)
+          }
+          fig_filename <- paste0(fig_filename, ".jpg")
+
           run_fig_paths <- c(run_fig_paths, fig_filename)
 
           jpeg(fig_filename,
@@ -1882,17 +1894,26 @@ run_bidsify <- function(eyeris,
     for (i_run in block_numbers) {
       current_data <- eyeris
 
+      # use run_num override for single block
+      run_dir_num <- if (!has_multiple_runs && !is.null(run_num)) as.numeric(run_num) else i_run
+
       if (all(c("eye_x", "eye_y") %in% colnames(current_data$timeseries[[paste0("block_", i_run)]])) &&
           all(c("screen.x", "screen.y") %in% colnames(eyeris$info))) {
-        
-        run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+
+        run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
         check_and_create_dir(run_dir, verbose = verbose)
         
         heatmap_filename <- file.path(
           run_dir,
-          sprintf("run-%02d_gaze_heatmap.png", i_run)
+          sprintf("run-%02d_gaze_heatmap", i_run)
         )
-        
+
+        if (!is.null(eye_suffix)) {
+          heatmap_filename <- paste0(heatmap_filename, "_", eye_suffix)
+        }
+
+        heatmap_filename <- paste0(heatmap_filename, ".png")
+
         png(heatmap_filename,
           width = 8, height = 6, units = "in", res = 300, pointsize = 12
         )
@@ -1905,7 +1926,8 @@ run_bidsify <- function(eyeris,
             screen_height = eyeris$info$screen.y,
             n_bins = 50,
             col_palette = "viridis",
-            main = sprintf("Gaze Heatmap (run-%02d)", i_run)
+            main = sprintf("Gaze Heatmap (run-%02d)", i_run),
+            eye_suffix = eye_suffix
           )
         }, error = function(e) {
           plot(NA,
@@ -1923,6 +1945,52 @@ run_bidsify <- function(eyeris,
         
         if (verbose) {
           alert("info", "Created gaze heatmap for run-%02d", i_run)
+
+      # generate binocular correlation plots if binocular data is detected
+      # check for both regular binocular data and binocular objects
+      # has_binocular <- isTRUE(current_data$binocular) || !is.null(current_data$raw_binocular_object)
+      has_binocular <- !is.null(raw_binocular_object)
+
+      if (has_binocular) {
+        run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+        check_and_create_dir(run_dir, verbose = verbose)
+
+        correlation_filename <- file.path(
+          run_dir,
+          sprintf("run-%02d_binocular_correlation", i_run)
+        )
+
+        correlation_filename <- paste0(correlation_filename, ".png")
+
+        png(correlation_filename,
+          width = 12, height = 4, units = "in", res = 300, pointsize = 12
+        )
+
+        tryCatch({
+          plot_binocular_correlation(
+            eyeris = raw_binocular_object,
+            block = i_run,
+            variables = c("pupil", "x", "y"),
+            main = "",
+            col_palette = "viridis",
+            verbose = verbose
+          )
+        }, error = function(e) {
+          plot(NA,
+            xlim = c(0, 1), ylim = c(0, 1), type = "n",
+            xlab = "", ylab = "",
+            main = sprintf("Error creating binocular correlation for run-%02d", i_run)
+          )
+          text(0.5, 0.5,
+               paste("Error:", e$message),
+            cex = 0.8, col = "red"
+          )
+        })
+
+        dev.off()
+
+        if (verbose) {
+          alert("info", "[INFO] Created binocular correlation plot for run-%02d", i_run)
         }
       }
     }
@@ -1962,11 +2030,14 @@ run_bidsify <- function(eyeris,
             }
           )
 
+          # use run_num override for single block
+          run_dir_num <- if (!has_multiple_runs && !is.null(run_num)) as.numeric(run_num) else get_block_numbers(bn)
+
           run_dir <- file.path(
             figs_out,
             sprintf(
               "run-%02d",
-              get_block_numbers(bn)
+              run_dir_num
             )
           )
           check_and_create_dir(run_dir, verbose = verbose)
@@ -1997,9 +2068,16 @@ run_bidsify <- function(eyeris,
               y_label <- paste("pupil size", y_units)
 
               file_out <- file.path(epochs_out, sprintf(
-                "run-%02d_%s_%d.png",
-                get_block_numbers(bn), group, pstep
+                "run-%02d_%s_%d",
+                run_dir_num, group, pstep
               ))
+
+              if (!is.null(eye_suffix)) {
+                file_out <- paste0(file_out, "_", eye_suffix)
+              }
+
+              file_out <- paste0(file_out, ".png")
+
               png(file_out,
                 width = 3.25,
                 height = 2.5,
@@ -2016,7 +2094,7 @@ run_bidsify <- function(eyeris,
                     group, "\n", pupil_steps[pstep],
                     sprintf(
                       " (Run %d)",
-                      get_block_numbers(bn)
+                      run_dir_num
                     )
                   )
                 )
@@ -2034,6 +2112,7 @@ run_bidsify <- function(eyeris,
                   paste("eyeris: no finite pupillometry data to plot for
                         current epoch...", "plotting empty epoch plot.")
                 )
+                text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
               }
               dev.off()
             }
@@ -2049,10 +2128,16 @@ run_bidsify <- function(eyeris,
                 all(c("screen.x", "screen.y") %in% colnames(eyeris$info))) {
               
               heatmap_filename <- file.path(epochs_out, sprintf(
-                "run-%02d_%s_gaze_heatmap.png",
-                get_block_numbers(bn), group
+                "run-%02d_%s_gaze_heatmap",
+                run_dir_num, group
               ))
-              
+
+              if (!is.null(eye_suffix)) {
+                heatmap_filename <- paste0(heatmap_filename, "_", eye_suffix)
+              }
+
+              heatmap_filename <- paste0(heatmap_filename, ".png")
+
               png(heatmap_filename,
                 width = 6, height = 4, units = "in", res = 300, pointsize = 10
               )
@@ -2060,13 +2145,14 @@ run_bidsify <- function(eyeris,
               tryCatch({
                 plot_gaze_heatmap(
                   eyeris = group_df,
-                  block = get_block_numbers(bn),
+                  block = run_dir_num,
                   screen_width = eyeris$info$screen.x,
                   screen_height = eyeris$info$screen.y,
                   n_bins = 30,
                   col_palette = "viridis",
-                  main = sprintf("%s\nGaze Heatmap (run-%02d)", 
-                                group, get_block_numbers(bn))
+                  main = sprintf("%s\nGaze Heatmap (run-%02d)",
+                                group, run_dir_num),
+                  eye_suffix = eye_suffix
                 )
               }, error = function(e) {
                 plot(NA,
@@ -2098,43 +2184,65 @@ run_bidsify <- function(eyeris,
 
             epochs <- file.path(
               "source", "figures",
-              sprintf("run-%02d", get_block_numbers(bn)),
+              sprintf("run-%02d", run_dir_num),
               names(epochs_to_save)[i],
               epochs
             )
+
+            if (!is.null(eye_suffix)) {
+              epochs <- epochs[grepl(eye_suffix, epochs)]
+            }
 
             make_gallery(eyeris, epochs, report_path,
                          sprintf(
                            "%s%s",
                            names(epochs_to_save)[i],
-                           sprintf("_run-%02d", get_block_numbers(bn))
+                           sprintf("_run-%02d", run_dir_num)
                          ),
                          sub = sub, ses = ses, task = task,
-                         run = sprintf("%02d", get_block_numbers(bn))
+                         run = sprintf("%02d", run_dir_num),
+                         eye_suffix = eye_suffix
             )
           }
         }
       }
     }
-
-    # make final report
+    # generate report
     report_output <- make_report(
       eyeris,
       report_path,
       fig_paths,
+      eye_suffix = eye_suffix,
       sub = sub, ses = ses, task = task
     )
 
     render_report(report_output)
   }
-
-  invisible(NULL)
 }
 
+#' Make a BIDS-compatible filename
+#'
+#' Helper function to generate a BIDS-compatible filename based on the provided
+#' parameters.
+#'
+#' @param sub_id The subject ID
+#' @param task_name The task name
+#' @param run_num The run number
+#' @param desc The description
+#' @param ses_id The session ID
+#' @param epoch_name The epoch name
+#' @param epoch_events The epoch events
+#' @param baseline_events The baseline events
+#' @param baseline_type The baseline type
+#' @param eye_suffix The eye suffix
+#'
+#' @return A BIDS-compatible filename
+#'
+#' @keywords internal
 make_bids_fname <- function(sub_id, task_name, run_num,
                             desc = "", ses_id = NULL, epoch_name = NULL,
                             epoch_events = NULL, baseline_events = NULL,
-                            baseline_type = NULL) {
+                            baseline_type = NULL, eye_suffix = NULL) {
   desc_parts <- c(desc)
 
   if (!is.null(epoch_events)) {
@@ -2156,10 +2264,10 @@ make_bids_fname <- function(sub_id, task_name, run_num,
   if (!is.null(baseline_events)) {
     baseline_event_name <-
       if (is.character(baseline_events) && length(baseline_events) == 1) {
-      gsub("[*{}]", "", baseline_events)
-    } else {
-      "multi_baseline"
-    }
+        gsub("[*{}]", "", baseline_events)
+      } else {
+        "multi_baseline"
+      }
 
     bline_string <- "bline"
     if (!is.null(baseline_type)) {
@@ -2171,6 +2279,11 @@ make_bids_fname <- function(sub_id, task_name, run_num,
   }
 
   final_desc <- paste(desc_parts, collapse = "_")
+
+  # add eye suffix if provided
+  if (!is.null(eye_suffix)) {
+    final_desc <- paste0(final_desc, "_", eye_suffix)
+  }
 
   f <- paste0(
     "sub-", sub_id,
@@ -2220,5 +2333,3 @@ find_baseline_structure <- function(eyeris, epoch_label) {
   message("No baseline structure found for epoch label: ", epoch_label)
   NULL
 }
-
-# nolint end
