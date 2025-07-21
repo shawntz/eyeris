@@ -114,14 +114,24 @@
 #' }
 #'
 #' @export
-bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
-                    merge_epochs = FALSE, bids_dir = NULL,
-                    participant_id = NULL, session_num = NULL,
-                    task_name = NULL, run_num = NULL, merge_runs = FALSE,
-                    save_raw = TRUE, html_report = TRUE, report_seed = 0,
+bidsify <- function(eyeris,
+                    save_all = TRUE,
+                    epochs_list = NULL,
+                    merge_epochs = FALSE,
+                    bids_dir = NULL,
+                    participant_id = NULL,
+                    session_num = NULL,
+                    task_name = NULL,
+                    run_num = NULL,
+                    merge_runs = FALSE,
+                    save_raw = TRUE,
+                    html_report = TRUE,
+                    report_seed = 0,
                     report_epoch_grouping_var_col = "matched_event",
-                    verbose = TRUE, pdf_report = deprecated()) {
-  # deprecation warning for pdf_report
+                    verbose = TRUE,
+                    pdf_report = deprecated()) {
+
+  # deprecation warning for pdf_report ---------------------------------
   if (is_present(pdf_report)) {
     deprecate_warn(
       "1.3.0",
@@ -131,147 +141,213 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     html_report <- pdf_report
   }
 
-  # nolint start
-  # setup
-  if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
-    actual_block_count <- length(eyeris$timeseries)
+  # setup --------------------------------------------------------------
+  if (is_binocular_object(eyeris)) {
+    left_eyeris <- eyeris$left
+    right_eyeris <- eyeris$right
 
-    if (actual_block_count > 1) {
-      # case: multiple blocks: show warning if run_num was provided
-      if (!is.null(run_num)) {
-        warning(
-          paste0(
-            "Note: `run_num` is ignored when data contains multiple blocks.",
-            "Blocks will be automatically numbered as runs (block 1 = run-01,",
-            "block 2 = run-02, etc.) in the order they appeared/were recorded."
-          )
+    run_bidsify(left_eyeris,
+                save_all = save_all,
+                epochs_list = epochs_list,
+                merge_epochs = merge_epochs,
+                bids_dir = bids_dir,
+                participant_id = participant_id,
+                session_num = session_num,
+                task_name = task_name,
+                run_num = run_num,
+                merge_runs = merge_runs,
+                save_raw = save_raw,
+                html_report = html_report,
+                report_seed = report_seed,
+                report_epoch_grouping_var_col = report_epoch_grouping_var_col,
+                eye_suffix = "eye-L",
+                verbose = verbose,
+                raw_binocular_object = eyeris$raw_binocular_object)
+
+    run_bidsify(right_eyeris,
+                save_all = save_all,
+                epochs_list = epochs_list,
+                merge_epochs = merge_epochs,
+                bids_dir = bids_dir,
+                participant_id = participant_id,
+                session_num = session_num,
+                task_name = task_name,
+                run_num = run_num,
+                merge_runs = merge_runs,
+                save_raw = save_raw,
+                html_report = html_report,
+                report_seed = report_seed,
+                report_epoch_grouping_var_col = report_epoch_grouping_var_col,
+                eye_suffix = "eye-R",
+                verbose = verbose,
+                raw_binocular_object = eyeris$raw_binocular_object)
+  } else {
+    run_bidsify(eyeris,
+                save_all = save_all,
+                epochs_list = epochs_list,
+                merge_epochs = merge_epochs,
+                bids_dir = bids_dir,
+                participant_id = participant_id,
+                session_num = session_num,
+                task_name = task_name,
+                run_num = run_num,
+                merge_runs = merge_runs,
+                save_raw = save_raw,
+                html_report = html_report,
+                report_seed = report_seed,
+                report_epoch_grouping_var_col = report_epoch_grouping_var_col,
+                verbose = verbose,
+                raw_binocular_object = eyeris$raw_binocular_object)
+  }
+}
+
+#' Internal function to run bidsify on a single eye
+#' @param eyeris An eyeris object
+#' @param save_all Whether to save all data
+#' @param epochs_list A list of epochs to include
+#' @param merge_epochs Whether to merge epochs
+#' @param bids_dir The directory to save the bids data
+#' @param participant_id The participant id
+#' @param session_num The session number
+#' @param task_name The task name
+#' @param run_num The run number
+#' @param merge_runs Whether to merge runs
+#' @param save_raw Whether to save raw data
+#' @param html_report Whether to generate an html report
+#' @param report_seed The seed for the report
+#' @param report_epoch_grouping_var_col The column to use for grouping epochs in the report
+#' @param eye_suffix The suffix to add to the eye data
+#' @param verbose Whether to print verbose output
+#' @param raw_binocular_object The raw binocular object
+#'
+#' @return A eyeris object
+#'
+#' @keywords internal
+run_bidsify <- function(eyeris,
+                        save_all = TRUE,
+                        epochs_list = NULL,
+                        merge_epochs = FALSE,
+                        bids_dir = NULL,
+                        participant_id = NULL,
+                        session_num = NULL,
+                        task_name = NULL,
+                        run_num = NULL,
+                        merge_runs = FALSE,
+                        save_raw = TRUE,
+                        html_report = TRUE,
+                        report_seed = 0,
+                        report_epoch_grouping_var_col = "matched_event",
+                        eye_suffix = NULL,
+                        verbose = TRUE,
+                        raw_binocular_object = NULL) {
+
+  actual_block_count <- length(eyeris$timeseries)
+
+  if (actual_block_count > 1) {
+    # case: multiple blocks: show warning if run_num was provided
+    if (!is.null(run_num)) {
+      cli::cli_alert_warning(
+        paste0(
+          "[WARN] `run_num` is ignored when data contains multiple blocks.",
+          "Blocks will be automatically numbered as runs (block 1 = run-01,",
+          "block 2 = run-02, etc.) in the order they appeared/were recorded."
         )
+      )
+    }
+    has_multiple_runs <- TRUE
+    num_runs <- actual_block_count
+  } else {
+    # case: single block in list format, here allow run_num override
+    has_multiple_runs <- FALSE
+    num_runs <- 1
+
+    if (verbose) {
+      cli::cli_alert_info("[INFO] Only 1 block detected...")
+    }
+
+    original_block_name <- names(eyeris$timeseries)[1]
+    run_num_stripped <- as.character(as.integer(run_num))
+    new_block_name <- paste0("block_", run_num_stripped)
+
+    if (!is.null(run_num)) {
+      cli::cli_alert_info(
+        sprintf("[INFO] Using run_num = %s for single block data", run_num)
+      )
+
+      names(eyeris$timeseries)[1] <- new_block_name
+
+      if ("block" %in% colnames(eyeris$timeseries[[1]])) {
+        eyeris$timeseries[[1]]$block <- as.numeric(run_num)
       }
-      has_multiple_runs <- TRUE
-      num_runs <- actual_block_count
-    } else {
-      # case: single block in list format, here allow override
-      has_multiple_runs <- FALSE
-      num_runs <- 1
 
-      if (verbose) {
-        alert("info", "Only 1 block detected...")
+      names(eyeris$events)[1] <- new_block_name
+      if ("block" %in% colnames(eyeris$events[[1]])) {
+        eyeris$events[[1]]$block <- as.numeric(run_num)
       }
 
-      if (!is.null(run_num)) {
-        if (verbose) {
-          alert("info", "Using run_num = %s for single block data", run_num)
+      names(eyeris$blinks)[1] <- new_block_name
+      if ("block" %in% colnames(eyeris$blinks[[1]])) {
+        eyeris$blinks[[1]]$block <- as.numeric(run_num)
+      }
+
+      names(eyeris$latest)[1] <- new_block_name
+    }
+
+    epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
+    for (epoch_name in epoch_names) {
+      current_block_names <- names(eyeris[[epoch_name]])
+      is_epoch_list <- is.list(eyeris[[epoch_name]])
+      epoch_info <- eyeris[[epoch_name]]$info
+
+      if (is_epoch_list && original_block_name %in% current_block_names) {
+        current_block_names[current_block_names == original_block_name] <- new_block_name
+
+        if (!is.null(epoch_info)) {
+          names(epoch_info)[names(epoch_info) == original_block_name] <- new_block_name
+          eyeris[[epoch_name]]$info <- epoch_info  # <-- ensure changes are saved back
         }
 
-        original_block_name <- names(eyeris$timeseries)[1]
-        run_num_stripped <- as.character(as.integer(run_num))
-        new_block_name <- paste0("block_", run_num_stripped)
-        names(eyeris$timeseries)[1] <- new_block_name
-
-        if ("block" %in% colnames(eyeris$timeseries[[1]])) {
-          eyeris$timeseries[[1]]$block <- as.numeric(run_num)
-        }
-
-        if (is.list(eyeris$events) && length(eyeris$events) == 1) {
-          names(eyeris$events)[1] <- new_block_name
-          if ("block" %in% colnames(eyeris$events[[1]])) {
-            eyeris$events[[1]]$block <- as.numeric(run_num)
-          }
-        }
-
-        if (is.list(eyeris$blinks) && length(eyeris$blinks) == 1) {
-          names(eyeris$blinks)[1] <- new_block_name
-          if ("block" %in% colnames(eyeris$blinks[[1]])) {
-            eyeris$blinks[[1]]$block <- as.numeric(run_num)
-          }
-        }
-
-        epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
-        for (epoch_name in epoch_names) {
-          if (
-              is.list(eyeris[[epoch_name]]) && original_block_name
-              %in% names(eyeris[[epoch_name]])) {
-            names(eyeris[[epoch_name]])[names(eyeris[[epoch_name]]) ==
-                                          original_block_name] <- new_block_name
-
-            if (!is.null(eyeris[[epoch_name]]$info)) {
-              names(eyeris[[epoch_name]]$info)[
-                names(eyeris[[epoch_name]]$info) == original_block_name] <-
-                new_block_name
-            }
-
-            if (is.data.frame(eyeris[[epoch_name]][[new_block_name]]) &&
-                "block" %in%
-                colnames(eyeris[[epoch_name]][[new_block_name]])) {
-              eyeris[[epoch_name]][[new_block_name]]$block <-
-                as.numeric(run_num)
-            }
-          }
-        }
-
-        if (!is.null(eyeris$confounds)) {
-          if (!is.null(eyeris$confounds$unepoched_timeseries) &&
-              original_block_name %in%
-              names(eyeris$confounds$unepoched_timeseries)) {
-            names(eyeris$confounds$unepoched_timeseries)[
-              names(eyeris$confounds$unepoched_timeseries) ==
-                original_block_name] <- new_block_name
-          }
-
-          if (!is.null(eyeris$confounds$epoched_timeseries)) {
-            for (epoch_name in names(eyeris$confounds$epoched_timeseries)) {
-              if (original_block_name %in%
-                  names(eyeris$confounds$epoched_timeseries[[epoch_name]])) {
-                names(eyeris$confounds$epoched_timeseries[[epoch_name]])[
-                  names(eyeris$confounds$epoched_timeseries[[epoch_name]]) ==
-                    original_block_name] <- new_block_name
-              }
-            }
-          }
-
-          if (!is.null(eyeris$confounds$epoched_epoch_wide)) {
-            for (epoch_name in names(eyeris$confounds$epoched_epoch_wide)) {
-              if (original_block_name %in%
-                  names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])) {
-                names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])[
-                  names(eyeris$confounds$epoched_epoch_wide[[epoch_name]]) ==
-                    original_block_name] <- new_block_name
-              }
-            }
-          }
-        }
-
-        baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
-        for (baseline_name in baseline_names) {
-          if (is.list(eyeris[[baseline_name]]) && original_block_name
-              %in% names(eyeris[[baseline_name]])) {
-            names(eyeris[[baseline_name]])[
-              names(eyeris[[baseline_name]]) == original_block_name
-            ] <- new_block_name
-
-            if (is.data.frame(eyeris[[baseline_name]][[new_block_name]]) &&
-                "block" %in%
-                colnames(eyeris[[baseline_name]][[new_block_name]])) {
-              eyeris[[baseline_name]][[new_block_name]]$block <-
-                as.numeric(run_num)
-            }
-          }
-        }
-      } else {
-        original_block_name <- names(eyeris$timeseries)[1]
-        run_num <- as.numeric(sub("block_", "", original_block_name))
-
-        if (verbose) {
-          alert("info", "No value for run_num supplied...")
-          alert("info", "Using default run_num = %s for single block data",
-                run_num)
+        if (is.data.frame(eyeris[[epoch_name]][[new_block_name]]) && "block" %in% colnames(eyeris[[epoch_name]][[new_block_name]])) {
+          eyeris[[epoch_name]][[new_block_name]]$block <- as.numeric(run_num)
         }
       }
     }
-  } else {
-    # case: single df fallback, no override
-    has_multiple_runs <- FALSE
-    num_runs <- 1
+
+    if (!is.null(eyeris$confounds)) {
+      if (!is.null(eyeris$confounds$unepoched_timeseries) && original_block_name %in% names(eyeris$confounds$unepoched_timeseries)) {
+        names(eyeris$confounds$unepoched_timeseries)[names(eyeris$confounds$unepoched_timeseries) == original_block_name] <- new_block_name
+      }
+
+      if (!is.null(eyeris$confounds$epoched_timeseries)) {
+        for (epoch_name in names(eyeris$confounds$epoched_timeseries)) {
+          if (original_block_name %in% names(eyeris$confounds$epoched_timeseries[[epoch_name]])) {
+            names(eyeris$confounds$epoched_timeseries[[epoch_name]])[names(eyeris$confounds$epoched_timeseries[[epoch_name]]) == original_block_name] <- new_block_name
+          }
+
+      if (!is.null(eyeris$confounds$epoched_epoch_wide)) {
+        for (epoch_name in names(eyeris$confounds$epoched_epoch_wide)) {
+          if (original_block_name %in% names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])) {
+            names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])[names(eyeris$confounds$epoched_epoch_wide[[epoch_name]]) == original_block_name] <- new_block_name
+          }
+        }
+      }
+    }
+
+    baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
+    for (baseline_name in baseline_names) {
+      if (is.list(eyeris[[baseline_name]]) && original_block_name %in% names(eyeris[[baseline_name]])) {
+        names(eyeris[[baseline_name]])[names(eyeris[[baseline_name]]) == original_block_name] <- new_block_name
+
+        if (!is.null(eyeris[[baseline_name]]$info) && original_block_name %in% names(eyeris[[baseline_name]]$info)) {
+          names(eyeris[[baseline_name]]$info)[names(eyeris[[baseline_name]]$info) == original_block_name] <- new_block_name
+        }
+
+        if (is.data.frame(eyeris[[baseline_name]][[new_block_name]]) && "block" %in% colnames(eyeris[[baseline_name]][[new_block_name]])) {
+          eyeris[[baseline_name]][[new_block_name]]$block <- as.numeric(run_num)
+        }
+      }
+    }
+
   }
 
   sub <- participant_id
@@ -373,6 +449,12 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
   p <- file.path(p, "eye")
   check_and_create_dir(dir, p, verbose = verbose)
   block_numbers <- get_block_numbers(eyeris)
+  block_numbers <- block_numbers[block_numbers > 0]
+
+  # if single block and run_num is provided, override block_numbers for output
+  if (!has_multiple_runs && !is.null(run_num)) {
+    block_numbers <- as.numeric(run_num)
+  }
 
   if (!merge_epochs && any_epochs) {
     if (has_multiple_runs) {
@@ -386,13 +468,15 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         }
 
         if (merge_runs) {
-          epochs_with_runs <- do.call(
-            rbind, lapply(names(eyeris$timeseries), function(i) {
-              run_epochs <- epochs_to_save[[epoch_id]][[i]]
-              run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              run_epochs
-            })
-          )
+          epochs_with_runs <- do.call(rbind, lapply(names(eyeris$timeseries), function(i) {
+            run_epochs <- epochs_to_save[[epoch_id]][[i]]
+            run_epochs$run <- sprintf("%02d", get_block_numbers(i))
+            run_epochs
+          }))
+
+          if (verbose) {
+            cli::cli_alert_info("[INFO] Merging runs for epoch: %s", epoch_id)
+          }
 
           f <- make_bids_fname(
             sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
@@ -532,15 +616,9 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             }
 
             f <- make_bids_fname(
-              sub_id = sub,
-              ses_id = ses,
-              task_name = task,
-              run_num = sprintf("%02d", get_block_numbers(i)),
-              desc = "preproc_pupil",
-              epoch_name = current_label,
-              epoch_events = evs,
-              baseline_events = bline_evs,
-              baseline_type = bline_type
+              sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
+              desc = paste0("preproc_pupil_", current_label),
+              eye_suffix = eye_suffix
             )
 
             if (verbose) {
@@ -551,10 +629,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               )
             }
 
-            write.csv(run_epochs,
-              file = file.path(bids_dir, p, f),
-              row.names = FALSE
-            )
+            write.csv(run_epochs, file.path(dir, p, f), row.names = FALSE)
 
             if (verbose) {
               alert(
@@ -948,7 +1023,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           }
         } else {
           NULL
-        }
+        },
+        eye_suffix = NULL
       )
     }
 
@@ -969,7 +1045,7 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
     }
   }
 
-  if (save_raw) {
+  if (save_raw && is.null(eye_suffix)) {
     if (has_multiple_runs) {
       if (merge_runs) {
         # save all runs together
@@ -1045,36 +1121,88 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
           }
         })
       }
-    } else {
-      # single run fallback case
-      f <- make_bids_fname(
-        sub_id = sub,
-        ses_id = ses,
-        task_name = task,
-        run_num = sprintf("%02d", as.numeric(run_num)),
-        desc = "timeseries_pupil"
-      )
+    }
+  }
 
-      if (verbose) {
-        alert(
-          "info", "Writing single raw pupil timeseries to '%s'...",
-          file.path(dir, p, f)
+  # for binocular data, save timeseries in the appropriate left/right subdirectory
+  if (save_raw && !is.null(eye_suffix)) {
+    if (has_multiple_runs) {
+      if (merge_runs) {
+        # save all runs together
+        combined_timeseries <- do.call(
+          rbind, lapply(seq_len(num_runs), function(i) {
+            if (has_multiple_runs) {
+              run_data <- eyeris$timeseries[[i]]
+            } else {
+              run_data <- eyeris$timeseries
+            }
+            run_data$run <- sprintf("%02d", i)
+            run_data
+          })
         )
       }
 
-      timeseries_data <- if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
-        eyeris$timeseries[[1]]
+        f <- make_bids_fname(
+          sub_id = sub, ses_id = ses, task_name = task, run_num = run_num,
+          desc = "timeseries_all",
+          eye_suffix = eye_suffix
+        )
+
+        if (verbose) {
+          alert(
+            "info", "[INFO] Writing combined raw pupil timeseries to '%s'...",
+            file.path(dir, p, f)
+          )
+        }
+
+        write.csv(combined_timeseries,
+          file.path(dir, p, f),
+          row.names = FALSE
+        )
+
+        if (verbose) {
+          alert(
+            "success",
+            "[OKAY] Combined raw pupil timeseries written to: '%s'",
+            file.path(dir, p, f)
+          )
+        }
       } else {
-        eyeris$timeseries
-      }
+        # save each run separately
+        lapply(seq_len(num_runs), function(i) {
+          if (has_multiple_runs) {
+            run_data <- eyeris$timeseries[[i]]
+          } else {
+            run_data <- eyeris$timeseries
+          }
 
-      write.csv(timeseries_data, file.path(dir, p, f), row.names = FALSE)
+          f <- make_bids_fname(
+            sub_id = sub,
+            ses_id = ses,
+            task_name = task,
+            run_num = sprintf("%02d", i),
+            desc = "timeseries",
+            eye_suffix = eye_suffix
+          )
 
-      if (verbose) {
-        alert(
-          "success", "Single raw pupil timeseries written to: '%s'",
-          file.path(dir, p, f)
-        )
+          if (verbose) {
+            alert(
+              "info",
+              "[INFO] Writing run %02d raw pupil timeseries to '%s'...",
+              i, file.path(dir, p, f)
+            )
+          }
+
+          write.csv(run_data, file.path(dir, p, f), row.names = FALSE)
+
+          if (verbose) {
+            alert(
+              "success",
+              "[OKAY] Run %02d raw pupil timeseries written to: '%s'",
+              i, file.path(dir, p, f)
+            )
+          }
+        })
       }
     }
   }
@@ -1093,7 +1221,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
             "_task-", task,
             if (!merge_runs) sprintf("_run-%02d",
                                      as.numeric(block_numbers)) else "",
-            "_desc-confounds"
+            "_desc-confounds",
+            if (!is.null(eye_suffix)) paste0("_", eye_suffix) else ""
           )
         },
         verbose = verbose,
@@ -1118,7 +1247,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
                 "_task-", task,
                 if (!merge_runs) sprintf("_run-%02d",
                                          as.numeric(block)) else "",
-                "_desc-confounds"
+                "_desc-confounds",
+                if (!is.null(eye_suffix)) paste0("_", eye_suffix) else ""
               )
             },
             verbose = verbose,
@@ -1133,6 +1263,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
    !is.null(eyeris$confounds$epoched_epoch_wide) && any_epochs) {
     # create summary files for each block
     for (block in block_numbers) {
+      epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
+
       epoch_summary <- data.frame(
         epoch_type = names(eyeris)[grep("^epoch_", names(eyeris))],
         epoch_events = sapply(names(eyeris)[grep("^epoch_", names(eyeris))],
@@ -1308,7 +1440,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
         task_name = task,
         run_num = if (!merge_runs) sprintf("%02d",
                                            as.numeric(block)) else run_num,
-        desc = "epoch_summary"
+        desc = "epoch_summary",
+        eye_suffix = eye_suffix
       )
       summary_filepath <- file.path(dir, p, summary_filename)
 
@@ -1440,7 +1573,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               desc = paste0("confounds_epoch_wide_", event_unique),
               epoch_events = epoch_events_info,
               baseline_events = baseline_events_info,
-              baseline_type = baseline_type_info
+              baseline_type = baseline_type_info,
+              eye_suffix = eye_suffix
             )
             epoch_filepath <- file.path(epoch_folder, epoch_filename)
 
@@ -1580,7 +1714,8 @@ bidsify <- function(eyeris, save_all = TRUE, epochs_list = NULL,
               desc = paste0("confounds_steps_", event_unique),
               epoch_events = epoch_events_info,
               baseline_events = baseline_events_info,
-              baseline_type = baseline_type_info
+              baseline_type = baseline_type_info,
+              eye_suffix = eye_suffix
             )
             event_filepath <- file.path(epoch_folder, event_filename)
 
