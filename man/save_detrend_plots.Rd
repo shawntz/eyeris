@@ -4,7 +4,13 @@
 \alias{save_detrend_plots}
 \title{Save detrend plots for each block}
 \usage{
-save_detrend_plots(eyeris, out_dir, preview_n = 3, plot_params = list())
+save_detrend_plots(
+  eyeris,
+  out_dir,
+  preview_n = 3,
+  plot_params = list(),
+  eye_suffix = NULL
+)
 }
 \arguments{
 \item{eyeris}{An \code{eyeris} object containing preprocessing results}
@@ -14,6 +20,8 @@ save_detrend_plots(eyeris, out_dir, preview_n = 3, plot_params = list())
 \item{preview_n}{Number of preview samples for plotting}
 
 \item{plot_params}{Additional plotting parameters}
+
+\item{eye_suffix}{Optional eye suffix for binocular data}
 }
 \value{
 No return value; saves detrend plots to the specified directory
