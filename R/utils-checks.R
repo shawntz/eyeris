@@ -20,13 +20,13 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
   if (dir.exists(dir)) {
     if (verbose) {
       cli::cli_alert_warning(
-        sprintf("'%s' already exists. Skipping creation...", dir)
+        sprintf("[WARN] '%s' already exists. Skipping creation...", dir)
       )
     }
   } else {
     if (verbose) {
       cli::cli_alert_info(
-        sprintf("'%s' does not exist. Creating...", dir)
+        sprintf("[INFO] '%s' does not exist. Creating...", dir)
       )
     }
 
@@ -34,7 +34,7 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
 
     if (verbose) {
       cli::cli_alert_success(
-        sprintf("BIDS directory successfully created at: '%s'", dir)
+        sprintf("[OKAY] BIDS directory successfully created at: '%s'", dir)
       )
     }
   }
