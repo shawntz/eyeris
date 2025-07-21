@@ -47,8 +47,8 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
   }
 
   if (bins_per_second <= 0 ||
-        !is.numeric(bins_per_second) ||
-        bins_per_second != round(bins_per_second)) {
+      !is.numeric(bins_per_second) ||
+      bins_per_second != round(bins_per_second)) {
     cli::cli_abort("bins_per_second must be a positive integer")
   }
 
@@ -76,7 +76,7 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
         current_fs,
         call_info = call_info
       )
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(
         bin_pupil,
@@ -86,13 +86,18 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
         current_fs,
         call_info = call_info
       )
-    
+
     # return combined structure
-    return(list(
+    list_out <- list(
       left = left_result,
       right = right_result,
-      original_file = eyeris$original_file
-    ))
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
   } else {
     # regular eyeris object, process normally
     eyeris |>

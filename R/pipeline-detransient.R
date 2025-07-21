@@ -129,11 +129,16 @@ detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
       )
 
     # return combined structure
-    return(list(
+    list_out <- list(
       left = left_result,
       right = right_result,
-      original_file = eyeris$original_file
-    ))
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
   } else {
     # regular eyeris object, process normally
     eyeris |>

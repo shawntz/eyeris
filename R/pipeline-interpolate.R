@@ -77,7 +77,8 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
     list_out <- list(
       left = left_result,
       right = right_result,
-      original_file = eyeris$original_file
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
 
     class(list_out) <- "eyeris"

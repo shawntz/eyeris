@@ -468,6 +468,37 @@ glassbox <- function(file,
     }
     file <- pipeline[["load_asc"]](file, params, original_call)
 
+    # handle binocular objects
+    if (is_binocular_object(file)) {
+      if (verbose) {
+        cli::cli_alert_info("[INFO] Detected binocular data - processing left and right eyes separately")
+      }
+
+      # process left eye
+      left_result <- glassbox_internal(
+        file$left, interactive_preview, preview_n, preview_duration,
+        preview_window, verbose, params, original_call, seed
+      )
+
+      # process right eye
+      right_result <- glassbox_internal(
+        file$right, interactive_preview, preview_n, preview_duration,
+        preview_window, verbose, params, original_call, seed
+      )
+
+      # return combined structure
+      list_out <- list(
+        left = left_result,
+        right = right_result,
+        original_file = file$original_file,
+        raw_binocular_object = file$raw_binocular_object
+      )
+
+      class(list_out) <- "eyeris"
+
+      return(list_out)
+    }
+
     if (interactive_preview) {
       plot_with_seed(
         file = file,
