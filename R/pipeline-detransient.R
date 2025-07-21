@@ -118,7 +118,7 @@ detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
         mad_thresh,
         call_info = call_info
       )
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(
         detransient_pupil,
@@ -127,7 +127,7 @@ detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
         mad_thresh,
         call_info = call_info
       )
-    
+
     # return combined structure
     return(list(
       left = left_result,

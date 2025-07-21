@@ -64,7 +64,7 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
         verbose,
         call_info = call_info
       )
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(
         interpolate_pupil,
@@ -72,7 +72,7 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
         verbose,
         call_info = call_info
       )
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,

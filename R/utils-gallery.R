@@ -23,7 +23,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     report_filename <- paste0(report_filename, "_", params$eye_suffix)
   }
   report_filename <- paste0(report_filename, ".Rmd")
-  
+
   rmd_f <- file.path(out, report_filename)
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
@@ -44,7 +44,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   if (!is.null(params$eye_suffix)) {
     title <- paste0(title, " - ", params$eye_suffix)
   }
-  
+
   content <- paste0(
     "---\n",
     "title: '", title, "'\n",

@@ -52,6 +52,7 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `FALSE` to suppress messages about the current
 #' processing step and run silently
+#'
 #' @param pdf_report **(Deprecated)** Use `html_report = TRUE` instead
 #'
 #' @return Invisibly returns `NULL`. Called for its side effects
@@ -1917,7 +1918,7 @@ run_bidsify <- function(eyeris,
         png(heatmap_filename,
           width = 8, height = 6, units = "in", res = 300, pointsize = 12
         )
-        
+
         tryCatch({
           plot_gaze_heatmap(
             eyeris = current_data,
@@ -1940,9 +1941,9 @@ run_bidsify <- function(eyeris,
             cex = 0.8, col = "red"
           )
         })
-        
+
         dev.off()
-        
+
         if (verbose) {
           alert("info", "Created gaze heatmap for run-%02d", i_run)
 
@@ -2117,16 +2118,16 @@ run_bidsify <- function(eyeris,
               dev.off()
             }
           }
-          
+
           for (group in epoch_groups) {
             group_df <- epochs_to_save[[i]][[bn]]
             group_df <- group_df[
               group_df[[report_epoch_grouping_var_col]] == group,
             ]
-            
+
             if (all(c("eye_x", "eye_y") %in% colnames(group_df)) &&
                 all(c("screen.x", "screen.y") %in% colnames(eyeris$info))) {
-              
+
               heatmap_filename <- file.path(epochs_out, sprintf(
                 "run-%02d_%s_gaze_heatmap",
                 run_dir_num, group
@@ -2141,7 +2142,7 @@ run_bidsify <- function(eyeris,
               png(heatmap_filename,
                 width = 6, height = 4, units = "in", res = 300, pointsize = 10
               )
-              
+
               tryCatch({
                 plot_gaze_heatmap(
                   eyeris = group_df,
@@ -2165,16 +2166,16 @@ run_bidsify <- function(eyeris,
                   cex = 0.8, col = "red"
                 )
               })
-              
+
               dev.off()
-              
+
               if (verbose) {
                 alert("info", "Created gaze heatmap for epoch %s (run-%02d)", 
                       group, get_block_numbers(bn))
               }
             }
           }
-          
+
           if (any_epochs) {
             epochs <- list.files(epochs_out,
                                  full.names = FALSE,

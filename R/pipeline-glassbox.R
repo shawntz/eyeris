@@ -188,7 +188,6 @@ glassbox <- function(file,
 
   # override defaults
   params <- utils::modifyList(default_params, list(...))
-  print(params)
 
   # handle method parameter for bin operation
   if (

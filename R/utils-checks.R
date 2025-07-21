@@ -448,12 +448,12 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
 #'
 #' @keywords internal
 is_binocular_object <- function(x) {
-  is.list(x) && 
-  "left" %in% names(x) && 
-  "right" %in% names(x) && 
-  "binocular_mode" %in% names(x$left) && 
-  "binocular_mode" %in% names(x$right) && 
-  x$left$binocular_mode == "both" && 
+  is.list(x) &&
+  "left" %in% names(x) &&
+  "right" %in% names(x) &&
+  "binocular_mode" %in% names(x$left) &&
+  "binocular_mode" %in% names(x$right) &&
+  x$left$binocular_mode == "both" &&
   x$right$binocular_mode == "both"
 }
 
@@ -467,7 +467,7 @@ is_binocular_object <- function(x) {
 #'
 #' @keywords internal
 should_plot_binoc_cors <- function(x) {
-  is.list(x) && 
+  is.list(x) &&
   ("left" %in% names(x) && "right" %in% names(x)) ||
   (isTRUE(x$binocular))
 }

@@ -256,7 +256,7 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
         verbose,
         call_info = call_info
       )
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(
         epoch_pupil, "epoch", events, limits, label, calc_baseline,
@@ -264,7 +264,7 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
         verbose,
         call_info = call_info
       )
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,
