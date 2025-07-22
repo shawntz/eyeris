@@ -83,7 +83,9 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   block_heatmaps_md <- "\n## Gaze Heatmaps\n\n"
   for (run_id in run_ids) {
     heatmap_path <- file.path(
-      "source", "figures", sprintf("run-%02d", run_id),
+      "source",
+      "figures",
+      sprintf("run-%02d", run_id),
       sprintf("run-%02d_gaze_heatmap", run_id)
     )
     if (!is.null(eye_suffix)) {
@@ -94,8 +96,12 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     if (file.exists(file.path(out, heatmap_path))) {
       block_heatmaps_md <- paste0(
         block_heatmaps_md,
-        "### run-", sprintf("%02d", run_id), "\n\n",
-        "![](", heatmap_path, ")\n\n"
+        "### run-",
+        sprintf("%02d", run_id),
+        "\n\n",
+        "![](",
+        heatmap_path,
+        ")\n\n"
       )
     }
   }
@@ -104,14 +110,20 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   binocular_correlations_md <- "\n## Binocular Correlations\n\n"
   for (run_id in run_ids) {
     correlation_path <- file.path(
-      "source", "figures", sprintf("run-%02d", run_id),
+      "source",
+      "figures",
+      sprintf("run-%02d", run_id),
       sprintf("run-%02d_binocular_correlation.png", run_id)
     )
     if (file.exists(file.path(out, correlation_path))) {
       binocular_correlations_md <- paste0(
         binocular_correlations_md,
-        "### run-", sprintf("%02d", run_id), "\n\n",
-        "![](", correlation_path, ")\n\n"
+        "### run-",
+        sprintf("%02d", run_id),
+        "\n\n",
+        "![](",
+        correlation_path,
+        ")\n\n"
       )
     }
   }
@@ -121,7 +133,9 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   for (run_id in run_ids) {
     metadata_dir <- file.path(out, "source", "logs")
-    if (!dir.exists(metadata_dir)) dir.create(metadata_dir, recursive = TRUE)
+    if (!dir.exists(metadata_dir)) {
+      dir.create(metadata_dir, recursive = TRUE)
+    }
 
     run_metadata <- list(
       run = run_id,
@@ -129,8 +143,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       call_stack = sanitize_call_stack(eyeris$params)
     )
 
-    meta_path <- file.path(metadata_dir,
-                           sprintf("run-%02d_metadata.json", run_id))
+    meta_path <- file.path(metadata_dir, sprintf("run-%02d_metadata.json", run_id))
 
     if (!file.exists(meta_path)) {
       jsonlite::write_json(
@@ -141,9 +154,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       )
     } else {
       cli::cli_alert_warning(
-        sprintf("[WARN] Metadata file already exists for %s: %s",
-                run_id,
-                meta_path)
+        sprintf("[WARN] Metadata file already exists for %s: %s", run_id, meta_path)
       )
     }
 
@@ -152,15 +163,22 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
       callstack_md <- paste0(
         callstack_md,
-        "### run-", sprintf("%02d", run_id), "\n\n",
-        "**Source `.asc` file**: ", meta$source_file, "\n\n",
+        "### run-",
+        sprintf("%02d", run_id),
+        "\n\n",
+        "**Source `.asc` file**: ",
+        meta$source_file,
+        "\n\n",
         "**Call stack**:\n\n",
-        make_md_table_multiline(format_call_stack(meta$call_stack)), "\n\n"
+        make_md_table_multiline(format_call_stack(meta$call_stack)),
+        "\n\n"
       )
     } else {
       callstack_md <- paste0(
         callstack_md,
-        "### run-", sprintf("%02d", run_id), "\n\n",
+        "### run-",
+        sprintf("%02d", run_id),
+        "\n\n",
         "*No metadata found for this run*\n\n"
       )
     }
@@ -181,27 +199,44 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   content <- paste0(
     "---\n",
-    "title: '", title, "'\n",
-    "date: '", report_date, "'\n",
+    "title: '",
+    title,
+    "'\n",
+    "date: '",
+    report_date,
+    "'\n",
     "output:\n",
     "  html_document:\n",
     "    df_print: paged\n",
-    "    css: '", css, "'\n",
+    "    css: '",
+    css,
+    "'\n",
     "    toc: true\n",
     "    toc_float: true\n",
     "    toc_depth: 6\n",
     "    number_sections: false\n",
     "---\n\n",
-    "\n\n<img src='", sticker_path, "' class='top-right-image'>",
+    "\n\n<img src='",
+    sticker_path,
+    "' class='top-right-image'>",
     "\n\n---\n\n## Summary\n",
-    " - Subject ID: ", params$sub, "\n",
-    " - Session: ", params$ses, "\n",
-    " - Task: ", params$task, "\n",
+    " - Subject ID: ",
+    params$sub,
+    "\n",
+    " - Session: ",
+    params$ses,
+    "\n",
+    " - Task: ",
+    params$task,
+    "\n",
     eye_info,
     run_info,
-    " - BIDS Directory: ", out, "\n",
+    " - BIDS Directory: ",
+    out,
+    "\n",
     " - [`eyeris` version](https://github.com/shawntz/eyeris): ",
-    package_version, "\n",
+    package_version,
+    "\n",
     "\n\n<style type='text/css'>\n",
     "@import url('http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/",
     "bootstrap.min.css');\n",
@@ -211,11 +246,13 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     save_progressive_summary_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
     "\n\n## Preprocessed Data Previews\n\n",
     save_detrend_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
-    print_plots(plots, eye_suffix = eye_suffix), "\n",
+    print_plots(plots, eye_suffix = eye_suffix),
+    "\n",
     block_heatmaps_md,
     if (should_plot_binoc_cors(eyeris)) binocular_correlations_md else "",
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
-    make_md_table(eyeris$info), "\n",
+    make_md_table(eyeris$info),
+    "\n",
     "\n\n---\n\n## `eyeris` call stack\n\n",
     callstack_md,
     "\n\n---\n\n## Citation\n\n",
@@ -266,8 +303,7 @@ make_md_table <- function(df) {
 #' @keywords internal
 make_md_table_multiline <- function(df) {
   md_table <- paste0("| ", paste(colnames(df), collapse = " | "), " |\n")
-  md_table <- paste0(md_table, "|",
-                     paste(rep("---", ncol(df)), collapse = "|"), "|\n")
+  md_table <- paste0(md_table, "|", paste(rep("---", ncol(df)), collapse = "|"), "|\n")
   for (i in seq_len(nrow(df))) {
     row <- df[i, ]
     md_table <- paste0(
@@ -329,7 +365,9 @@ print_plots <- function(plots, eye_suffix = NULL) {
 
         md_plots <- paste0(
           md_plots,
-          "### run-", run_num, "\n\n"
+          "### run-",
+          run_num,
+          "\n\n"
         )
 
         # sort by fig number if possible
@@ -344,25 +382,31 @@ print_plots <- function(plots, eye_suffix = NULL) {
 
         placeholder_detected <- FALSE
         placeholder_patterns <- c(
-          "no_data", "placeholder", "error", "No_data", "NoData"
+          "no_data",
+          "placeholder",
+          "error",
+          "No_data",
+          "NoData"
         )
-        if (length(sorted_plot_paths) == 1 || all(sapply(sorted_plot_paths,
-          function(x) {
-            any(
-              grepl(
-                paste(placeholder_patterns, collapse = "|"),
-                x,
-                ignore.case = TRUE
+        if (
+          length(sorted_plot_paths) == 1 ||
+            all(sapply(sorted_plot_paths, function(x) {
+              any(
+                grepl(
+                  paste(placeholder_patterns, collapse = "|"),
+                  x,
+                  ignore.case = TRUE
+                )
               )
-            )
-          }
-        ))) {
+            }))
+        ) {
           placeholder_detected <- TRUE
         }
 
         if (placeholder_detected) {
           md_plots <- paste0(
-            md_plots, "> **No data available for this run.**\n\n"
+            md_plots,
+            "> **No data available for this run.**\n\n"
           )
         }
 
@@ -389,7 +433,9 @@ print_plots <- function(plots, eye_suffix = NULL) {
           md_plots <- paste0(
             md_plots,
             "### Detrend Diagnostics\n\n",
-            "![](", make_relative_path(detrend_plot_path), ")\n\n"
+            "![](",
+            make_relative_path(detrend_plot_path),
+            ")\n\n"
           )
         }
       }
@@ -412,8 +458,7 @@ print_plots <- function(plots, eye_suffix = NULL) {
 #' @return No return value; saves detrend plots to the specified directory
 #'
 #' @keywords internal
-save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
-                               plot_params = list(), eye_suffix = NULL) {
+save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL) {
   blocks <- names(eyeris$timeseries)
 
   for (block in blocks) {
@@ -434,8 +479,7 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
     pupil_data <- eyeris$timeseries[[block]]
 
     # only proceed if detrended values exist
-    if ("detrend_fitted_values" %in% names(pupil_data) &&
-          any(grepl("_detrend$", names(pupil_data)))) {
+    if ("detrend_fitted_values" %in% names(pupil_data) && any(grepl("_detrend$", names(pupil_data)))) {
       pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
       grDevices::jpeg(
@@ -501,9 +545,15 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
 #' @keywords internal
 #'
 #' @seealso \code{\link{plot.eyeris}}
-make_prog_summary_plot <- function(pupil_data, pupil_steps,
-                                   preview_n = 3, plot_params = list(),
-                                   run_id = "run-01", cex = 2.0, eye_suffix = NULL) {
+make_prog_summary_plot <- function(
+  pupil_data,
+  pupil_steps,
+  preview_n = 3,
+  plot_params = list(),
+  run_id = "run-01",
+  cex = 2.0,
+  eye_suffix = NULL
+) {
   plot_steps <- pupil_steps[!grepl("_z$", pupil_steps)]
 
   time_range <- range(pupil_data$time_secs, na.rm = TRUE)
@@ -515,7 +565,9 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
   for (i in seq_along(plot_steps)) {
     step_data <- pupil_data[[plot_steps[i]]][start_idx:end_idx]
     valid_indices <- is.finite(step_data)
-    if (sum(valid_indices) < 100) next
+    if (sum(valid_indices) < 100) {
+      next
+    }
     layer_data[[i]] <- list(
       time = time_subset[valid_indices],
       signal = step_data[valid_indices],
@@ -523,13 +575,16 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
     )
   }
   if (length(layer_data) < 2) {
-    plot(NA,
-      xlim = c(0, 1), ylim = c(0, 1), type = "n",
-      xlab = "", ylab = "", main = paste("Insufficient data for", run_id)
+    plot(
+      NA,
+      xlim = c(0, 1),
+      ylim = c(0, 1),
+      type = "n",
+      xlab = "",
+      ylab = "",
+      main = paste("Insufficient data for", run_id)
     )
-    text(0.5, 0.5, "Not enough preprocessing steps\nfor progressive summary",
-      cex = 1.2, col = "red"
-    )
+    text(0.5, 0.5, "Not enough preprocessing steps\nfor progressive summary", cex = 1.2, col = "red")
     return()
   }
 
@@ -548,13 +603,23 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
 
   layout(matrix(1:2, nrow = 2), heights = c(7, 2))
   par(mar = c(4, 5, 4, 2))
-  plot(NA,
-    xlim = x_range, ylim = y_range, type = "n",
-    xlab = "Time (seconds)", ylab = "Pupil Size",
-    main = paste("Progressive Preprocessing Summary -", run_id,
-                 if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else ""),
-    cex.main = cex, cex.lab = cex, cex.axis = cex,
-    yaxt = "n", bty = "n"
+  plot(
+    NA,
+    xlim = x_range,
+    ylim = y_range,
+    type = "n",
+    xlab = "Time (seconds)",
+    ylab = "Pupil Size",
+    main = paste(
+      "Progressive Preprocessing Summary -",
+      run_id,
+      if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else ""
+    ),
+    cex.main = cex,
+    cex.lab = cex,
+    cex.axis = cex,
+    yaxt = "n",
+    bty = "n"
   )
   axis(2, labels = FALSE)
   for (i in seq_along(layer_data)) {
@@ -562,9 +627,7 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
     time_offset <- layer$time + i * 0.1
     scale_factor <- 1 - i * 0.02
     signal_scaled <- layer$signal * scale_factor
-    lines(time_offset, signal_scaled,
-      col = colors[i], lwd = 4
-    )
+    lines(time_offset, signal_scaled, col = colors[i], lwd = 4)
   }
 
   par(mar = c(0, 0, 0, 0))
@@ -574,9 +637,15 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
     clean_name <- gsub("_", " > ", clean_name)
     clean_name
   })
-  legend("center",
-    legend = step_names, col = colors, lwd = 2, cex = cex - 0.5,
-    title = "Processing Steps", horiz = FALSE, bty = "n"
+  legend(
+    "center",
+    legend = step_names,
+    col = colors,
+    lwd = 2,
+    cex = cex - 0.5,
+    title = "Processing Steps",
+    horiz = FALSE,
+    bty = "n"
   )
   layout(1)
 }
@@ -595,8 +664,7 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
 #' @return A character string containing markdown references to the saved plots
 #'
 #' @keywords internal
-save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
-                                           plot_params = list(), eye_suffix = NULL) {
+save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL) {
   run_dirs <- list.dirs(
     file.path(out_dir, "source", "figures"),
     recursive = FALSE,
@@ -608,8 +676,10 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
 
   md_content <- paste(
     "This visualization shows how the pupil timeseries changes across",
-    "preprocessing steps. ", "Each layer represents a different",
-    "preprocessing step, with the earliest step at the back ", "and the",
+    "preprocessing steps. ",
+    "Each layer represents a different",
+    "preprocessing step, with the earliest step at the back ",
+    "and the",
     "final step at the front (via a subtle horizontal offset effect).\n\n"
   )
 
@@ -638,8 +708,12 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
       )
       md_content <- paste0(
         md_content,
-        "### ", run_id, "\n\n",
-        "![](", relative_path, ")\n\n"
+        "### ",
+        run_id,
+        "\n\n",
+        "![](",
+        relative_path,
+        ")\n\n"
       )
       next
     }
@@ -657,7 +731,9 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
     if (length(pupil_steps) < 2) {
       md_content <- paste0(
         md_content,
-        "### ", run_id, "\n\n",
+        "### ",
+        run_id,
+        "\n\n",
         "*Not enough preprocessing steps for progressive summary*\n\n"
       )
       next
@@ -685,8 +761,12 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
 
     md_content <- paste0(
       md_content,
-      "### ", run_id, "\n\n",
-      "![](", relative_path, ")\n\n"
+      "### ",
+      run_id,
+      "\n\n",
+      "![](",
+      relative_path,
+      ")\n\n"
     )
   }
 
