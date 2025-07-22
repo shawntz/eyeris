@@ -78,8 +78,7 @@ summarize_confounds <- function(eyeris) {
   hz <- eyeris$info$sample.rate
   if (is.null(hz)) {
     cli::cli_abort(
-      paste0("[EXIT] Sampling rate (Hz) must be present in tracker",
-             "metadata (i.e., eyeris$info)")
+      paste0("[EXIT] Sampling rate (Hz) must be present in tracker", "metadata (i.e., eyeris$info)")
     )
   }
 
@@ -93,7 +92,9 @@ summarize_confounds <- function(eyeris) {
 
     for (step_name in pupil_steps) {
       stepwise_pupil <- block_pupil_data[[step_name]]
-      if (is.null(stepwise_pupil)) next
+      if (is.null(stepwise_pupil)) {
+        next
+      }
 
       confounds_list[[block_name]][[step_name]] <-
         get_confounds_for_step(
@@ -139,11 +140,12 @@ summarize_confounds <- function(eyeris) {
 #'
 #' @keywords internal
 get_confounds_for_step <- function(
-    pupil_df,
-    pupil_vec,
-    screen_width,
-    screen_height,
-    hz) {
+  pupil_df,
+  pupil_vec,
+  screen_width,
+  screen_height,
+  hz
+) {
   if (!("is_blink" %in% names(pupil_df))) {
     pupil_df <- tag_blinks(pupil_df, pupil_vec)
   }
@@ -159,13 +161,17 @@ get_confounds_for_step <- function(
   total_time_ms <- (nrow(pupil_df) - 1) / hz * 1000
   is_invalid <- is.na(pupil_vec) | pupil_df$is_blink | pupil_df$is_offscreen
   gap_rle <-
-    if (!any(is.na(is_invalid))) rle(is_invalid) else list(lengths = 0,
-                                                           values = FALSE)
+    if (!any(is.na(is_invalid))) rle(is_invalid) else list(lengths = 0, values = FALSE)
   gap_lengths <- gap_rle$lengths[gap_rle$values]
   blink_rle <-
-    if (!any(is.na(pupil_df$is_blink))) rle(pupil_df$is_blink) else list(
-      lengths = 0, values = FALSE
-    )
+    if (!any(is.na(pupil_df$is_blink))) {
+      rle(pupil_df$is_blink)
+    } else {
+      list(
+        lengths = 0,
+        values = FALSE
+      )
+    }
   blink_durs <- blink_rle$lengths[blink_rle$values] / hz * 1000
   total_blink_time <- sum(pupil_df$is_blink) / hz * 1000
 
@@ -180,18 +186,12 @@ get_confounds_for_step <- function(
     n_invalid = sum(is_invalid),
     prop_invalid = mean(is_invalid),
     n_gaps = length(gap_lengths),
-    max_gap_n_samples =
-      if (length(gap_lengths)) max(gap_lengths) else 0,
-    max_gap_duration_ms =
-      if (length(gap_lengths)) max(gap_lengths) / hz * 1000 else 0,
-    min_gap_n_samples =
-      if (length(gap_lengths)) min(gap_lengths) else 0,
-    min_gap_duration_ms =
-      if (length(gap_lengths)) min(gap_lengths) / hz * 1000 else 0,
-    mean_gap_n_samples =
-      if (length(gap_lengths)) mean(gap_lengths) else 0,
-    mean_gap_duration_ms =
-      if (length(gap_lengths)) mean(gap_lengths) / hz * 1000 else 0,
+    max_gap_n_samples = if (length(gap_lengths)) max(gap_lengths) else 0,
+    max_gap_duration_ms = if (length(gap_lengths)) max(gap_lengths) / hz * 1000 else 0,
+    min_gap_n_samples = if (length(gap_lengths)) min(gap_lengths) else 0,
+    min_gap_duration_ms = if (length(gap_lengths)) min(gap_lengths) / hz * 1000 else 0,
+    mean_gap_n_samples = if (length(gap_lengths)) mean(gap_lengths) else 0,
+    mean_gap_duration_ms = if (length(gap_lengths)) mean(gap_lengths) / hz * 1000 else 0,
     screen_width = screen_width,
     screen_height = screen_height,
     gaze_x_var_px = var(pupil_df$eye_x, na.rm = TRUE),
@@ -200,8 +200,7 @@ get_confounds_for_step <- function(
       calc_euclidean_dist(pupil_df$eye_x, pupil_df$eye_y, cx, cy),
       na.rm = TRUE
     ),
-    mean_gaze_distance_from_center_norm =
-      mean(pupil_df$gaze_dist_from_center, na.rm = TRUE),
+    mean_gaze_distance_from_center_norm = mean(pupil_df$gaze_dist_from_center, na.rm = TRUE),
     prop_clipped = mean(pupil_vec %in% range(pupil_vec, na.rm = TRUE)),
     n_blinks = length(blink_durs),
     blink_rate_hz = length(blink_durs) / (total_time_ms / 1000),
@@ -290,8 +289,7 @@ normalize_gaze_coords <- function(pupil_df, screen_width, screen_height) {
 #'   - `is_offscreen`: Logical indicating if gaze is outside screen boundaries
 #'
 #' @keywords internal
-tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
-                            overshoot_buffer = 0.05) {
+tag_gaze_coords <- function(pupil_df, screen_width, screen_height, overshoot_buffer = 0.05) {
   pupil_df <- normalize_gaze_coords(
     pupil_df = pupil_df,
     screen_width = screen_width,
@@ -321,9 +319,7 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
 #' @return Invisibly returns a vector of created file paths
 #'
 #' @keywords internal
-export_confounds_to_csv <- function(confounds_list,
-                                    output_dir, filename_prefix, verbose,
-                                    run_num = NULL) {
+export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix, verbose, run_num = NULL) {
   # handle binocular objects
   if (is_binocular_object(confounds_list)) {
     # process left and right eyes independently with appropriate suffixes
@@ -356,7 +352,9 @@ export_confounds_to_csv <- function(confounds_list,
 
   for (block_name in names(confounds_list)) {
     block_data <- confounds_list[[block_name]]
-    if (length(block_data) == 0) next
+    if (length(block_data) == 0) {
+      next
+    }
 
     all_steps <- names(block_data)
     base_names <- sub("^pupil_", "", all_steps)
@@ -366,7 +364,9 @@ export_confounds_to_csv <- function(confounds_list,
     for (i in seq_along(all_steps)) {
       full_step_name <- all_steps[i]
       step_data <- block_data[[full_step_name]]
-      if (is.null(step_data)) next
+      if (is.null(step_data)) {
+        next
+      }
 
       if (!is.data.frame(step_data)) {
         step_data <- as.data.frame(step_data)
@@ -416,8 +416,7 @@ export_confounds_to_csv <- function(confounds_list,
 #' @return An updated `eyeris` object with epoched confounds
 #'
 #' @keywords internal
-calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
-                                        verbose = TRUE) {
+calculate_epoched_confounds <- function(eyeris, epoch_names, hz, verbose = TRUE) {
   # handle binocular objects
   if (is_binocular_object(eyeris)) {
     # process left and right eyes independently
@@ -445,13 +444,19 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
     eyeris$confounds$epoched_epoch_wide[[epoch_name]] <- list()
 
     for (block_name in names(eyeris[[epoch_name]])) {
-      if (block_name == "info") next
+      if (block_name == "info") {
+        next
+      }
 
       epoch_data <- eyeris[[epoch_name]][[block_name]]
 
-      if (is.null(epoch_data) ||
-            !is.data.frame(epoch_data) ||
-            nrow(epoch_data) == 0) next
+      if (
+        is.null(epoch_data) ||
+          !is.data.frame(epoch_data) ||
+          nrow(epoch_data) == 0
+      ) {
+        next
+      }
 
       epoch_ids <- unique(epoch_data$matched_event)
 
@@ -463,7 +468,9 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
       for (id in epoch_ids) {
         epoch_subset <- epoch_data[epoch_data$matched_event == id, ]
 
-        if (nrow(epoch_subset) == 0) next
+        if (nrow(epoch_subset) == 0) {
+          next
+        }
 
         epoch_duration_ms <- (nrow(epoch_subset) - 1) / hz * 1000
         block_blinks <- eyeris$blinks[[block_name]]
@@ -471,16 +478,16 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
         if ("baseline_period" %in% names(epoch_subset)) {
           baseline_start <- min(epoch_subset$baseline_period)
           baseline_end <- max(epoch_subset$baseline_period)
-          n_blinks_baseline <- sum(sapply(seq_len(nrow(block_blinks)),
-                                          function(i) {
-            max(block_blinks$stime[i], baseline_start) <=
-              min(block_blinks$etime[i], baseline_end)
+          n_blinks_baseline <- sum(sapply(seq_len(nrow(block_blinks)), function(i) {
+            max(block_blinks$stime[i], baseline_start) <= min(block_blinks$etime[i], baseline_end)
           }))
         }
         first_blink_time <- NA
         epoch_start_time <- min(epoch_subset$time_orig)
-        blinks_in_epoch <- block_blinks[block_blinks$stime >= epoch_start_time &
-          block_blinks$stime <= max(epoch_subset$time_orig), ]
+        blinks_in_epoch <- block_blinks[
+          block_blinks$stime >= epoch_start_time &
+            block_blinks$stime <= max(epoch_subset$time_orig),
+        ]
         if (nrow(blinks_in_epoch) > 0) {
           first_blink_time <-
             (min(blinks_in_epoch$stime) - epoch_start_time) / hz * 1000
@@ -503,7 +510,9 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
         for (step_name in pupil_steps) {
           pupil_vec <- epoch_subset[[step_name]]
 
-          if (all(is.na(pupil_vec))) next
+          if (all(is.na(pupil_vec))) {
+            next
+          }
 
           base_confounds <- get_confounds_for_step(
             pupil_df = epoch_subset,
@@ -515,8 +524,10 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
 
           pre_epoch_window <- c(epoch_start_time - 200, epoch_start_time)
           pre_epoch_data <- eyeris$timeseries[[block_name]] |>
-            dplyr::filter(time_orig >= pre_epoch_window[1] &
-                            time_orig <= pre_epoch_window[2])
+            dplyr::filter(
+              time_orig >= pre_epoch_window[1] &
+                time_orig <= pre_epoch_window[2]
+            )
 
           step_df <- data.frame(
             matched_event = id,
