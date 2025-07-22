@@ -908,9 +908,9 @@ evaluate_pipeline_step_params <- function(params) {
 #' @param params A list of pipeline step parameters
 #' @param original_call The original call to the glassbox function
 #' @param seed A random seed for reproducible plotting
-#' 
+#'
 #' @return An `eyeris` object with the processed data lists
-#' 
+#'
 #' @keywords internal
 glassbox_internal <- function(file,
                               interactive_preview = FALSE,
@@ -1281,7 +1281,7 @@ glassbox_internal <- function(file,
               if (verbose) {
                 cli::cli_alert_info(
                   paste(
-                    "Process cancelled after running the",
+                    "[INFO] Process cancelled after running the",
                     step_name, "step for", block_name, ".",
                     "Adjust your parameters and re-run!\n"
                   )
@@ -1349,7 +1349,7 @@ glassbox_internal <- function(file,
       cat("\n")
     }
   } else {
-    cli::cli_abort("No data blocks found error.")
+    cli::cli_abort("[EXIT] No data blocks found error.")
   }
 
   # generate confounds after all other steps

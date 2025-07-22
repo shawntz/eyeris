@@ -128,7 +128,7 @@ load_asc <- function(file,
 
   if (binocular) {
     cli::cli_alert_info(
-      "Binocular data detected. Processing {.val {binocular_mode}} mode."
+      "[INFO] Binocular data detected. Processing {.val {binocular_mode}} mode."
     )
 
     # create left and right eye data frames to store original binocular data before merging

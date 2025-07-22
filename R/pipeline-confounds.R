@@ -45,7 +45,7 @@ summarize_confounds <- function(eyeris) {
     # process left and right eyes independently
     left_result <- summarize_confounds(eyeris$left)
     right_result <- summarize_confounds(eyeris$right)
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,
@@ -58,7 +58,7 @@ summarize_confounds <- function(eyeris) {
 
     return(list_out)
   }
-  
+
   # regular eyeris object processing
   tryCatch(
     {
@@ -72,13 +72,13 @@ summarize_confounds <- function(eyeris) {
   available_blocks <- get_block_numbers(eyeris)
 
   if (is.null(available_blocks)) {
-    cli::cli_abort("eyeris no blocks found error.")
+    cli::cli_abort("[EXIT] eyeris no blocks found error.")
   }
 
   hz <- eyeris$info$sample.rate
   if (is.null(hz)) {
     cli::cli_abort(
-      paste0("Sampling rate (Hz) must be present in tracker",
+      paste0("[EXIT] Sampling rate (Hz) must be present in tracker",
              "metadata (i.e., eyeris$info)")
     )
   }
@@ -328,25 +328,25 @@ export_confounds_to_csv <- function(confounds_list,
   if (is_binocular_object(confounds_list)) {
     # process left and right eyes independently with appropriate suffixes
     left_files <- export_confounds_to_csv(
-      confounds_list$left, 
-      file.path(output_dir, "left"), 
+      confounds_list$left,
+      file.path(output_dir, "left"),
       function(block_name) paste0(filename_prefix, "_eye-L_", block_name),
-      verbose, 
+      verbose,
       run_num
     )
-    
+
     right_files <- export_confounds_to_csv(
-      confounds_list$right, 
-      file.path(output_dir, "right"), 
+      confounds_list$right,
+      file.path(output_dir, "right"),
       function(block_name) paste0(filename_prefix, "_eye-R_", block_name),
-      verbose, 
+      verbose,
       run_num
     )
-    
+
     # return combined file paths
     return(c(left_files, right_files))
   }
-  
+
   # regular confounds list processing
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
@@ -423,7 +423,7 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
     # process left and right eyes independently
     left_result <- calculate_epoched_confounds(eyeris$left, epoch_names, hz, verbose)
     right_result <- calculate_epoched_confounds(eyeris$right, epoch_names, hz, verbose)
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,
@@ -435,7 +435,7 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
 
     return(list_out)
   }
-  
+
   # regular eyeris object processing
   eyeris$confounds$epoched_timeseries <- list()
   eyeris$confounds$epoched_epoch_wide <- list()

@@ -341,7 +341,7 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
   }
 
   if (is.list(evs)) { # manual method (with only 1 block at a time)
-    warning(
+    cli::cli_alert_warning(
       paste0(
         "[WARN] Manual epoching only works with 1 block at a time.",
         "\nManual epoch input must be a list of 2 dataframes and 1 numeric:",
