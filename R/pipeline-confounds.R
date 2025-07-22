@@ -460,7 +460,6 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
       epoch_wide_confounds <- list()
       step_specific_confounds <- list()
 
-      # nolint start
       for (id in epoch_ids) {
         epoch_subset <- epoch_data[epoch_data$matched_event == id, ]
 
@@ -556,4 +555,3 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
 
   return(eyeris)
 }
-# nolint end
