@@ -59,10 +59,10 @@ manually.
   preprocessing step and its effect on the pupil signal (at the global
   and trial levels), as well as gaze heatmaps and binocular correlation
   plots to assess data quality and participant attention patterns.
-- `📦 BIDS-like File Structure`: Organizes preprocessed data using a
+- `📁 BIDS-like File Structure`: Organizes preprocessed data using a
   BIDS-like directory structure that supports both monocular and
   binocular eye-tracking data.
-- `📦 Logging Commands`: Automatically capture all console output and
+- `📝 Logging Commands`: Automatically capture all console output and
   errors to timestamped log files.
 
 ## 📖 Function Reference
