@@ -1,3 +1,33 @@
+## eyeris 2.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png){width="50"}
+
+This minor release introduces significant enhancements, new features, and robust improvements focusing on binocular data support, standardized logging, and improved reporting and development workflows, substantially elevating `eyeris'` functionality, robustness, and user experience.
+
+#### ✨ New features & enhancements
+
+- **Comprehensive Binocular Recording Support**: `eyeris` now provides full binocular recording support, resolving a critical data loading bug previously encountered with binocular EyeLink recording data files (#216 reported by @anomalosepia). This enhancement includes nesting `eyeris` class lists with `left` and `right` parent lists to explicitly separate left eye (`L`) and right eye (`R`) data. All downstream operations are now designed to treat `L` and/or `R` as separate entities, which ensures no cross-contamination between data from the two eyes during processing. Additionally, the `bidsify()` function now appends `_eye-L` and/or `_eye-R` to all derivatives and output HTML reports for binocular data for clear naming conventions. Pipeline functions such as `deblink()`, `interpolate()`, `lpfilt()`, `detransient()`, `zscore()`, `epoch()`, `downsample()`, `detrend()`, and `bin()` have been updated to handle binocular objects. A new `plot_binocular_correlation()` function has also been added, and vignettes were updated to explain binocular data structures and usage with `glassbox()`; by @shawntz in #228.
+
+- **Standardized Logging and Error Handling (using `cli` package)**: The `eyeris` package has undergone comprehensive refactoring to standardize and enhance the clarity of logging, warning, and error messages by transitioning fully to the `cli` R package. This replaces base R functions like `message()`, `stop()`, and `warning()` with `cli::cli_alert_*`, `cli::cli_abort()`, and `cli::cli_alert_warning()` respectively. Consistent log level tags such as `[INFO]`, `[OKAY]`, `[WARN]`, and `[EXIT]` are now implemented within `cli` alert messages for clearer categorization and improved message clarity and uniformity across various pipelines and functions. These changes have been applied across key components including `run_bidsify`, `detransient_pupil`, `pipeline-epoch.R`, `interpolate_pupil`, `make_epoch_label`, `check_and_create_dir`, `compute_baseline`, `load_asc`, `process_eyeris_data`, `pipeline-glassbox.R`, and `plot.eyeris.R`; by @shawntz in #229.
+
+- **Enhanced HTML Reports for Multi-Run Data:** HTML reports now accurately reflect all detected runs, including their metadata and call stack. This addresses a previous issue where only the latest run was shown, by modifying `make_report()` to detect all `run-xx` folders in `source/figures/` and updating `save_progressive_summary_plots()` to use the folder structure rather than `eyeris$timeseries` names. The metadata section now shows one line per run for the `.asc` file source and a formatted call stack for each run; by @shawntz in #224.
+
+- **Integration of Air R Formatter:** The project's R code formatting has transitioned to `Air`, an R formatter and language server written in Rust, replacing the lintr-based formatting system. This change involved deleting the `.github/workflows/linter.yml` file, introducing a new `.air.toml` configuration file, and adding two new GitHub workflows for format checking and suggestions. Furthermore, comprehensive code reformatting has been applied to all R source files to match Air's standards, ensuring better line breaks, consistent spacing, and improved argument alignment throughout the entire codebase; by @shawntz in #234.
+
+#### 🔧 Minor improvements and fixes
+
+- **Improved HTML Report Navigation:** The table of contents depth in HTML reports has been increased from 3 to 6 levels for better navigation by @shawntz in #229.
+
+- **Refined Makefile Targets:** New Makefile targets have been added for CRAN presubmission checks, CRAN submission, GitHub releases, and code formatting with `Air`. This also includes expanded dependency installation and improved output formatting and redirection for cleaner logs by @shawntz in #230.
+
+- **Event Placeholder Fix:** The event placeholder in example code and documentation has been updated from `{type}` to `{startstop}` to resolve a name conflict with an existing `type` column name in the derived `.csv` data files by @shawntz in #232.
+
+#### 📚 Documentation & Development Workflow Updates
+
+- **Revamped README:** The `README` has been significantly expanded with detailed feature highlights, a comprehensive function reference table, and new sections outlining the BIDS-like file structure for both monocular and binocular data. It also includes quick links to eyeris tutorials (R CRAN package vignettes), improved example output, and updated section headings for clarity and visual appeal; by @shawntz in #231.
+
+- **Enhanced Pull Request Template:** The GitHub pull request template has been updated to provide a more structured and detailed format for contributors. This update includes structured sections for problem description, key changes, and acknowledgments, providing detailed examples and expanding the breaking changes section into a more comprehensive checklist; by @shawntz in #227.
+
+- **Makefile Maintenance:** Comments and section headers in the Makefile have been updated and clarified for better maintainability by @shawntz in #230.
+
 ## eyeris 2.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png){width="50"}
 
 This is the largest update yet for `eyeris`, introducing a wealth of new features and addressing numerous small issues to significantly enhance functionality, robustness, and user experience (#215).
