@@ -70,14 +70,49 @@ winsorize <- function(eyeris, lower = 0.01, upper = 0.99, call_info = NULL) {
     call_info
   }
 
-  pipeline_handler(
-    eyeris,
-    winsorize_pupil,
-    "winsorize",
-    lower = lower,
-    upper = upper,
-    call_info = call_info
-  )
+  # handle binocular objects
+  if (eyeris:::is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+    )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+  }
 }
 
 # and voilà, you can now connect your custom extension
