@@ -94,5 +94,5 @@ ghpages:
 # clean up build directory ------------------------------------------------
 clean:
 	@echo "[INFO] Cleaning up eyeris package build directory..."
-	rm -rf build > /dev/null
+	rm -rf build 2>/dev/null || true
 	@echo "[OKAY] eyeris build directory cleaned!\n"
