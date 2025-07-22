@@ -67,7 +67,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Print plots in markdown format</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
       <div class="d-none name"><code>print_plots.Rd</code></div>
     </div>
 
@@ -77,7 +77,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">print_plots</span><span class="op">(</span><span class="va">plots</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">print_plots</span><span class="op">(</span><span class="va">plots</span>, eye_suffix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,6 +86,10 @@
 
 <dl><dt id="arg-plots">plots<a class="anchor" aria-label="anchor" href="#arg-plots"></a></dt>
 <dd><p>Vector of plot file paths</p></dd>
+
+
+<dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
+<dd><p>Optional eye suffix for binocular data</p></dd>
 
 </dl></div>
     <div class="section level2">

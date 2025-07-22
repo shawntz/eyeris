@@ -71,7 +71,7 @@ looked most frequently during the recording period."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create gaze heatmap of eye coordinates</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
       <div class="d-none name"><code>plot_gaze_heatmap.Rd</code></div>
     </div>
 
@@ -93,7 +93,8 @@ looked most frequently during the recording period.</p>
 <span>  main <span class="op">=</span> <span class="st">"Gaze Heatmap"</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Screen X (pixels)"</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="st">"Screen Y (pixels)"</span>,</span>
-<span>  sample_rate <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  sample_rate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  eye_suffix <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -140,6 +141,10 @@ looked most frequently during the recording period.</p>
 <dt id="arg-sample-rate">sample_rate<a class="anchor" aria-label="anchor" href="#arg-sample-rate"></a></dt>
 <dd><p>Sample rate in Hz (optional)</p></dd>
 
+
+<dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
+<dd><p>Eye suffix for binocular data (default: NULL)</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -150,22 +155,20 @@ looked most frequently during the recording period.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">eyeris_preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="plot_gaze_heatmap-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Block processing summary:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-in"><span><span class="fu">plot_gaze_heatmap</span><span class="op">(</span>eyeris <span class="op">=</span> <span class="va">eyeris_preproc</span>, block <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_gaze_heatmap-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

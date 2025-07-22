@@ -73,7 +73,7 @@ users to see how each step modifies the pupil signal."><meta property="og:image"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create progressive preprocessing summary plot</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
       <div class="d-none name"><code>make_prog_summary_plot.Rd</code></div>
     </div>
 
@@ -92,7 +92,8 @@ users to see how each step modifies the pupil signal.</p>
 <span>  preview_n <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  plot_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  run_id <span class="op">=</span> <span class="st">"run-01"</span>,</span>
-<span>  cex <span class="op">=</span> <span class="fl">2</span></span>
+<span>  cex <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  eye_suffix <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,6 +128,10 @@ Used for plot titles and file naming. Defaults to <code>"run-01"</code></p></dd>
 
 <dt id="arg-cex">cex<a class="anchor" aria-label="anchor" href="#arg-cex"></a></dt>
 <dd><p>Character expansion factor for plot elements. Defaults to <code>2.0</code></p></dd>
+
+
+<dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
+<dd><p>Optional eye suffix for binocular data</p></dd>
 
 </dl></div>
     <div class="section level2">

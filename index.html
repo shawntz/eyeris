@@ -109,7 +109,7 @@
 
 <!-- The goal of eyeris is to ... -->
 <div class="section level2">
-<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
+<h2 id="id_-motivation">💡 Motivation<a class="anchor" aria-label="anchor" href="#id_-motivation"></a>
 </h2>
 <p>Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. <code>eyeris</code>, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by <code>Nipype</code>.</p>
 <p><code>eyeris</code> also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by <code>fMRIPrep</code>). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).</p>
@@ -117,10 +117,177 @@
 <p><img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="id_-feature-highlights">🚀 Feature Highlights<a class="anchor" aria-label="anchor" href="#id_-feature-highlights"></a>
+</h2>
+<ul>
+<li>
+<code>📦 Modular Design</code>: Each preprocessing step is a standalone function that can be used independently or combined into custom pipelines.</li>
+<li>
+<code>🔍 Interactive Reports</code>: Beautiful, interactive HTML reports that summarize preprocessing steps and visualize data quality.</li>
+<li>
+<code>🔄 Flexible Extensions</code>: Easily create custom extensions to the preprocessing pipeline by writing your own functions and adding them to the pipeline.</li>
+<li>
+<code>📊 Data Quality Assessment</code>: Automatically generated figures of each preprocessing step and its effect on the pupil signal (at the global and trial levels), as well as gaze heatmaps and binocular correlation plots to assess data quality and participant attention patterns.</li>
+<li>
+<code>📁 BIDS-like File Structure</code>: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.</li>
+<li>
+<code>📝 Logging Commands</code>: Automatically capture all console output and errors to timestamped log files.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="id_-function-reference">📖 Function Reference<a class="anchor" aria-label="anchor" href="#id_-function-reference"></a>
+</h2>
+<p>Below is a table of all main <code>eyeris</code> functions, organized by feature, with links to their documentation and a brief description.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Feature</strong></th>
+<th><strong>Function Documentation</strong></th>
+<th><strong>Description</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pipeline Orchestration</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/glassbox.html">glassbox()</a></td>
+<td>Run the full recommended preprocessing pipeline with a single function call.</td>
+</tr>
+<tr class="even">
+<td><strong>BIDSify</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/bidsify.html">bidsify()</a></td>
+<td>Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance.</td>
+</tr>
+<tr class="odd">
+<td><strong>Data Loading</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/load_asc.html">load_asc()</a></td>
+<td>Load EyeLink <code>.asc</code> files into an <code>eyeris</code> object.</td>
+</tr>
+<tr class="even">
+<td><strong>Blink Artifact Removal</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/deblink.html">deblink()</a></td>
+<td>Remove blink artifacts by extending and masking missing samples.</td>
+</tr>
+<tr class="odd">
+<td><strong>Transient (Speed-Based) Artifact Removal</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/detransient.html">detransient()</a></td>
+<td>Remove transient spikes in the pupil signal using a moving MAD filter.</td>
+</tr>
+<tr class="even">
+<td><strong>Linear Interpolation</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/interpolate.html">interpolate()</a></td>
+<td>Interpolate missing (NA) samples in the pupil signal.</td>
+</tr>
+<tr class="odd">
+<td><strong>Lowpass Filtering</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/lpfilt.html">lpfilt()</a></td>
+<td>Apply a Butterworth lowpass filter to the pupil signal.</td>
+</tr>
+<tr class="even">
+<td><strong>Downsampling</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/downsample.html">downsample()</a></td>
+<td>Downsample the pupil signal to a lower sampling rate.</td>
+</tr>
+<tr class="odd">
+<td><strong>Binning</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/bin.html">bin()</a></td>
+<td>Bin pupil data into specified time bins using mean or median.</td>
+</tr>
+<tr class="even">
+<td><strong>Detrending</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/detrend.html">detrend()</a></td>
+<td>Remove slow drifts from the pupil signal by linear detrending.</td>
+</tr>
+<tr class="odd">
+<td><strong>Z-scoring</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/zscore.html">zscore()</a></td>
+<td>Z-score the pupil signal within each block.</td>
+</tr>
+<tr class="even">
+<td><strong>Confound Summary</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/summarize_confounds.html">summarize_confounds()</a></td>
+<td>Summarize and visualize confounding variables for each preprocessing step.</td>
+</tr>
+<tr class="odd">
+<td><strong>Epoching</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/epoch.html">epoch()</a></td>
+<td>Extract time-locked epochs from the continuous pupil signal.</td>
+</tr>
+<tr class="even">
+<td><strong>Plotting</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/plot.eyeris.html">plot()</a></td>
+<td>Plot the pupil signal and preprocessing steps.</td>
+</tr>
+<tr class="odd">
+<td><strong>Gaze Heatmaps</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html">plot_gaze_heatmap()</a></td>
+<td>Generate heatmaps of gaze position across the screen.</td>
+</tr>
+<tr class="even">
+<td><strong>Binocular Correlation</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.html">plot_binocular_correlation()</a></td>
+<td>Compute correlation between left and right eye pupil signals.</td>
+</tr>
+<tr class="odd">
+<td><strong>Demo (Monocular) Dataset</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset()</a></td>
+<td>Load a demo monocular recording EyeLink dataset for testing and examples.</td>
+</tr>
+<tr class="even">
+<td><strong>Demo (Binocular) Dataset</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/eyelink_asc_binocular_demo_dataset.html">eyelink_asc_binocular_demo_dataset()</a></td>
+<td>Load a demo binocular recording EyeLink dataset for testing and examples.</td>
+</tr>
+<tr class="odd">
+<td><strong>Logging Commands</strong></td>
+<td><a href="https://shawnschwartz.com/eyeris/reference/eyelogger.html">eyelogger()</a></td>
+<td>Automatically capture all console output and errors to timestamped log files.</td>
+</tr>
+<tr class="even">
+<td><strong>Custom Extensions</strong></td>
+<td><em>See vignette: <a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">Custom Extensions</a></em></td>
+<td>Learn how to write your own pipeline steps and integrate them with <code>eyeris</code>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For a full list of all functions, see the <a href="https://shawnschwartz.com/eyeris/reference/index.html">eyeris reference index</a>.</p>
+</blockquote>
+</div>
+<div class="section level2">
+<h2 id="id_-tutorials">📚 Tutorials<a class="anchor" aria-label="anchor" href="#id_-tutorials"></a>
 </h2>
 <div class="section level3">
-<h3 id="stable-release-from-cran">stable release from CRAN<a class="anchor" aria-label="anchor" href="#stable-release-from-cran"></a>
+<h3 id="id_-start-here">🌟 Start Here<a class="anchor" aria-label="anchor" href="#id_-start-here"></a>
+</h3>
+<ul>
+<li><a href="https://shawnschwartz.com/eyeris/articles/complete-pipeline.html">✈️ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough</a></li>
+<li><a href="https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html">📁 Extracting Data Epochs and Exporting Pupil Data</a></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="id_-pupil-data-quality-control">👀 Pupil Data Quality Control<a class="anchor" aria-label="anchor" href="#id_-pupil-data-quality-control"></a>
+</h3>
+<ul>
+<li><a href="https://shawnschwartz.com/eyeris/articles/reports.html">🔎 QC with Interactive Reports</a></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="id_-advanced-topics">💯 Advanced Topics<a class="anchor" aria-label="anchor" href="#id_-advanced-topics"></a>
+</h3>
+<ul>
+<li><a href="https://shawnschwartz.com/eyeris/articles/anatomy.html">🫀 Anatomy of an <code>eyeris</code> Object</a></li>
+<li><a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">🛠️ Building Your Own Custom Pipeline Extensions</a></li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="id_-package-installation">📦 Package Installation<a class="anchor" aria-label="anchor" href="#id_-package-installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="stable-release-from-cran">Stable release from CRAN<a class="anchor" aria-label="anchor" href="#stable-release-from-cran"></a>
 </h3>
 <p>You can install the stable release of <a href="https://cran.r-project.org/package=eyeris" class="external-link"><code>eyeris</code> from CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -131,7 +298,7 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="development-version-from-github">development version from GitHub<a class="anchor" aria-label="anchor" href="#development-version-from-github"></a>
+<h3 id="development-version-from-github">Development version from GitHub<a class="anchor" aria-label="anchor" href="#development-version-from-github"></a>
 </h3>
 <p>You can install the development version of <a href="https://github.com/shawntz/eyeris" class="external-link"><code>eyeris</code> from GitHub</a> with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -140,10 +307,10 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="id_️-example">✏️ Example<a class="anchor" aria-label="anchor" href="#id_%EF%B8%8F-example"></a>
 </h2>
 <div class="section level3">
-<h3 id="the-glassbox-prescription-function">the <code>glassbox()</code> “prescription” function<a class="anchor" aria-label="anchor" href="#the-glassbox-prescription-function"></a>
+<h3 id="the-glassbox-prescription-function">The <code>glassbox()</code> “prescription” function<a class="anchor" aria-label="anchor" href="#the-glassbox-prescription-function"></a>
 </h3>
 <p>This is a basic example of how to use <code>eyeris</code> out of the box with our very <em>opinionated</em> set of steps and parameters that one should start out with when preprocessing pupillometry data. Critically, this is a “glassbox” – as opposed to a “blackbox” – since each step and parameter implemented herein is fully open and accessible to you. We designed each pipeline step / function to be like legos – they are intentionally and carefully designed in a way that allows you to flexibly construct and compare different pipelines.</p>
 <p>We hope you enjoy! -shawn</p>
@@ -161,20 +328,22 @@
 <span>  <span class="va">demo_data</span>,</span>
 <span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; ℹ [ INFO ] - Processing block: block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; ! [ SKIP ] - Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; ! [ SKIP ] - Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; ! [ SKIP ] - Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [  OK  ] - Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; ℹ [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; ! [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; ! [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; ! [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; ℹ [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; ℹ [INFO] block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
+<span><span class="co">#&gt; ✔ [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="step-wise-correction-of-pupillary-signal">step-wise correction of pupillary signal<a class="anchor" aria-label="anchor" href="#step-wise-correction-of-pupillary-signal"></a>
+<h3 id="step-wise-correction-of-pupillary-signal">Step-wise correction of pupillary signal<a class="anchor" aria-label="anchor" href="#step-wise-correction-of-pupillary-signal"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eyeris_preproc</span>, add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -183,7 +352,7 @@
 </div>
 </div>
 <div class="section level3">
-<h3 id="final-pre-post-correction-of-pupillary-signal-raw--preprocessed">final pre-post correction of pupillary signal (raw ➡ preprocessed)<a class="anchor" aria-label="anchor" href="#final-pre-post-correction-of-pupillary-signal-raw--preprocessed"></a>
+<h3 id="final-pre-post-correction-of-pupillary-signal-raw--preprocessed">Final pre-post correction of pupillary signal (raw ➡ preprocessed)<a class="anchor" aria-label="anchor" href="#final-pre-post-correction-of-pupillary-signal-raw--preprocessed"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">start_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">eyeris_preproc</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span></span>
@@ -194,12 +363,12 @@
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">end_time</span><span class="op">)</span>,</span>
 <span>  add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ! [ INFO ] - Plotting block 1 from possible blocks: 1</span></span>
-<span><span class="co">#&gt; ℹ [ INFO ] - Plotting with sampling rate: 1000 Hz</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ [INFO] Plotting block 1 from possible blocks: 1</span></span>
+<span><span class="co">#&gt; ℹ [INFO] Plotting with sampling rate: 1000 Hz</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"><img src="reference/figures/README-timeseries-plot-5.png" width="100%"><img src="reference/figures/README-timeseries-plot-6.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [ INFO ] - Creating progressive summary plot for block_1</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [INFO] Creating progressive summary plot for block_1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-7.png" width="100%"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [  OK  ] - Progressive summary plot created successfully!</span></span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [OKAY] Progressive summary plot created successfully!</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">plot_gaze_heatmap</span>(</span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">eyeris =</span> eyeris_preproc,</span>
@@ -209,8 +378,253 @@
 </div>
 </div>
 <div class="section level2">
+<h2 id="bids-like-file-structure">BIDS-like file structure<a class="anchor" aria-label="anchor" href="#bids-like-file-structure"></a>
+</h2>
+<p><code>eyeris</code> organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data. The <code><a href="reference/bidsify.html">bidsify()</a></code> function creates a standardized directory hierarchy with separate organization for different data types.</p>
+<div class="section level3">
+<h3 id="monocular-data-structure">Monocular data structure<a class="anchor" aria-label="anchor" href="#monocular-data-structure"></a>
+</h3>
+<p>For single-eye recordings, data are organized in the main eye directory:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>bids_dir<span class="sc">/</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>└── derivatives<span class="sc">/</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    └── sub<span class="dv">-001</span><span class="sc">/</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>        └── ses<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>            ├── sub<span class="fl">-001.</span>html</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>            └── eye<span class="sc">/</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye.csv</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds.csv</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil.csv</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil.csv</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events.csv</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks.csv</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary.csv</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="fl">-01.</span>html</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>                └── source<span class="sc">/</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>                    ├── figures<span class="sc">/</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>                    │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-1</span>_deblink.jpg</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-2</span>_detrend.jpg</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-3</span>_interpolate.jpg</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-4</span>_lpfilt.jpg</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-5</span>_zscore.jpg</span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_gaze_heatmap.png</span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_detrend.png</span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>                    │       └── run<span class="dv">-01</span>_desc<span class="sc">-</span>progressive_summary.png</span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>                    └── logs<span class="sc">/</span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a>                        └── run<span class="dv">-01</span>_metadata.json</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="binocular-data-structure">Binocular data structure<a class="anchor" aria-label="anchor" href="#binocular-data-structure"></a>
+</h3>
+<p>For binocular recordings, data are organized into separate <code>left</code> and <code>right</code> eye subdirectories:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>bids_dir<span class="sc">/</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>└── derivatives<span class="sc">/</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    └── sub<span class="dv">-001</span><span class="sc">/</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>        └── ses<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>            ├── sub<span class="dv">-001</span><span class="sc">-</span>L.html</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>            ├── sub<span class="dv">-001</span><span class="sc">-</span>R.html</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>            ├── eye<span class="sc">-</span>L<span class="sc">/</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary_eye<span class="sc">-</span>L.csv</span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_eye<span class="sc">-</span>L.html</span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>            │   └── source<span class="sc">/</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>            │       ├── figures<span class="sc">/</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>            │       │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>            │       └── logs<span class="sc">/</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>            │           └── run<span class="dv">-01</span>_metadata.json</span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>            └── eye<span class="sc">-</span>R<span class="sc">/</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary_eye<span class="sc">-</span>R.csv</span>
+<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_eye<span class="sc">-</span>R.html</span>
+<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a>                └── source<span class="sc">/</span></span>
+<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a>                    ├── figures<span class="sc">/</span></span>
+<span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a>                    │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb10-33"><a href="#cb10-33" tabindex="-1"></a>                    └── logs<span class="sc">/</span></span>
+<span id="cb10-34"><a href="#cb10-34" tabindex="-1"></a>                        └── run<span class="dv">-01</span>_metadata.json</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="file-naming-convention">File naming convention<a class="anchor" aria-label="anchor" href="#file-naming-convention"></a>
+</h3>
+<p>All files follow a consistent BIDS-like naming pattern:</p>
+<ul>
+<li>
+<strong>Timeseries data</strong>: <code>desc-timeseries_eye</code> (with <code>_eye-L</code> or <code>_eye-R</code> suffix for binocular data)</li>
+<li>
+<strong>Confounds</strong>: <code>desc-confounds</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Epochs</strong>: <code>epoch-{event}_desc-preproc_pupil</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Baselines</strong>: <code>baseline-{event}_desc-preproc_pupil</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Events</strong>: <code>events</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Blinks</strong>: <code>blinks</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Reports</strong>: HTML files with eye suffix for binocular data</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="events-and-blinks-data">Events and blinks data<a class="anchor" aria-label="anchor" href="#events-and-blinks-data"></a>
+</h3>
+<p>The events and blinks CSV files contain the raw event markers and blink detection data as stored in the eyeris object:</p>
+<p><strong>Events file structure:</strong> - <code>block</code>: Block/run number - <code>time</code>: Timestamp of the event - <code>text</code>: Raw event text from the ASC file - <code>text_unique</code>: Unique event identifier</p>
+<p><strong>Blinks file structure:</strong> - <code>block</code>: Block/run number - <code>stime</code>: Start time of the blink - <code>etime</code>: End time of the blink - <code>dur</code>: Duration of the blink in milliseconds - <code>eye</code>: Eye identifier (L/R for binocular data)</p>
+</div>
+<div class="section level3">
+<h3 id="key-features">Key features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+</h3>
+<ul>
+<li>
+<strong>Organized Structure</strong>: Clear separation between monocular and binocular data</li>
+<li>
+<strong>Consistent Naming</strong>: Standardized file naming across all data types</li>
+<li>
+<strong>Complete Documentation</strong>: HTML reports with preprocessing summaries and visualizations</li>
+<li>
+<strong>Quality Assessment</strong>: Gaze heatmaps and binocular correlation plots for data quality evaluation</li>
+<li>
+<strong>Reproducibility</strong>: Metadata files documenting preprocessing parameters and call stacks</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
 <h2 id="logging-eyeris-commands-with-eyelogger">Logging <code>eyeris</code> commands with <code>eyelogger()</code>
 <a class="anchor" aria-label="anchor" href="#logging-eyeris-commands-with-eyelogger"></a>
+</h2>
+</div>
+<div class="section level2">
+<h2 id="id_-bids-like-file-structure">📁 BIDS-like file structure<a class="anchor" aria-label="anchor" href="#id_-bids-like-file-structure"></a>
+</h2>
+<p><code>eyeris</code> organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data. The <code><a href="reference/bidsify.html">bidsify()</a></code> function creates a standardized directory hierarchy with separate organization for different data types.</p>
+<div class="section level3">
+<h3 id="monocular-data-structure-1">Monocular data structure<a class="anchor" aria-label="anchor" href="#monocular-data-structure-1"></a>
+</h3>
+<p>For single-eye recordings, data are organized in the main eye directory:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>bids_dir<span class="sc">/</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>└── derivatives<span class="sc">/</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    └── sub<span class="dv">-001</span><span class="sc">/</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>        └── ses<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>            ├── sub<span class="fl">-001.</span>html</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>            └── eye<span class="sc">/</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye.csv</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds.csv</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil.csv</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil.csv</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events.csv</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks.csv</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary.csv</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="fl">-01.</span>html</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>                └── source<span class="sc">/</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>                    ├── figures<span class="sc">/</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>                    │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-1</span>_deblink.jpg</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-2</span>_detrend.jpg</span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-3</span>_interpolate.jpg</span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-4</span>_lpfilt.jpg</span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_fig<span class="dv">-5</span>_zscore.jpg</span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_gaze_heatmap.png</span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a>                    │       ├── run<span class="dv">-01</span>_detrend.png</span>
+<span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a>                    │       └── run<span class="dv">-01</span>_desc<span class="sc">-</span>progressive_summary.png</span>
+<span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a>                    └── logs<span class="sc">/</span></span>
+<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a>                        └── run<span class="dv">-01</span>_metadata.json</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="binocular-data-structure-1">Binocular data structure<a class="anchor" aria-label="anchor" href="#binocular-data-structure-1"></a>
+</h3>
+<p>For binocular recordings, data are organized into separate <code>left</code> and <code>right</code> eye subdirectories:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>bids_dir<span class="sc">/</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>└── derivatives<span class="sc">/</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    └── sub<span class="dv">-001</span><span class="sc">/</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>        └── ses<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>            ├── sub<span class="dv">-001</span><span class="sc">-</span>L.html</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>            ├── sub<span class="dv">-001</span><span class="sc">-</span>R.html</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>            ├── eye<span class="sc">-</span>L<span class="sc">/</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary_eye<span class="sc">-</span>L.csv</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>            │   ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_eye<span class="sc">-</span>L.html</span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>            │   └── source<span class="sc">/</span></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>            │       ├── figures<span class="sc">/</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>            │       │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>            │       └── logs<span class="sc">/</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>            │           └── run<span class="dv">-01</span>_metadata.json</span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>            └── eye<span class="sc">-</span>R<span class="sc">/</span></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>timeseries_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_desc<span class="sc">-</span>confounds_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_epoch<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_baseline<span class="sc">-</span>stimulus_desc<span class="sc">-</span>preproc_pupil_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_events_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_blinks_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_summary_eye<span class="sc">-</span>R.csv</span>
+<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>                ├── sub<span class="dv">-001</span>_ses<span class="dv">-01</span>_task<span class="sc">-</span>test_run<span class="dv">-01</span>_eye<span class="sc">-</span>R.html</span>
+<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a>                └── source<span class="sc">/</span></span>
+<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a>                    ├── figures<span class="sc">/</span></span>
+<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a>                    │   └── run<span class="dv">-01</span><span class="sc">/</span></span>
+<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a>                    └── logs<span class="sc">/</span></span>
+<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a>                        └── run<span class="dv">-01</span>_metadata.json</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="file-naming-convention-1">File naming convention<a class="anchor" aria-label="anchor" href="#file-naming-convention-1"></a>
+</h3>
+<p>All files follow a consistent BIDS-like naming pattern:</p>
+<ul>
+<li>
+<strong>Timeseries data</strong>: <code>desc-timeseries_eye</code> (with <code>_eye-L</code> or <code>_eye-R</code> suffix for binocular data)</li>
+<li>
+<strong>Confounds</strong>: <code>desc-confounds</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Epochs</strong>: <code>epoch-{event}_desc-preproc_pupil</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Baselines</strong>: <code>baseline-{event}_desc-preproc_pupil</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Events</strong>: <code>events</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Blinks</strong>: <code>blinks</code> (with eye suffix for binocular data)</li>
+<li>
+<strong>Reports</strong>: HTML files with eye suffix for binocular data</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="events-and-blinks-data-1">Events and blinks data<a class="anchor" aria-label="anchor" href="#events-and-blinks-data-1"></a>
+</h3>
+<p>The events and blinks CSV files contain the raw event markers and blink detection data as stored in the eyeris object:</p>
+<p><strong>Events file structure:</strong> - <code>block</code>: Block/run number - <code>time</code>: Timestamp of the event - <code>text</code>: Raw event text from the ASC file - <code>text_unique</code>: Unique event identifier</p>
+<p><strong>Blinks file structure:</strong> - <code>block</code>: Block/run number - <code>stime</code>: Start time of the blink - <code>etime</code>: End time of the blink - <code>dur</code>: Duration of the blink in milliseconds - <code>eye</code>: Eye identifier (L/R for binocular data)</p>
+</div>
+<div class="section level3">
+<h3 id="key-features-1">Key features<a class="anchor" aria-label="anchor" href="#key-features-1"></a>
+</h3>
+<ul>
+<li>
+<strong>Organized Structure</strong>: Clear separation between monocular and binocular data</li>
+<li>
+<strong>Consistent Naming</strong>: Standardized file naming across all data types</li>
+<li>
+<strong>Complete Documentation</strong>: HTML reports with preprocessing summaries and visualizations</li>
+<li>
+<strong>Quality Assessment</strong>: Gaze heatmaps and binocular correlation plots for data quality evaluation</li>
+<li>
+<strong>Reproducibility</strong>: Metadata files documenting preprocessing parameters and call stacks</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="id_-logging-eyeris-commands-with-eyelogger">📝 Logging <code>eyeris</code> commands with <code>eyelogger()</code>
+<a class="anchor" aria-label="anchor" href="#id_-logging-eyeris-commands-with-eyelogger"></a>
 </h2>
 <p>The <code><a href="reference/eyelogger.html">eyelogger()</a></code> utility lets you run any <code>eyeris</code> command (or block of R code) while automatically capturing all console output and errors to timestamped log files. This is especially useful for reproducibility, debugging, or running batch jobs.</p>
 <p><strong>How it works:</strong> - All standard output (<code>stdout</code>) and standard error (<code>stderr</code>) are saved to log files in a directory you specify (or a temporary directory by default). - Each run produces two log files: - <code>&lt;timestamp&gt;.out</code>: all console output - <code>&lt;timestamp&gt;.err</code>: all warnings and errors</p>
@@ -218,7 +632,7 @@
 <h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h3>
 <p>You can wrap any <code>eyeris</code> command or block of code in <code>eyelogger({ ... })</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># log a simple code block with messages, warnings, and prints</span></span>
@@ -250,34 +664,33 @@
 <h3 id="what-you-get">What you get<a class="anchor" aria-label="anchor" href="#what-you-get"></a>
 </h3>
 <p>After running, you’ll find log files in your specified directory, e.g.:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="dv">20240614</span>_153012.out   <span class="co"># console output</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="dv">20240614</span>_153012.err   <span class="co"># warnings and errors</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="dv">20240614</span>_153012.out   <span class="co"># console output</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="dv">20240614</span>_153012.err   <span class="co"># warnings and errors</span></span></code></pre></div>
 <p>This makes it easy to keep a record of your preprocessing runs and debug any issues that arise.</p>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="eyeris-dependency-graph-see_no_evil">
-<code>eyeris</code> dependency graph <span class="emoji" data-emoji="see_no_evil">🙈</span>
-<a class="anchor" aria-label="anchor" href="#eyeris-dependency-graph-see_no_evil"></a>
+<h2 id="see_no_evil-eyeris-dependency-graph">
+<span class="emoji" data-emoji="see_no_evil">🙈</span> <code>eyeris</code> dependency graph<a class="anchor" aria-label="anchor" href="#see_no_evil-eyeris-dependency-graph"></a>
 </h2>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <hr>
 </div>
-</div>
-<div class="section level1">
-<h1 id="contributing-to-eyeris">Contributing to <code>eyeris</code>
-<a class="anchor" aria-label="anchor" href="#contributing-to-eyeris"></a>
-</h1>
+<div class="section level2">
+<h2 id="id_-contributing-to-eyeris">🤝 Contributing to <code>eyeris</code>
+<a class="anchor" aria-label="anchor" href="#id_-contributing-to-eyeris"></a>
+</h2>
 <p>Thank you for considering contributing to the open-source <code>eyeris</code> R package; there are many ways one could contribute to <code>eyeris</code>.</p>
 <p>We believe the best preprocessing practices emerge from collective expertise and rigorous discussion. Please see the <a href="https://shawnschwartz.com/eyeris/CONTRIBUTING.html">contribution guidelines</a> for more information on how to get started..</p>
+</div>
 <div class="section level2">
-<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+<h2 id="id_-code-of-conduct">📜 Code of Conduct<a class="anchor" aria-label="anchor" href="#id_-code-of-conduct"></a>
 </h2>
 <p>Please note that the eyeris project is released with a <a href="https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 <div class="section level2">
-<h2 id="suggestions-questions-issues">Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#suggestions-questions-issues"></a>
+<h2 id="id_-suggestions-questions-issues">💬 Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#id_-suggestions-questions-issues"></a>
 </h2>
 <p>Please use the issues tab (<a href="https://github.com/shawntz/eyeris/issues" class="external-link uri">https://github.com/shawntz/eyeris/issues</a>) to make note of any bugs, comments, suggestions, feedback, etc… all are welcomed and appreciated, thanks!</p>
 </div>
@@ -289,7 +702,7 @@
 <p>If you use the <code>eyeris</code> package in your research, please consider citing our preprint!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -310,7 +723,6 @@
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 </div>
-
   </main><aside class="col-md-3"><div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">

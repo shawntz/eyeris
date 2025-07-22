@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Anatomy of an eyeris Object</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/vignettes/anatomy.Rmd" class="external-link"><code>vignettes/anatomy.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/vignettes/anatomy.Rmd" class="external-link"><code>vignettes/anatomy.Rmd</code></a></small>
       <div class="d-none name"><code>anatomy.Rmd</code></div>
     </div>
 
@@ -175,6 +175,19 @@ passed to each step</p></li>
 <li><p><code>epoch_{name}</code>: list of data frames for any given
 epoched timeseries</p></li>
 </ul>
+<blockquote>
+<p>[!NOTE]<br>
+This vignette describes the structure of an <code>eyeris</code> object
+as returned by the main preprocessing pipeline. Understanding these
+components will help you interpret results, debug issues, and extend the
+pipeline for your own research needs. Furthermore, binocular data will
+have a <code>left</code> and <code>right</code> component to the
+<code>eyeris</code> object, which will contain the same components as
+the main <code>eyeris</code> object. There is also a phantom
+<code>raw_binocular_object</code> component to the <code>eyeris</code>
+object, which contains the raw binocular data used internally to perform
+the binocular correlation analysis and plotting.</p>
+</blockquote>
 <p>Now that we’ve explained what you can expect to see after running the
 <code>eyeris</code> <code><a href="../reference/glassbox.html">glassbox()</a></code> function, we’ll demonstrate
 what the <code><a href="../reference/glassbox.html">glassbox()</a></code> wrapper is generally comprised of in

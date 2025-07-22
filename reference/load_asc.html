@@ -73,7 +73,7 @@ all subsequent eyeris pipeline steps and functions."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Load and parse SR Research EyeLink <code>.asc</code> files</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/pipeline-loadasc.R" class="external-link"><code>R/pipeline-loadasc.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/pipeline-loadasc.R" class="external-link"><code>R/pipeline-loadasc.R</code></a></small>
       <div class="d-none name"><code>load_asc.Rd</code></div>
     </div>
 
@@ -86,7 +86,11 @@ all subsequent <code>eyeris</code> pipeline steps and functions.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_asc</span><span class="op">(</span><span class="va">file</span>, block <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_asc</span><span class="op">(</span></span>
+<span>  <span class="va">file</span>,</span>
+<span>  block <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  binocular_mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"left"</span>, <span class="st">"right"</span>, <span class="st">"both"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -99,33 +103,50 @@ EyeLink <code>edf2asc</code> command</p></dd>
 
 
 <dt id="arg-block">block<a class="anchor" aria-label="anchor" href="#arg-block"></a></dt>
-<dd><p>Optional block number specification. The following are valid
-options:</p><ul><li><p>"auto" (default): Automatically handles multiple recording segments
-embedded within the same <code>.asc</code> file. We recommend using this default as
-this is likely the safer choice then assuming a single-block recording
-(unless you know what you're doing).</p></li>
+<dd><p>Optional block number specification. The following are
+valid options:</p><ul><li><p>"auto" (default): Automatically handles multiple recording segments
+embedded within the same <code>.asc</code> file. We recommend using this default
+as this is likely the safer choice then assuming a single-block
+recording (unless you know what you're doing).</p></li>
 <li><p><code>NULL</code>: Omits block column. Suitable for single-block recordings.</p></li>
-<li><p>Numeric value: Manually sets block number based on the value provided
-here.</p></li>
+<li><p>Numeric value: Manually sets block number based on the value
+provided here.</p></li>
+</ul></dd>
+
+
+<dt id="arg-binocular-mode">binocular_mode<a class="anchor" aria-label="anchor" href="#arg-binocular-mode"></a></dt>
+<dd><p>Optional binocular mode specification. The
+following are valid options:</p><ul><li><p>"average" (default): Averages the left and right eye pupil sizes.</p></li>
+<li><p>"left": Uses only the left eye pupil size.</p></li>
+<li><p>"right": Uses only the right eye pupil size.</p></li>
+<li><p>"both": Uses both the left and right eye pupil sizes independently.</p></li>
 </ul></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of S3 class <code>eyeris</code> with the following attributes:</p><ol><li><p><code>file</code>: Path to the original <code>.asc</code> file.</p></li>
-<li><p><code>timeseries</code>: Dataframe of all raw timeseries data from the tracker.</p></li>
-<li><p><code>events</code>: Dataframe of all event messages and their timestamps.</p></li>
-<li><p><code>blinks</code>: Dataframe of all blink events.</p></li>
-<li><p><code>info</code>: Dataframe of various metadata parsed from the file header.</p></li>
+<li><p><code>timeseries</code>: Data frame of all raw time series data from the
+tracker.</p></li>
+<li><p><code>events</code>: Data frame of all event messages and their time
+stamps.</p></li>
+<li><p><code>blinks</code>: Data frame of all blink events.</p></li>
+<li><p><code>info</code>: Data frame of various metadata parsed from the file
+header.</p></li>
 <li><p><code>latest</code>: <code>eyeris</code> variable for tracking pipeline run history.</p></li>
+</ol><p>For binocular data with <code>binocular_mode = "both"</code>, returns a list
+containing:</p><ol><li><p><code>left</code>: An <code>eyeris</code> object for the left eye data.</p></li>
+<li><p><code>right</code>: An <code>eyeris</code> object for the right eye data.</p></li>
+<li><p><code>original_file</code>: Path to the original <code>.asc</code> file.</p></li>
 </ol></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function is automatically called by <code><a href="glassbox.html">glassbox()</a></code> by default. If needed,
-customize the parameters for <code>load_asc</code> by providing a parameter list.</p>
-<p>Users should prefer using <code><a href="glassbox.html">glassbox()</a></code> rather than invoking this function
-directly unless they have a specific reason to customize the pipeline
-manually.</p>
+    <p>This function is automatically called by <code><a href="glassbox.html">glassbox()</a></code> by default. If
+needed, customize the parameters for <code>load_asc</code> by providing a parameter
+list.</p>
+<p>Users should prefer using <code><a href="glassbox.html">glassbox()</a></code> rather than invoking this
+function directly unless they have a specific reason to customize the
+pipeline manually.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -137,8 +158,8 @@ intended for direct use in most cases. Provide parameters via
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/eyelinker/man/read.asc.html" class="external-link">eyelinker::read.asc()</a></code> which this function wraps.</p>
-<p><code><a href="glassbox.html">glassbox()</a></code> for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.</p></div>
+<p><code><a href="glassbox.html">glassbox()</a></code> for the recommended way to run this step
+as part of the full eyeris glassbox preprocessing pipeline.</p></div>
     </div>
 
     <div class="section level2">
@@ -147,22 +168,20 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span>load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>block <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="load_asc-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Block processing summary:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -228,6 +247,9 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw_deblink_detransient_interpolate_lpfilt_z"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $binocular</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -239,6 +261,9 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$block</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $params$load_asc$parameters$binocular_mode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "average"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -475,6 +500,9 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $binocular</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -544,14 +572,17 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $binocular</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "eyeris"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## (3) Auto-detect multiple recording segments embedded within the same file</span></span></span>
-<span class="r-in"><span><span class="co">##  (i.e., the default behavior)</span></span></span>
+<span class="r-in"><span><span class="co">## (3) Auto-detect multiple recording segments embedded within the same</span></span></span>
+<span class="r-in"><span><span class="co">##  file (i.e., the default behavior)</span></span></span>
 <span class="r-in"><span><span class="va">demo_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">load_asc</span><span class="op">(</span>block <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $file</span>
@@ -613,6 +644,9 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $binocular</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
@@ -678,6 +712,9 @@ part of the full eyeris glassbox preprocessing pipeline.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $latest$block_1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pupil_raw"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $binocular</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $decimated.sample.rate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>

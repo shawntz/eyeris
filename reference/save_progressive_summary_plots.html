@@ -69,7 +69,7 @@ object."><meta property="og:image" content="https://shawnschwartz.com/eyeris/log
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Save progressive summary plots for each block</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/utils-render_report.R" class="external-link"><code>R/utils-render_report.R</code></a></small>
       <div class="d-none name"><code>save_progressive_summary_plots.Rd</code></div>
     </div>
 
@@ -84,7 +84,8 @@ object.</p>
 <span>  <span class="va">eyeris</span>,</span>
 <span>  <span class="va">out_dir</span>,</span>
 <span>  preview_n <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  plot_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  plot_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  eye_suffix <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -106,6 +107,10 @@ object.</p>
 
 <dt id="arg-plot-params">plot_params<a class="anchor" aria-label="anchor" href="#arg-plot-params"></a></dt>
 <dd><p>Additional plotting parameters</p></dd>
+
+
+<dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
+<dd><p>Optional eye suffix for binocular data</p></dd>
 
 </dl></div>
     <div class="section level2">

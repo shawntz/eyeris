@@ -73,7 +73,7 @@ block, and epoched timeseries in the eyeris object."><meta property="og:image" c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract confounding variables calculated separately for each pupil data file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/R/pipeline-confounds.R" class="external-link"><code>R/pipeline-confounds.R</code></a></small>
       <div class="d-none name"><code>summarize_confounds.Rd</code></div>
     </div>
 
@@ -122,28 +122,26 @@ Each step contains metrics such as:</p><ul><li><p>Blink rate and duration statis
 <span class="r-in"><span>    label <span class="op">=</span> <span class="st">"prePostProbe"</span> <span class="co"># custom epoch label name</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">summarize_confounds</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [ INFO ] - Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="summarize_confounds-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [ SKIP ] - Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::zscore() for block_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Block processing summary:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [  OK  ] - Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] block_1: OK (steps: 6, latest: pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Epoching pupil data...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Block 1: found 10 matching events for PROBEtypetrial</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Block 1: pupil data from 10 unique event messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Pupil epoching completed in 0.14 seconds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Recalculating epoched confounds for new epochs...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Block 1: found 10 matching events for PROBEtypetrial</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Done!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Block 1: pupil data from 10 unique event messages extracted</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [OKAY] Pupil epoching completed in 0.10 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [INFO] Recalculating epoched confounds for new epochs...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># access confounds for entire timeseries for a specific block and step</span></span></span>
 <span class="r-in"><span><span class="va">confounds</span><span class="op">$</span><span class="va">confounds</span><span class="op">$</span><span class="va">unepoched_timeseries</span></span></span>

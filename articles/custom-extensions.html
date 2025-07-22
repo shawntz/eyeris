@@ -103,7 +103,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Building Your Own Custom Pipeline Extensions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/223-bug/vignettes/custom-extensions.Rmd" class="external-link"><code>vignettes/custom-extensions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/218-enh-binocular-support/vignettes/custom-extensions.Rmd" class="external-link"><code>vignettes/custom-extensions.Rmd</code></a></small>
       <div class="d-none name"><code>custom-extensions.Rmd</code></div>
     </div>
 
@@ -199,14 +199,50 @@ list of data frames, and</li>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>    <span class="va">call_info</span></span>
 <span>  <span class="op">}</span></span>
-<span>  <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
-<span>    <span class="va">eyeris</span>,</span>
-<span>    <span class="va">winsorize_pupil</span>,</span>
-<span>    <span class="st">"winsorize"</span>,</span>
-<span>    lower <span class="op">=</span> <span class="va">lower</span>,</span>
-<span>    upper <span class="op">=</span> <span class="va">upper</span>,</span>
-<span>    call_info <span class="op">=</span> <span class="va">call_info</span></span>
-<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># handle binocular objects</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="../reference/is_binocular_object.html">is_binocular_object</a></span><span class="op">(</span><span class="va">eyeris</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># process left and right eyes independently</span></span>
+<span>    <span class="va">left_result</span> <span class="op">&lt;-</span> <span class="va">eyeris</span><span class="op">$</span><span class="va">left</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
+<span>        <span class="va">winsorize_pupil</span>,</span>
+<span>        <span class="st">"winsorize"</span>,</span>
+<span>        lower <span class="op">=</span> <span class="va">lower</span>,</span>
+<span>        upper <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>        call_info <span class="op">=</span> <span class="va">call_info</span></span>
+<span>      <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">right_result</span> <span class="op">&lt;-</span> <span class="va">eyeris</span><span class="op">$</span><span class="va">right</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
+<span>        <span class="va">winsorize_pupil</span>,</span>
+<span>        <span class="st">"winsorize"</span>,</span>
+<span>        lower <span class="op">=</span> <span class="va">lower</span>,</span>
+<span>        upper <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>        call_info <span class="op">=</span> <span class="va">call_info</span></span>
+<span>      <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># return combined structure</span></span>
+<span>    <span class="va">list_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      left <span class="op">=</span> <span class="va">left_result</span>,</span>
+<span>      right <span class="op">=</span> <span class="va">right_result</span>,</span>
+<span>      original_file <span class="op">=</span> <span class="va">eyeris</span><span class="op">$</span><span class="va">original_file</span>,</span>
+<span>      raw_binocular_object <span class="op">=</span> <span class="va">eyeris</span><span class="op">$</span><span class="va">raw_binocular_object</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">list_out</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"eyeris"</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">list_out</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="co"># regular eyeris object, process normally</span></span>
+<span>    <span class="va">eyeris</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/pipeline_handler.html">pipeline_handler</a></span><span class="op">(</span></span>
+<span>        <span class="va">winsorize_pupil</span>,</span>
+<span>        <span class="st">"winsorize"</span>,</span>
+<span>        lower <span class="op">=</span> <span class="va">lower</span>,</span>
+<span>        upper <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>        call_info <span class="op">=</span> <span class="va">call_info</span></span>
+<span>      <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 </div>
