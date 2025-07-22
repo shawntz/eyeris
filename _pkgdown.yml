@@ -4,9 +4,11 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST RELEASE"
+    - text: "v2.1.0 (CRAN)"
+      href: news/index.html#eyeris-210
+    - text: -------
     - text: "v2.0.0 (CRAN)"
       href: news/index.html#eyeris-200
-    - text: -------
     - text: "Previous Releases"
     - text: "v1.2.1 (CRAN)"
       href: news/index.html#eyeris-121
