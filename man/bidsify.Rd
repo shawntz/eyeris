@@ -121,7 +121,7 @@ demo_data |>
 demo_data |>
   eyeris::glassbox() |>
   eyeris::epoch(
-    events = "PROBE_{type}_{trial}",
+    events = "PROBE_{startstop}_{trial}",
     limits = c(-1, 1), # grab 1 second prior to and 1 second post event
     label = "prePostProbe" # custom epoch label name
   ) |>
@@ -139,7 +139,7 @@ demo_data <- eyelink_asc_demo_dataset()
 demo_data |>
   eyeris::glassbox() |>
   eyeris::epoch(
-    events = "PROBE_{type}_{trial}",
+    events = "PROBE_{startstop}_{trial}",
     limits = c(-1, 1),
     label = "prePostProbe"
   ) |>
