@@ -49,12 +49,15 @@ step is appended to the previous columns name
 - `params`: detailed list of steps run and parameters passed to each step
 - `epoch_{name}`: list of data frames for any given epoched timeseries
 
+<div class="alert alert-light">
+💡 <strong>Note:</strong> This vignette describes the structure of an `eyeris` object as returned by the main preprocessing pipeline.
 
-> [!NOTE]  
-> This vignette describes the structure of an `eyeris` object as returned by the main preprocessing pipeline. 
-> Understanding these components will help you interpret results, debug issues, and extend the pipeline for your own research needs.
-> Furthermore, binocular data will have a `left` and `right` component to the `eyeris` object, which will contain the same components as the main `eyeris` object.
-> There is also a phantom `raw_binocular_object` component to the `eyeris` object, which contains the raw binocular data used internally to perform the binocular correlation analysis and plotting.
+1. Understanding these components will help you interpret results, debug issues, and extend the pipeline for your own research needs. 
+
+2. Furthermore, binocular data will have a `left` and `right` component to the `eyeris` object, which will contain the same components as the main `eyeris` object. 
+
+3. There is also a phantom `raw_binocular_object` component to the `eyeris` object, which contains the raw binocular data used internally to perform the binocular correlation analysis and plotting.
+</div>
 
 Now that we've explained what you can expect to see after running the `eyeris`
 `glassbox()` function, we'll demonstrate what the `glassbox()` wrapper is
