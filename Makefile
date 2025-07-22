@@ -10,6 +10,20 @@ air:
 	air format .
 	@echo "[OKAY] Done!"
 
+bump:
+	@if [ -z "$(v)" ]; then \
+		echo "❌ Error: No version number provided. Use: make bump v=2.1.0"; \
+		exit 1; \
+	fi
+	@echo "🔧 Bumping version to $(v)..."
+	@today=$$(date +%Y-%m-%d); \
+	@git checkout -b release/v$(v)
+	@echo "🌿 Switched to new branch release/v$(v)"
+	sed -i.bak -E "s/^Version: .*/Version: $(v)/" DESCRIPTION && \
+	sed -i.bak -E "s/^Date: .*/Date: $$today/" DESCRIPTION && \
+	rm DESCRIPTION.bak && \
+	echo "📄 Updated DESCRIPTION with version $(v) and date $$today"
+
 # CRAN presubmission checks target def ------------------------------------
 cran:
 	air
