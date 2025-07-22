@@ -159,8 +159,7 @@ slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
 #' @return A list containing start and end timestamps
 #'
 #' @keywords internal
-get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits,
-                           baseline_mode = FALSE) {
+get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits, baseline_mode = FALSE) {
   start_ts <- NULL
   end_ts <- NULL
 
@@ -169,7 +168,8 @@ get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits,
     if (!is.na(msg_e)) {
       end_ts <- merge_events_with_timeseries(timestamped_events, msg_e)
     }
-  } else { # baseline calculation disabled
+  } else {
+    # baseline calculation disabled
     if (!is.list(evs)) {
       start_ts <- merge_events_with_timeseries(timestamped_events, msg_s)
     }
@@ -207,11 +207,22 @@ get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits,
 #' @return A dataframe with matched events and extracted metadata
 #'
 #' @keywords internal
-merge_events_with_timeseries <- function(events, metadata_template,
-                                         merge = TRUE) {
+merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE) {
   special_chars <- c(
-    "\\", ".", "+", "*", "?", "^",
-    "$", "(", ")", "[", "]", "{", "}", "|"
+    "\\",
+    ".",
+    "+",
+    "*",
+    "?",
+    "^",
+    "$",
+    "(",
+    ")",
+    "[",
+    "]",
+    "{",
+    "}",
+    "|"
   )
 
   # Use text_unique if available, otherwise fall back to text
@@ -242,12 +253,14 @@ merge_events_with_timeseries <- function(events, metadata_template,
     return(result)
   }
 
-  if (any(endsWith(metadata_template, "*"))) { # wildcard mode
+  if (any(endsWith(metadata_template, "*"))) {
+    # wildcard mode
     prefix <- substr(metadata_template, 1, nchar(metadata_template) - 1)
 
     for (char in special_chars) {
       prefix <- stringr::str_replace_all(
-        prefix, stringr::fixed(char),
+        prefix,
+        stringr::fixed(char),
         paste0("\\", char)
       )
     }
@@ -263,7 +276,8 @@ merge_events_with_timeseries <- function(events, metadata_template,
       time = ifelse(matches, event_times, NA_real_)
     ) |>
       tidyr::drop_na(matched_event)
-  } else { # template mode
+  } else {
+    # template mode
     template <- metadata_template
     placeholders <- unlist(stringr::str_extract_all(template, "\\{[^{}]+\\}"))
     placeholder_names <- gsub("[{}]", "", placeholders)
