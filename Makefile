@@ -15,10 +15,10 @@ bump:
 		echo "❌ Error: No version number provided. Use: make bump v=2.1.0"; \
 		exit 1; \
 	fi
-	@echo "🔧 Bumping version to $(v)..."
-	@today=$$(date +%Y-%m-%d); \
 	@git checkout -b release/v$(v)
 	@echo "🌿 Switched to new branch release/v$(v)"
+	@echo "🔧 Bumping version to $(v)..."
+	@today=$$(date +%Y-%m-%d); \
 	sed -i.bak -E "s/^Version: .*/Version: $(v)/" DESCRIPTION && \
 	sed -i.bak -E "s/^Date: .*/Date: $$today/" DESCRIPTION && \
 	rm DESCRIPTION.bak && \
