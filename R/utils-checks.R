@@ -20,13 +20,13 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
   if (dir.exists(dir)) {
     if (verbose) {
       cli::cli_alert_warning(
-        sprintf("'%s' already exists. Skipping creation...", dir)
+        sprintf("[WARN] '%s' already exists. Skipping creation...", dir)
       )
     }
   } else {
     if (verbose) {
       cli::cli_alert_info(
-        sprintf("'%s' does not exist. Creating...", dir)
+        sprintf("[INFO] '%s' does not exist. Creating...", dir)
       )
     }
 
@@ -34,7 +34,7 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
 
     if (verbose) {
       cli::cli_alert_success(
-        sprintf("BIDS directory successfully created at: '%s'", dir)
+        sprintf("[OKAY] BIDS directory successfully created at: '%s'", dir)
       )
     }
   }
@@ -404,7 +404,7 @@ count_epochs <- function(epochs) {
 check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
   if (is.null(time_vector) || length(time_vector) == 0) {
     cli::cli_abort(paste(
-      "Time vector is NULL or empty. Cannot validate monotonicity.",
+      "[EXIT] Time vector is NULL or empty. Cannot validate monotonicity.",
       "Time column:", time_col_name
     ))
   }
@@ -414,7 +414,7 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
 
   if (length(time_clean) < 2) {
     cli::cli_abort(paste(
-      "Insufficient non-NA time points to validate monotonicity.",
+      "[EXIT] Insufficient non-NA time points to validate monotonicity.",
       "Need at least 2 points, got", length(time_clean),
       "Time column:", time_col_name
     ))
@@ -427,7 +427,7 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
     first_violation_idx <- which(diffs < 0)[1]
 
     cli::cli_abort(paste(
-      "Time series is not monotonically increasing.",
+      "[EXIT] Time series is not monotonically increasing.",
       "First violation at index", first_violation_idx + 1,
       "where time decreases from", time_clean[first_violation_idx],
       "to", time_clean[first_violation_idx + 1],
@@ -435,4 +435,39 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
       "This may indicate EDF file errors or data corruption."
     ))
   }
+}
+
+#' Check if object is a binocular eyeris object
+#'
+#' Detects whether an object is a binocular eyeris object created with
+#' `binocular_mode = "both"`.
+#'
+#' @param x The `eyeris` object to check
+#'
+#' @return Logical indicating whether the object is a binocular eyeris object
+#'
+#' @keywords internal
+is_binocular_object <- function(x) {
+  is.list(x) &&
+  "left" %in% names(x) &&
+  "right" %in% names(x) &&
+  "binocular_mode" %in% names(x$left) &&
+  "binocular_mode" %in% names(x$right) &&
+  x$left$binocular_mode == "both" &&
+  x$right$binocular_mode == "both"
+}
+
+#' Check if binocular correlations should be plotted
+#'
+#' Validates that binocular correlations should be plotted.
+#'
+#' @param x The `eyeris` object to check
+#'
+#' @return Logical indicating whether binocular correlations should be plotted
+#'
+#' @keywords internal
+should_plot_binoc_cors <- function(x) {
+  is.list(x) &&
+  ("left" %in% names(x) && "right" %in% names(x)) ||
+  (isTRUE(x$binocular))
 }

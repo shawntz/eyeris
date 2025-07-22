@@ -10,7 +10,8 @@ make_prog_summary_plot(
   preview_n = 3,
   plot_params = list(),
   run_id = "run-01",
-  cex = 2
+  cex = 2,
+  eye_suffix = NULL
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ functions. Defaults to \code{list()}}
 Used for plot titles and file naming. Defaults to \code{"run-01"}}
 
 \item{cex}{Character expansion factor for plot elements. Defaults to \code{2.0}}
+
+\item{eye_suffix}{Optional eye suffix for binocular data}
 }
 \value{
 NULL (invisibly). Creates a plot showing progressive preprocessing

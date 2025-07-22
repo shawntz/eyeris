@@ -15,6 +15,27 @@ eyelink_asc_demo_dataset <- function() {
   system.file("extdata", "memory.asc", package = "eyeris")
 }
 
+#' Access example EyeLink .asc binocular mock dataset file provided by the eyeris package.
+#'
+#' @description Returns the file path to the demo binocular `.asc` EyeLink pupil data file
+#' included in the `eyeris` package.
+#'
+#' @details This dataset is a mock dataset trimmed from a larger data file. The original data
+#' file was obtained from:
+#' https://github.com/scott-huberty/eyelinkio/blob/main/src/eyelinkio/tests/data/test_raw_binocular.edf
+#'
+#' @return A character string giving the full file path to the demo `.asc`
+#' EyeLink pupil data file
+#'
+#' @examples
+#' path_to_binocular_demo_dataset <- eyelink_asc_binocular_demo_dataset()
+#' print(path_to_binocular_demo_dataset)
+#'
+#' @export
+eyelink_asc_binocular_demo_dataset <- function() {
+  system.file("extdata", "binocular.asc", package = "eyeris")
+}
+
 #' Default color palette for eyeris plotting functions
 #'
 #' @description A custom color palette designed for visualizing pupil data

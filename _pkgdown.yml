@@ -94,6 +94,7 @@ reference:
       - summarize_confounds
       - plot.eyeris
       - plot_gaze_heatmap
+      - plot_binocular_correlation
       - eyeris_color_palette
 
   - title: "🔧 Preprocessing Steps"
@@ -121,6 +122,7 @@ reference:
       Example eye-tracking / pupil datasets for testing and demonstrating pipeline functionality.
     contents:
       - eyelink_asc_demo_dataset
+      - eyelink_asc_binocular_demo_dataset
 
 articles:
   - title: Start Here

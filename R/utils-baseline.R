@@ -113,9 +113,9 @@ compute_baseline <- function(x, epochs,
   n_baseline_epochs <- length(baseline_epochs)
 
   if (n_baseline_epochs > n_epochs) {
-    warning(sprintf(
+    cli::cli_alert_warning(sprintf(
       paste0(
-        "More baseline epochs (%d) than actual epochs (%d).\n",
+        "[WARN] More baseline epochs (%d) than actual epochs (%d).\n",
         "Truncating baseline epochs to match."
       ),
       n_baseline_epochs, n_epochs
@@ -127,7 +127,7 @@ compute_baseline <- function(x, epochs,
 
   for (i in seq_len(length(baseline_epochs))) {
     if (i > length(epochs)) {
-      warning(sprintf("Epoch %d does not exist, skipping baseline computation",
+      cli::cli_alert_warning(sprintf("[WARN] Epoch %d does not exist, skipping baseline computation",
                       i)
       )
       baseline_data[[i]] <- rep(NA_real_, 1)

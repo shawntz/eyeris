@@ -40,6 +40,26 @@
 #'
 #' @export
 summarize_confounds <- function(eyeris) {
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- summarize_confounds(eyeris$left)
+    right_result <- summarize_confounds(eyeris$right)
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  }
+
+  # regular eyeris object processing
   tryCatch(
     {
       check_data(eyeris, "summarize_confounds")
@@ -52,13 +72,13 @@ summarize_confounds <- function(eyeris) {
   available_blocks <- get_block_numbers(eyeris)
 
   if (is.null(available_blocks)) {
-    cli::cli_abort("eyeris no blocks found error.")
+    cli::cli_abort("[EXIT] eyeris no blocks found error.")
   }
 
   hz <- eyeris$info$sample.rate
   if (is.null(hz)) {
     cli::cli_abort(
-      paste0("Sampling rate (Hz) must be present in tracker",
+      paste0("[EXIT] Sampling rate (Hz) must be present in tracker",
              "metadata (i.e., eyeris$info)")
     )
   }
@@ -91,7 +111,7 @@ summarize_confounds <- function(eyeris) {
   epoch_names <- grep("^epoch_", names(eyeris), value = TRUE)
 
   if (length(epoch_names) > 0) {
-    eyeris <- calculate_epoched_confounds(eyeris, epoch_names, hz, verbose)
+    eyeris <- calculate_epoched_confounds(eyeris, epoch_names, hz, verbose = TRUE)
   }
 
   eyeris
@@ -289,7 +309,7 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
 #'
 #' Exports each block's confounds data to a separate CSV file.
 #' Each file will contain all pupil steps (e.g., pupil_raw, pupil_clean)
-#' as columns.
+#' as rows, with confound metrics as columns.
 #'
 #' @param confounds_list A nested list structure containing confounds data
 #' @param output_dir The directory where CSV files will be saved
@@ -304,6 +324,30 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height,
 export_confounds_to_csv <- function(confounds_list,
                                     output_dir, filename_prefix, verbose,
                                     run_num = NULL) {
+  # handle binocular objects
+  if (is_binocular_object(confounds_list)) {
+    # process left and right eyes independently with appropriate suffixes
+    left_files <- export_confounds_to_csv(
+      confounds_list$left,
+      file.path(output_dir, "left"),
+      function(block_name) paste0(filename_prefix, "_eye-L_", block_name),
+      verbose,
+      run_num
+    )
+
+    right_files <- export_confounds_to_csv(
+      confounds_list$right,
+      file.path(output_dir, "right"),
+      function(block_name) paste0(filename_prefix, "_eye-R_", block_name),
+      verbose,
+      run_num
+    )
+
+    # return combined file paths
+    return(c(left_files, right_files))
+  }
+
+  # regular confounds list processing
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
@@ -374,6 +418,25 @@ export_confounds_to_csv <- function(confounds_list,
 #' @keywords internal
 calculate_epoched_confounds <- function(eyeris, epoch_names, hz,
                                         verbose = TRUE) {
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- calculate_epoched_confounds(eyeris$left, epoch_names, hz, verbose)
+    right_result <- calculate_epoched_confounds(eyeris$right, epoch_names, hz, verbose)
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  }
+
+  # regular eyeris object processing
   eyeris$confounds$epoched_timeseries <- list()
   eyeris$confounds$epoched_epoch_wide <- list()
 

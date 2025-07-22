@@ -43,13 +43,13 @@
 #' @export
 bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
   if (!method %in% c("mean", "median")) {
-    cli::cli_abort("Method must be either 'mean' or 'median'")
+    cli::cli_abort("[EXIT] Method must be either 'mean' or 'median'")
   }
 
   if (bins_per_second <= 0 ||
-        !is.numeric(bins_per_second) ||
-        bins_per_second != round(bins_per_second)) {
-    cli::cli_abort("bins_per_second must be a positive integer")
+      !is.numeric(bins_per_second) ||
+      bins_per_second != round(bins_per_second)) {
+    cli::cli_abort("[EXIT] bins_per_second must be a positive integer")
   }
 
   current_fs <- eyeris$info$sample.rate
@@ -64,15 +64,52 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      bin_pupil,
-      "bin",
-      bins_per_second,
-      method,
-      current_fs,
-      call_info = call_info
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        bin_pupil,
+        "bin",
+        bins_per_second,
+        method,
+        current_fs,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        bin_pupil,
+        "bin",
+        bins_per_second,
+        method,
+        current_fs,
+        call_info = call_info
+      )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        bin_pupil,
+        "bin",
+        bins_per_second,
+        method,
+        current_fs,
+        call_info = call_info
+      )
+  }
 }
 
 #' Bin pupil data into specified time bins
@@ -98,7 +135,7 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   # debug: check if prev_op is empty or NULL
   if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {
     cli::cli_abort(paste(
-      "Previous operation column name is empty or NULL.",
+      "[EXIT] Previous operation column name is empty or NULL.",
       "Expected a valid column name like 'pupil_raw'. This usually means the",
       "eyeris object's 'latest' pointer is not set correctly.",
       "Current prev_op value:", deparse(prev_op)
@@ -108,13 +145,13 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   # debug: check if the column exists
   if (!prev_op %in% colnames(x)) {
     cli::cli_abort(paste(
-      "Column '", prev_op, "' not found in eyeris data object.",
+      "[EXIT] Column '", prev_op, "' not found in eyeris data object.",
       "Available columns:", paste(colnames(x), collapse = ", ")
     ))
   }
 
   if (any(is.na(x[[prev_op]]))) {
-    cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
+    cli::cli_abort("[EXIT] NAs detected in pupil data. Need to interpolate first.")
   } else {
     prev_pupil <- x[[prev_op]]
   }

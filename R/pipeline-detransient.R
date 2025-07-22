@@ -107,14 +107,49 @@ detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      detransient_pupil,
-      "detransient",
-      n,
-      mad_thresh,
-      call_info = call_info
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        detransient_pupil,
+        "detransient",
+        n,
+        mad_thresh,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        detransient_pupil,
+        "detransient",
+        n,
+        mad_thresh,
+        call_info = call_info
+      )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        detransient_pupil,
+        "detransient",
+        n,
+        mad_thresh,
+        call_info = call_info
+      )
+  }
 }
 
 #' Internal function to remove transient artifacts from pupil data
@@ -163,10 +198,10 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
     mad_val <- median(abs(pupil_speed - median_speed), na.rm = TRUE)
     mad_thresh <- median_speed + (n * mad_val)
   } else if (is.numeric(mad_thresh)) {
-    alert("warning", "Using user supplied `mad_thresh`... skipping calculation")
+    alert("warning", "[WARN] Using user supplied `mad_thresh`... skipping calculation")
     mad_val <- 0
   } else {
-    stop("`mad_thresh` must either be `NULL` or numeric.")
+    cli::cli_abort("[EXIT] `mad_thresh` must either be `NULL` or numeric.")
   }
 
   # validate `mad_val` != 0: unrealistic outcome for real data
@@ -213,7 +248,7 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
       "RISK.\n\n\n"
     ))
 
-    stop("Computed property `mad_val` == 0!")
+    cli::cli_abort("[EXIT] Computed property `mad_val` == 0!")
   }
 
   # handle case where mad_val is NA (all pupil data is NA)

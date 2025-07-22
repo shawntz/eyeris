@@ -124,26 +124,29 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           prev_operation == "") {
       cli::cli_abort(
         paste0(
-          "Latest pointer is empty or NULL.",
+          "[EXIT] Latest pointer is empty or NULL.",
           "This indicates a pipeline initialization error."
         )
       )
     }
     if (grepl("_([^_]+)_\\1", prev_operation)) {
       cli::cli_abort(paste(
-        "Corrupted latest pointer detected:", prev_operation,
+        "[EXIT] Corrupted latest pointer detected:", prev_operation,
         "This indicates a pipeline error. Please restart the pipeline."
       ))
     }
     is_multiblock <- FALSE
   }
 
-  output_col <- paste0(prev_operation, "_", new_suffix)
-  if (grepl("_([^_]+)_\\1", output_col)) {
-    cli::cli_abort(paste(
-      "Attempting to create corrupted column name:", output_col,
-      "This indicates a pipeline processing error. Please check your data."
-    ))
+  # only create output_col and check for single-block data
+  if (!is_multiblock) {
+    output_col <- paste0(prev_operation, "_", new_suffix)
+    if (grepl("_([^_]+)_\\1", output_col)) {
+      cli::cli_abort(paste(
+        "[EXIT] Attempting to create corrupted column name:", output_col,
+        "This indicates a pipeline processing error. Please check your data."
+      ))
+    }
   }
 
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
@@ -168,14 +171,14 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
               length(block_prev_operation) == 0 ||
               block_prev_operation == "") {
           cli::cli_abort(paste(
-            "Latest pointer for block",
+            "[EXIT] Latest pointer for block",
             i_block,
             "is empty or NULL."
           ))
         }
         if (grepl("_([^_]+)_\\1", block_prev_operation)) {
           cli::cli_abort(paste(
-            "Corrupted latest pointer detected for block",
+            "[EXIT] Corrupted latest pointer detected for block",
             i_block, ":", block_prev_operation,
             "This indicates a pipeline error. Please restart the pipeline."
           ))
@@ -183,7 +186,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         block_output_col <- paste0(block_prev_operation, "_", new_suffix)
         if (grepl("_([^_]+)_\\1", block_output_col)) {
           cli::cli_abort(paste(
-            "Attempting to create corrupted column name for block",
+            "[EXIT] Attempting to create corrupted column name for block",
             i_block, ":", block_output_col,
             "This indicates a pipeline error. Please check your data."
           ))

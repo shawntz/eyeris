@@ -4,10 +4,12 @@
 \alias{print_plots}
 \title{Print plots in markdown format}
 \usage{
-print_plots(plots)
+print_plots(plots, eye_suffix = NULL)
 }
 \arguments{
 \item{plots}{Vector of plot file paths}
+
+\item{eye_suffix}{Optional eye suffix for binocular data}
 }
 \value{
 A character string containing markdown plot references

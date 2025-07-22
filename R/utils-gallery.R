@@ -17,10 +17,14 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
   epoch_name_corrected <- sub("^epoch_", "epoch-", epoch_name)
 
-  rmd_f <- file.path(out, paste0(
-    "sub-", params$sub, "_",
-    epoch_name_corrected, ".Rmd"
-  ))
+  # include eye_suffix in filename if provided
+  report_filename <- paste0("sub-", params$sub, "_", epoch_name_corrected)
+  if (!is.null(params$eye_suffix)) {
+    report_filename <- paste0(report_filename, "_", params$eye_suffix)
+  }
+  report_filename <- paste0(report_filename, ".Rmd")
+
+  rmd_f <- file.path(out, report_filename)
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(
@@ -36,9 +40,14 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
   epoch_lightbox_html <- print_lightbox_img_html(epochs)
 
+  title <- "`eyeris` interactive epoch previewer"
+  if (!is.null(params$eye_suffix)) {
+    title <- paste0(title, " - ", params$eye_suffix)
+  }
+
   content <- paste0(
     "---\n",
-    "title: '`eyeris` epoch previewer'\n",
+    "title: '", title, "'\n",
     "date: '", report_date, "'\n",
     "output:\n",
     "  html_document:\n",
@@ -51,6 +60,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     " - Session: ", params$ses, "\n",
     " - Task: ", params$task, "\n",
     " - Run: ", params$run, "\n",
+    if (!is.null(params$eye_suffix)) paste0(" - Eye: ", params$eye_suffix, "\n") else "",
     " - BIDS Directory: ", out, "\n",
     " - Source `.asc` file: ", eyeris$file, "\n",
     " - [`eyeris` version](https://github.com/shawntz/eyeris): ",

@@ -62,13 +62,46 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      deblink_pupil,
-      "deblink",
-      extend = extend,
-      call_info = call_info
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
+  }
 }
 
 #' Internal function to remove blink artifacts from pupil data
@@ -116,7 +149,7 @@ deblink_pupil <- function(x, prev_op, extend) {
   } else {
     cli::cli_abort(
       paste(
-        "extend must either be a single integer (symmetric) or a vector of",
+        "[EXIT] extend must either be a single integer (symmetric) or a vector of",
         "length 2 (asymmetric) in the format `c(backward, forward)`!"
       )
     )

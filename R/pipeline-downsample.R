@@ -70,17 +70,58 @@ downsample <- function(
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      downsample_pupil,
-      "downsample",
-      target_fs,
-      plot_freqz,
-      current_fs,
-      rp,
-      rs,
-      call_info = call_info
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        downsample_pupil,
+        "downsample",
+        target_fs,
+        plot_freqz,
+        current_fs,
+        rp,
+        rs,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        downsample_pupil,
+        "downsample",
+        target_fs,
+        plot_freqz,
+        current_fs,
+        rp,
+        rs,
+        call_info = call_info
+      )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        downsample_pupil,
+        "downsample",
+        target_fs,
+        plot_freqz,
+        current_fs,
+        rp,
+        rs,
+        call_info = call_info
+      )
+  }
 }
 
 #' Internal function to downsample pupil data
@@ -107,7 +148,7 @@ downsample <- function(
 downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
                              rp, rs) {
   if (any(is.na(x[[prev_op]]))) {
-    cli::cli_abort("NAs detected in pupil data. Need to interpolate first.")
+    cli::cli_abort("[EXIT] NAs detected in pupil data. Need to interpolate first.")
     return(x[[prev_op]])
   } else {
     prev_pupil <- x[[prev_op]]
@@ -118,7 +159,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (decimation_factor < 1) {
     cli::cli_abort(
       paste(
-        "Target sampling frequency (", target_fs, " Hz) must be less than",
+        "[EXIT] Target sampling frequency (", target_fs, " Hz) must be less than",
         "current sampling frequency (", current_fs, " Hz)"
       )
     )
@@ -127,7 +168,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (decimation_factor != round(decimation_factor)) {
     cli::cli_abort(
       paste(
-        "Decimation factor must be an integer. Current: ", decimation_factor,
+        "[EXIT] Decimation factor must be an integer. Current: ", decimation_factor,
         ". Consider using a different target_fs."
       )
     )
@@ -144,7 +185,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (wp < 4) {
     cli::cli_abort(
       paste(
-        "Passband frequency (", round(wp, 2), " Hz) is too low.",
+        "[EXIT] Passband frequency (", round(wp, 2), " Hz) is too low.",
         "This would likely cause loss of actual pupillary responses.",
         "Consider using a higher target_fs or the binning function instead."
       )

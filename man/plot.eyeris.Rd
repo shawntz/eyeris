@@ -17,6 +17,7 @@
   suppress_prompt = TRUE,
   verbose = TRUE,
   add_progressive_summary = FALSE,
+  eye = c("left", "right", "both"),
   num_previews = deprecated()
 )
 }
@@ -78,6 +79,10 @@ progressive summary plot after plotting. Defaults to \code{FALSE}. Set to \code{
 to enable the progressive summary plot (useful for interactive exploration).
 Set to \code{FALSE} to disable the progressive summary plot (useful in automated
 contexts like bidsify reports)}
+
+\item{eye}{For binocular data, specifies which eye to plot: "left", "right",
+or "both". Defaults to "left". For "both", currently plots left eye data
+(use eye="right" for right eye data)}
 
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead}
 }

@@ -44,12 +44,39 @@ detrend <- function(eyeris, call_info = NULL) {
     call_info
   }
 
-  eyeris_out <- eyeris |>
-    pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
 
-  eyeris_out$metadata$detrended <- TRUE
+    left_result$metadata$detrended <- TRUE
+    
+    right_result <- eyeris$right |>
+      pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
 
-  eyeris_out
+    right_result$metadata$detrended <- TRUE
+    
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris_out <- eyeris |>
+      pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
+
+    eyeris_out$metadata$detrended <- TRUE
+
+    eyeris_out
+  }
 }
 
 #' Internal function to detrend pupil data

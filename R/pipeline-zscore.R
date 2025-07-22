@@ -75,8 +75,31 @@ zscore <- function(eyeris, call_info = NULL) {
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(zscore_pupil, "z", call_info = call_info)
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(zscore_pupil, "z", call_info = call_info)
+
+    right_result <- eyeris$right |>
+      pipeline_handler(zscore_pupil, "z", call_info = call_info)
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(zscore_pupil, "z", call_info = call_info)
+  }
 }
 
 #' Internal function to z-score pupil data
@@ -95,12 +118,12 @@ zscore <- function(eyeris, call_info = NULL) {
 zscore_pupil <- function(x, prev_op) {
   # validate the previous operation column name
   if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {
-    cli::cli_abort("Previous operation column name is empty or NULL.")
+    cli::cli_abort("[EXIT] Previous operation column name is empty or NULL.")
   }
 
   if (!prev_op %in% colnames(x)) {
     cli::cli_abort(paste(
-      "Column '", prev_op, "' not found in data.",
+      "[EXIT] Column '", prev_op, "' not found in data.",
       "Available columns:", paste(colnames(x), collapse = ", ")
     ))
   }
@@ -108,7 +131,7 @@ zscore_pupil <- function(x, prev_op) {
   # check for duplicate suffixes in column name (might indicate corruption)
   if (grepl("_([^_]+)_\\1", prev_op)) {
     cli::cli_abort(paste(
-      "Corrupted column name detected:", prev_op,
+      "[EXIT] Corrupted column name detected:", prev_op,
       "This might indicate an eyeris pipeline processing error."
     ))
   }

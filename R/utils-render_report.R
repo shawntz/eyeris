@@ -19,19 +19,25 @@ render_report <- function(rmd_f) {
 #' @param eyeris An `eyeris` object containing preprocessing results
 #' @param out Output directory for the report
 #' @param plots Vector of plot file paths to include in the report
+#' @param eye_suffix Optional eye suffix (e.g., "eye-L", "eye-R") for binocular data
 #' @param ... Additional parameters passed from bidsify
 #'
 #' @return Path to the generated R Markdown file
 #'
 #' @keywords internal
-make_report <- function(eyeris, out, plots, ...) {
+make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   # get extra subject params from bidsify.R
   params <- list(...)
 
   has_multiple_runs <- length(grep("run-\\d+", plots)) > 0
 
-  # temp file
-  rmd_f <- file.path(out, paste0("sub-", params$sub, ".Rmd"))
+  # temp file - include eye_suffix in filename if provided
+  report_filename <- paste0("sub-", params$sub)
+  if (!is.null(eye_suffix)) {
+    report_filename <- paste0(report_filename, "_", eye_suffix)
+  }
+  report_filename <- paste0(report_filename, ".Rmd")
+  rmd_f <- file.path(out, report_filename)
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(
@@ -57,22 +63,55 @@ make_report <- function(eyeris, out, plots, ...) {
 
   run_info <- paste(
     " - Runs: ",
-    paste(paste0("0", as.character(run_ids)), collapse = ", "),
+    paste(
+      sapply(run_ids, function(x) {
+        x_chr <- as.character(x)
+        if (x < 10) paste0("0", x_chr) else x_chr
+      }),
+      collapse = ", "
+    ),
     "\n"
   )
+
+  # add eye information to summary if binocular
+  eye_info <- ""
+  if (!is.null(eye_suffix)) {
+    eye_info <- paste0(" - Eye: ", eye_suffix, "\n")
+  }
 
   # eyeris report markdown content
   block_heatmaps_md <- "\n## Gaze Heatmaps\n\n"
   for (run_id in run_ids) {
     heatmap_path <- file.path(
       "source", "figures", sprintf("run-%02d", run_id),
-      sprintf("run-%02d_gaze_heatmap.png", run_id)
+      sprintf("run-%02d_gaze_heatmap", run_id)
     )
+    if (!is.null(eye_suffix)) {
+      heatmap_path <- paste0(heatmap_path, "_", eye_suffix)
+    }
+    heatmap_path <- paste0(heatmap_path, ".png")
+
     if (file.exists(file.path(out, heatmap_path))) {
       block_heatmaps_md <- paste0(
         block_heatmaps_md,
         "### run-", sprintf("%02d", run_id), "\n\n",
         "![](", heatmap_path, ")\n\n"
+      )
+    }
+  }
+
+  # add binocular correlation plots to the report
+  binocular_correlations_md <- "\n## Binocular Correlations\n\n"
+  for (run_id in run_ids) {
+    correlation_path <- file.path(
+      "source", "figures", sprintf("run-%02d", run_id),
+      sprintf("run-%02d_binocular_correlation.png", run_id)
+    )
+    if (file.exists(file.path(out, correlation_path))) {
+      binocular_correlations_md <- paste0(
+        binocular_correlations_md,
+        "### run-", sprintf("%02d", run_id), "\n\n",
+        "![](", correlation_path, ")\n\n"
       )
     }
   }
@@ -101,8 +140,8 @@ make_report <- function(eyeris, out, plots, ...) {
         auto_unbox = TRUE
       )
     } else {
-      cli::cli_alert_info(
-        sprintf("[Skipped] Metadata file already exists for %s: %s",
+      cli::cli_alert_warning(
+        sprintf("[WARN] Metadata file already exists for %s: %s",
                 run_id,
                 meta_path)
       )
@@ -138,9 +177,11 @@ make_report <- function(eyeris, out, plots, ...) {
     }
   }
 
+  title <- "`eyeris` preprocessing summary report"
+
   content <- paste0(
     "---\n",
-    "title: '`eyeris` report'\n",
+    "title: '", title, "'\n",
     "date: '", report_date, "'\n",
     "output:\n",
     "  html_document:\n",
@@ -148,7 +189,7 @@ make_report <- function(eyeris, out, plots, ...) {
     "    css: '", css, "'\n",
     "    toc: true\n",
     "    toc_float: true\n",
-    "    toc_depth: 3\n",
+    "    toc_depth: 6\n",
     "    number_sections: false\n",
     "---\n\n",
     "\n\n<img src='", sticker_path, "' class='top-right-image'>",
@@ -156,6 +197,7 @@ make_report <- function(eyeris, out, plots, ...) {
     " - Subject ID: ", params$sub, "\n",
     " - Session: ", params$ses, "\n",
     " - Task: ", params$task, "\n",
+    eye_info,
     run_info,
     " - BIDS Directory: ", out, "\n",
     " - [`eyeris` version](https://github.com/shawntz/eyeris): ",
@@ -166,11 +208,12 @@ make_report <- function(eyeris, out, plots, ...) {
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
     "\n## Preprocessing Summaries\n\n",
-    save_progressive_summary_plots(eyeris = eyeris, out_dir = out),
+    save_progressive_summary_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
     "\n\n## Preprocessed Data Previews\n\n",
-    save_detrend_plots(eyeris = eyeris, out_dir = out),
-    print_plots(plots), "\n",
+    save_detrend_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
+    print_plots(plots, eye_suffix = eye_suffix), "\n",
     block_heatmaps_md,
+    if (should_plot_binoc_cors(eyeris)) binocular_correlations_md else "",
     "\n\n---\n\n## EyeLink Header Metadata\n\n",
     make_md_table(eyeris$info), "\n",
     "\n\n---\n\n## `eyeris` call stack\n\n",
@@ -252,11 +295,12 @@ sanitize_call_stack <- function(x) {
 #' Generates markdown code to display plots in the report.
 #'
 #' @param plots Vector of plot file paths
+#' @param eye_suffix Optional eye suffix for binocular data
 #'
 #' @return A character string containing markdown plot references
 #'
 #' @keywords internal
-print_plots <- function(plots) {
+print_plots <- function(plots, eye_suffix = NULL) {
   md_plots <- ""
 
   make_relative_path <- function(path) {
@@ -275,6 +319,10 @@ print_plots <- function(plots) {
   if (length(run_dirs) > 0) {
     for (run_dir in run_dirs) {
       run_plots <- list.files(run_dir, pattern = "*.jpg", full.names = TRUE)
+
+      if (!is.null(eye_suffix)) {
+        run_plots <- run_plots[grepl(eye_suffix, run_plots)]
+      }
 
       if (length(run_plots) > 0) {
         run_num <- sub(".*run-(\\d+).*$", "\\1", run_dir)
@@ -323,11 +371,19 @@ print_plots <- function(plots) {
           md_plots <- paste0(md_plots, "![](", relative_fig_path, ")\n\n")
         }
 
-        # Detrend diagnostics (unchanged)
+        # detrend diagnostics - check for eye_suffix version first
         detrend_plot_path <- file.path(
           run_dir,
           paste0("run-", run_num, "_detrend.png")
         )
+
+        # if eye_suffix is provided, look for the suffixed version
+        if (!is.null(eye_suffix)) {
+          detrend_plot_path <- file.path(
+            run_dir,
+            paste0("run-", run_num, "_detrend_", eye_suffix, ".png")
+          )
+        }
         detrend_exists <- file.exists(detrend_plot_path)
         if (detrend_exists) {
           md_plots <- paste0(
@@ -351,19 +407,25 @@ print_plots <- function(plots) {
 #' @param out_dir Output directory for saving plots
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
+#' @param eye_suffix Optional eye suffix for binocular data
 #'
 #' @return No return value; saves detrend plots to the specified directory
 #'
 #' @keywords internal
 save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
-                               plot_params = list()) {
+                               plot_params = list(), eye_suffix = NULL) {
   blocks <- names(eyeris$timeseries)
 
   for (block in blocks) {
     block_number <- sub("block_", "", block)
     run_id <- sprintf("run-%02d", as.numeric(block_number))
     run_dir <- file.path(out_dir, "source", "figures", run_id)
-    detrend_path <- file.path(run_dir, paste0(run_id, "_detrend.png"))
+    detrend_filename <- paste0(run_id, "_detrend")
+    if (!is.null(eye_suffix)) {
+      detrend_filename <- paste0(detrend_filename, "_", eye_suffix)
+    }
+    detrend_filename <- paste0(detrend_filename, ".png")
+    detrend_path <- file.path(run_dir, detrend_filename)
 
     if (!dir.exists(run_dir)) {
       dir.create(run_dir, recursive = TRUE)
@@ -393,9 +455,9 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
 
       grDevices::dev.off()
 
-      message(sprintf("[Saved] %s", detrend_path))
+      cli::cli_alert_info(sprintf("[INFO] %s", detrend_path))
     } else {
-      message(sprintf("[Skipped] No detrend data found for %s", run_id))
+      cli::cli_alert_warning(sprintf("[WARN] No detrend data found for %s", run_id))
     }
   }
 }
@@ -418,6 +480,7 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
 #' @param run_id Character string identifying the run/block (e.g., "run-01").
 #'   Used for plot titles and file naming. Defaults to `"run-01"`
 #' @param cex Character expansion factor for plot elements. Defaults to `2.0`
+#' @param eye_suffix Optional eye suffix for binocular data
 #'
 #' @return NULL (invisibly). Creates a plot showing progressive preprocessing
 #'   effects with multiple layers overlaid on the same time series
@@ -440,7 +503,7 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3,
 #' @seealso \code{\link{plot.eyeris}}
 make_prog_summary_plot <- function(pupil_data, pupil_steps,
                                    preview_n = 3, plot_params = list(),
-                                   run_id = "run-01", cex = 2.0) {
+                                   run_id = "run-01", cex = 2.0, eye_suffix = NULL) {
   plot_steps <- pupil_steps[!grepl("_z$", pupil_steps)]
 
   time_range <- range(pupil_data$time_secs, na.rm = TRUE)
@@ -488,7 +551,8 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
   plot(NA,
     xlim = x_range, ylim = y_range, type = "n",
     xlab = "Time (seconds)", ylab = "Pupil Size",
-    main = paste("Progressive Preprocessing Summary -", run_id),
+    main = paste("Progressive Preprocessing Summary -", run_id,
+                 if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else ""),
     cex.main = cex, cex.lab = cex, cex.axis = cex,
     yaxt = "n", bty = "n"
   )
@@ -526,12 +590,13 @@ make_prog_summary_plot <- function(pupil_data, pupil_steps,
 #' @param out_dir Output directory for saving plots
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
+#' @param eye_suffix Optional eye suffix for binocular data
 #'
 #' @return A character string containing markdown references to the saved plots
 #'
 #' @keywords internal
 save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
-                                           plot_params = list()) {
+                                           plot_params = list(), eye_suffix = NULL) {
   run_dirs <- list.dirs(
     file.path(out_dir, "source", "figures"),
     recursive = FALSE,
@@ -552,9 +617,12 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
     block <- paste0("block_", run_id)
     run_id <- sprintf("run-%02d", run_id)
     run_dir <- file.path(out_dir, "source", "figures", run_id)
-    progressive_path <- file.path(
-      run_dir, paste0(run_id, "_desc-progressive_summary.png")
-    )
+    progressive_filename <- paste0(run_id, "_desc-progressive_summary")
+    if (!is.null(eye_suffix)) {
+      progressive_filename <- paste0(progressive_filename, "_", eye_suffix)
+    }
+    progressive_filename <- paste0(progressive_filename, ".png")
+    progressive_path <- file.path(run_dir, progressive_filename)
 
     if (!dir.exists(run_dir)) {
       dir.create(run_dir, recursive = TRUE)
@@ -578,8 +646,8 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
 
     pupil_data <- eyeris$timeseries[[block]]
     if (is.null(pupil_data)) {
-      cli::cli_alert_info(
-        sprintf("[Skipped] No pupil data for %s", run_id)
+      cli::cli_alert_warning(
+        sprintf("[WARN] No pupil data for %s", run_id)
       )
       next
     }
@@ -607,7 +675,8 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3,
       pupil_steps = pupil_steps,
       preview_n = preview_n,
       plot_params = plot_params,
-      run_id = run_id
+      run_id = run_id,
+      eye_suffix = eye_suffix
     )
 
     grDevices::dev.off()

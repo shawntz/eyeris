@@ -54,13 +54,46 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
     call_info
   }
 
-  eyeris |>
-    pipeline_handler(
-      interpolate_pupil,
-      "interpolate",
-      verbose,
-      call_info = call_info
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        interpolate_pupil,
+        "interpolate",
+        verbose,
+        call_info = call_info
+      )
+
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        interpolate_pupil,
+        "interpolate",
+        verbose,
+        call_info = call_info
+      )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
     )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        interpolate_pupil,
+        "interpolate",
+        verbose,
+        call_info = call_info
+      )
+  }
 }
 
 #' Interpolate missing pupil data using linear interpolation
@@ -83,7 +116,7 @@ interpolate_pupil <- function(x, prev_op, verbose) {
   if (!any(is.na(x[[prev_op]]))) {
     if (verbose) {
       cli::cli_alert_warning(
-        "[ INFO ] - No NAs detected in pupil data... Skipping interpolation!"
+        "[WARN] No NAs detected in pupil data... Skipping interpolation!"
       )
     }
     return(x[[prev_op]])
