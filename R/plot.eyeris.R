@@ -1028,7 +1028,7 @@ plot_gaze_heatmap <- function(
 #' # For binocular data loaded with binocular_mode = "average"
 #' # (correlation plot will show original left vs right before averaging)
 #' avg_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "average")
-#' plot_binocular_correlation(avg_data)
+#' plot_binocular_correlation(avg_data$raw_binocular_object)
 #'
 #' @export
 plot_binocular_correlation <- function(

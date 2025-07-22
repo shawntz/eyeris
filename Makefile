@@ -26,7 +26,7 @@ bump:
 
 # CRAN presubmission checks target def ------------------------------------
 cran:
-	air
+	air format .
 	@echo "[INFO] Building eyeris package for CRAN presubmission checks..."
 	mkdir -p build/cran-presubmission
 	Rscript -e "devtools::build(pkg = '.', path = 'build/cran-presubmission')"
@@ -46,6 +46,12 @@ submit:
 
 # CRAN use github release target def ---------------------------------------
 release:
+	@if [ -z "$(v)" ]; then \
+		echo "❌ Error: No version number provided. Use: make release v=2.1.0"; \
+		exit 1; \
+	fi
+	@git checkout release/v$(v)
+	@echo "🌿 Switched to branch release/v$(v)"
 	@echo "[INFO] Creating github release for eyeris package..."
 	Rscript -e "usethis::use_github_release()"
 	@echo "[INFO] github release created!\n"
