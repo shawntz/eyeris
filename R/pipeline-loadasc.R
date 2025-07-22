@@ -90,11 +90,16 @@
 #'   eyeris::load_asc(block = NULL)
 #'
 #' @export
-load_asc <- function(file,
-                     block = "auto",
-                     binocular_mode = c(
-                       "average", "left", "right", "both"
-                     )) {
+load_asc <- function(
+  file,
+  block = "auto",
+  binocular_mode = c(
+    "average",
+    "left",
+    "right",
+    "both"
+  )
+) {
   binocular_mode <- match.arg(binocular_mode)
 
   if (!tools::file_ext(file) %in% c("asc", "gz")) {
@@ -113,7 +118,9 @@ load_asc <- function(file,
   is_left <- x$info$left
   is_right <- x$info$right
   if (is_mono) {
-    if (is_left) eye <- "L"
+    if (is_left) {
+      eye <- "L"
+    }
     if (is_right) eye <- "R"
   } else {
     if (is_left && is_right) eye <- "LR"
@@ -122,7 +129,7 @@ load_asc <- function(file,
   pupil_type <- tolower(x$info$pupil.dtype)
 
   # binocular handling start ----------------------------------------------
-  has_left  <- all(c("psl", "xpl", "ypl") %in% names(x$raw))
+  has_left <- all(c("psl", "xpl", "ypl") %in% names(x$raw))
   has_right <- all(c("psr", "xpr", "ypr") %in% names(x$raw))
   binocular <- has_left && has_right
 
@@ -228,7 +235,14 @@ load_asc <- function(file,
 
     if (binocular_mode != "both") {
       other_binocular_list_out <- process_eyeris_data(
-        x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
+        x,
+        block,
+        eye,
+        hz,
+        pupil_type,
+        file,
+        binocular,
+        binoc_mode = NULL
       )
 
       other_binocular_list_out$raw_binocular_object$left <- left_eyeris
@@ -239,7 +253,14 @@ load_asc <- function(file,
   }
   # binocular handling end ------------------------------------------------
   list_out <- process_eyeris_data(
-    x, block, eye, hz, pupil_type, file, binocular, binoc_mode = NULL
+    x,
+    block,
+    eye,
+    hz,
+    pupil_type,
+    file,
+    binocular,
+    binoc_mode = NULL
   )
   return(list_out)
 }
@@ -257,15 +278,7 @@ load_asc <- function(file,
 #'
 #' @return An eyeris object
 #' @keywords internal
-process_eyeris_data <- function(x,
-                                block,
-                                eye,
-                                hz,
-                                pupil_type,
-                                file,
-                                binoc,
-                                binoc_mode) {
-
+process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, binoc_mode) {
   # raw data processing
   raw_df <- x$raw |>
     dplyr::select(
@@ -363,8 +376,10 @@ process_eyeris_data <- function(x,
   list_out$binocular_mode <- binoc_mode
 
   # set latest pointer based on block structure
-  if (is.list(list_out$timeseries) &&
-        !is.data.frame(list_out$timeseries)) {
+  if (
+    is.list(list_out$timeseries) &&
+      !is.data.frame(list_out$timeseries)
+  ) {
     # multiblock: set a named list of pointers
     list_out$latest <- setNames(
       as.list(rep("pupil_raw", length(list_out$timeseries))),

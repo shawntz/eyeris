@@ -12,7 +12,8 @@ test_that("load_asc function returns list with expected objects", {
   )
   actual_objects <- names(result)
 
-  expect_true(all(expected_objects %in% actual_objects),
+  expect_true(
+    all(expected_objects %in% actual_objects),
     info = paste(
       "Not all expected objects in `eyeris`",
       "object are present in the loaded data."

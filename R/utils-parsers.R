@@ -22,84 +22,87 @@ parse_call_stack <- function(call_str) {
 #'
 #' @keywords internal
 format_call_stack <- function(callstack) {
-  params_parsed <- do.call(rbind, lapply(names(callstack), function(step) {
-    step_data <- callstack[[step]]
+  params_parsed <- do.call(
+    rbind,
+    lapply(names(callstack), function(step) {
+      step_data <- callstack[[step]]
 
-    if (is.list(step_data) && "call" %in% names(step_data)) {
-      call_obj <- step_data$call
-      params <- step_data$parameters
+      if (is.list(step_data) && "call" %in% names(step_data)) {
+        call_obj <- step_data$call
+        params <- step_data$parameters
 
-      call_str <- deparse(call_obj)
-      call_str <- paste(call_str, collapse = "")
+        call_str <- deparse(call_obj)
+        call_str <- paste(call_str, collapse = "")
 
-      if (length(params) > 0) {
-        param_strs <- sapply(names(params), function(name) {
-          val <- params[[name]]
-          if (is.null(val)) {
-            paste0(name, " = NULL")
-          } else if (is.character(val)) {
-            paste0(name, " = '", val, "'")
-          } else if (is.logical(val)) {
-            paste0(name, " = ", val)
-          } else {
-            paste0(name, " = ", deparse(val))
-          }
-        })
-        param_str <- paste(param_strs, collapse = ", ")
+        if (length(params) > 0) {
+          param_strs <- sapply(names(params), function(name) {
+            val <- params[[name]]
+            if (is.null(val)) {
+              paste0(name, " = NULL")
+            } else if (is.character(val)) {
+              paste0(name, " = '", val, "'")
+            } else if (is.logical(val)) {
+              paste0(name, " = ", val)
+            } else {
+              paste0(name, " = ", deparse(val))
+            }
+          })
+          param_str <- paste(param_strs, collapse = ", ")
+        } else {
+          param_str <- "no parameters"
+        }
+
+        data.frame(
+          step = step,
+          callstack = call_str,
+          parameters = param_str,
+          stringsAsFactors = FALSE
+        )
+      } else if (is.list(step_data) && "call_stack" %in% names(step_data)) {
+        call_obj <- step_data$call_stack
+        params <- step_data$parameters
+
+        call_str <- deparse(call_obj)
+        call_str <- paste(call_str, collapse = "")
+
+        if (length(params) > 0) {
+          param_strs <- sapply(names(params), function(name) {
+            val <- params[[name]]
+            if (is.null(val)) {
+              paste0(name, " = NULL")
+            } else if (is.character(val)) {
+              paste0(name, " = '", val, "'")
+            } else if (is.logical(val)) {
+              paste0(name, " = ", val)
+            } else {
+              paste0(name, " = ", deparse(val))
+            }
+          })
+          param_str <- paste(param_strs, collapse = ", ")
+        } else {
+          param_str <- "no parameters"
+        }
+
+        data.frame(
+          step = step,
+          callstack = call_str,
+          parameters = param_str,
+          stringsAsFactors = FALSE
+        )
       } else {
-        param_str <- "no parameters"
+        parsed <- parse_call_stack(step_data)
+        args <- deparse(parsed$Arguments)
+        args <- paste(args, collapse = "")
+
+        data.frame(
+          step = step,
+          callstack = args,
+          parameters = "not available",
+          stringsAsFactors = FALSE
+        )
       }
-
-      data.frame(
-        step = step,
-        callstack = call_str,
-        parameters = param_str,
-        stringsAsFactors = FALSE
-      )
-    } else if (is.list(step_data) && "call_stack" %in% names(step_data)) {
-      call_obj <- step_data$call_stack
-      params <- step_data$parameters
-
-      call_str <- deparse(call_obj)
-      call_str <- paste(call_str, collapse = "")
-
-      if (length(params) > 0) {
-        param_strs <- sapply(names(params), function(name) {
-          val <- params[[name]]
-          if (is.null(val)) {
-            paste0(name, " = NULL")
-          } else if (is.character(val)) {
-            paste0(name, " = '", val, "'")
-          } else if (is.logical(val)) {
-            paste0(name, " = ", val)
-          } else {
-            paste0(name, " = ", deparse(val))
-          }
-        })
-        param_str <- paste(param_strs, collapse = ", ")
-      } else {
-        param_str <- "no parameters"
-      }
-
-      data.frame(
-        step = step,
-        callstack = call_str,
-        parameters = param_str,
-        stringsAsFactors = FALSE
-      )
-    } else {
-      parsed <- parse_call_stack(step_data)
-      args <- deparse(parsed$Arguments)
-      args <- paste(args, collapse = "")
-
-      data.frame(
-        step = step,
-        callstack = args,
-        parameters = "not available",
-        stringsAsFactors = FALSE
-      )
-    }
-  }))
+    })
+  )
 
   rownames(params_parsed) <- NULL
   params_parsed

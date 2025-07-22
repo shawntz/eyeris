@@ -20,3 +20,4 @@
 ^inst/figures$
 ^doc$
 ^Meta$
+^\.air\.toml$

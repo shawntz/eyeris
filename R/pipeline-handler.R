@@ -93,7 +93,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     call_info <- dots$call_info
     dots$call_info <- NULL # Remove call_info from dots
   }
-  if (!is.list(eyeris$params)) eyeris$params <- list()
+  if (!is.list(eyeris$params)) {
+    eyeris$params <- list()
+  }
   # ensure call_info is a list with call_stack and parameters
   if (!is.null(call_info) && !is.list(call_info)) {
     call_info <- list(call_stack = call_info, parameters = dots)
@@ -119,9 +121,11 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     is_multiblock <- TRUE
   } else {
-    if (is.null(prev_operation) ||
-          length(prev_operation) == 0 ||
-          prev_operation == "") {
+    if (
+      is.null(prev_operation) ||
+        length(prev_operation) == 0 ||
+        prev_operation == ""
+    ) {
       cli::cli_abort(
         paste0(
           "[EXIT] Latest pointer is empty or NULL.",
@@ -131,7 +135,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
     if (grepl("_([^_]+)_\\1", prev_operation)) {
       cli::cli_abort(paste(
-        "[EXIT] Corrupted latest pointer detected:", prev_operation,
+        "[EXIT] Corrupted latest pointer detected:",
+        prev_operation,
         "This indicates a pipeline error. Please restart the pipeline."
       ))
     }
@@ -143,7 +148,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     output_col <- paste0(prev_operation, "_", new_suffix)
     if (grepl("_([^_]+)_\\1", output_col)) {
       cli::cli_abort(paste(
-        "[EXIT] Attempting to create corrupted column name:", output_col,
+        "[EXIT] Attempting to create corrupted column name:",
+        output_col,
         "This indicates a pipeline processing error. Please check your data."
       ))
     }
@@ -167,9 +173,11 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       if (new_suffix != "epoch") {
         data <- eyeris$timeseries[[i_block]]
         block_prev_operation <- eyeris$latest[[i_block]]
-        if (is.null(block_prev_operation) ||
-              length(block_prev_operation) == 0 ||
-              block_prev_operation == "") {
+        if (
+          is.null(block_prev_operation) ||
+            length(block_prev_operation) == 0 ||
+            block_prev_operation == ""
+        ) {
           cli::cli_abort(paste(
             "[EXIT] Latest pointer for block",
             i_block,
@@ -179,7 +187,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         if (grepl("_([^_]+)_\\1", block_prev_operation)) {
           cli::cli_abort(paste(
             "[EXIT] Corrupted latest pointer detected for block",
-            i_block, ":", block_prev_operation,
+            i_block,
+            ":",
+            block_prev_operation,
             "This indicates a pipeline error. Please restart the pipeline."
           ))
         }
@@ -187,13 +197,16 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         if (grepl("_([^_]+)_\\1", block_output_col)) {
           cli::cli_abort(paste(
             "[EXIT] Attempting to create corrupted column name for block",
-            i_block, ":", block_output_col,
+            i_block,
+            ":",
+            block_output_col,
             "This indicates a pipeline error. Please check your data."
           ))
         }
         if (new_suffix == "detrend") {
           list_detrend <- do.call(
-            operation, c(list(data, block_prev_operation), dots)
+            operation,
+            c(list(data, block_prev_operation), dots)
           )
           data["detrend_fitted_values"] <- list_detrend$fitted_values
           data[[block_output_col]] <- list_detrend$residuals
@@ -203,7 +216,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
         } else if (new_suffix == "bin" || new_suffix == "downsample") {
           list_ds_bin <- do.call(
-            operation, c(list(data, block_prev_operation), dots)
+            operation,
+            c(list(data, block_prev_operation), dots)
           )
           data <- list_ds_bin$downsampled_df |>
             dplyr::select(
@@ -220,7 +234,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
             )
         } else {
           data[[block_output_col]] <- do.call(
-            operation, c(list(data, block_prev_operation), dots)
+            operation,
+            c(list(data, block_prev_operation), dots)
           )
         }
         eyeris$timeseries[[i_block]] <- data
@@ -264,7 +279,8 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         data[[output_col]] <- list_detrend$residuals
       } else {
         data[[output_col]] <- do.call(
-          operation, c(list(data, prev_operation), dots)
+          operation,
+          c(list(data, prev_operation), dots)
         )
       }
       eyeris$timeseries <- data

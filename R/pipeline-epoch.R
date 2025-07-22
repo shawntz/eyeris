@@ -203,17 +203,27 @@
 #'   )
 #'
 #' @export
-epoch <- function(eyeris, events, limits = NULL, label = NULL,
-                  baseline = FALSE, baseline_type = c("sub", "div"),
-                  baseline_events = NULL, baseline_period = NULL,
-                  hz = NULL, verbose = TRUE, call_info = NULL,
-                  calc_baseline = deprecated(),
-                  apply_baseline = deprecated()) {
+epoch <- function(
+  eyeris,
+  events,
+  limits = NULL,
+  label = NULL,
+  baseline = FALSE,
+  baseline_type = c("sub", "div"),
+  baseline_events = NULL,
+  baseline_period = NULL,
+  hz = NULL,
+  verbose = TRUE,
+  call_info = NULL,
+  calc_baseline = deprecated(),
+  apply_baseline = deprecated()
+) {
   # handle deprecated parameters
   if (is_present(calc_baseline)) {
     lifecycle::deprecate_warn(
       "1.3.0",
-      "epoch(calc_baseline)", "epoch(baseline)"
+      "epoch(calc_baseline)",
+      "epoch(baseline)"
     )
     if (isTRUE(calc_baseline)) {
       baseline <- TRUE
@@ -223,7 +233,8 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
   if (is_present(apply_baseline)) {
     lifecycle::deprecate_warn(
       "1.3.0",
-      "epoch(apply_baseline)", "epoch(baseline)"
+      "epoch(apply_baseline)",
+      "epoch(baseline)"
     )
     if (isTRUE(apply_baseline)) {
       baseline <- TRUE
@@ -237,10 +248,15 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
     list(
       call_stack = match.call(),
       parameters = list(
-        events = events, limits = limits, label = label,
-        baseline = baseline, baseline_type = baseline_type,
-        baseline_events = baseline_events, baseline_period = baseline_period,
-        hz = hz, verbose = verbose
+        events = events,
+        limits = limits,
+        label = label,
+        baseline = baseline,
+        baseline_type = baseline_type,
+        baseline_events = baseline_events,
+        baseline_period = baseline_period,
+        hz = hz,
+        verbose = verbose
       )
     )
   } else {
@@ -251,16 +267,34 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
     # process left and right eyes independently
     left_result <- eyeris$left |>
       pipeline_handler(
-        epoch_pupil, "epoch", events, limits, label, calc_baseline,
-        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        epoch_pupil,
+        "epoch",
+        events,
+        limits,
+        label,
+        calc_baseline,
+        apply_baseline,
+        baseline_type,
+        baseline_events,
+        baseline_period,
+        hz,
         verbose,
         call_info = call_info
       )
 
     right_result <- eyeris$right |>
       pipeline_handler(
-        epoch_pupil, "epoch", events, limits, label, calc_baseline,
-        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        epoch_pupil,
+        "epoch",
+        events,
+        limits,
+        label,
+        calc_baseline,
+        apply_baseline,
+        baseline_type,
+        baseline_events,
+        baseline_period,
+        hz,
         verbose,
         call_info = call_info
       )
@@ -280,8 +314,17 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
     # regular eyeris object, process normally
     eyeris |>
       pipeline_handler(
-        epoch_pupil, "epoch", events, limits, label, calc_baseline,
-        apply_baseline, baseline_type, baseline_events, baseline_period, hz,
+        epoch_pupil,
+        "epoch",
+        events,
+        limits,
+        label,
+        calc_baseline,
+        apply_baseline,
+        baseline_type,
+        baseline_events,
+        baseline_period,
+        hz,
         verbose,
         call_info = call_info
       )
@@ -312,15 +355,28 @@ epoch <- function(eyeris, events, limits = NULL, label = NULL,
 #' @return A list containing epoch and baseline results
 #'
 #' @keywords internal
-epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
-                        bline_type = c("sub", "div"), bline_evs, bline_per,
-                        hz, verbose) {
+epoch_pupil <- function(
+  x,
+  prev_op,
+  evs,
+  lims,
+  label,
+  c_bline,
+  a_bline,
+  bline_type = c("sub", "div"),
+  bline_evs,
+  bline_per,
+  hz,
+  verbose
+) {
   bline_type <- tolower(bline_type)
   bline_type <- match.arg(bline_type)
 
   start_time <- Sys.time()
 
-  if (is.null(hz)) hz <- x$info$sample.rate
+  if (is.null(hz)) {
+    hz <- x$info$sample.rate
+  }
 
   msg_s <- evs[1]
   msg_e <- evs[2]
@@ -340,7 +396,8 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
     alert("info", alert_str)
   }
 
-  if (is.list(evs)) { # manual method (with only 1 block at a time)
+  if (is.list(evs)) {
+    # manual method (with only 1 block at a time)
     cli::cli_alert_warning(
       paste0(
         "[WARN] Manual epoching only works with 1 block at a time.",
@@ -378,7 +435,8 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
 
     if (!is.list(evs)) {
       n_events <- merge_events_with_timeseries(
-        x$events[[bn]], msg_s,
+        x$events[[bn]],
+        msg_s,
         merge = FALSE
       ) |>
         nrow()
@@ -405,8 +463,20 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
     )
 
     processed_data[[bn]] <- epoch_and_baseline_block(
-      x, block_metadata, label, evs, lims, msg_s, msg_e,
-      c_bline, a_bline, bline_type, bline_evs, bline_per, hz, verbose
+      x,
+      block_metadata,
+      label,
+      evs,
+      lims,
+      msg_s,
+      msg_e,
+      c_bline,
+      a_bline,
+      bline_type,
+      bline_evs,
+      bline_per,
+      hz,
+      verbose
     )
 
     epoch_id <- processed_data[[bn]]$epoch$id
@@ -521,9 +591,22 @@ epoch_pupil <- function(x, prev_op, evs, lims, label, c_bline, a_bline,
 #' @return A list containing epoch and baseline results
 #'
 #' @keywords internal
-epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
-                                     c_bline, a_bline, bline_type,
-                                     bline_evs, bline_per, hz, verbose) {
+epoch_and_baseline_block <- function(
+  x,
+  blk,
+  lab,
+  evs,
+  lims,
+  msg_s,
+  msg_e,
+  c_bline,
+  a_bline,
+  bline_type,
+  bline_evs,
+  bline_per,
+  hz,
+  verbose
+) {
   # input validation ---------------------------------------------------
   if (!is.list(x$timeseries)) {
     cli::cli_abort("[EXIT] Input timeseries must be a list of blocks")
@@ -554,7 +637,8 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
   data.table::setkey(dt, "time_orig")
 
   # epoch logic --------------------------------------------------------
-  if (!is.list(evs) || length(evs) != 3) { # i.e., manual method
+  if (!is.list(evs) || length(evs) != 3) {
+    # i.e., manual method
     timestamps <- get_timestamps(evs, block_events, msg_s, msg_e, lims)
   } else {
     timestamps <- NULL
@@ -579,20 +663,26 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
     bline_msg_s <- bline_evs[1]
     bline_msg_e <- bline_evs[2]
 
-    bline_matches <- get_timestamps(bline_evs, block_events,
-      bline_msg_s, bline_msg_e, bline_per,
-      baseline_mode = TRUE
-    )
+    bline_matches <- get_timestamps(bline_evs, block_events, bline_msg_s, bline_msg_e, bline_per, baseline_mode = TRUE)
 
     check_baseline_epoch_counts(timestamps, bline_matches)
 
     baseline_epochs <- extract_baseline_epochs(
-      x, block_data, bline_evs, bline_per, bline_matches, hz
+      x,
+      block_data,
+      bline_evs,
+      bline_per,
+      bline_matches,
+      hz
     )
 
     computed_baselines <- compute_baseline(
-      x, result, baseline_epochs, bline_type,
-      epoch_events = evs, baseline_events = bline_evs
+      x,
+      result,
+      baseline_epochs,
+      bline_type,
+      epoch_events = evs,
+      baseline_events = bline_evs
     )
 
     baseline_id <- make_baseline_label(computed_baselines, epoch_id)
@@ -653,8 +743,7 @@ epoch_and_baseline_block <- function(x, blk, lab, evs, lims, msg_s, msg_e,
 #' @return A list containing epoch and baseline results
 #'
 #' @keywords internal
-process_epoch_and_baselines <- function(eyeris, timestamps, evs,
-                                        lims, hz, verbose) {
+process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbose) {
   n_timestamps <- nrow(timestamps$start)
 
   if (n_timestamps == 0 && !is.null(n_timestamps)) {
@@ -683,14 +772,17 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs,
       epoch_manually(evs, hz, verbose)
   }
 
-  if (!is.null(n_timestamps) &&
-        length(epochs) > 0 &&
-        length(epochs) != n_timestamps) {
+  if (
+    !is.null(n_timestamps) &&
+      length(epochs) > 0 &&
+      length(epochs) != n_timestamps
+  ) {
     cli::cli_abort(sprintf(
       paste0(
         "[EXIT] Expected %d samples but got %d samples.",
         "Check data for a possible matching error.",
-        n_timestamps, length(epochs)
+        n_timestamps,
+        length(epochs)
       )
     ))
   }
@@ -854,7 +946,9 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz, verbose) {
     epochs[[i]] <- eyeris |>
       purrr::pluck("timeseries") |>
       slice_epochs_with_limits(
-        start$time[i], lims, hz
+        start$time[i],
+        lims,
+        hz
       ) |>
       dplyr::mutate(
         timebin = seq(from = 0, to = duration, length.out = n_samples),
@@ -903,11 +997,13 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
     i_end <- end$time[i]
 
     start_metadata_vals <- dplyr::rename_with(
-      index_metadata(start, i), ~ paste0("start_", .x)
+      index_metadata(start, i),
+      ~ paste0("start_", .x)
     )
 
     end_metadata_vals <- dplyr::rename_with(
-      index_metadata(end, i), ~ paste0("end_", .x)
+      index_metadata(end, i),
+      ~ paste0("end_", .x)
     )
 
     metadata_vals <- start_metadata_vals |>

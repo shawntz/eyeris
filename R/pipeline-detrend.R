@@ -51,12 +51,12 @@ detrend <- function(eyeris, call_info = NULL) {
       pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
 
     left_result$metadata$detrended <- TRUE
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(detrend_pupil, "detrend", call_info = call_info)
 
     right_result$metadata$detrended <- TRUE
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,

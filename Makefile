@@ -4,8 +4,15 @@ all: uninstall getdeps build install roxygenize readme ghpages clean
 # debugging target def ----------------------------------------------------
 debug: uninstall build install clean
 
+# air lintr target def ----------------------------------------------------
+air:
+	@echo "[INFO] Formatting code with air..."
+	air format .
+	@echo "[OKAY] Done!"
+
 # CRAN presubmission checks target def ------------------------------------
 cran:
+	air
 	@echo "[INFO] Building eyeris package for CRAN presubmission checks..."
 	mkdir -p build/cran-presubmission
 	Rscript -e "devtools::build(pkg = '.', path = 'build/cran-presubmission')"

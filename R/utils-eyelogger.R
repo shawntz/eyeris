@@ -28,9 +28,7 @@
 #' }, log_dir = file.path(tempdir(), "eyeris_logs"))
 #'
 #' @export
-eyelogger <- function(eyeris_cmd,
-                      log_dir = file.path(tempdir(), "eyeris_logs"),
-                      timestamp_format = "%Y%m%d_%H%M%S") {
+eyelogger <- function(eyeris_cmd, log_dir = file.path(tempdir(), "eyeris_logs"), timestamp_format = "%Y%m%d_%H%M%S") {
   if (!dir.exists(log_dir)) {
     dir.create(log_dir, recursive = TRUE)
   }
@@ -50,14 +48,17 @@ eyelogger <- function(eyeris_cmd,
 
   result <- NULL
 
-  tryCatch({
-    result <- eval(eyeris_cmd, envir = parent.frame())
-  }, finally = {
-    sink(type = "message")
-    sink(type = "output")
-    close(stdout_con)
-    close(stderr_con)
-  })
+  tryCatch(
+    {
+      result <- eval(eyeris_cmd, envir = parent.frame())
+    },
+    finally = {
+      sink(type = "message")
+      sink(type = "output")
+      close(stdout_con)
+      close(stderr_con)
+    }
+  )
 
   invisible(result)
 }

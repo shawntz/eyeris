@@ -46,9 +46,11 @@ bin <- function(eyeris, bins_per_second, method = "mean", call_info = NULL) {
     cli::cli_abort("[EXIT] Method must be either 'mean' or 'median'")
   }
 
-  if (bins_per_second <= 0 ||
+  if (
+    bins_per_second <= 0 ||
       !is.numeric(bins_per_second) ||
-      bins_per_second != round(bins_per_second)) {
+      bins_per_second != round(bins_per_second)
+  ) {
     cli::cli_abort("[EXIT] bins_per_second must be a positive integer")
   }
 
@@ -138,15 +140,19 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
       "[EXIT] Previous operation column name is empty or NULL.",
       "Expected a valid column name like 'pupil_raw'. This usually means the",
       "eyeris object's 'latest' pointer is not set correctly.",
-      "Current prev_op value:", deparse(prev_op)
+      "Current prev_op value:",
+      deparse(prev_op)
     ))
   }
 
   # debug: check if the column exists
   if (!prev_op %in% colnames(x)) {
     cli::cli_abort(paste(
-      "[EXIT] Column '", prev_op, "' not found in eyeris data object.",
-      "Available columns:", paste(colnames(x), collapse = ", ")
+      "[EXIT] Column '",
+      prev_op,
+      "' not found in eyeris data object.",
+      "Available columns:",
+      paste(colnames(x), collapse = ", ")
     ))
   }
 
@@ -171,7 +177,8 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
 
   # pre-compute bin assignments for all time points
   bin_assignments <- findInterval(
-    time_secs_inferred, bin_centers - bin_duration / 2
+    time_secs_inferred,
+    bin_centers - bin_duration / 2
   )
 
   binned_df <- data.frame(
@@ -210,7 +217,8 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   binned_df <- cbind(
     binned_df,
     setNames(
-      list(binned_bin_col), paste0(prev_op, "_bin")
+      list(binned_bin_col),
+      paste0(prev_op, "_bin")
     )
   )
 
