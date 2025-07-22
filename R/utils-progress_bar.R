@@ -13,12 +13,14 @@
 #' @return A progress bar object from the progress package
 #'
 #' @keywords internal
-progress_bar <- function(total, msg = "Processing", width = 80,
-                         show_percent = TRUE, show_eta = TRUE,
-                         clear = FALSE) {
+progress_bar <- function(total, msg = "Processing", width = 80, show_percent = TRUE, show_eta = TRUE, clear = FALSE) {
   format_str <- c(msg, "[:bar]")
-  if (show_percent) format_str <- c(format_str, ":percent")
-  if (show_eta) format_str <- c(format_str, "eta: :eta")
+  if (show_percent) {
+    format_str <- c(format_str, ":percent")
+  }
+  if (show_eta) {
+    format_str <- c(format_str, "eta: :eta")
+  }
   format_str <- paste(format_str, collapse = " ")
 
   progress::progress_bar$new(
