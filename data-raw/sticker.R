@@ -15,9 +15,15 @@ combined_plot <- cowplot::ggdraw() +
 sticker <- hexSticker::sticker(
   combined_plot,
   package = "EYERIS",
-  h_fill = "#820000", h_color = "#820000",
-  s_x = 1, s_y = 1.28, s_width = 0.35,
-  p_x = 1, p_y = 0.78, p_size = 22, p_family = "Nunito",
+  h_fill = "#820000",
+  h_color = "#820000",
+  s_x = 1,
+  s_y = 1.28,
+  s_width = 0.35,
+  p_x = 1,
+  p_y = 0.78,
+  p_size = 22,
+  p_family = "Nunito",
   filename = "inst/figures/sticker.png"
 )
 
