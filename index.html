@@ -37,7 +37,7 @@
 
     <a class="navbar-brand me-2" href="index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -129,7 +129,7 @@
 <li>
 <code>📊 Data Quality Assessment</code>: Automatically generated figures of each preprocessing step and its effect on the pupil signal (at the global and trial levels), as well as gaze heatmaps and binocular correlation plots to assess data quality and participant attention patterns.</li>
 <li>
-<code>📁 BIDS-like File Structure</code>: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.</li>
+<code>🗂️ BIDS-like File Structure</code>: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.</li>
 <li>
 <code>📝 Logging Commands</code>: Automatically capture all console output and errors to timestamped log files.</li>
 </ul>
@@ -211,7 +211,7 @@
 <td>Summarize and visualize confounding variables for each preprocessing step.</td>
 </tr>
 <tr class="odd">
-<td><strong>Epoching</strong></td>
+<td><strong>Epoching &amp; Baselining</strong></td>
 <td><a href="https://shawnschwartz.com/eyeris/reference/epoch.html">epoch()</a></td>
 <td>Extract time-locked epochs from the continuous pupil signal.</td>
 </tr>
@@ -477,8 +477,30 @@
 <h3 id="events-and-blinks-data">Events and blinks data<a class="anchor" aria-label="anchor" href="#events-and-blinks-data"></a>
 </h3>
 <p>The events and blinks CSV files contain the raw event markers and blink detection data as stored in the eyeris object:</p>
-<p><strong>Events file structure:</strong> - <code>block</code>: Block/run number - <code>time</code>: Timestamp of the event - <code>text</code>: Raw event text from the ASC file - <code>text_unique</code>: Unique event identifier</p>
-<p><strong>Blinks file structure:</strong> - <code>block</code>: Block/run number - <code>stime</code>: Start time of the blink - <code>etime</code>: End time of the blink - <code>dur</code>: Duration of the blink in milliseconds - <code>eye</code>: Eye identifier (L/R for binocular data)</p>
+<p><strong>Events file structure:</strong></p>
+<ul>
+<li>
+<code>block</code>: Block/run number</li>
+<li>
+<code>time</code>: Timestamp of the event</li>
+<li>
+<code>text</code>: Raw event text from the ASC file</li>
+<li>
+<code>text_unique</code>: Unique event identifier</li>
+</ul>
+<p><strong>Blinks file structure:</strong></p>
+<ul>
+<li>
+<code>block</code>: Block/run number</li>
+<li>
+<code>stime</code>: Start time of the blink</li>
+<li>
+<code>etime</code>: End time of the blink</li>
+<li>
+<code>dur</code>: Duration of the blink in milliseconds</li>
+<li>
+<code>eye</code>: Eye identifier (L/R for binocular data)</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="key-features">Key features<a class="anchor" aria-label="anchor" href="#key-features"></a>
@@ -602,8 +624,30 @@
 <h3 id="events-and-blinks-data-1">Events and blinks data<a class="anchor" aria-label="anchor" href="#events-and-blinks-data-1"></a>
 </h3>
 <p>The events and blinks CSV files contain the raw event markers and blink detection data as stored in the eyeris object:</p>
-<p><strong>Events file structure:</strong> - <code>block</code>: Block/run number - <code>time</code>: Timestamp of the event - <code>text</code>: Raw event text from the ASC file - <code>text_unique</code>: Unique event identifier</p>
-<p><strong>Blinks file structure:</strong> - <code>block</code>: Block/run number - <code>stime</code>: Start time of the blink - <code>etime</code>: End time of the blink - <code>dur</code>: Duration of the blink in milliseconds - <code>eye</code>: Eye identifier (L/R for binocular data)</p>
+<p><strong>Events file structure:</strong></p>
+<ul>
+<li>
+<code>block</code>: Block/run number</li>
+<li>
+<code>time</code>: Timestamp of the event</li>
+<li>
+<code>text</code>: Raw event text from the ASC file</li>
+<li>
+<code>text_unique</code>: Unique event identifier</li>
+</ul>
+<p><strong>Blinks file structure:</strong></p>
+<ul>
+<li>
+<code>block</code>: Block/run number</li>
+<li>
+<code>stime</code>: Start time of the blink</li>
+<li>
+<code>etime</code>: End time of the blink</li>
+<li>
+<code>dur</code>: Duration of the blink in milliseconds</li>
+<li>
+<code>eye</code>: Eye identifier (L/R for binocular data)</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="key-features-1">Key features<a class="anchor" aria-label="anchor" href="#key-features-1"></a>
@@ -627,7 +671,18 @@
 <a class="anchor" aria-label="anchor" href="#id_-logging-eyeris-commands-with-eyelogger"></a>
 </h2>
 <p>The <code><a href="reference/eyelogger.html">eyelogger()</a></code> utility lets you run any <code>eyeris</code> command (or block of R code) while automatically capturing all console output and errors to timestamped log files. This is especially useful for reproducibility, debugging, or running batch jobs.</p>
-<p><strong>How it works:</strong> - All standard output (<code>stdout</code>) and standard error (<code>stderr</code>) are saved to log files in a directory you specify (or a temporary directory by default). - Each run produces two log files: - <code>&lt;timestamp&gt;.out</code>: all console output - <code>&lt;timestamp&gt;.err</code>: all warnings and errors</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>All standard output (<code>stdout</code>) and standard error (<code>stderr</code>) are saved to log files in a directory you specify (or a temporary directory by default).</li>
+<li>Each run produces two log files:
+<ul>
+<li>
+<code>&lt;timestamp&gt;.out</code>: all console output</li>
+<li>
+<code>&lt;timestamp&gt;.err</code>: all warnings and errors</li>
+</ul>
+</li>
+</ul>
 <div class="section level3">
 <h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h3>
