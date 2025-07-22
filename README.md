@@ -59,7 +59,7 @@ manually.
   preprocessing step and its effect on the pupil signal (at the global
   and trial levels), as well as gaze heatmaps and binocular correlation
   plots to assess data quality and participant attention patterns.
-- `📁 BIDS-like File Structure`: Organizes preprocessed data using a
+- `🗂️ BIDS-like File Structure`: Organizes preprocessed data using a
   BIDS-like directory structure that supports both monocular and
   binocular eye-tracking data.
 - `📝 Logging Commands`: Automatically capture all console output and
@@ -84,7 +84,7 @@ with links to their documentation and a brief description.
 | **Detrending** | [detrend()](https://shawnschwartz.com/eyeris/reference/detrend.html) | Remove slow drifts from the pupil signal by linear detrending. |
 | **Z-scoring** | [zscore()](https://shawnschwartz.com/eyeris/reference/zscore.html) | Z-score the pupil signal within each block. |
 | **Confound Summary** | [summarize_confounds()](https://shawnschwartz.com/eyeris/reference/summarize_confounds.html) | Summarize and visualize confounding variables for each preprocessing step. |
-| **Epoching** | [epoch()](https://shawnschwartz.com/eyeris/reference/epoch.html) | Extract time-locked epochs from the continuous pupil signal. |
+| **Epoching & Baselining** | [epoch()](https://shawnschwartz.com/eyeris/reference/epoch.html) | Extract time-locked epochs from the continuous pupil signal. |
 | **Plotting** | [plot()](https://shawnschwartz.com/eyeris/reference/plot.eyeris.html) | Plot the pupil signal and preprocessing steps. |
 | **Gaze Heatmaps** | [plot_gaze_heatmap()](https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html) | Generate heatmaps of gaze position across the screen. |
 | **Binocular Correlation** | [plot_binocular_correlation()](https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.html) | Compute correlation between left and right eye pupil signals. |
@@ -330,14 +330,20 @@ All files follow a consistent BIDS-like naming pattern:
 The events and blinks CSV files contain the raw event markers and blink
 detection data as stored in the eyeris object:
 
-**Events file structure:** - `block`: Block/run number - `time`:
-Timestamp of the event - `text`: Raw event text from the ASC file -
-`text_unique`: Unique event identifier
+**Events file structure:**
 
-**Blinks file structure:** - `block`: Block/run number - `stime`: Start
-time of the blink - `etime`: End time of the blink - `dur`: Duration of
-the blink in milliseconds - `eye`: Eye identifier (L/R for binocular
-data)
+- `block`: Block/run number
+- `time`: Timestamp of the event
+- `text`: Raw event text from the ASC file
+- `text_unique`: Unique event identifier
+
+**Blinks file structure:**
+
+- `block`: Block/run number
+- `stime`: Start time of the blink
+- `etime`: End time of the blink
+- `dur`: Duration of the blink in milliseconds
+- `eye`: Eye identifier (L/R for binocular data)
 
 ### Key features
 
@@ -352,6 +358,7 @@ data)
   parameters and call stacks
 
 ## Logging `eyeris` commands with `eyelogger()`
+
 ## 📁 BIDS-like file structure
 
 `eyeris` organizes preprocessed data using a BIDS-like directory
@@ -452,12 +459,14 @@ The events and blinks CSV files contain the raw event markers and blink
 detection data as stored in the eyeris object:
 
 **Events file structure:**
+
 - `block`: Block/run number
 - `time`: Timestamp of the event
 - `text`: Raw event text from the ASC file
 - `text_unique`: Unique event identifier
 
 **Blinks file structure:**
+
 - `block`: Block/run number
 - `stime`: Start time of the blink
 - `etime`: End time of the blink
@@ -483,11 +492,14 @@ R code) while automatically capturing all console output and errors to
 timestamped log files. This is especially useful for reproducibility,
 debugging, or running batch jobs.
 
-**How it works:** - All standard output (`stdout`) and standard error
-(`stderr`) are saved to log files in a directory you specify (or a
-temporary directory by default). - Each run produces two log files: -
-`<timestamp>.out`: all console output - `<timestamp>.err`: all warnings
-and errors
+**How it works:**
+
+- All standard output (`stdout`) and standard error (`stderr`) are saved
+  to log files in a directory you specify (or a temporary directory by
+  default).
+- Each run produces two log files:
+  - `<timestamp>.out`: all console output
+  - `<timestamp>.err`: all warnings and errors
 
 ### Usage
 
