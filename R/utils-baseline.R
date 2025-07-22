@@ -10,8 +10,10 @@
 #' @keywords internal
 make_baseline_label <- function(baselined_data, epoch_id) {
   paste0(
-    "baseline_", baselined_data$baseline_cor_col_name,
-    "_", epoch_id
+    "baseline_",
+    baselined_data$baseline_cor_col_name,
+    "_",
+    epoch_id
   )
 }
 
@@ -30,8 +32,7 @@ make_baseline_label <- function(baselined_data, epoch_id) {
 #' @return A list of baseline epoch dataframes
 #'
 #' @keywords internal
-extract_baseline_epochs <- function(x, df, evs, time_range,
-                                    matched_epochs, hz) {
+extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) {
   check_baseline_inputs(evs, time_range)
 
   time_col <- "time_orig"
@@ -46,12 +47,15 @@ extract_baseline_epochs <- function(x, df, evs, time_range,
 
     for (i in seq_len(nrow(start))) {
       current_epoch <- slice_epochs_with_limits(
-        df, start$time[i], time_range,
+        df,
+        start$time[i],
+        time_range,
         hz
       )
       baselines[[i]] <- current_epoch
     }
-  } else { # user provides start message + end message for baseline period
+  } else {
+    # user provides start message + end message for baseline period
     end <- matched_epochs$end
     check_start_end_timestamps(start, end)
 
@@ -86,9 +90,7 @@ extract_baseline_epochs <- function(x, df, evs, time_range,
 #' @return A list containing baseline correction results and metadata
 #'
 #' @keywords internal
-compute_baseline <- function(x, epochs,
-                             baseline_epochs, mode,
-                             epoch_events = NULL, baseline_events = NULL) {
+compute_baseline <- function(x, epochs, baseline_epochs, mode, epoch_events = NULL, baseline_events = NULL) {
   # compute baseline on pre z-scored data
   pupil_col <- gsub("_z", "", x$latest)
 
@@ -118,7 +120,8 @@ compute_baseline <- function(x, epochs,
         "[WARN] More baseline epochs (%d) than actual epochs (%d).\n",
         "Truncating baseline epochs to match."
       ),
-      n_baseline_epochs, n_epochs
+      n_baseline_epochs,
+      n_epochs
     ))
     baseline_epochs <- baseline_epochs[1:n_epochs]
     baseline_data <- vector(mode = "list", length = n_epochs)
@@ -127,9 +130,7 @@ compute_baseline <- function(x, epochs,
 
   for (i in seq_len(length(baseline_epochs))) {
     if (i > length(epochs)) {
-      cli::cli_alert_warning(sprintf("[WARN] Epoch %d does not exist, skipping baseline computation",
-                      i)
-      )
+      cli::cli_alert_warning(sprintf("[WARN] Epoch %d does not exist, skipping baseline computation", i))
       baseline_data[[i]] <- rep(NA_real_, 1)
       baseline_means[i] <- NA_real_
       next
@@ -138,9 +139,11 @@ compute_baseline <- function(x, epochs,
     pupil_dat <- epochs[[i]][[pupil_col]]
     baseline_window_pupil <- baseline_epochs[[i]][[pupil_col]]
 
-    if (is.null(baseline_window_pupil) ||
-          length(baseline_window_pupil) == 0 ||
-          all(is.na(baseline_window_pupil))) {
+    if (
+      is.null(baseline_window_pupil) ||
+        length(baseline_window_pupil) == 0 ||
+        all(is.na(baseline_window_pupil))
+    ) {
       # if no baseline data, fill with NA of correct length
       baseline_removed <- rep(NA_real_, length(pupil_dat))
       baseline_avg <- NA_real_
