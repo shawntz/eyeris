@@ -48,12 +48,13 @@
 #'
 #' @export
 downsample <- function(
-    eyeris,
-    target_fs,
-    plot_freqz = FALSE,
-    rp = 1,
-    rs = 35,
-    call_info = NULL) {
+  eyeris,
+  target_fs,
+  plot_freqz = FALSE,
+  rp = 1,
+  rs = 35,
+  call_info = NULL
+) {
   current_fs <- eyeris$info$sample.rate
 
   call_info <- if (is.null(call_info)) {
@@ -145,8 +146,7 @@ downsample <- function(
 #' @return A list containing the downsampled data and the decimated sample rate
 #'
 #' @keywords internal
-downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
-                             rp, rs) {
+downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, rs) {
   if (any(is.na(x[[prev_op]]))) {
     cli::cli_abort("[EXIT] NAs detected in pupil data. Need to interpolate first.")
     return(x[[prev_op]])
@@ -159,8 +159,12 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (decimation_factor < 1) {
     cli::cli_abort(
       paste(
-        "[EXIT] Target sampling frequency (", target_fs, " Hz) must be less than",
-        "current sampling frequency (", current_fs, " Hz)"
+        "[EXIT] Target sampling frequency (",
+        target_fs,
+        " Hz) must be less than",
+        "current sampling frequency (",
+        current_fs,
+        " Hz)"
       )
     )
   }
@@ -168,7 +172,8 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (decimation_factor != round(decimation_factor)) {
     cli::cli_abort(
       paste(
-        "[EXIT] Decimation factor must be an integer. Current: ", decimation_factor,
+        "[EXIT] Decimation factor must be an integer. Current: ",
+        decimation_factor,
         ". Consider using a different target_fs."
       )
     )
@@ -185,7 +190,9 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
   if (wp < 4) {
     cli::cli_abort(
       paste(
-        "[EXIT] Passband frequency (", round(wp, 2), " Hz) is too low.",
+        "[EXIT] Passband frequency (",
+        round(wp, 2),
+        " Hz) is too low.",
         "This would likely cause loss of actual pupillary responses.",
         "Consider using a higher target_fs or the binning function instead."
       )
@@ -208,8 +215,14 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
     )
     subtitle <- paste0(
       "*freq response for anti-aliasing filter* - ",
-      "passband (", wp, "Hz), stopband (", ws, "Hz), ",
-      "target_fs (", target_fs, "Hz)\n"
+      "passband (",
+      wp,
+      "Hz), stopband (",
+      ws,
+      "Hz), ",
+      "target_fs (",
+      target_fs,
+      "Hz)\n"
     )
 
     # calculate cex
@@ -217,8 +230,12 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs,
     scaling_factor <- 7
     cex_val <- plot_width / scaling_factor
     graphics::mtext(
-      side = 2, line = 2, at = 0, adj = 0.95,
-      cex = cex_val, subtitle
+      side = 2,
+      line = 2,
+      at = 0,
+      adj = 0.95,
+      cex = cex_val,
+      subtitle
     )
   }
 
