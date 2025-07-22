@@ -451,14 +451,18 @@ All files follow a consistent BIDS-like naming pattern:
 The events and blinks CSV files contain the raw event markers and blink
 detection data as stored in the eyeris object:
 
-**Events file structure:** - `block`: Block/run number - `time`:
-Timestamp of the event - `text`: Raw event text from the ASC file -
-`text_unique`: Unique event identifier
+**Events file structure:**
+- `block`: Block/run number
+- `time`: Timestamp of the event
+- `text`: Raw event text from the ASC file
+- `text_unique`: Unique event identifier
 
-**Blinks file structure:** - `block`: Block/run number - `stime`: Start
-time of the blink - `etime`: End time of the blink - `dur`: Duration of
-the blink in milliseconds - `eye`: Eye identifier (L/R for binocular
-data)
+**Blinks file structure:**
+- `block`: Block/run number
+- `stime`: Start time of the blink
+- `etime`: End time of the blink
+- `dur`: Duration of the blink in milliseconds
+- `eye`: Eye identifier (L/R for binocular data)
 
 ### Key features
 
