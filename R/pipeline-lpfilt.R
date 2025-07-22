@@ -48,8 +48,7 @@
 #'   plot(seed = 0)
 #'
 #' @export
-lpfilt <- function(eyeris, wp = 4, ws = 8,
-                   rp = 1, rs = 35, plot_freqz = FALSE, call_info = NULL) {
+lpfilt <- function(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE, call_info = NULL) {
   # safely handle user's current options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
@@ -182,7 +181,11 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
     )
     subtitle <- paste0(
       "*freq response for the low-pass filter* - ",
-      "cutoff (", wp, "Hz), stopping (", ws, "Hz)\n"
+      "cutoff (",
+      wp,
+      "Hz), stopping (",
+      ws,
+      "Hz)\n"
     )
 
     # calculate cex
@@ -190,8 +193,12 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
     scaling_factor <- 7
     cex_val <- plot_width / scaling_factor
     graphics::mtext(
-      side = 2, line = 2, at = 0, adj = 0.95,
-      cex = cex_val, subtitle
+      side = 2,
+      line = 2,
+      at = 0,
+      adj = 0.95,
+      cex = cex_val,
+      subtitle
     )
   }
 
