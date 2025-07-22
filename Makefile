@@ -26,7 +26,7 @@ bump:
 
 # CRAN presubmission checks target def ------------------------------------
 cran:
-	air
+	air format .
 	@echo "[INFO] Building eyeris package for CRAN presubmission checks..."
 	mkdir -p build/cran-presubmission
 	Rscript -e "devtools::build(pkg = '.', path = 'build/cran-presubmission')"
