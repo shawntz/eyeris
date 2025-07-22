@@ -17,15 +17,18 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
+[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/eyeris?color=brightgreen)](https://cran.r-project.org/package=badger)
+[![bioRxiv Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
 [![Air check](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
-[![bioRxiv Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 <!-- badges: end -->
 
-## 💻 eyeris DevOps Dashboard
-Dive deeper into eyeris's development and operational insights with our new [eyeris DevOps Dashboard](https://shawnschwartz.notion.site/eyeris-devops)!
+<div class="alert alert-light">
+  <h2>💻 eyeris DevOps Dashboard</h2>
+  Dive deeper into <code>eyeris'</code> development and operational insights with our new <a href="https://shawnschwartz.notion.site/eyeris-devops" target="_blank">eyeris DevOps Dashboard</a>!
+</div>
 
 <!-- The goal of eyeris is to ... -->
 ## 💡 Motivation
@@ -53,10 +56,6 @@ coordinates across the entire screen area, helping you assess data quality
 and participant attention patterns. These heatmaps are automatically generated 
 in the BIDS reports and can also be created manually.
 
-```{r, echo=FALSE, fig.dpi=300, out.width='100%'}
-knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif")
-```
-
 ## 🚀 Feature Highlights
 
 - `📦 Modular Design`: Each preprocessing step is a standalone function that can be used independently or combined into custom pipelines.
@@ -66,6 +65,9 @@ knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/
 - `🗂️ BIDS-like File Structure`: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.
 - `📝 Logging Commands`: Automatically capture all console output and errors to timestamped log files.
 
+```{r, echo=FALSE, fig.dpi=300, out.width='100%'}
+knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif")
+```
 
 ## 📖 Function Reference
 

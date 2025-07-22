@@ -7,14 +7,30 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
+[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/eyeris?color=brightgreen)](https://cran.r-project.org/package=badger)
+[![bioRxiv
+Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
-[![linter](https://github.com/shawntz/eyeris/actions/workflows/linter.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/linter.yml)
+[![Air
+check](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
-[![bioRxiv
-Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 <!-- badges: end -->
+
+<div class="alert alert-light">
+
+<h2>
+
+💻 eyeris DevOps Dashboard
+</h2>
+
+Dive deeper into <code>eyeris’</code> development and operational
+insights with our new
+<a href="https://shawnschwartz.notion.site/eyeris-devops" target="_blank">eyeris
+DevOps Dashboard</a>!
+
+</div>
 
 <!-- The goal of eyeris is to ... -->
 
@@ -44,8 +60,6 @@ quality and participant attention patterns. These heatmaps are
 automatically generated in the BIDS reports and can also be created
 manually.
 
-<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%" />
-
 ## 🚀 Feature Highlights
 
 - `📦 Modular Design`: Each preprocessing step is a standalone function
@@ -64,6 +78,8 @@ manually.
   binocular eye-tracking data.
 - `📝 Logging Commands`: Automatically capture all console output and
   errors to timestamped log files.
+
+<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%" />
 
 ## 📖 Function Reference
 
@@ -165,7 +181,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v2.0.0.9000 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v2.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 
 demo_data <- eyelink_asc_demo_dataset()
