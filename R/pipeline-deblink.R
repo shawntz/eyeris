@@ -72,7 +72,7 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
         extend = extend,
         call_info = call_info
       )
-    
+
     right_result <- eyeris$right |>
       pipeline_handler(
         deblink_pupil,
@@ -80,7 +80,7 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
         extend = extend,
         call_info = call_info
       )
-    
+
     # return combined structure
     list_out <- list(
       left = left_result,
@@ -149,7 +149,7 @@ deblink_pupil <- function(x, prev_op, extend) {
   } else {
     cli::cli_abort(
       paste(
-        "extend must either be a single integer (symmetric) or a vector of",
+        "[EXIT] extend must either be a single integer (symmetric) or a vector of",
         "length 2 (asymmetric) in the format `c(backward, forward)`!"
       )
     )

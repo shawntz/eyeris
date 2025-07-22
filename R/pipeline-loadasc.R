@@ -98,7 +98,7 @@ load_asc <- function(file,
   binocular_mode <- match.arg(binocular_mode)
 
   if (!tools::file_ext(file) %in% c("asc", "gz")) {
-    stop(sprintf("Error: The file '%s' is not a .asc file.", file))
+    cli::cli_abort(sprintf("[EXIT] Error: The file '%s' is not a .asc file.", file))
   }
 
   x <- eyelinker::read.asc(
@@ -128,7 +128,7 @@ load_asc <- function(file,
 
   if (binocular) {
     cli::cli_alert_info(
-      "Binocular data detected. Processing {.val {binocular_mode}} mode."
+      "[INFO] Binocular data detected. Processing {.val {binocular_mode}} mode."
     )
 
     # create left and right eye data frames to store original binocular data before merging
@@ -336,7 +336,7 @@ process_eyeris_data <- function(x,
         paste0("block_", as.character(block))
       )
     } else {
-      stop("`block` must be either: NULL, numeric, or 'auto'.")
+      cli::cli_abort("[EXIT] `block` must be either: NULL, numeric, or 'auto'.")
     }
   } else {
     # fallback to direct assignment if all block cases fail
