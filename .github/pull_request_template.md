@@ -9,7 +9,7 @@
 ### Key Changes and Enhancements (Targeting `vX.Y.Z` [`Major`/`Minor`/`Patch`] Release)
 > **EXAMPLE:** The following system-wide changes are included for implementation in a minor release `v2.1.0` to better support both monocular and binocular data files:
 >
-> 1. **Nest all `eyeris` class lists with `left` and `right` parent lists** to explicitly separate out left eye (`L`) and right eye (`R`) data. This design now supports both monocular and binocular data without requiring any special settings or parameters; if the data is monocular, the the resulting `eyeris` objects will remain unchanged from #221.
+> 1. **Nest all `eyeris` class lists with `left` and `right` parent lists** to explicitly separate out left eye (`L`) and right eye (`R`) data. This design now supports both monocular and binocular data without requiring any special settings or parameters; if the data is monocular, the resulting `eyeris` objects will remain unchanged from #221.
 > 2. **Nest all downstream operations to treat `L` and/or `R` as separate entities**. This crucial step ensures that there is no cross-contamination 😷 between data from the two eyes during any subsequent processing.  
 > 3. For the `bidsify()` function, `eyeris` will now append **`_eye-L` and/or `_eye-R` to all derivatives and output HTML reports**. This provides clear and consistent naming conventions, making it easier to identify and manage outputs related to specific eyes.
 
