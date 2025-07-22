@@ -60,8 +60,8 @@ knitr::include_graphics("https://github.com/shawntz/eyeris/raw/dev/inst/figures/
 - `🔍 Interactive Reports`: Beautiful, interactive HTML reports that summarize preprocessing steps and visualize data quality.
 - `🔄 Flexible Extensions`: Easily create custom extensions to the preprocessing pipeline by writing your own functions and adding them to the pipeline.
 - `📊 Data Quality Assessment`: Automatically generated figures of each preprocessing step and its effect on the pupil signal (at the global and trial levels), as well as gaze heatmaps and binocular correlation plots to assess data quality and participant attention patterns.
-- `📦 BIDS-like File Structure`: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.
-- `📦 Logging Commands`: Automatically capture all console output and errors to timestamped log files.
+- `🗂️ BIDS-like File Structure`: Organizes preprocessed data using a BIDS-like directory structure that supports both monocular and binocular eye-tracking data.
+- `📝 Logging Commands`: Automatically capture all console output and errors to timestamped log files.
 
 
 ## 📖 Function Reference
