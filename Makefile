@@ -50,7 +50,7 @@ getdeps:
 build:
 	@echo "[INFO] Starting eyeris devtools package build..."
 	Rscript -e "devtools::document(pkg = '.')" > /dev/null
-	mkdir build > /dev/null
+	mkdir -p build
 	Rscript -e "devtools::build(pkg = '.', path = 'build')" > /dev/null
 	@echo "[OKAY] eyeris devtools package built successfully!\n"
 
