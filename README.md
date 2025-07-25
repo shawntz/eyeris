@@ -56,7 +56,7 @@ Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).
 `eyeris` also introduces a `BIDS`-like structure for organizing
 derivative (preprocessed) pupillometry data, as well as an intuitive
 workflow for inspecting preprocessed pupillometry epochs within
-beautiful, interactive HTML report files (see demonstration below ⬇️)!
+beautiful, interactive HTML report files (see demonstration below ⬇)!
 The package also includes gaze heatmaps that show the distribution of
 eye coordinates across the entire screen area, helping you assess data
 quality and participant attention patterns. These heatmaps are
@@ -119,7 +119,7 @@ with links to their documentation and a brief description.
 
 ### 🌟 Start Here
 
-- [✈️ Getting Started: Complete (Opinionated) Pupillometry Pipeline
+- [✈ Getting Started: Complete (Opinionated) Pupillometry Pipeline
   Walkthrough](https://shawnschwartz.com/eyeris/articles/complete-pipeline.html)
 - [📁 Extracting Data Epochs and Exporting Pupil
   Data](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html)
@@ -133,7 +133,7 @@ with links to their documentation and a brief description.
 
 - [🫀 Anatomy of an `eyeris`
   Object](https://shawnschwartz.com/eyeris/articles/anatomy.html)
-- [🛠️ Building Your Own Custom Pipeline
+- [🛠 Building Your Own Custom Pipeline
   Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)
 
 ## 📦 Package Installation
@@ -164,7 +164,7 @@ GitHub](https://github.com/shawntz/eyeris) with:
 devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
-## ✏️ Example
+## ✏ Example
 
 ### The `glassbox()` “prescription” function
 
