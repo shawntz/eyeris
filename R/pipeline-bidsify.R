@@ -2322,8 +2322,7 @@ run_bidsify <- function(
         dev.off()
 
         if (verbose) {
-          alert("info", "Created gaze heatmap for run-%02d", i_run)
-          alert("info", "[INFO] Created gaze heatmap for run-%02d", i_run)
+          alert("success", "[OKAY] Created gaze heatmap for run-%02d", i_run)
         }
       }
 
@@ -2571,7 +2570,7 @@ run_bidsify <- function(
               dev.off()
 
               if (verbose) {
-                alert("info", "[INFO] Created gaze heatmap for epoch %s (run-%02d)", group, run_dir_num)
+                alert("success", "[OKAY] Created gaze heatmap for epoch %s (run-%02d)", group, run_dir_num)
               }
             }
           }
