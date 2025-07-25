@@ -33,7 +33,7 @@ data from each step of the preprocessing pipeline to make quality control and
 assurance intuitive and accessible for any dataset (without needing to write any
 additional code)!
 
-## 1️⃣ Load and Preprocess Your Data
+## 1 Load and Preprocess Your Data
 
 ```{r setup, fig.show='hide'}
 # Load eyeris
@@ -44,7 +44,7 @@ demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
 ```
 
-## 2️⃣ Extract Data Epochs
+## 2 Extract Data Epochs
 
 `epoch()` enables flexible extraction of trials using:
 
@@ -170,7 +170,7 @@ eye_1d <- eye |>
   )
 ```
 
-## 3️⃣ Export to a BIDS-like Format
+## 3 Export to a BIDS-like Format
 
 Once epoched, your data is ready to be exported with `bidsify()`, which saves 
 the raw and epoched data in a structured, `BIDS`-inspired format.
