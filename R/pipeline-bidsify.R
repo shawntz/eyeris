@@ -508,7 +508,7 @@ run_bidsify <- function(
     )
 
     if (verbose) {
-      cli::cli_alert_info("[INFO] Writing blinks data to '%s'...", file.path(dir, p, bids_fname))
+      alert("info", "[INFO] Writing blinks data to '%s'...", file.path(dir, p, bids_fname))
     }
 
     if (is_binocular_object(eyeris)) {
@@ -525,7 +525,7 @@ run_bidsify <- function(
     }
 
     if (verbose) {
-      cli::cli_alert_success("[OKAY] Blinks data written to: '%s'", file.path(dir, p, bids_fname))
+      alert("success", "[OKAY] Blinks data written to: '%s'", file.path(dir, p, bids_fname))
     }
   }
 
@@ -540,7 +540,7 @@ run_bidsify <- function(
     )
 
     if (verbose) {
-      cli::cli_alert_info("[INFO] Writing events data to '%s'...", file.path(dir, p, bids_fname))
+      alert("info", "[INFO] Writing events data to '%s'...", file.path(dir, p, bids_fname))
     }
 
     if (is_binocular_object(eyeris)) {
@@ -557,7 +557,7 @@ run_bidsify <- function(
     }
 
     if (verbose) {
-      cli::cli_alert_success("[OKAY] Events data written to: '%s'", file.path(dir, p, bids_fname))
+      alert("success", "[OKAY] Events data written to: '%s'", file.path(dir, p, bids_fname))
     }
   }
 
