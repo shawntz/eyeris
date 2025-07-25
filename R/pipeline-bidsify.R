@@ -1329,7 +1329,7 @@ run_bidsify <- function(
       if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
         run_data <- eyeris$timeseries[[1]]
       } else {
-        stop("[ERROR] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
+        cli::cli_abort("[EXIT] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
       }
       # use run_num if provided, otherwise default to 1
       run_num_to_use <- if (!is.null(run_num)) {
@@ -1337,7 +1337,7 @@ run_bidsify <- function(
         if (!is.na(run_num_numeric)) {
           sprintf("%02d", run_num_numeric)
         } else {
-          warning("[WARNING] Invalid run_num provided. Defaulting to '01'.")
+          cli::cli_alert_warning("[WARN] Invalid run_num provided. Defaulting to '01'.")
           "01"
         }
       } else {
