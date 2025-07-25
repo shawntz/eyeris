@@ -1,5 +1,6 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+
 name: pkgdown
 
 permissions: read-all
@@ -16,6 +17,8 @@ on:
         - '_pkgdown.yml'
         - 'DESCRIPTION'
   pull_request:
+    branches:
+        - release/**
     paths:
         - 'NEWS.md'
         - 'README.md'
