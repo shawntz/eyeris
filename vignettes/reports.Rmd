@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1️⃣ Setup
+## 1 Setup
 
 After extracting epochs from your data,
 
@@ -34,7 +34,7 @@ eye <- eye |>
 ```
 (for more details on extracting pupil data epochs, see the [Extracting Data Epochs and Exporting Pupil Data vignette](epoching-bids-reports.html); for more details on this specific example code shown above, [click here](epoching-bids-reports.html#example-c-epoch-with-subtractive-baselining)).
 
-## 2️⃣ Generating the Interactive HTML Reports
+## 2 Generating the Interactive HTML Reports
 
 When running `bidsify` on the previously epoched data, be sure to set 
 `html_report` to `TRUE` (as shown below).
@@ -94,7 +94,7 @@ Here, notice specifically these two files:
 - <highlight>sub-001.html</highlight>
 - <highlight>sub-001_epoch-prePostProbe_run-01.html</highlight>
 
-## 3️⃣ Previewing your Entire Pupil Timeseries
+## 3 Previewing your Entire Pupil Timeseries
 
 > `sub-001.html` will look something like this:
 
@@ -104,7 +104,7 @@ img_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
 knitr::include_graphics(img_url)
 ```
 
-## 4️⃣ Data QC of Extracted Pupil Epochs with Interactive Reports
+## 4 Data QC of Extracted Pupil Epochs with Interactive Reports
 
 > Meanwhile, `sub-001_epoch-prePostProbe_run-01.html` will enable you to
 interact with images of each extracted data epoch (for which you will see
@@ -127,7 +127,7 @@ gif_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
 knitr::include_graphics(gif_url)
 ```
 
-## 3️⃣ Gaze Heatmaps
+## 5 Gaze Heatmaps
 
 In addition to the standard pupil timeseries plots, `eyeris` now includes gaze heatmaps that show the distribution of eye coordinates across the entire screen area. These heatmaps are automatically generated in the BIDS reports and can also be created manually.
 
