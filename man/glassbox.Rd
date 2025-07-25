@@ -95,7 +95,7 @@ time, facilitating a fairly easy-to-use workflow for parameter optimization
 on your particular dataset. This process essentially takes each of the
 opinionated steps and provides a pre-/post-plot of the timeseries data for
 each step so you can adjust parameters and re-run the pipeline until you are
-satisfied with the choices of your paramters and their consequences on your
+satisfied with the choices of your parameters and their consequences on your
 pupil timeseries data.
 }
 \examples{

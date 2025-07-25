@@ -224,7 +224,7 @@ This version marks the official launch of the `eyeris` package on CRAN.
 -   Improved function documentation across the package
 -   Added citation guidance and reproducibility tips
 
-Thanks for checking out `eyeris`! 🧠👁️
+Thanks for checking out `eyeris`! 🧠
 
 ------------------------------------------------------------------------
 

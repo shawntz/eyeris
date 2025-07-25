@@ -21,7 +21,9 @@ knitr::opts_chunk$set(
 [![bioRxiv Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
-[![Air check](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml)
+[![air format check](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml)
+[![air format suggest](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml)
+[![spellcheck](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
 <!-- badges: end -->
 
@@ -50,7 +52,7 @@ Alice Xue, and Anthony Wagner).
 `eyeris` also introduces a `BIDS`-like 
 structure for organizing derivative (preprocessed) pupillometry data, as 
 well as an intuitive workflow for inspecting preprocessed pupillometry epochs 
-within beautiful, interactive HTML report files (see demonstration below ⬇️)!
+within beautiful, interactive HTML report files (see demonstration below ⬇)!
 The package also includes gaze heatmaps that show the distribution of eye 
 coordinates across the entire screen area, helping you assess data quality 
 and participant attention patterns. These heatmaps are automatically generated 
@@ -101,7 +103,7 @@ Below is a table of all main `eyeris` functions, organized by feature, with link
 ## 📚 Tutorials
 
 ### 🌟 Start Here
-- [✈️ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough](https://shawnschwartz.com/eyeris/articles/complete-pipeline.html)
+- [✈ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough](https://shawnschwartz.com/eyeris/articles/complete-pipeline.html)
 - [📁 Extracting Data Epochs and Exporting Pupil Data](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html)
 
 ### 👀 Pupil Data Quality Control
@@ -109,7 +111,7 @@ Below is a table of all main `eyeris` functions, organized by feature, with link
 
 ### 💯 Advanced Topics
 - [🫀 Anatomy of an `eyeris` Object](https://shawnschwartz.com/eyeris/articles/anatomy.html)
-- [🛠️ Building Your Own Custom Pipeline Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)
+- [🛠 Building Your Own Custom Pipeline Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)
 
 ## 📦 Package Installation
 
@@ -137,7 +139,7 @@ You can install the development version of [`eyeris` from GitHub](https://github
 devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
-## ✏️ Example
+## ✏ Example
 
 ### The `glassbox()` "prescription" function
 
@@ -146,10 +148,10 @@ This is a basic example of how to use `eyeris` out of the box with our very
 preprocessing pupillometry data. Critically, this is a "glassbox" -- as opposed
 to a "blackbox" -- since each step and parameter implemented herein is fully
 open and accessible to you. We designed each pipeline step / function to be like
-legos -- they are intentionally and carefully designed in a way that allows you
+a LEGO brick -- they are intentionally and carefully designed in a way that allows you
 to flexibly construct and compare different pipelines.
 
-We hope you enjoy! -shawn
+We hope you enjoy! -Shawn
 
 ```{r glassbox-example, echo=TRUE, results='hide', fig.show='hide', fig.dpi=120}
 set.seed(32)

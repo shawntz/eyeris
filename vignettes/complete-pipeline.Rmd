@@ -225,14 +225,14 @@ pass `detrend = TRUE` to `glassbox()`.
 #### Some additional notes about preventing live filtering in future recordings...
 
 Unfortunately the `Live Sample Filter` and `Saved Sample Filter` are two common 
-settings when experiment softwares communicate with EyeLink. For example, 
+settings when experiment software communicates with EyeLink. For example, 
 `PsychoPy` incorporates them in the eyetracking setting panel, and if you use 
 `pylink` directly, these two settings are also included in their example script / 
 function used to connect to EyeLink. The same goes for `Eprime` and `NBS Presentation`, 
 where these two filter settings are users’ responsibilities to set. 
 
 Adjusting the `config.ini` file on your EyeLink host PC to set the defaults to be `OFF` 
-is not sufficient as they will get overwritten when experiment softwares 
+is not sufficient as they will get overwritten when experiment software 
 (`PsychoPy`, `Eprime`, `NBS Presentation`, etc.) make the initial connect request. 
 
 Therefore, unfortunately all users for all future experiments need to be cognizant 

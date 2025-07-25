@@ -1,6 +1,6 @@
 # Workflow derived from https://github.com/marketplace/actions/r-spellcheck-action
 
-name: Spellcheck
+name: spellcheck
 
 on:
   push:

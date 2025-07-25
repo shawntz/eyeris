@@ -43,7 +43,7 @@ If you're unfamiliar with how these columns are structured and tracked,
 first check out the companion vignette: 
 [📦 Anatomy of an `eyeris` Object](anatomy.html).
 
-## 🛠️Creating a Custom Extension for `eyeris`
+## 🛠 Creating a Custom Extension for `eyeris`
 
 Let's say you want to write a new `eyeris` extension function called `winsorize()`
   to apply [winsorization](https://en.wikipedia.org/wiki/Winsorizing) to extreme
