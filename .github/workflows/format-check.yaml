@@ -1,10 +1,12 @@
 # Workflow derived from https://github.com/posit-dev/setup-air/tree/main/examples
+
+name: air check
+
 on:
   push:
-    branches: [main, master]
+    branches: [ dev, release/** ]
   pull_request:
-
-name: Air check
+    branches: [ dev, release/** ]
 
 permissions: read-all
 

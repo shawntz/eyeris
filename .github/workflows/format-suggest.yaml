@@ -1,8 +1,12 @@
 # Workflow derived from https://github.com/posit-dev/setup-air/tree/main/examples
-on:
-  pull_request:
 
-name: Air suggest
+name: air suggest
+
+on:
+  push:
+    branches: [ dev, release/** ]
+  pull_request:
+    branches: [ dev, release/** ]
 
 permissions: read-all
 
