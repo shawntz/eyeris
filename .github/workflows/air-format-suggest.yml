@@ -1,6 +1,6 @@
 # Workflow derived from https://github.com/posit-dev/setup-air/tree/main/examples
 
-name: air suggest
+name: air format suggest
 
 on:
   push:
