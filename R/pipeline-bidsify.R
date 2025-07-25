@@ -1326,7 +1326,11 @@ run_bidsify <- function(
       }
     } else {
       # single run (monocular) case: write the raw timeseries
-      run_data <- eyeris$timeseries[[1]]
+      if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
+        run_data <- eyeris$timeseries[[1]]
+      } else {
+        stop("[ERROR] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
+      }
       # use run_num if provided, otherwise default to 1
       run_num_to_use <- if (!is.null(run_num)) sprintf("%02d", as.numeric(run_num)) else "01"
       f <- make_bids_fname(
