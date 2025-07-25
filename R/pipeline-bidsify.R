@@ -413,7 +413,7 @@ run_bidsify <- function(
   n_epochs <- length(epochs)
   any_epochs <- n_epochs > 0
 
-  if (verbose) {
+  if (verbose && any_epochs) {
     cli::cli_alert_info(
       sprintf("[INFO] Filtered epochs: %s", paste(epochs, collapse = ", "))
     )
