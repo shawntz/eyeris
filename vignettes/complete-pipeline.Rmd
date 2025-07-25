@@ -232,7 +232,7 @@ function used to connect to EyeLink. The same goes for `Eprime` and `NBS Present
 where these two filter settings are users’ responsibilities to set. 
 
 Adjusting the `config.ini` file on your EyeLink host PC to set the defaults to be `OFF` 
-is not sufficient as they will get overwritten when experiment softwares 
+is not sufficient as they will get overwritten when experiment software 
 (`PsychoPy`, `Eprime`, `NBS Presentation`, etc.) make the initial connect request. 
 
 Therefore, unfortunately all users for all future experiments need to be cognizant 
