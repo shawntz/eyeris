@@ -6,13 +6,13 @@
 # See https://github.com/r-lib/actions/tree/master/examples#readme for
 # additional example workflows available for the R community.
 
-name: build
+name: build eyeris
 
 on:
   push:
-    branches: [ dev, release ]
+    branches: [ dev, release/** ]
   pull_request:
-    branches: [ dev, release ]
+    branches: [ dev, release/** ]
 
 permissions: read-all
 
