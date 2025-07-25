@@ -13,8 +13,11 @@ Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https:
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
-[![Air
-check](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml)
+[![air format
+check](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml)
+[![air format
+suggest](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml)
+[![spellcheck](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml)
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
 <!-- badges: end -->
 
@@ -170,11 +173,11 @@ very *opinionated* set of steps and parameters that one should start out
 with when preprocessing pupillometry data. Critically, this is a
 “glassbox” – as opposed to a “blackbox” – since each step and parameter
 implemented herein is fully open and accessible to you. We designed each
-pipeline step / function to be like legos – they are intentionally and
-carefully designed in a way that allows you to flexibly construct and
-compare different pipelines.
+pipeline step / function to be like a LEGO brick – they are
+intentionally and carefully designed in a way that allows you to
+flexibly construct and compare different pipelines.
 
-We hope you enjoy! -shawn
+We hope you enjoy! -Shawn
 
 ``` r
 set.seed(32)
