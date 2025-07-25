@@ -1324,6 +1324,48 @@ run_bidsify <- function(
           }
         })
       }
+    } else {
+      # single run (monocular) case: write the raw timeseries
+      if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
+        run_data <- eyeris$timeseries[[1]]
+      } else {
+        cli::cli_abort("[EXIT] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
+      }
+      # use run_num if provided, otherwise default to 1
+      run_num_to_use <- if (!is.null(run_num)) {
+        run_num_numeric <- suppressWarnings(as.numeric(run_num))
+        if (!is.na(run_num_numeric)) {
+          sprintf("%02d", run_num_numeric)
+        } else {
+          cli::cli_alert_warning("[WARN] Invalid run_num provided. Defaulting to '01'.")
+          "01"
+        }
+      } else {
+        "01"
+      }
+      f <- make_bids_fname(
+        sub_id = sub,
+        ses_id = ses,
+        task_name = task,
+        run_num = run_num_to_use,
+        desc = "timeseries",
+        eye_suffix = eye_suffix
+      )
+      if (verbose) {
+        alert(
+          "info",
+          "[INFO] Writing raw pupil timeseries to '%s'...",
+          file.path(dir, p, f)
+        )
+      }
+      write.csv(run_data, file.path(dir, p, f), row.names = FALSE)
+      if (verbose) {
+        alert(
+          "success",
+          "[OKAY] Raw pupil timeseries written to: '%s'",
+          file.path(dir, p, f)
+        )
+      }
     }
   }
 
