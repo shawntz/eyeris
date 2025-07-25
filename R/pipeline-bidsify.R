@@ -1332,7 +1332,17 @@ run_bidsify <- function(
         stop("[ERROR] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
       }
       # use run_num if provided, otherwise default to 1
-      run_num_to_use <- if (!is.null(run_num)) sprintf("%02d", as.numeric(run_num)) else "01"
+      run_num_to_use <- if (!is.null(run_num)) {
+        run_num_numeric <- suppressWarnings(as.numeric(run_num))
+        if (!is.na(run_num_numeric)) {
+          sprintf("%02d", run_num_numeric)
+        } else {
+          warning("[WARNING] Invalid run_num provided. Defaulting to '01'.")
+          "01"
+        }
+      } else {
+        "01"
+      }
       f <- make_bids_fname(
         sub_id = sub,
         ses_id = ses,
