@@ -280,6 +280,14 @@ load_asc <- function(
 #' @keywords internal
 process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, binoc_mode) {
   # raw data processing
+  if (eye == "left") {
+    eye_meta <- "L"
+  } else if (eye == "right") {
+    eye_meta <- "R"
+  } else {
+    eye_meta <- eye
+  }
+
   raw_df <- x$raw |>
     dplyr::select(
       block,
@@ -289,7 +297,7 @@ process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, bino
       eye_y = yp
     ) |>
     dplyr::mutate(
-      eye = eye,
+      eye = eye_meta,
       hz = hz,
       type = pupil_type
     ) |>
