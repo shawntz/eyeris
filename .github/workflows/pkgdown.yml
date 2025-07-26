@@ -7,18 +7,7 @@ permissions: read-all
 
 on:
   push:
-    branches:
-        - release/**
-    paths:
-        - 'NEWS.md'
-        - 'README.md'
-        - 'vignettes/**'
-        - 'man/**'
-        - '_pkgdown.yml'
-        - 'DESCRIPTION'
-  pull_request:
-    branches:
-        - release/**
+    branches: dev
     paths:
         - 'NEWS.md'
         - 'README.md'
