@@ -37,7 +37,7 @@
 
     <a class="navbar-brand me-2" href="index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,7 +120,7 @@
 </h2>
 <p>Despite decades of pupillometry research, many established packages and workflows unfortunately lack design principles based on (F)indability (A)ccessbility (I)nteroperability (R)eusability (FAIR) principles. <code>eyeris</code>, on the other hand follows a thoughtful design philosophy that results in an intuitive, modular, performant, and extensible pupillometry data preprocessing framework. Much of these design principles were heavily inspired by <code>Nipype</code>.</p>
 <p><code>eyeris</code> also provides a highly opinionated pipeline for tonic and phasic pupillometry preprocessing (inspired by <code>fMRIPrep</code>). These opinions are the product of many hours of discussions from core members and signal processing experts from the Stanford Memory Lab (Shawn Schwartz, Mingjian He, Haopei Yang, Alice Xue, and Anthony Wagner).</p>
-<p><code>eyeris</code> also introduces a <code>BIDS</code>-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files (see demonstration below ⬇️)! The package also includes gaze heatmaps that show the distribution of eye coordinates across the entire screen area, helping you assess data quality and participant attention patterns. These heatmaps are automatically generated in the BIDS reports and can also be created manually.</p>
+<p><code>eyeris</code> also introduces a <code>BIDS</code>-like structure for organizing derivative (preprocessed) pupillometry data, as well as an intuitive workflow for inspecting preprocessed pupillometry epochs within beautiful, interactive HTML report files (see demonstration below ⬇)! The package also includes gaze heatmaps that show the distribution of eye coordinates across the entire screen area, helping you assess data quality and participant attention patterns. These heatmaps are automatically generated in the BIDS reports and can also be created manually.</p>
 </div>
 <div class="section level2">
 <h2 id="id_-feature-highlights">🚀 Feature Highlights<a class="anchor" aria-label="anchor" href="#id_-feature-highlights"></a>
@@ -270,7 +270,7 @@
 <h3 id="id_-start-here">🌟 Start Here<a class="anchor" aria-label="anchor" href="#id_-start-here"></a>
 </h3>
 <ul>
-<li><a href="https://shawnschwartz.com/eyeris/articles/complete-pipeline.html">✈️ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough</a></li>
+<li><a href="https://shawnschwartz.com/eyeris/articles/complete-pipeline.html">✈ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough</a></li>
 <li><a href="https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html">📁 Extracting Data Epochs and Exporting Pupil Data</a></li>
 </ul>
 </div>
@@ -286,7 +286,7 @@
 </h3>
 <ul>
 <li><a href="https://shawnschwartz.com/eyeris/articles/anatomy.html">🫀 Anatomy of an <code>eyeris</code> Object</a></li>
-<li><a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">🛠️ Building Your Own Custom Pipeline Extensions</a></li>
+<li><a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">🛠 Building Your Own Custom Pipeline Extensions</a></li>
 </ul>
 </div>
 </div>
@@ -314,19 +314,19 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="id_️-example">✏️ Example<a class="anchor" aria-label="anchor" href="#id_%EF%B8%8F-example"></a>
+<h2 id="id_-example">✏ Example<a class="anchor" aria-label="anchor" href="#id_-example"></a>
 </h2>
 <div class="section level3">
 <h3 id="the-glassbox-prescription-function">The <code>glassbox()</code> “prescription” function<a class="anchor" aria-label="anchor" href="#the-glassbox-prescription-function"></a>
 </h3>
-<p>This is a basic example of how to use <code>eyeris</code> out of the box with our very <em>opinionated</em> set of steps and parameters that one should start out with when preprocessing pupillometry data. Critically, this is a “glassbox” – as opposed to a “blackbox” – since each step and parameter implemented herein is fully open and accessible to you. We designed each pipeline step / function to be like legos – they are intentionally and carefully designed in a way that allows you to flexibly construct and compare different pipelines.</p>
-<p>We hope you enjoy! -shawn</p>
+<p>This is a basic example of how to use <code>eyeris</code> out of the box with our very <em>opinionated</em> set of steps and parameters that one should start out with when preprocessing pupillometry data. Critically, this is a “glassbox” – as opposed to a “blackbox” – since each step and parameter implemented herein is fully open and accessible to you. We designed each pipeline step / function to be like a LEGO brick – they are intentionally and carefully designed in a way that allows you to flexibly construct and compare different pipelines.</p>
+<p>We hope you enjoy! -Shawn</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">32</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; eyeris v2.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶</span></span>
+<span><span class="co">#&gt; eyeris v2.1.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶</span></span>
 <span><span class="co">#&gt; Welcome! Type ?`eyeris` to get started.</span></span>
 <span></span>
 <span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -829,7 +829,9 @@
 <li><a href="https://doi.org/10.1101/2025.06.01.657312" class="external-link"><img src="https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen" alt="bioRxiv Preprint"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://github.com/shawntz/eyeris/actions/workflows/build.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg" alt="build"></a></li>
-<li><a href="https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/format-check.yaml/badge.svg" alt="Air check"></a></li>
+<li><a href="https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml/badge.svg" alt="air format check"></a></li>
+<li><a href="https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml/badge.svg" alt="air format suggest"></a></li>
+<li><a href="https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml/badge.svg" alt="spellcheck"></a></li>
 <li><a href="https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml" class="external-link"><img src="https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg" alt="pkgdown"></a></li>
 </ul>
 </div>
