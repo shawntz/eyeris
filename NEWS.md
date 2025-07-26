@@ -1,4 +1,28 @@
-# eyeris 2.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 2.1.1 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This release patches a few bugs that emerged as a result of the `v2.1.0` minor release.
+
+## 🔧 Minor improvements and fixes
+
+- BF (#237): Ensure full raw timeseries `.csv` file is written by `bidsify()` for single-run (monocular) data, including cases with or without epoching and with run number override. Previously, the file was only written for multi-run data by @shawntz in #240.
+
+- FF (#236): Certain `sprintf`-formatted log messages (e.g., those with '%s') for blinks/events writing in `pipeline-bidsify.R` now parse and display correctly in the logger by using the internal `alert()` wrapper by @shawntz in #241.
+
+- FF (#238): Only log `[INFO] Filtered epochs: ...` when data is epoched by @shawntz in #242.
+
+- CHORE (#239): Remove duplicate logging events for "Created gaze heatmap" in `bidsify()` pipeline. The log message now appears only once per run and uses the `[OKAY]` log level for both run-level and epoch-level heatmap creation, improving clarity and consistency in logs, by @shawntz in #243.
+
+- ENH DOC: Add GitHub Actions workflow for automated spellchecking of documentation and code using [r-spellcheck-action](https://github.com/marketplace/actions/r-spellcheck-action). The workflow runs on pushes and pull requests to `dev` and `release/**` branches by @shawntz in #244
+
+- CHORE: Adjust `pkgdown` CI deployment trigger conditions for PRs to be more specific about which branches should trigger the workflow by @shawntz in #245.
+
+- CHORE: Update the GitHub Actions workflow configuration to fix CI triggers for the R CMD build/check action. The changes modify the workflow name and expand branch pattern matching to include release branches with additional path segments, by @shawntz in #246.
+
+- CHORE: Standardize the GitHub Actions workflow configurations for air formatting operations. The changes update workflow names and branch targeting patterns to ensure consistent formatting checks and suggestions across the development workflow, by @shawntz in #247.
+
+- CHORE: Resolve spelling errors throughout the package by correcting typos in documentation, comments, and code, while also creating a WORDLIST file for the spellchecker to recognize domain-specific terms by @shawntz in #248.
+
+# eyeris 2.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release introduces significant enhancements, new features, and robust improvements focusing on binocular data support, standardized logging, and improved reporting and development workflows, substantially elevating `eyeris'` functionality, robustness, and user experience.
 
@@ -28,7 +52,7 @@ This minor release introduces significant enhancements, new features, and robust
 
 - **Makefile Maintenance:** Comments and section headers in the Makefile have been updated and clarified for better maintainability by @shawntz in #230.
 
-# eyeris 2.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 2.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This is the largest update yet for `eyeris`, introducing a wealth of new features and addressing numerous small issues to significantly enhance functionality, robustness, and user experience (#215).
 
@@ -104,7 +128,7 @@ This is the largest update yet for `eyeris`, introducing a wealth of new feature
 
 ------------------------------------------------------------------------
 
-# eyeris 1.2.1 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png){width="50"}
+# eyeris 1.2.1 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/tree-trunks.png){width="50"}
 
 ## ✨ New features
 
@@ -132,7 +156,7 @@ This is the largest update yet for `eyeris`, introducing a wealth of new feature
 -   FF: missing x-axis labels on histograms in rendered reports by @shawntz in #169
 -   NF: add detrend fitted values diagnostic plot to rendered reports by @shawntz in #169
 
-# eyeris 1.2.0 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/tree-trunks.png){alt="Tree Trunks" width="50"}
+# eyeris 1.2.0 "Tree Trunks" ![Tree Trunks](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/tree-trunks.png){alt="Tree Trunks" width="50"}
 
 ## ✨ New features
 
@@ -168,7 +192,7 @@ plot(eyeris_preproc,
     -   Update funders and contributors list
     -   Add funders disclaimer statement to the footer
 
-# eyeris 1.1.0 "Princess Bubblegum" ![Princess Bubblegum](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/princess-bubblegum.png){alt="Princess Bubblegum" width="25"}
+# eyeris 1.1.0 "Princess Bubblegum" ![Princess Bubblegum](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/princess-bubblegum.png){alt="Princess Bubblegum" width="25"}
 
 ## ✨ New features
 
@@ -189,7 +213,7 @@ plot(eyeris_preproc,
 -   BF: Random seed assignment was not behaving as expected within the `glassbox()` pipeline.
 -   RF: Modify paths to documentation assets to fix broken links at build.
 
-# eyeris 1.0.1 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
+# eyeris 1.0.1 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
 
 This non-CRAN release patches a small handful of documentation-related chores that have no direct impact on the functionality of `eyeris` for the end user. The minor improvements and fixes contained within this release will soon be bundled with a more substantial feature upgrade when submitted to CRAN to reduce burden on the CRAN reviewers at this time. Stay tuned!
 
@@ -205,7 +229,7 @@ This non-CRAN release patches a small handful of documentation-related chores th
 -   DOC: add `CONTRIBUTING.md` guidelines file for GitHub (#157)
 -   DOC: fix `/man/figures/...` image ref issues which is leading to broken links on the `R CRAN read-only` [GitHub mirror repo](https://github.com/cran/eyeris) (#158)
 
-# eyeris 1.0.0 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
+# eyeris 1.0.0 "Ice King" ![Ice King](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/ice-king.png){alt="Ice King" width="50"}
 
 ## 🎉 **First CRAN release!** (#144)
 
@@ -230,7 +254,7 @@ Thanks for checking out `eyeris`! 🧠
 
 **Pre-CRAN `dev` GitHub releases:** 
 
-# eyeris 0.1.1.9000 "Jake the Dog" ![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png){alt="Jake the Dog" width="40"}
+# eyeris 0.1.1.9000 "Jake the Dog" ![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/jake.png){alt="Jake the Dog" width="40"}
 
 ## 🔧 Minor improvements and fixes
 
@@ -240,7 +264,7 @@ Thanks for checking out `eyeris`! 🧠
     -   Furthermore, a new `mad_thresh` override parameter has been added to `eyeris::detransient()` for advanced users to override the `mad_thresh` computed property. *Note:* this new `mad_thresh` parameter defaults to `NULL` (and should pretty much always stay as such).
 -   FF (#122): fixed issue with incompatible unicode character in plot titles (#123)
 
-# eyeris 0.1.0.9000 "Jake the Dog" ![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/jake.png){width="40"}
+# eyeris 0.1.0.9000 "Jake the Dog" ![Jake the Dog](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/jake.png){width="40"}
 
 ## 💥 Breaking changes
 
@@ -265,7 +289,7 @@ Thanks for checking out `eyeris`! 🧠
     -   Similarly, these added benefits coincide nicely with the new multi-block support (#10)
 -   General bug fixes and enhancements to codebase and front-end UX (#120)
 
-# eyeris 0.0.0.9000 "Finn the Human" ![Finn the Human](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/release/v2.0.0/inst/figures/adventure-time/finn.png){width="35"}
+# eyeris 0.0.0.9000 "Finn the Human" ![Finn the Human](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/finn.png){width="35"}
 
 -   Initial beta release
 
