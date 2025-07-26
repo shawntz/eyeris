@@ -4,9 +4,9 @@ name: spellcheck
 
 on:
   push:
-    branches: [ dev, release ]
+    branches: dev
   pull_request:
-    branches: [ dev, release ]
+    branches: [ dev, release/** ]
 
 jobs:
   check:
