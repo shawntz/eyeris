@@ -4,28 +4,30 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST RELEASE"
-    - text: "v2.1.0 (CRAN)"
-      href: news/index.html#eyeris-210
+    - text: "v2.1.1 (CRAN)"
+      href: news/index.html#eyeris-211-lumpy-space-princess-lumpy-space-princess
     - text: -------
+    - text: "v2.1.0 (CRAN)"
+      href: news/index.html#eyeris-210-lumpy-space-princess-lumpy-space-princess
     - text: "Previous Releases"
     - text: "v2.0.0 (CRAN)"
-      href: news/index.html#eyeris-200
+      href: news/index.html#eyeris-200-lumpy-space-princess-lumpy-space-princess
     - text: "v1.2.1 (CRAN)"
-      href: news/index.html#eyeris-121
+      href: news/index.html#eyeris-121-tree-trunks-tree-trunks
     - text: "v1.2.0 (CRAN)"
-      href: news/index.html#eyeris-120
+      href: news/index.html#eyeris-120-tree-trunks-tree-trunks
     - text: "v1.1.0 (CRAN)"
-      href: news/index.html#eyeris-110
+      href: news/index.html#eyeris-110-princess-bubblegum-princess-bubblegum
     - text: "v1.0.1 (devel)"
-      href: news/index.html#eyeris-101
+      href: news/index.html#eyeris-101-ice-king-ice-king
     - text: "v1.0.0 (CRAN)"
-      href: news/index.html#eyeris-100
+      href: news/index.html#eyeris-100-ice-king-ice-king
     - text: "v0.1.1.9000 (devel)"
-      href: news/index.html#eyeris-0119000
+      href: news/index.html#eyeris-0119000-jake-the-dog-jake-the-dog
     - text: "v0.1.0.9000 (devel)"
-      href: news/index.html#eyeris-0109000
+      href: news/index.html#eyeris-0109000-jake-the-dog-jake-the-dog
     - text: "v0.0.0.9000 (devel)"
-      href: news/index.html#eyeris-0009000
+      href: news/index.html#eyeris-0009000-finn-the-human-finn-the-human
 
 home:
   sidebar:
