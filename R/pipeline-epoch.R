@@ -489,12 +489,19 @@ epoch_pupil <- function(
 
     # store epoch metadata when no baseline correction is used
     if (!a_bline) {
+      if ("matched_event" %in% names(epoched_data)) {
+        n_epochs <- length(unique(epoched_data$matched_event))
+      } else if ("start_matched_event" %in% names(epoched_data)) {
+        n_epochs <- length(unique(epoched_data$start_matched_event))
+      } else {
+        n_epochs <- NA
+      }
       epoch_info <- list(
         calc_baseline = FALSE,
         apply_baseline = FALSE,
         epoch_events = evs,
         epoch_limits = lims,
-        n_epochs = length(unique(epoched_data$matched_event))
+        n_epochs = n_epochs
       )
 
       if (is.null(x[[epoch_id]]$info)) {
@@ -509,7 +516,7 @@ epoch_pupil <- function(
         sprintf(
           "[OKAY] Block %d: pupil data from %d unique event messages extracted",
           block_int,
-          length(unique(epoched_data$matched_event))
+          n_epochs
         )
       )
     }
@@ -1009,14 +1016,13 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
     metadata_vals <- start_metadata_vals |>
       dplyr::bind_cols(end_metadata_vals)
 
-    duration <- (i_end - i_start) / hz
-    n_samples <- duration * hz
+    duration <- (i_end - i_start) / 1000  # Convert to seconds
 
     epochs[[i]] <- eyeris |>
       purrr::pluck("timeseries") |>
-      dplyr::filter(time_orig >= s, time_orig < e) |>
+      dplyr::filter(time_orig >= i_start, time_orig < i_end) |>
       dplyr::mutate(
-        timebin = seq(0, duration, length.out = n_samples)
+        timebin = seq(0, duration, length.out = dplyr::n())
       ) |>
       dplyr::bind_cols(metadata_vals)
 
