@@ -1,3 +1,14 @@
+# eyeris 2.1.1.9000 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+## ⚠ **development version** — unreleased
+_Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.1.2`). Items will continue to be added here until that version is finalized._
+
+## 🔧 Minor improvements and fixes
+
+- BF (#250): Updated functions in `pipeline-confounds.R` and `pipeline-epoch.R` to handle cases where 'start_matched_event' is used instead of 'matched_event' in epoched data. Resolved an issue with inconsistent variable name using introduced in #a8df0c0, and fixed time and duration calculations in `epoch_start_end_msg()` to use correct units and sample counts, by @shawntz in #251.
+
+- Added Bootstrap and Lightbox assets (CSS, JS, fonts, images) to `inst/www` and updated `.Rbuildignore` to exclude them from builds. Refactored make_gallery to use local copies of these dependencies with CDN fallbacks, improving offline support and reliability of gallery reports, by @shawntz in #252.
+
 # eyeris 2.1.1 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This release patches a few bugs that emerged as a result of the `v2.1.0` minor release.
