@@ -400,12 +400,13 @@ epoch_pupil <- function(
     # manual method (with only 1 block at a time)
     cli::cli_alert_warning(
       paste0(
-        "[WARN] Manual epoching only works with 1 block at a time.",
-        "\nManual epoch input must be a list of 2 dataframes and 1 numeric:",
-        "\n  - `start_events` (df), `end_events` (df), and `block` (numeric)",
-        "\nPlease be sure to explicitly indicate the block number in your",
+        "[WARN] Manual epoching only works with 1 block at a time. ",
+        "\nManual epoch input must be a list of 2 dataframes and 1 numeric: ",
+        "\n  - `start_events` (df), `end_events` (df), and `block` (numeric) ",
+        "\nPlease be sure to explicitly indicate the block number in your ",
         "input list! (see example #9 in the documentation for more details)."
-      )
+      ),
+      wrap = TRUE
     )
 
     if (!is.list(evs) || length(evs) != 3) {
@@ -413,7 +414,8 @@ epoch_pupil <- function(
         paste0(
           "[EXIT] Manual epoch input must be a list of 2 dataframes and 1 numeric:",
           "\n`start_events` (df), `end_events` (df), and `block` (numeric)"
-        )
+        ),
+        wrap = TRUE
       )
     }
 
