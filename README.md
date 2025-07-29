@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![dev branch
+status](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/badges/dev-branch-version.svg)](https://github.com/shawntz/eyeris/tree/dev)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
 [![downloads](http://cranlogs.r-pkg.org/badges/grand-total/eyeris?color=brightgreen)](https://cran.r-project.org/package=badger)
@@ -184,7 +186,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v2.1.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v2.1.1.9000 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 
 demo_data <- eyelink_asc_demo_dataset()
