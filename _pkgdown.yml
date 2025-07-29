@@ -3,13 +3,15 @@ url: https://shawnschwartz.com/eyeris/
 news:
     cran_dates: true
     releases:
-    - text: "LATEST RELEASE"
+    - text: "LATEST RELEASES"
+    - text: "v2.1.1.9000 (devel)"
+      href: news/index.html#eyeris-2119000-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1 (CRAN)"
       href: news/index.html#eyeris-211-lumpy-space-princess-lumpy-space-princess
     - text: -------
+    - text: "Previous Releases"
     - text: "v2.1.0 (CRAN)"
       href: news/index.html#eyeris-210-lumpy-space-princess-lumpy-space-princess
-    - text: "Previous Releases"
     - text: "v2.0.0 (CRAN)"
       href: news/index.html#eyeris-200-lumpy-space-princess-lumpy-space-princess
     - text: "v1.2.1 (CRAN)"

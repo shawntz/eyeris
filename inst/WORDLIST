@@ -156,5 +156,10 @@ zscore
 CMD
 PRs
 WORDLIST
+CDN
+fallbacks
+JS
+Rbuildignore
+www
 users'
 eyeris'
