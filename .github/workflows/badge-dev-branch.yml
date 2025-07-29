@@ -1,20 +1,18 @@
-name: dev
+name: eyeris dev branch version badge
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]
   workflow_dispatch:
 
 jobs:
   badge:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: dev
-
-      - uses: r-lib/actions/setup-r@v2
 
       - name: Extract version
         id: version
@@ -25,13 +23,16 @@ jobs:
       - name: Create badge
         uses: emibcn/badge-action@v2
         with:
-          label: dev version
+          label: dev
           message: ${{ steps.version.outputs.version }}
           color: blue
-          path: dev-version-badge.svg
+          path: inst/figures/dev-version.svg
+
+      - name: Commit and push badge
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add inst/figures/dev-version.svg
+          git commit -m "Update dev version badge [skip ci]" || echo "No changes to commit"
+          git push
           
-      - name: Upload badge
-        uses: actions/upload-artifact@v4
-        with:
-          name: dev-version-badge
-          path: dev-version-badge.svg
