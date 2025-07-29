@@ -463,7 +463,7 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz, verbose = TRUE)
       } else if ("start_matched_event" %in% colnames(epoch_data)) {
         epoch_ids <- unique(epoch_data$start_matched_event)
       } else {
-        epoch_ids <- NA
+        epoch_ids <- character(0)
       }
 
       pupil_steps <- grep("^pupil_", names(epoch_data), value = TRUE)
