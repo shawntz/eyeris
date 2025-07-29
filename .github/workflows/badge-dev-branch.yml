@@ -24,9 +24,9 @@ jobs:
         uses: emibcn/badge-action@v2
         with:
           label: dev
-          message: ${{ steps.version.outputs.version }}
+          status: ${{ steps.version.outputs.version }}
           color: blue
-          path: inst/figures/dev-version.svg
+          path: dev-version.svg
 
       - name: Commit and push badge
         run: |
