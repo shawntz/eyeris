@@ -1018,7 +1018,7 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
     metadata_vals <- start_metadata_vals |>
       dplyr::bind_cols(end_metadata_vals)
 
-    duration <- (i_end - i_start) / 1000 # Convert to seconds
+    duration <- (i_end - i_start) / 1000 # convert to seconds
 
     epochs[[i]] <- eyeris |>
       purrr::pluck("timeseries") |>
