@@ -39,11 +39,12 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASE</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>LATEST RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119000-lumpy-space-princess-lumpy-space-princess">v2.1.1.9000 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-211-lumpy-space-princess-lumpy-space-princess">v2.1.1 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-210-lumpy-space-princess-lumpy-space-princess">v2.1.0 (CRAN)</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-210-lumpy-space-princess-lumpy-space-princess">v2.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-200-lumpy-space-princess-lumpy-space-princess">v2.0.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-121-tree-trunks-tree-trunks">v1.2.1 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-120-tree-trunks-tree-trunks">v1.2.0 (CRAN)</a></li>
@@ -72,6 +73,18 @@
       <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.1.9000" id="eyeris-2119000-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9000 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119000-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<div class="section level3">
+<h3 id="id_-development-version--unreleased-2-1-1-9000">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9000"></a></h3>
+<p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.1.2</code>). Items will continue to be added here until that version is finalized.</em></p>
+</div>
+<div class="section level3">
+<h3 id="id_-minor-improvements-and-fixes-2-1-1-9000">🔧 Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-2-1-1-9000"></a></h3>
+<ul><li><p>BF (<a href="https://github.com/shawntz/eyeris/issues/250" class="external-link">#250</a>): Updated functions in <code>pipeline-confounds.R</code> and <code>pipeline-epoch.R</code> to handle cases where ‘start_matched_event’ is used instead of ‘matched_event’ in epoched data. Resolved an issue with inconsistent variable naming introduced in #a8df0c0, and fixed time and duration calculations in <code><a href="../reference/epoch_start_end_msg.html">epoch_start_end_msg()</a></code> to use correct units and sample counts, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/251" class="external-link">#251</a>.</p></li>
+<li><p>Added Bootstrap and Lightbox assets (CSS, JS, fonts, images) to <code>inst/www</code> and updated <code>.Rbuildignore</code> to exclude them from builds. Refactored make_gallery to use local copies of these dependencies with CDN fallbacks, improving offline support and reliability of gallery reports, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/252" class="external-link">#252</a>.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.1" id="eyeris-211-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-211-lumpy-space-princess-lumpy-space-princess"></a></h2>
 <p>This release patches a few bugs that emerged as a result of the <code>v2.1.0</code> minor release.</p>
