@@ -458,7 +458,13 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz, verbose = TRUE)
         next
       }
 
-      epoch_ids <- unique(epoch_data$matched_event)
+      if ("matched_event" %in% colnames(epoch_data)) {
+        epoch_ids <- unique(epoch_data$matched_event)
+      } else if ("start_matched_event" %in% colnames(epoch_data)) {
+        epoch_ids <- unique(epoch_data$start_matched_event)
+      } else {
+        epoch_ids <- character(0)
+      }
 
       pupil_steps <- grep("^pupil_", names(epoch_data), value = TRUE)
 
@@ -466,7 +472,13 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz, verbose = TRUE)
       step_specific_confounds <- list()
 
       for (id in epoch_ids) {
-        epoch_subset <- epoch_data[epoch_data$matched_event == id, ]
+        if ("matched_event" %in% colnames(epoch_data)) {
+          epoch_subset <- epoch_data[epoch_data$matched_event == id, ]
+        } else if ("start_matched_event" %in% colnames(epoch_data)) {
+          epoch_subset <- epoch_data[epoch_data$start_matched_event == id, ]
+        } else {
+          epoch_subset <- epoch_data
+        }
 
         if (nrow(epoch_subset) == 0) {
           next
