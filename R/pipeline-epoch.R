@@ -489,15 +489,16 @@ epoch_pupil <- function(
     }
     x[[epoch_id]][[bn]] <- dplyr::as_tibble(epoched_data)
 
+    if ("matched_event" %in% names(epoched_data)) {
+      n_epochs <- length(unique(epoched_data$matched_event))
+    } else if ("start_matched_event" %in% names(epoched_data)) {
+      n_epochs <- length(unique(epoched_data$start_matched_event))
+    } else {
+      n_epochs <- length(unique(epoched_data$start_msg))
+    }
+
     # store epoch metadata when no baseline correction is used
     if (!a_bline) {
-      if ("matched_event" %in% names(epoched_data)) {
-        n_epochs <- length(unique(epoched_data$matched_event))
-      } else if ("start_matched_event" %in% names(epoched_data)) {
-        n_epochs <- length(unique(epoched_data$start_matched_event))
-      } else {
-        n_epochs <- NA
-      }
       epoch_info <- list(
         calc_baseline = FALSE,
         apply_baseline = FALSE,
