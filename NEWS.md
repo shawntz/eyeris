@@ -5,7 +5,7 @@ _Note: This is the working changelog for features and fixes being developed for 
 
 ## 🔧 Minor improvements and fixes
 
-- BF (#250): Updated functions in `pipeline-confounds.R` and `pipeline-epoch.R` to handle cases where 'start_matched_event' is used instead of 'matched_event' in epoched data. Resolved an issue with inconsistent variable name using introduced in #a8df0c0, and fixed time and duration calculations in `epoch_start_end_msg()` to use correct units and sample counts, by @shawntz in #251.
+- BF (#250): Updated functions in `pipeline-confounds.R` and `pipeline-epoch.R` to handle cases where 'start_matched_event' is used instead of 'matched_event' in epoched data. Resolved an issue with inconsistent variable naming introduced in #a8df0c0, and fixed time and duration calculations in `epoch_start_end_msg()` to use correct units and sample counts, by @shawntz in #251.
 
 - Added Bootstrap and Lightbox assets (CSS, JS, fonts, images) to `inst/www` and updated `.Rbuildignore` to exclude them from builds. Refactored make_gallery to use local copies of these dependencies with CDN fallbacks, improving offline support and reliability of gallery reports, by @shawntz in #252.
 
