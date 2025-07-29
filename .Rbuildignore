@@ -18,6 +18,7 @@
 ^CONTRIBUTING\.md$
 ^CRAN-SUBMISSION$
 ^inst/figures$
+^inst/www$
 ^doc$
 ^Meta$
 ^\.air\.toml$

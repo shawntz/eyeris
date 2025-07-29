@@ -26,9 +26,27 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
   rmd_f <- file.path(out, report_filename)
 
+  report_dir <- file.path(dirname(rmd_f), "source")
+  file.copy(system.file("www", package = "eyeris"), report_dir, recursive = TRUE)
+
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(
     utils::packageVersion("eyeris")
+  )
+
+  html_deps <- paste0(
+    "<link rel='stylesheet' href='./source/www/css/bootstrap.min.css' ",
+    "onerror=\"this.onerror=null;this.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css';\" />\n",
+
+    "<link rel='stylesheet' href='./source/www/css/lightbox.min.css' ",
+    "onerror=\"this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/lightbox2/dist/css/lightbox.min.css';\" />\n",
+
+    "<script src='./source/www/js/lightbox.min.js' ",
+    "onerror=\"this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/lightbox2/dist/js/lightbox.min.js';\"></script>\n",
+
+    "<script>document.addEventListener('DOMContentLoaded', function() {",
+    "lightbox.option({'imageFadeDuration' : 0, 'resizeDuration': 25, 'wrapAround': false});",
+    "});</script>\n"
   )
 
   css <- system.file(
@@ -86,15 +104,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     " - [`eyeris` version](https://github.com/shawntz/eyeris): ",
     package_version,
     "\n",
-    "\n\n<style type='text/css'>\n",
-    "@import url('http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/",
-    "bootstrap.min.css');\n",
-    "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
-    "lightbox.min.css');\n</style>\n",
-    "<script src='https://cdn.jsdelivr.net/npm/lightbox2/dist/js/",
-    "lightbox.min.js'></script>\n<script>document.addEventListener(",
-    "'DOMContentLoaded', function() {lightbox.option({'imageFadeDuration' : 0,",
-    "'resizeDuration': 25,'wrapAround': false});});</script>\n\n\n",
+    html_deps,
     "\n## Preprocessed Data Preview\n\n",
     "\n## ",
     epoch_name,
