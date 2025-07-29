@@ -477,7 +477,7 @@ calculate_epoched_confounds <- function(eyeris, epoch_names, hz, verbose = TRUE)
         } else if ("start_matched_event" %in% colnames(epoch_data)) {
           epoch_subset <- epoch_data[epoch_data$start_matched_event == id, ]
         } else {
-          epoch_subset <- NA
+          epoch_subset <- epoch_data
         }
 
         if (nrow(epoch_subset) == 0) {
