@@ -4,12 +4,12 @@
 \alias{eyeris_db_connect}
 \title{Connect to eyeris project database (user-facing)}
 \usage{
-eyeris_db_connect(bids_dir, db_path = "eyeris-proj.duckdb")
+eyeris_db_connect(bids_dir, db_path = "my-project")
 }
 \arguments{
 \item{bids_dir}{Path to the BIDS directory containing the database}
 
-\item{db_path}{Database filename (defaults to "eyeris-proj.duckdb")
+\item{db_path}{Database name (defaults to "my-project", becomes "my-project.eyerisdb")
 If just a filename, will look in \verb{derivatives/} directory.
 If includes path, will use as provided.}
 }
