@@ -23,7 +23,7 @@ run_bidsify(
   verbose = TRUE,
   csv_enabled = TRUE,
   db_enabled = FALSE,
-  db_path = "eyeris-proj.duckdb",
+  db_path = "my-project",
   raw_binocular_object = NULL
 )
 }
