@@ -161,5 +161,8 @@ fallbacks
 JS
 Rbuildignore
 www
+inode
+js
+LFS
 users'
 eyeris'
