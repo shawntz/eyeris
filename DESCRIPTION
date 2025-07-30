@@ -1,8 +1,8 @@
 Package: eyeris
 Type: Package
 Title: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
-Version: 2.1.1.9000
-Date: 2025-07-28
+Version: 2.1.1.9001
+Date: 2025-07-29
 Authors@R: 
   c(
     person(given = "Shawn", family = "Schwartz", role = c("aut", "cre"), 
@@ -39,7 +39,8 @@ Imports:
   viridis,
   fields,
   jsonlite,
-  rmarkdown
+  rmarkdown,
+  base64enc
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests:
