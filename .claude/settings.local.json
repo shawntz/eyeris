@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(R CMD check:*)",
-      "Bash(R:*)"
-    ],
-    "deny": []
-  }
-}
