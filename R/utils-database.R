@@ -435,7 +435,7 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-study") {
 #'
 #' @export
 eyeris_db_disconnect <- function(con) {
-  disconnect_eyeris_database(con, verbose = TRUE)
+  status <- disconnect_eyeris_database(con, verbose = TRUE)
 }
 
 #' Write data to CSV and/or database (helper function)
