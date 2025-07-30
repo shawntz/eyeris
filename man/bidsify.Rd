@@ -22,7 +22,7 @@ bidsify(
   verbose = TRUE,
   csv_enabled = TRUE,
   db_enabled = FALSE,
-  db_path = "eyeris-proj.duckdb",
+  db_path = "my-project",
   pdf_report = deprecated()
 )
 }
@@ -91,7 +91,7 @@ for large-scale cloud compute environments when using database storage only}
 database. Defaults to \code{FALSE}. When \code{TRUE}, creates or connects to a database
 for centralized data storage and querying}
 
-\item{db_path}{Database filename or path. Defaults to \code{"eyeris-proj.duckdb"}.
+\item{db_path}{Database filename or path. Defaults to \code{"eyeris-proj.eyerisdb"}.
 If just a filename, the database will be created in the \verb{derivatives/}
 directory. If a full path is provided, it will be used as specified}
 
