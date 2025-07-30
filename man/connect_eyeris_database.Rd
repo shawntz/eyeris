@@ -4,16 +4,12 @@
 \alias{connect_eyeris_database}
 \title{Create or connect to eyeris project database}
 \usage{
-connect_eyeris_database(
-  bids_dir,
-  db_path = "eyeris-proj.duckdb",
-  verbose = FALSE
-)
+connect_eyeris_database(bids_dir, db_path = "my-project", verbose = FALSE)
 }
 \arguments{
 \item{bids_dir}{Path to the BIDS directory containing derivatives}
 
-\item{db_path}{Database filename (defaults to "eyeris-proj.duckdb")}
+\item{db_path}{Database name (defaults to "my-project", becomes "my-project.eyerisdb")}
 
 \item{verbose}{Whether to print verbose output}
 }
