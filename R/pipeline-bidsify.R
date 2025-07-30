@@ -947,7 +947,7 @@ run_bidsify <- function(
             lapply(names(eyeris$timeseries), function(i) {
               run_epochs <- epochs_to_save[[epoch_id]][[i]]
               run_epochs$run <- sprintf("%02d", get_block_numbers(i))
-              run_epochs$epoch_type <- epoch_id
+              run_epochs$epoch_label <- epoch_id
               run_epochs
             })
           )
@@ -1090,7 +1090,7 @@ run_bidsify <- function(
         rbind,
         lapply(names(epochs_to_save), function(epoch_id) {
           epochs <- epochs_to_save[[epoch_id]]
-          epochs$epoch_type <- epoch_id
+          epochs$epoch_label <- epoch_id
           epochs
         })
       )
