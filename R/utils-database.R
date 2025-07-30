@@ -4,19 +4,24 @@
 #' The database will be created in the BIDS derivatives directory.
 #'
 #' @param bids_dir Path to the BIDS directory containing derivatives
-#' @param db_path Database filename (defaults to "eyeris-proj.duckdb")
+#' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
 #' @param verbose Whether to print verbose output
 #'
 #' @return DBI database connection object
 #'
 #' @keywords internal
-connect_eyeris_database <- function(bids_dir, db_path = "eyeris-proj.duckdb", verbose = FALSE) {
+connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = FALSE) {
   derivatives_dir <- file.path(bids_dir, "derivatives")
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
     if (verbose) {
       cli::cli_alert_info(glue::glue("[INFO] Created derivatives directory: {derivatives_dir}"), wrap = TRUE)
     }
+  }
+
+  # Auto-append .eyerisdb extension if not present
+  if (!grepl("\\.eyerisdb$", db_path)) {
+    db_path <- paste0(db_path, ".eyerisdb")
   }
 
   if (dirname(db_path) == ".") {
@@ -354,7 +359,7 @@ eyeris_db_read <- function(
 #' This function provides easy access for users to query their eyeris data.
 #'
 #' @param bids_dir Path to the BIDS directory containing the database
-#' @param db_path Database filename (defaults to "eyeris-proj.duckdb")
+#' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
 #'   If just a filename, will look in `derivatives/` directory.
 #'   If includes path, will use as provided.
 #'
@@ -385,7 +390,12 @@ eyeris_db_read <- function(
 #' }
 #'
 #' @export
-eyeris_db_connect <- function(bids_dir, db_path = "eyeris-proj.duckdb") {
+eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
+  # Auto-append .eyerisdb extension if not present
+  if (!grepl("\\.eyerisdb$", db_path)) {
+    db_path <- paste0(db_path, ".eyerisdb")
+  }
+
   if (dirname(db_path) == ".") {
     full_db_path <- file.path(bids_dir, "derivatives", db_path)
   } else {
