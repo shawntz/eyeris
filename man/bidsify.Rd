@@ -179,8 +179,8 @@ demo_data |>
     participant_id = "001",
     session_num = "01",
     task_name = "assocret",
-    db_enabled = TRUE,  # enable database storage
-    db_path = "my-study.duckdb"  # custom database name
+    db_enabled = TRUE,  # enable eyerisdb database storage
+    db_path = "my-study"  # custom project database name
   )
 
 # example for large-scale cloud compute (database only, no CSV files)
