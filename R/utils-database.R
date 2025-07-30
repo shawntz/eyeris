@@ -167,21 +167,25 @@ write_eyeris_data_to_db <- function(
 
   tryCatch(
     {
-      # add metadata columns
-      data$subject_id <- sub
-      data$session_id <- ses
-      data$task_name <- task
-      data$data_type <- data_type
+      metadata_cols <- data.frame(
+        subject_id = sub,
+        session_id = ses,
+        task_name = task,
+        data_type = data_type,
+        stringsAsFactors = FALSE
+      )
 
       if (!is.null(run)) {
-        data$run_number <- run
+        metadata_cols$run_number <- run
       }
 
       if (!is.null(eye_suffix)) {
-        data$eye_suffix <- eye_suffix
+        metadata_cols$eye_suffix <- eye_suffix
       }
 
-      data$created_timestamp <- Sys.time()
+      metadata_cols$created_timestamp <- Sys.time()
+
+      data <- cbind(metadata_cols, data)
 
       DBI::dbWriteTable(
         conn = con,
@@ -390,8 +394,8 @@ eyeris_db_read <- function(
 #' }
 #'
 #' @export
-eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
-  # Auto-append .eyerisdb extension if not present
+eyeris_db_connect <- function(bids_dir, db_path = "my-study") {
+  # auto-append .eyerisdb extension if not present
   if (!grepl("\\.eyerisdb$", db_path)) {
     db_path <- paste0(db_path, ".eyerisdb")
   }
