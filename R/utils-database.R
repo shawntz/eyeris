@@ -15,7 +15,7 @@ connect_eyeris_database <- function(bids_dir, db_path = "eyeris-proj.duckdb", ve
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
     if (verbose) {
-      cli::cli_alert_info("[INFO] Created derivatives directory: %s", derivatives_dir)
+      cli::cli_alert_info(glue::glue("[INFO] Created derivatives directory: {derivatives_dir}"), wrap = TRUE)
     }
   }
 
@@ -31,16 +31,16 @@ connect_eyeris_database <- function(bids_dir, db_path = "eyeris-proj.duckdb", ve
 
       if (verbose) {
         if (file.exists(full_db_path)) {
-          cli::cli_alert_info("[INFO] Connected to existing eyeris database: %s", full_db_path)
+          cli::cli_alert_info(glue::glue("[INFO] Connected to existing eyeris database: {full_db_path}"), wrap = TRUE)
         } else {
-          cli::cli_alert_success("[OKAY] Created new eyeris database: %s", full_db_path)
+          cli::cli_alert_success(glue::glue("[OKAY] Created new eyeris database: {full_db_path}"), wrap = TRUE)
         }
       }
 
       return(con)
     },
     error = function(e) {
-      cli::cli_alert_warning("[WARN] Failed to connect to database: %s", e$message)
+      cli::cli_alert_warning(glue::glue("[WARN] Failed to connect to database: {e$message}"), wrap = TRUE)
       return(NULL)
     }
   )
@@ -65,13 +65,13 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
     {
       DBI::dbDisconnect(con)
       if (verbose) {
-        cli::cli_alert_info("[INFO] Disconnected from eyeris database")
+        cli::cli_alert_info("[INFO] Disconnected from eyeris database", wrap = TRUE)
       }
       return(TRUE)
     },
     error = function(e) {
       if (verbose) {
-        cli::cli_alert_warning("[WARN] Error disconnecting from database: %s", e$message)
+        cli::cli_alert_warning(glue::glue("[WARN] Error disconnecting from database: {e$message}"), wrap = TRUE)
       }
       return(FALSE)
     }
@@ -146,14 +146,14 @@ write_eyeris_data_to_db <- function(
 ) {
   if (is.null(con)) {
     if (verbose) {
-      cli::cli_alert_warning("[WARN] No database connection provided")
+      cli::cli_alert_warning("[WARN] No database connection provided", wrap = TRUE)
     }
     return(FALSE)
   }
 
   if (is.null(data) || nrow(data) == 0) {
     if (verbose) {
-      cli::cli_alert_warning("[WARN] No data to write to database")
+      cli::cli_alert_warning("[WARN] No data to write to database", wrap = TRUE)
     }
     return(FALSE)
   }
@@ -189,10 +189,8 @@ write_eyeris_data_to_db <- function(
       if (verbose) {
         action <- if (append) "Added" else "Created"
         cli::cli_alert_success(
-          "[OKAY] %s table '%s' with %d rows",
-          action,
-          table_name,
-          nrow(data)
+          glue::glue("[OKAY] {action} table '{table_name}' with {nrow(data)} rows"),
+          wrap = TRUE
         )
       }
 
@@ -201,9 +199,8 @@ write_eyeris_data_to_db <- function(
     error = function(e) {
       if (verbose) {
         cli::cli_alert_warning(
-          "[WARN] Failed to write data to table '%s': %s",
-          table_name,
-          e$message
+          glue::glue("[WARN] Failed to write data to table '{table_name}': {e$message}"),
+          wrap = TRUE
         )
       }
       return(FALSE)
@@ -224,7 +221,7 @@ write_eyeris_data_to_db <- function(
 #' @export
 eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
   if (is.null(con)) {
-    cli::cli_alert_warning("[WARN] No database connection provided")
+    cli::cli_alert_warning("[WARN] No database connection provided", wrap = TRUE)
     return(character(0))
   }
 
@@ -247,7 +244,7 @@ eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
       return(tables)
     },
     error = function(e) {
-      cli::cli_alert_warning("[WARN] Failed to list tables: %s", e$message)
+      cli::cli_alert_warning(glue::glue("[WARN] Failed to list tables: {e$message}"), wrap = TRUE)
       return(character(0))
     }
   )
@@ -295,7 +292,7 @@ eyeris_db_read <- function(
       tables <- DBI::dbListTables(con)
 
       if (length(tables) == 0) {
-        cli::cli_alert_warning("[WARN] No tables found in database")
+        cli::cli_alert_warning("[WARN] No tables found in database", wrap = TRUE)
         return(data.frame())
       }
 
@@ -306,7 +303,7 @@ eyeris_db_read <- function(
       }
 
       if (length(tables) == 0) {
-        cli::cli_alert_warning("[WARN] No matching tables found")
+        cli::cli_alert_warning("[WARN] No matching tables found", wrap = TRUE)
         return(data.frame())
       }
 
@@ -345,7 +342,7 @@ eyeris_db_read <- function(
       return(result)
     },
     error = function(e) {
-      cli::cli_alert_warning("[WARN] Failed to read from database: %s", e$message)
+      cli::cli_alert_warning(glue::glue("[WARN] Failed to read from database: {e$message}"), wrap = TRUE)
       return(data.frame())
     }
   )
@@ -365,20 +362,26 @@ eyeris_db_read <- function(
 #'
 #' @examples
 #' \donttest{
-#' # connect to your eyeris project database
-#' con <- eyeris_db_connect("/path/to/your/bids/directory")
+#' # step 1: create a database using bidsify with db_enabled = TRUE
+#' # (This example assumes you have already run bidsify to create a database)
 #'
-#' # connect to custom database name
-#' con <- eyeris_db_connect("/path/to/bids", db_path = "my-study.duckdb")
+#' # temp dir for testing
+#' temp_dir <- tempdir()
 #'
-#' # list available tables
-#' tables <- eyeris_db_list_tables(con)
+#' # step 2: connect to eyeris DB (will fail gracefully if no DB exists)
+#' tryCatch({
+#'   con <- eyeris_db_connect(temp_dir)
 #'
-#' # read timeseries data for a specific subject
-#' data <- eyeris_db_read(con, data_type = "timeseries", subject = "001")
+#'   tables <- eyeris_db_list_tables(con)
 #'
-#' # close connection when done
-#' eyeris_db_disconnect(con)
+#'   # read timeseries data for a specific subject
+#'   data <- eyeris_db_read(con, data_type = "timeseries", subject = "001")
+#'
+#'   # close connection when done
+#'   eyeris_db_disconnect(con)
+#' }, error = function(e) {
+#'   message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
+#' })
 #' }
 #'
 #' @export
@@ -399,7 +402,7 @@ eyeris_db_connect <- function(bids_dir, db_path = "eyeris-proj.duckdb") {
   tryCatch(
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = full_db_path)
-      cli::cli_alert_success("[OKAY] Connected to eyeris database: %s", full_db_path)
+      cli::cli_alert_success(glue::glue("[OKAY] Connected to eyeris database: {full_db_path}"), wrap = TRUE)
       return(con)
     },
     error = function(e) {
@@ -468,7 +471,7 @@ write_csv_and_db <- function(
       },
       error = function(e) {
         if (verbose) {
-          cli::cli_alert_warning("[WARN] Failed to write CSV file: %s", csv_path)
+          cli::cli_alert_warning(glue::glue("[WARN] Failed to write CSV file: {csv_path}"), wrap = TRUE)
         }
         csv_success <- FALSE
       }
@@ -497,11 +500,10 @@ write_csv_and_db <- function(
   # centralized success logging
   if (verbose && length(outputs) > 0 && csv_success && db_success) {
     output_str <- paste(outputs, collapse = " and ")
+    data_type_str <- if (is.null(data_type)) "data" else data_type
     cli::cli_alert_success(
-      "[OKAY] Written %s data (%d rows) to %s",
-      data_type %||% "data",
-      nrow(data),
-      output_str
+      glue::glue("[OKAY] Written {data_type_str} data ({nrow(data)} rows) to {output_str}"),
+      wrap = TRUE
     )
   }
 
