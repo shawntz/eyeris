@@ -22,20 +22,26 @@ This function provides easy access for users to query their eyeris data.
 }
 \examples{
 \donttest{
-# connect to your eyeris project database
-con <- eyeris_db_connect("/path/to/your/bids/directory")
+# step 1: create a database using bidsify with db_enabled = TRUE
+# (This example assumes you have already run bidsify to create a database)
 
-# connect to custom database name
-con <- eyeris_db_connect("/path/to/bids", db_path = "my-study.duckdb")
+# temp dir for testing
+temp_dir <- tempdir()
 
-# list available tables
-tables <- eyeris_db_list_tables(con)
+# step 2: connect to eyeris DB (will fail gracefully if no DB exists)
+tryCatch({
+  con <- eyeris_db_connect(temp_dir)
 
-# read timeseries data for a specific subject
-data <- eyeris_db_read(con, data_type = "timeseries", subject = "001")
+  tables <- eyeris_db_list_tables(con)
 
-# close connection when done
-eyeris_db_disconnect(con)
+  # read timeseries data for a specific subject
+  data <- eyeris_db_read(con, data_type = "timeseries", subject = "001")
+
+  # close connection when done
+  eyeris_db_disconnect(con)
+}, error = function(e) {
+  message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
+})
 }
 
 }
