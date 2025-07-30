@@ -160,11 +160,11 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
   } else {
     # try multiple possible paths to find the zip file
     possible_paths <- c(
-      zip_path,                                   # exact path as provided
-      file.path(getwd(), zip_path),               # relative to current working directory
-      file.path(dirname(getwd()), zip_path),      # relative to parent directory
-      normalizePath(zip_path, mustWork = FALSE),  # normalized path
-      file.path(".", zip_path)                    # relative to current location
+      zip_path, # exact path as provided
+      file.path(getwd(), zip_path), # relative to current working directory
+      file.path(dirname(getwd()), zip_path), # relative to parent directory
+      normalizePath(zip_path, mustWork = FALSE), # normalized path
+      file.path(".", zip_path) # relative to current location
     )
 
     full_zip_path <- NULL
@@ -177,7 +177,10 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
     }
 
     if (is.null(full_zip_path)) {
-      cli::cli_alert_warning(sprintf("[WARN] Zip file not found. Tried paths: %s", paste(possible_paths, collapse = ", ")))
+      cli::cli_alert_warning(sprintf(
+        "[WARN] Zip file not found. Tried paths: %s",
+        paste(possible_paths, collapse = ", ")
+      ))
     }
 
     # then use original path for HTML display
@@ -194,32 +197,45 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
   # first try to embed zip file as data URL to avoid CORS issues
   zip_data_url <- NULL
   if (!is.null(full_zip_path) && file.exists(full_zip_path)) {
-    tryCatch({
-      file_size <- file.info(full_zip_path)$size
-      # only embed if file size is reasonable (< 10MB)
-      if (file_size < 10 * 1024 * 1024) {
-        zip_bytes <- readBin(full_zip_path, "raw", file_size)
-        zip_b64 <- base64enc::base64encode(zip_bytes)
-        zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
-        cli::cli_alert_success(sprintf("[OKAY] Embedded zip file as data URL (%d bytes)", file_size))
-      } else {
-        cli::cli_alert_warning(sprintf("[WARN] Zip file too large for data URL embedding (%d bytes)", file_size))
+    tryCatch(
+      {
+        file_size <- file.info(full_zip_path)$size
+        # only embed if file size is reasonable (< 10MB)
+        if (file_size < 10 * 1024 * 1024) {
+          zip_bytes <- readBin(full_zip_path, "raw", file_size)
+          zip_b64 <- base64enc::base64encode(zip_bytes)
+          zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
+          cli::cli_alert_success(sprintf("[OKAY] Embedded zip file as data URL (%d bytes)", file_size))
+        } else {
+          cli::cli_alert_warning(sprintf("[WARN] Zip file too large for data URL embedding (%d bytes)", file_size))
+        }
+      },
+      error = function(e) {
+        cli::cli_alert_warning(sprintf("[WARN] Could not embed zip file as data URL: %s", e$message))
       }
-    }, error = function(e) {
-      cli::cli_alert_warning(sprintf("[WARN] Could not embed zip file as data URL: %s", e$message))
-    })
+    )
   }
 
   html_out <- paste0(
-    "<div id='gallery_", gallery_id, "' class='zip-gallery'>\n",
+    "<div id='gallery_",
+    gallery_id,
+    "' class='zip-gallery'>\n",
     "  <div class='loading'>Loading images...</div>\n",
     "</div>\n",
-    "<input type='file' id='zipInput_", gallery_id, "' style='display: none;' accept='.zip' />\n",
+    "<input type='file' id='zipInput_",
+    gallery_id,
+    "' style='display: none;' accept='.zip' />\n",
     "<script>\n",
     "(async function() {\n",
-    "  const galleryDiv = document.getElementById('gallery_", gallery_id, "');\n",
-    "  const zipPath = '", html_zip_path, "';\n",
-    "  const zipDataURL = ", if (is.null(zip_data_url)) "null" else paste0("'", zip_data_url, "'"), ";\n",
+    "  const galleryDiv = document.getElementById('gallery_",
+    gallery_id,
+    "');\n",
+    "  const zipPath = '",
+    html_zip_path,
+    "';\n",
+    "  const zipDataURL = ",
+    if (is.null(zip_data_url)) "null" else paste0("'", zip_data_url, "'"),
+    ";\n",
     "  \n",
     "  async function loadZipFromURL(url) {\n",
     "    // Try multiple methods for loading local files\n",
@@ -330,9 +346,13 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
     "    const epochMatch = zipPath.match(/epoch_([^/]+)/); \n",
     "    const epochName = epochMatch ? epochMatch[1] : 'epoch images';\n",
     "    \n",
-    "    galleryDiv.innerHTML = '<div style=\"padding: 20px; border: 2px solid #e74c3c; background-color: #fdf2f2; margin: 15px 0; border-radius: 8px;\"><div style=\"display: flex; align-items: center; margin-bottom: 15px;\"><span style=\"font-size: 24px; margin-right: 10px;\">🔒</span><h3 style=\"margin: 0; color: #c0392b;\">eyeris Epoch Gallery Loader</h3></div><p style=\"margin-bottom: 15px;\"><strong>Unable to automatically load zip file due to browser security restrictions.</strong></p><div style=\"background-color: #fff; padding: 15px; border-radius: 5px; margin-bottom: 15px;\"><p style=\"margin: 0 0 10px 0; font-weight: bold;\">Expected file location:</p><code style=\"background-color: #f8f9fa; padding: 8px; border-radius: 3px; display: block; word-break: break-all;\">' + zipPath + '</code></div><div style=\"text-align: center;\"><button onclick=\"document.getElementById(\\'zipInput_", gallery_id, "\\').click();\" style=\"padding: 12px 24px; background-color: #2c3e50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);\">📁 Load eyeris Epoch Gallery (' + epochName + ')</button></div><p style=\"margin-top: 15px; font-size: 14px; color: #7f8c8d; text-align: center;\">Navigate to and select the zip file shown above to view your epoch images.</p></div>';\n",
+    "    galleryDiv.innerHTML = '<div style=\"padding: 20px; border: 2px solid #e74c3c; background-color: #fdf2f2; margin: 15px 0; border-radius: 8px;\"><div style=\"display: flex; align-items: center; margin-bottom: 15px;\"><span style=\"font-size: 24px; margin-right: 10px;\">🔒</span><h3 style=\"margin: 0; color: #c0392b;\">eyeris Epoch Gallery Loader</h3></div><p style=\"margin-bottom: 15px;\"><strong>Unable to automatically load zip file due to browser security restrictions.</strong></p><div style=\"background-color: #fff; padding: 15px; border-radius: 5px; margin-bottom: 15px;\"><p style=\"margin: 0 0 10px 0; font-weight: bold;\">Expected file location:</p><code style=\"background-color: #f8f9fa; padding: 8px; border-radius: 3px; display: block; word-break: break-all;\">' + zipPath + '</code></div><div style=\"text-align: center;\"><button onclick=\"document.getElementById(\\'zipInput_",
+    gallery_id,
+    "\\').click();\" style=\"padding: 12px 24px; background-color: #2c3e50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);\">📁 Load eyeris Epoch Gallery (' + epochName + ')</button></div><p style=\"margin-top: 15px; font-size: 14px; color: #7f8c8d; text-align: center;\">Navigate to and select the zip file shown above to view your epoch images.</p></div>';\n",
     "    \n",
-    "    document.getElementById('zipInput_", gallery_id, "').addEventListener('change', async function(event) {\n",
+    "    document.getElementById('zipInput_",
+    gallery_id,
+    "').addEventListener('change', async function(event) {\n",
     "      const file = event.target.files[0];\n",
     "      if (file && (file.type === 'application/zip' || file.name.endsWith('.zip'))) {\n",
     "        try {\n",
