@@ -2,17 +2,20 @@
 % Please edit documentation in R/utils-gallery.R
 \name{print_lightbox_img_html}
 \alias{print_lightbox_img_html}
-\title{Print lightbox image HTML}
+\title{Print lightbox image HTML for zip-based gallery}
 \usage{
-print_lightbox_img_html(images)
+print_lightbox_img_html(zip_path, image_filenames = NULL)
 }
 \arguments{
-\item{images}{Vector of image file paths}
+\item{zip_path}{Path to the zip file containing images (can be absolute or relative)}
+
+\item{image_filenames}{Vector of image filenames within the zip}
 }
 \value{
 A character string containing HTML code for the lightbox gallery
 }
 \description{
-Generates HTML code for lightbox image gallery functionality.
+Generates HTML code for lightbox image gallery functionality that loads
+images from zip files using zip.js.
 }
 \keyword{internal}
