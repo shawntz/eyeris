@@ -2621,6 +2621,12 @@ run_bidsify <- function(
     )
 
     render_report(report_output)
+
+    cleanup_source_figures_post_render(
+      report_path = report_path,
+      eye_suffix = eye_suffix,
+      verbose = verbose
+    )
   }
 }
 
