@@ -21,6 +21,9 @@ run_bidsify(
   report_epoch_grouping_var_col = "matched_event",
   eye_suffix = NULL,
   verbose = TRUE,
+  csv_enabled = TRUE,
+  db_enabled = FALSE,
+  db_path = "eyeris-proj.duckdb",
   raw_binocular_object = NULL
 )
 }
