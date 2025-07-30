@@ -165,5 +165,10 @@ inode
 js
 LFS
 JPG
+csv
+dplyr
+duckdb
+DuckDB
+proj
 users'
 eyeris'
