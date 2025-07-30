@@ -1,13 +1,11 @@
-# eyeris 2.1.1.9001 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 2.1.1.9002 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.1.2`). Items will continue to be added here until that version is finalized._
 
-## 🚀 New features
+- **DuckDB Database Integration**: Added optional DuckDB database functionality to `bidsify()` as an alternative to CSV files for large-scale analyses. When `db_enabled = TRUE`, all eyeris data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (`eyeris_db_connect()`, `eyeris_db_read()`, `eyeris_db_list_tables()`), and dplyr-style data access. CSV file generation can be optionally disabled with `csv_enabled = FALSE` for cloud compute environments, by @shawntz in #256.
 
-- **Zip-based epoch gallery system**: Replaced individual epoch image files with zip-based storage and loading system. The `make_gallery()` function now creates epoch images in zip files instead of individual PNG files, and uses `zip.js` to dynamically load images in the HTML gallery. This reduces file count, improves organization, and provides more efficient loading while maintaining full backward compatibility with existing individual image files. This is particularly beneficial for high-throughput compute environments with limited inode quotas and simplifies file transfers to cloud storage providers like GitHub LFS, by @shawntz in #254.
-
-- **Automated source figure cleanup**: Added post-render cleanup functionality that automatically zips all `png` and `jpg` files in each `source/figures/run-xx/` directory after the main HTML report is generated before deleting the individual image files, further reducing file count burden while preserving all figure data in compressed format, creating only one zip file per run per subject instead of hundreds of individual image files, by @shawntz in #255.
+# eyeris 2.1.1.9001 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 # eyeris 2.1.1.9000 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
