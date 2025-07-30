@@ -106,6 +106,10 @@ reference:
       - plot_gaze_heatmap
       - plot_binocular_correlation
       - eyeris_color_palette
+      - eyeris_db_connect
+      - eyeris_db_disconnect
+      - eyeris_db_read
+      - eyeris_db_list_tables
 
   - title: "🔧 Preprocessing Steps"
     desc: >
