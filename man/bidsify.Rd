@@ -14,7 +14,7 @@ bidsify(
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = FALSE,
+  merge_runs = deprecated(),
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
@@ -57,12 +57,9 @@ blocks are automatically numbered as runs (block 1 = run-01, block 2 =
 run-02, etc.) in the order they appeared/were recorded. Defaults to \code{NULL}
 (no override)}
 
-\item{merge_runs}{Logical flag indicating whether multiple runs (either
-from multiple recording blocks existing within the \strong{same} \code{.asc} file
-(see above), or manually specified) should be combined into a single
-output file. When \code{TRUE}, adds a 'run' column to identify the source run
-Defaults to \code{FALSE} (i.e., separate files per block/run -- the standard
-BIDS-like-behavior)}
+\item{merge_runs}{\strong{(Deprecated)} This parameter is deprecated and will be
+ignored. All runs are now saved as separate files following BIDS conventions.
+This parameter will be removed in a future version}
 
 \item{save_raw}{Logical flag indicating whether to save_raw pupil data in
 addition to epoched data. Defaults to \code{TRUE}}
