@@ -88,7 +88,7 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
 #' Generates a standardized table name for eyeris data based on the data type
 #' and subject information.
 #'
-#' @param data_type Type of data ("timeseries", "epochs", "events", "blinks")
+#' @param data_type Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")
 #' @param sub Subject ID
 #' @param ses Session ID
 #' @param task Task name
@@ -98,13 +98,34 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
 #' @return Character string with table name
 #'
 #' @keywords internal
-create_table_name <- function(data_type, sub, ses, task, run = NULL, eye_suffix = NULL) {
+create_table_name <- function(data_type, sub, ses, task, run = NULL, eye_suffix = NULL, epoch_label = NULL) {
   # base table name
   table_name <- paste0(data_type, "_", sub, "_", ses, "_", task)
 
   # add run if provided
   if (!is.null(run)) {
-    table_name <- paste0(table_name, "_run", run)
+    # ensure run number is formatted as 2-digit string
+    formatted_run <- if (is.numeric(run)) {
+      sprintf("%02d", run)
+    } else if (is.character(run)) {
+      # if already a string, check if it needs zero-padding
+      if (nchar(run) == 1 && grepl("^[0-9]$", run)) {
+        sprintf("%02d", as.numeric(run))
+      } else {
+        run
+      }
+    } else {
+      run
+    }
+    table_name <- paste0(table_name, "_run", formatted_run)
+  }
+
+  # add epoch label if provided (for epoched data)
+  if (!is.null(epoch_label)) {
+    # sanitize epoch label for database table naming
+    sanitized_label <- gsub("[^a-zA-Z0-9]", "", epoch_label)
+    sanitized_label <- tolower(sanitized_label)
+    table_name <- paste0(table_name, "_", sanitized_label)
   }
 
   # add eye suffix if provided
@@ -125,12 +146,13 @@ create_table_name <- function(data_type, sub, ses, task, run = NULL, eye_suffix 
 #'
 #' @param data Data frame to write
 #' @param con Database connection
-#' @param data_type Type of data ("timeseries", "epochs", "events", "blinks")
+#' @param data_type Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")
 #' @param sub Subject ID
 #' @param ses Session ID
 #' @param task Task name
 #' @param run Run number
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param epoch_label Optional epoch label for epoched data (used in table naming)
 #' @param append Whether to append to existing table (default TRUE)
 #' @param verbose Whether to print verbose output
 #'
@@ -146,6 +168,7 @@ write_eyeris_data_to_db <- function(
   task,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   append = TRUE,
   verbose = FALSE
 ) {
@@ -163,7 +186,7 @@ write_eyeris_data_to_db <- function(
     return(FALSE)
   }
 
-  table_name <- create_table_name(data_type, sub, ses, task, run, eye_suffix)
+  table_name <- create_table_name(data_type, sub, ses, task, run, eye_suffix, epoch_label)
 
   tryCatch(
     {
@@ -181,6 +204,10 @@ write_eyeris_data_to_db <- function(
 
       if (!is.null(eye_suffix)) {
         metadata_cols$eye_suffix <- eye_suffix
+      }
+
+      if (!is.null(epoch_label)) {
+        metadata_cols$epoch_label <- epoch_label
       }
 
       metadata_cols$created_timestamp <- Sys.time()
@@ -264,12 +291,13 @@ eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
 #' Reads eyeris data from the project database with dplyr-style interface.
 #'
 #' @param con Database connection
-#' @param data_type Type of data to read ("timeseries", "epochs", "events", "blinks")
+#' @param data_type Type of data to read ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")
 #' @param subject Optional subject ID filter
 #' @param session Optional session ID filter
 #' @param task Optional task name filter
 #' @param run Optional run number filter
 #' @param eye_suffix Optional eye suffix filter
+#' @param epoch_label Optional epoch label filter (for epoched data)
 #' @param table_name Exact table name (overrides other parameters)
 #'
 #' @return Data frame with requested data
@@ -283,6 +311,7 @@ eyeris_db_read <- function(
   task = NULL,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   table_name = NULL
 ) {
   if (is.null(con)) {
@@ -308,6 +337,14 @@ eyeris_db_read <- function(
       # filter tables based on criteria
       if (!is.null(data_type)) {
         pattern <- paste0("^", data_type, "_")
+        tables <- tables[grepl(pattern, tables)]
+      }
+
+      # filter by epoch label if provided
+      if (!is.null(epoch_label)) {
+        sanitized_label <- gsub("[^a-zA-Z0-9]", "", epoch_label)
+        sanitized_label <- tolower(sanitized_label)
+        pattern <- paste0("_", sanitized_label, "(_|$)")
         tables <- tables[grepl(pattern, tables)]
       }
 
@@ -345,6 +382,11 @@ eyeris_db_read <- function(
         query <- paste(query, "AND eye_suffix =", shQuote(eye_suffix))
       }
 
+      if (!is.null(epoch_label)) {
+        query <- paste(query, "AND LOWER(epoch_label) =", tolower(shQuote(epoch_label)))
+      }
+
+      print(query)
       # execute query
       result <- DBI::dbGetQuery(con, query)
 
@@ -448,12 +490,13 @@ eyeris_db_disconnect <- function(con) {
 #' @param csv_path Full path where CSV file should be written (ignored if csv_enabled = FALSE)
 #' @param csv_enabled Whether to write CSV files (defaults to TRUE for backward compatibility)
 #' @param db_con Database connection (NULL if not enabled)
-#' @param data_type Type of data ("timeseries", "epochs", "events", "blinks", "confounds")
+#' @param data_type Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks", "confounds")
 #' @param sub Subject ID
 #' @param ses Session ID
 #' @param task Task name
 #' @param run Run number (optional)
 #' @param eye_suffix Eye suffix for binocular data (optional)
+#' @param epoch_label Epoch label for epoched data (optional, used in table naming)
 #' @param verbose Whether to print verbose output
 #'
 #' @return Logical indicating success
@@ -470,6 +513,7 @@ write_csv_and_db <- function(
   task = NULL,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   verbose = FALSE
 ) {
   csv_success <- TRUE
@@ -502,6 +546,7 @@ write_csv_and_db <- function(
       task = task,
       run = run,
       eye_suffix = eye_suffix,
+      epoch_label = epoch_label,
       append = TRUE,
       verbose = FALSE # suppress individual DB logging to avoid duplication
     )
