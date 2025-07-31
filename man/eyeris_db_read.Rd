@@ -19,7 +19,7 @@ eyeris_db_read(
 \arguments{
 \item{con}{Database connection}
 
-\item{data_type}{Type of data to read ("timeseries", "epochs", "epochs_timeseries", "events", "blinks")}
+\item{data_type}{Type of data to read ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")}
 
 \item{subject}{Optional subject ID filter}
 
