@@ -27,7 +27,7 @@ jobs:
           git fetch origin badges
           git checkout badges
           git pull origin badges
-          rm dev-branch-version.svg
+          rm -f dev-branch-version.svg
           git add -A
           git commit -m "removed old dev-branch-version.svg file [skip ci]" || echo "no changes to commit"
           git push origin badges
