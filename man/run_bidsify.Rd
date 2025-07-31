@@ -14,7 +14,6 @@ run_bidsify(
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = FALSE,
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
@@ -46,8 +45,6 @@ run_bidsify(
 \item{task_name}{The task name}
 
 \item{run_num}{The run number}
-
-\item{merge_runs}{Whether to merge runs}
 
 \item{save_raw}{Whether to save raw data}
 
