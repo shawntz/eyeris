@@ -15,7 +15,7 @@ create_table_name(
 )
 }
 \arguments{
-\item{data_type}{Type of data ("timeseries", "epochs", "epochs_timeseries", "events", "blinks")}
+\item{data_type}{Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")}
 
 \item{sub}{Subject ID}
 
