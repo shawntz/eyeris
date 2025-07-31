@@ -4,7 +4,7 @@
 \alias{eyeris_db_connect}
 \title{Connect to eyeris project database (user-facing)}
 \usage{
-eyeris_db_connect(bids_dir, db_path = "my-study")
+eyeris_db_connect(bids_dir, db_path = "my-project")
 }
 \arguments{
 \item{bids_dir}{Path to the BIDS directory containing the database}
