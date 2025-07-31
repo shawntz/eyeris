@@ -23,6 +23,7 @@ bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  db_drop_existing_subject = TRUE,
   pdf_report = deprecated()
 )
 }
@@ -94,6 +95,10 @@ for centralized data storage and querying}
 \item{db_path}{Database filename or path. Defaults to \code{"eyeris-proj.eyerisdb"}.
 If just a filename, the database will be created in the \verb{derivatives/}
 directory. If a full path is provided, it will be used as specified}
+
+\item{db_drop_existing_subject}{Logical flag indicating whether to drop all existing
+entries for the current subject before inserting new data. This prevents duplicate
+entries when re-running bidsify on the same subject. Defaults to \code{TRUE}}
 
 \item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead}
 }
@@ -180,7 +185,7 @@ demo_data |>
     session_num = "01",
     task_name = "assocret",
     db_enabled = TRUE,  # enable eyerisdb database storage
-    db_path = "my-study"  # custom project database name
+    db_path = "my-project"  # custom project database name
   )
 
 # example for large-scale cloud compute (database only, no CSV files)
