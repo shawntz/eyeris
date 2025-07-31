@@ -629,7 +629,7 @@ write_csv_and_db <- function(
     output_str <- paste(outputs, collapse = " and ")
     data_type_str <- if (is.null(data_type)) "data" else data_type
     cli::cli_alert_success(
-      glue::glue("[OKAY] Written {data_type_str} data ({nrow(data)} rows) to {output_str}"),
+      glue::glue("[OKAY] Wrote {data_type_str} data ({nrow(data)} rows) to {output_str}"),
       wrap = TRUE
     )
   }
