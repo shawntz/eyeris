@@ -4,10 +4,18 @@
 \alias{create_table_name}
 \title{Create table name for eyeris data}
 \usage{
-create_table_name(data_type, sub, ses, task, run = NULL, eye_suffix = NULL)
+create_table_name(
+  data_type,
+  sub,
+  ses,
+  task,
+  run = NULL,
+  eye_suffix = NULL,
+  epoch_label = NULL
+)
 }
 \arguments{
-\item{data_type}{Type of data ("timeseries", "epochs", "events", "blinks")}
+\item{data_type}{Type of data ("timeseries", "epochs", "epochs_timeseries", "events", "blinks")}
 
 \item{sub}{Subject ID}
 
