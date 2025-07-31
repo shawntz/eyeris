@@ -24,6 +24,7 @@ run_bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  db_drop_existing_subject = TRUE,
   raw_binocular_object = NULL
 )
 }
@@ -59,6 +60,14 @@ run_bidsify(
 \item{eye_suffix}{The suffix to add to the eye data}
 
 \item{verbose}{Whether to print verbose output}
+
+\item{csv_enabled}{Whether to save csv files}
+
+\item{db_enabled}{Whether to save data to the database}
+
+\item{db_path}{The path to the database}
+
+\item{db_drop_existing_subject}{Whether to drop all existing entries for the current subject before inserting new data}
 
 \item{raw_binocular_object}{The raw binocular object}
 }
