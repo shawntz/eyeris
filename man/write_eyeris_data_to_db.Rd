@@ -13,6 +13,7 @@ write_eyeris_data_to_db(
   task,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   append = TRUE,
   verbose = FALSE
 )
@@ -22,7 +23,7 @@ write_eyeris_data_to_db(
 
 \item{con}{Database connection}
 
-\item{data_type}{Type of data ("timeseries", "epochs", "events", "blinks")}
+\item{data_type}{Type of data ("timeseries", "epochs", "epochs_timeseries", "events", "blinks")}
 
 \item{sub}{Subject ID}
 
@@ -33,6 +34,8 @@ write_eyeris_data_to_db(
 \item{run}{Run number}
 
 \item{eye_suffix}{Optional eye suffix for binocular data}
+
+\item{epoch_label}{Optional epoch label for epoched data (used in table naming)}
 
 \item{append}{Whether to append to existing table (default TRUE)}
 
