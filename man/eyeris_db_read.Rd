@@ -12,13 +12,14 @@ eyeris_db_read(
   task = NULL,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   table_name = NULL
 )
 }
 \arguments{
 \item{con}{Database connection}
 
-\item{data_type}{Type of data to read ("timeseries", "epochs", "events", "blinks")}
+\item{data_type}{Type of data to read ("timeseries", "epochs", "epochs_timeseries", "events", "blinks")}
 
 \item{subject}{Optional subject ID filter}
 
@@ -29,6 +30,8 @@ eyeris_db_read(
 \item{run}{Optional run number filter}
 
 \item{eye_suffix}{Optional eye suffix filter}
+
+\item{epoch_label}{Optional epoch label filter (for epoched data)}
 
 \item{table_name}{Exact table name (overrides other parameters)}
 }
