@@ -16,7 +16,8 @@ export_confounds_to_csv(
   ses = NULL,
   task = NULL,
   eye_suffix = NULL,
-  epoch_label = NULL
+  epoch_label = NULL,
+  drop_existing_subject = FALSE
 )
 }
 \arguments{
