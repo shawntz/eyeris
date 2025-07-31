@@ -15,6 +15,7 @@ write_csv_and_db(
   task = NULL,
   run = NULL,
   eye_suffix = NULL,
+  epoch_label = NULL,
   verbose = FALSE
 )
 }
@@ -27,7 +28,7 @@ write_csv_and_db(
 
 \item{db_con}{Database connection (NULL if not enabled)}
 
-\item{data_type}{Type of data ("timeseries", "epochs", "events", "blinks", "confounds")}
+\item{data_type}{Type of data ("timeseries", "epochs", "epochs_timeseries", "events", "blinks", "confounds")}
 
 \item{sub}{Subject ID}
 
@@ -38,6 +39,8 @@ write_csv_and_db(
 \item{run}{Run number (optional)}
 
 \item{eye_suffix}{Eye suffix for binocular data (optional)}
+
+\item{epoch_label}{Epoch label for epoched data (optional, used in table naming)}
 
 \item{verbose}{Whether to print verbose output}
 }
