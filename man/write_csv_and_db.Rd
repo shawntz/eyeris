@@ -16,6 +16,7 @@ write_csv_and_db(
   run = NULL,
   eye_suffix = NULL,
   epoch_label = NULL,
+  drop_existing_subject = TRUE,
   verbose = FALSE
 )
 }
@@ -28,7 +29,7 @@ write_csv_and_db(
 
 \item{db_con}{Database connection (NULL if not enabled)}
 
-\item{data_type}{Type of data ("timeseries", "epochs", "epochs_timeseries", "events", "blinks", "confounds")}
+\item{data_type}{Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks", "confounds")}
 
 \item{sub}{Subject ID}
 
@@ -41,6 +42,8 @@ write_csv_and_db(
 \item{eye_suffix}{Eye suffix for binocular data (optional)}
 
 \item{epoch_label}{Epoch label for epoched data (optional, used in table naming)}
+
+\item{drop_existing_subject}{Whether to drop all existing entries for this subject before inserting (default TRUE)}
 
 \item{verbose}{Whether to print verbose output}
 }
