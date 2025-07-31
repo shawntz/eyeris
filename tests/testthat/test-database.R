@@ -271,7 +271,7 @@ test_that("database integration works correctly", {
     result <- write_eyeris_data_to_db(
       data = test_data,
       con = con,
-      data_type = "epochs_timeseries",
+      data_type = "epoch_timeseries",
       sub = "005",
       ses = "01",
       task = "epochtest",
@@ -284,15 +284,15 @@ test_that("database integration works correctly", {
 
     # check table was created with epoch label
     tables <- DBI::dbListTables(con)
-    expect_true("epochs_timeseries_005_01_epochtest_run01_prepostprobe" %in% tables)
+    expect_true("epoch_timeseries_005_01_epochtest_run01_prepostprobe" %in% tables)
 
     # verify data contains epoch label metadata
-    table_data <- DBI::dbReadTable(con, "epochs_timeseries_005_01_epochtest_run01_prepostprobe")
+    table_data <- DBI::dbReadTable(con, "epoch_timeseries_005_01_epochtest_run01_prepostprobe")
     expect_true("epoch_label" %in% colnames(table_data))
     expect_equal(unique(table_data$epoch_label), "prePostProbe")
 
     # test reading data with epoch label filter
-    filtered_data <- eyeris_db_read(con, data_type = "epochs_timeseries", subject = "005", epoch_label = "prePostProbe")
+    filtered_data <- eyeris_db_read(con, data_type = "epoch_timeseries", subject = "005", epoch_label = "prePostProbe")
     expect_true(nrow(filtered_data) > 0)
     expect_equal(unique(filtered_data$epoch_label), "prePostProbe")
     expect_equal(unique(filtered_data$subject_id), "005")
