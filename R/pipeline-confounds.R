@@ -303,9 +303,9 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height, overshoot_buf
   pupil_df
 }
 
-#' Export confounds data to CSV files
+#' Export confounds data to CSV files and/or database
 #'
-#' Exports each block's confounds data to a separate CSV file.
+#' Exports each block's confounds data to a separate CSV file and/or database table.
 #' Each file will contain all pupil steps (e.g., pupil_raw, pupil_clean)
 #' as rows, with confound metrics as columns.
 #'
@@ -314,12 +314,32 @@ tag_gaze_coords <- function(pupil_df, screen_width, screen_height, overshoot_buf
 #' @param filename_prefix Either a string prefix for filenames or a function
 #' that takes a block name and returns a prefix
 #' @param verbose A flag to indicate whether to print progress messages
-#' @param run_num The run number
+#' @param run_num The run number (if NULL, will be extracted from block names)
+#' @param csv_enabled Whether to write CSV files (default TRUE)
+#' @param db_con Database connection object (NULL if database disabled)
+#' @param sub Subject ID for database metadata
+#' @param ses Session ID for database metadata
+#' @param task Task name for database metadata
+#' @param eye_suffix Eye suffix for binocular data (e.g., "eye-L", "eye-R")
+#' @param epoch_label Epoch label for epoched data (added as column)
 #'
 #' @return Invisibly returns a vector of created file paths
 #'
 #' @keywords internal
-export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix, verbose, run_num = NULL) {
+export_confounds_to_csv <- function(
+  confounds_list,
+  output_dir,
+  filename_prefix,
+  verbose,
+  run_num = NULL,
+  csv_enabled = TRUE,
+  db_con = NULL,
+  sub = NULL,
+  ses = NULL,
+  task = NULL,
+  eye_suffix = NULL,
+  epoch_label = NULL
+) {
   # handle binocular objects
   if (is_binocular_object(confounds_list)) {
     # process left and right eyes independently with appropriate suffixes
@@ -328,7 +348,14 @@ export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix,
       file.path(output_dir, "left"),
       function(block_name) paste0(filename_prefix, "_eye-L_", block_name),
       verbose,
-      run_num
+      run_num,
+      csv_enabled,
+      db_con,
+      sub,
+      ses,
+      task,
+      "eye-L",
+      epoch_label
     )
 
     right_files <- export_confounds_to_csv(
@@ -336,7 +363,14 @@ export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix,
       file.path(output_dir, "right"),
       function(block_name) paste0(filename_prefix, "_eye-R_", block_name),
       verbose,
-      run_num
+      run_num,
+      csv_enabled,
+      db_con,
+      sub,
+      ses,
+      task,
+      "eye-R",
+      epoch_label
     )
 
     # return combined file paths
@@ -372,10 +406,23 @@ export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix,
         step_data <- as.data.frame(step_data)
       }
 
+      # extract run number from block name if run_num is NULL
+      actual_run_num <- run_num
+      if (is.null(actual_run_num)) {
+        # extract from block name (e.g., "block_1" -> "01")
+        block_number <- gsub("block_", "", block_name)
+        actual_run_num <- sprintf("%02d", as.numeric(block_number))
+      }
+
       step_row <- data.frame(
-        block = run_num,
+        block = actual_run_num,
         step = full_step_name
       )
+
+      # add epoch_label column if provided (for epoch data)
+      if (!is.null(epoch_label)) {
+        step_row$epoch_label <- epoch_label
+      }
 
       step_row <- cbind(step_row, step_data)
 
@@ -391,11 +438,23 @@ export_confounds_to_csv <- function(confounds_list, output_dir, filename_prefix,
     }
 
     filename <- file.path(output_dir, paste0(prefix, ".csv"))
-    write.csv(result_df, filename, row.names = FALSE)
-    created_files <- c(created_files, filename)
 
-    if (verbose) {
-      alert("success", "Confounds file written to: '%s'", filename)
+    success <- write_csv_and_db(
+      data = result_df,
+      csv_path = filename,
+      csv_enabled = csv_enabled,
+      db_con = db_con,
+      data_type = "confounds",
+      sub = sub,
+      ses = ses,
+      task = task,
+      run = actual_run_num,
+      eye_suffix = eye_suffix,
+      verbose = verbose
+    )
+
+    if (success) {
+      created_files <- c(created_files, filename)
     }
   }
 
