@@ -2,14 +2,21 @@
 % Please edit documentation in R/pipeline-confounds.R
 \name{export_confounds_to_csv}
 \alias{export_confounds_to_csv}
-\title{Export confounds data to CSV files}
+\title{Export confounds data to CSV files and/or database}
 \usage{
 export_confounds_to_csv(
   confounds_list,
   output_dir,
   filename_prefix,
   verbose,
-  run_num = NULL
+  run_num = NULL,
+  csv_enabled = TRUE,
+  db_con = NULL,
+  sub = NULL,
+  ses = NULL,
+  task = NULL,
+  eye_suffix = NULL,
+  epoch_label = NULL
 )
 }
 \arguments{
@@ -22,13 +29,27 @@ that takes a block name and returns a prefix}
 
 \item{verbose}{A flag to indicate whether to print progress messages}
 
-\item{run_num}{The run number}
+\item{run_num}{The run number (if NULL, will be extracted from block names)}
+
+\item{csv_enabled}{Whether to write CSV files (default TRUE)}
+
+\item{db_con}{Database connection object (NULL if database disabled)}
+
+\item{sub}{Subject ID for database metadata}
+
+\item{ses}{Session ID for database metadata}
+
+\item{task}{Task name for database metadata}
+
+\item{eye_suffix}{Eye suffix for binocular data (e.g., "eye-L", "eye-R")}
+
+\item{epoch_label}{Epoch label for epoched data (added as column)}
 }
 \value{
 Invisibly returns a vector of created file paths
 }
 \description{
-Exports each block's confounds data to a separate CSV file.
+Exports each block's confounds data to a separate CSV file and/or database table.
 Each file will contain all pupil steps (e.g., pupil_raw, pupil_clean)
 as rows, with confound metrics as columns.
 }
