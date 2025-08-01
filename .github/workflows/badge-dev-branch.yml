@@ -40,9 +40,6 @@ jobs:
           color: blue
           path: dev-branch-version.svg
 
-      - name: Clean up untracked files
-        run: git clean -fd
-
       - name: Commit and push badge
         run: |
           git config --global user.name "GitHub Actions"
