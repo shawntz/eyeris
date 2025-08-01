@@ -9,7 +9,6 @@ _Note: This is the working changelog for features and fixes being developed for 
 
 - **Automated source figure cleanup**: Added post-render cleanup functionality that automatically zips all `png` and `jpg` files in each `source/figures/run-xx/` directory after the main HTML report is generated before deleting the individual image files, further reducing file count burden while preserving all figure data in compressed format, creating only one zip file per run per subject instead of hundreds of individual image files, by @shawntz in #255.
 
->>>>>>> Stashed changes
 # eyeris 2.1.1.9000 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased

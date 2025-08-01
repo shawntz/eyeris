@@ -9,7 +9,7 @@ make_gallery(eyeris, epochs, out, epoch_name, ...)
 \arguments{
 \item{eyeris}{An \code{eyeris} object containing preprocessing results}
 
-\item{epochs}{Vector of epoch plot file paths}
+\item{epochs}{Vector of epoch plot file paths or path to zip file}
 
 \item{out}{Output directory for the report}
 

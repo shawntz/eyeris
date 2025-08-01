@@ -20,6 +20,18 @@ jobs:
           VERSION=$(grep '^Version:' DESCRIPTION | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Trash old badge
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git fetch origin badges
+          git checkout badges
+          git pull origin badges
+          rm -f dev-branch-version.svg
+          git add -A
+          git commit -m "removed old dev-branch-version.svg file [skip ci]" || echo "no changes to commit"
+          git push origin badges
+
       - name: Create badge
         uses: emibcn/badge-action@v2
         with:
@@ -28,16 +40,12 @@ jobs:
           color: blue
           path: dev-branch-version.svg
 
-      - name: Clean up untracked files
-        run: git clean -fd
-
       - name: Commit and push badge
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git fetch origin badges
           git checkout badges
-          git pull origin badges
-          git add dev-branch-version.svg
+          git add -A
           git commit -m "update dev branch version badge [skip ci]" || echo "no changes to commit"
           git push origin badges
