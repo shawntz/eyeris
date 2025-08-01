@@ -37,6 +37,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/check_start_end_timestamps.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/check_time_monotonic.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/clean_string.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/cleanup_source_figures_post_render.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/compute_baseline.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/convert_nested_dt.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/count_epochs.html</loc></url>
@@ -125,6 +126,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/tag_blinks.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/tag_gaze_coords.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/tick.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/zip_and_cleanup_source_figures.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/zscore.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/zscore_pupil.html</loc></url>
 </urlset>
