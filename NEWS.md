@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 # eyeris 2.1.1.9001 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
