@@ -116,7 +116,16 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
         setwd(current_dir)
       },
       error = function(e) {
-        setwd(current_dir) # finally return to original directory
+        tryCatch(
+          setwd(current_dir), # finally return to original directory
+          error = function(setwd_error) {
+            if (verbose) {
+              cli::cli_alert_warning(
+                sprintf("[WARN] Failed to return to original directory: %s", setwd_error$message)
+              )
+            }
+          }
+        )
         if (verbose) {
           cli::cli_alert_warning(
             sprintf("[WARN] Failed to create zip for %s: %s", run_name, e$message)
