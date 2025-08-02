@@ -2729,7 +2729,9 @@ run_bidsify <- function(
   duration <- round(difftime(end_time, start_time, units = "secs"), 2)
   if (verbose) {
     cli::cli_alert_info(
-      glue::glue("[INFO] Finished BIDSify for sub-{sub} at {format(end_time, '%Y-%m-%d %H:%M:%S')} (Duration: {duration} seconds)")
+      glue::glue(
+        "[INFO] Finished BIDSify for sub-{sub} at {format(end_time, '%Y-%m-%d %H:%M:%S')} (Duration: {duration} seconds)"
+      )
     )
   }
 }
