@@ -36,7 +36,10 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
 
       if (verbose) {
         if (file.exists(full_db_path)) {
-          cli::cli_alert_success(glue::glue("[OKAY] Connected to existing eyeris project database: {full_db_path}"), wrap = TRUE)
+          cli::cli_alert_success(
+            glue::glue("[OKAY] Connected to existing eyeris project database: {full_db_path}"),
+            wrap = TRUE
+          )
         } else {
           cli::cli_alert_success(glue::glue("[OKAY] Created new eyeris database: {full_db_path}"), wrap = TRUE)
         }
@@ -359,7 +362,6 @@ eyeris_db_read <- function(
         tables <- tables[grepl(pattern, tables)]
       }
 
-
       if (length(tables) == 0) {
         return(data.frame())
       }
@@ -410,7 +412,8 @@ eyeris_db_read <- function(
 
       # execute query
       cli::cli_alert_info(
-        glue::glue("[INFO] Executing query: {query}"), wrap = TRUE
+        glue::glue("[INFO] Executing query: {query}"),
+        wrap = TRUE
       )
       result <- DBI::dbGetQuery(con, query)
 
@@ -664,17 +667,19 @@ eyeris_db_collect <- function(
   return_list = TRUE,
   verbose = TRUE
 ) {
-
   # Connect to database
   if (verbose) {
     cli::cli_alert_info("[INFO] Connecting to eyeris database...")
   }
 
-  con <- tryCatch({
-    eyeris_db_connect(bids_dir, db_path)
-  }, error = function(e) {
-    cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
-  })
+  con <- tryCatch(
+    {
+      eyeris_db_connect(bids_dir, db_path)
+    },
+    error = function(e) {
+      cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
+    }
+  )
 
   # Ensure disconnection on exit
   on.exit(eyeris_db_disconnect(con))
@@ -692,8 +697,16 @@ eyeris_db_collect <- function(
   }
 
   # Define all possible data types
-  all_data_types <- c("blinks", "events", "timeseries", "epochs", "epoch_summary",
-                     "run_confounds", "confounds_events", "confounds_summary")
+  all_data_types <- c(
+    "blinks",
+    "events",
+    "timeseries",
+    "epochs",
+    "epoch_summary",
+    "run_confounds",
+    "confounds_events",
+    "confounds_summary"
+  )
 
   # Use all data types if none specified
   if (is.null(data_types)) {
@@ -719,85 +732,88 @@ eyeris_db_collect <- function(
       cli::cli_alert_info("[INFO] Processing {data_type}...")
     }
 
-    tryCatch({
-      # Handle epoch-specific data types
-      if (data_type %in% c("epochs", "confounds_events", "confounds_summary")) {
-        if (is.null(epoch_labels)) {
-          # Get all available epoch labels for this data type
-          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
-          if (length(type_tables) > 0) {
-            # Extract unique epoch labels from table names
-            # Pattern handles both eye-L/eye-R and eyeL/eyeR formats
-            epoch_pattern <- paste0(data_type, "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$")
-            extracted_labels <- unique(gsub(epoch_pattern, "\\1", type_tables))
-            # Remove failed matches (when pattern doesn't match, returns original string)
-            extracted_labels <- extracted_labels[extracted_labels != type_tables & !is.na(extracted_labels) & extracted_labels != ""]
-            epoch_labels_to_use <- if (length(extracted_labels) > 0) extracted_labels else NULL
+    tryCatch(
+      {
+        # Handle epoch-specific data types
+        if (data_type %in% c("epochs", "confounds_events", "confounds_summary")) {
+          if (is.null(epoch_labels)) {
+            # Get all available epoch labels for this data type
+            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+            if (length(type_tables) > 0) {
+              # Extract unique epoch labels from table names
+              # Pattern handles both eye-L/eye-R and eyeL/eyeR formats
+              epoch_pattern <- paste0(data_type, "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$")
+              extracted_labels <- unique(gsub(epoch_pattern, "\\1", type_tables))
+              # Remove failed matches (when pattern doesn't match, returns original string)
+              extracted_labels <- extracted_labels[
+                extracted_labels != type_tables & !is.na(extracted_labels) & extracted_labels != ""
+              ]
+              epoch_labels_to_use <- if (length(extracted_labels) > 0) extracted_labels else NULL
+            } else {
+              epoch_labels_to_use <- NULL
+            }
           } else {
-            epoch_labels_to_use <- NULL
+            epoch_labels_to_use <- epoch_labels
+          }
+
+          # Extract data for each epoch label
+          epoch_data_list <- list()
+          if (!is.null(epoch_labels_to_use)) {
+            for (epoch_label in epoch_labels_to_use) {
+              epoch_data <- eyeris_db_read(
+                con = con,
+                data_type = data_type,
+                subject = subjects,
+                session = sessions,
+                task = tasks,
+                epoch_label = epoch_label,
+                eye_suffix = eye_suffixes
+              )
+              if (!is.null(epoch_data) && nrow(epoch_data) > 0) {
+                epoch_data_list[[epoch_label]] <- epoch_data
+              }
+            }
+          }
+
+          # Combine all epoch data
+          if (length(epoch_data_list) > 0) {
+            combined_data <- do.call(rbind, epoch_data_list)
+            result_list[[data_type]] <- combined_data
+          } else if (verbose) {
+            # Check if there are any tables for this data type at all
+            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+            if (length(type_tables) == 0) {
+              cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
+            }
           }
         } else {
-          epoch_labels_to_use <- epoch_labels
-        }
+          # Handle non-epoch data types
+          data <- eyeris_db_read(
+            con = con,
+            data_type = data_type,
+            subject = subjects,
+            session = sessions,
+            task = tasks,
+            eye_suffix = eye_suffixes
+          )
 
-        # Extract data for each epoch label
-        epoch_data_list <- list()
-        if (!is.null(epoch_labels_to_use)) {
-          for (epoch_label in epoch_labels_to_use) {
-            epoch_data <- eyeris_db_read(
-              con = con,
-              data_type = data_type,
-              subject = subjects,
-              session = sessions,
-              task = tasks,
-              epoch_label = epoch_label,
-              eye_suffix = eye_suffixes
-            )
-            if (!is.null(epoch_data) && nrow(epoch_data) > 0) {
-              epoch_data_list[[epoch_label]] <- epoch_data
+          if (!is.null(data) && nrow(data) > 0) {
+            result_list[[data_type]] <- data
+          } else if (verbose) {
+            # Check if there are any tables for this data type at all
+            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+            if (length(type_tables) == 0) {
+              cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
             }
           }
         }
-
-        # Combine all epoch data
-        if (length(epoch_data_list) > 0) {
-          combined_data <- do.call(rbind, epoch_data_list)
-          result_list[[data_type]] <- combined_data
-        } else if (verbose) {
-          # Check if there are any tables for this data type at all
-          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
-          if (length(type_tables) == 0) {
-            cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
-          }
-        }
-
-      } else {
-        # Handle non-epoch data types
-        data <- eyeris_db_read(
-          con = con,
-          data_type = data_type,
-          subject = subjects,
-          session = sessions,
-          task = tasks,
-          eye_suffix = eye_suffixes
-        )
-
-        if (!is.null(data) && nrow(data) > 0) {
-          result_list[[data_type]] <- data
-        } else if (verbose) {
-          # Check if there are any tables for this data type at all
-          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
-          if (length(type_tables) == 0) {
-            cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
-          }
+      },
+      error = function(e) {
+        if (verbose) {
+          cli::cli_alert_warning("[WARN] Failed to extract {data_type}: {e$message}")
         }
       }
-
-    }, error = function(e) {
-      if (verbose) {
-        cli::cli_alert_warning("[WARN] Failed to extract {data_type}: {e$message}")
-      }
-    })
+    )
   }
 
   # Filter out empty results
@@ -864,17 +880,19 @@ eyeris_db_collect <- function(
 #'
 #' @export
 eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) {
-
   # Connect to database
   if (verbose) {
     cli::cli_alert_info("[INFO] Connecting to eyeris database...")
   }
 
-  con <- tryCatch({
-    eyeris_db_connect(bids_dir, db_path)
-  }, error = function(e) {
-    cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
-  })
+  con <- tryCatch(
+    {
+      eyeris_db_connect(bids_dir, db_path)
+    },
+    error = function(e) {
+      cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
+    }
+  )
 
   # Ensure disconnection on exit
   on.exit(eyeris_db_disconnect(con))
@@ -912,36 +930,42 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
   sample_tables <- head(all_tables, min(10, length(all_tables)))
 
   for (table in sample_tables) {
-    tryCatch({
-      # Query just one row to get metadata
-      sample_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM \"", table, "\" LIMIT 1"))
-      if (nrow(sample_data) > 0) {
-        if ("subject_id" %in% colnames(sample_data)) {
-          subjects <- c(subjects, sample_data$subject_id)
+    tryCatch(
+      {
+        # Query just one row to get metadata
+        sample_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM \"", table, "\" LIMIT 1"))
+        if (nrow(sample_data) > 0) {
+          if ("subject_id" %in% colnames(sample_data)) {
+            subjects <- c(subjects, sample_data$subject_id)
+          }
+          if ("session_id" %in% colnames(sample_data)) {
+            sessions <- c(sessions, sample_data$session_id)
+          }
+          if ("task_name" %in% colnames(sample_data)) {
+            tasks <- c(tasks, sample_data$task_name)
+          }
+          if ("eye_suffix" %in% colnames(sample_data)) {
+            eye_suffixes <- c(eye_suffixes, sample_data$eye_suffix)
+          }
         }
-        if ("session_id" %in% colnames(sample_data)) {
-          sessions <- c(sessions, sample_data$session_id)
-        }
-        if ("task_name" %in% colnames(sample_data)) {
-          tasks <- c(tasks, sample_data$task_name)
-        }
-        if ("eye_suffix" %in% colnames(sample_data)) {
-          eye_suffixes <- c(eye_suffixes, sample_data$eye_suffix)
-        }
+      },
+      error = function(e) {
+        # Skip tables that can't be queried
       }
-    }, error = function(e) {
-      # Skip tables that can't be queried
-    })
+    )
   }
 
   # Get row counts for each table
   for (table in all_tables) {
-    tryCatch({
-      count <- DBI::dbGetQuery(con, paste0("SELECT COUNT(*) as n FROM \"", table, "\""))$n
-      table_counts[table] <- count
-    }, error = function(e) {
-      table_counts[table] <- NA
-    })
+    tryCatch(
+      {
+        count <- DBI::dbGetQuery(con, paste0("SELECT COUNT(*) as n FROM \"", table, "\""))$n
+        table_counts[table] <- count
+      },
+      error = function(e) {
+        table_counts[table] <- NA
+      }
+    )
   }
 
   # Remove duplicates and NAs
@@ -963,12 +987,16 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
   if (verbose) {
     cli::cli_alert_success("[OKAY] Database summary:")
     cli::cli_alert_info("  Total tables: {result$total_tables}")
-    cli::cli_alert_info("  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})")
+    cli::cli_alert_info(
+      "  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})"
+    )
     cli::cli_alert_info("  Sessions: {length(result$sessions)} ({paste(result$sessions, collapse = ', ')})")
     cli::cli_alert_info("  Tasks: {length(result$tasks)} ({paste(result$tasks, collapse = ', ')})")
     cli::cli_alert_info("  Data types: {length(result$data_types)} ({paste(result$data_types, collapse = ', ')})")
     if (length(result$eye_suffixes) > 0) {
-      cli::cli_alert_info("  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})")
+      cli::cli_alert_info(
+        "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})"
+      )
     }
 
     total_rows <- sum(table_counts, na.rm = TRUE)
