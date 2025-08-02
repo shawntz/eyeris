@@ -106,6 +106,13 @@ reference:
       - plot_gaze_heatmap
       - plot_binocular_correlation
       - eyeris_color_palette
+
+  - title: "🗄 Database Storage & Analysis"
+    desc: >
+      High-performance database storage and querying powered by DuckDB. Scalable alternative to CSV files for large studies, cloud computing, and collaborative research.
+    contents:
+      - eyeris_db_collect
+      - eyeris_db_summary
       - eyeris_db_connect
       - eyeris_db_disconnect
       - eyeris_db_read
@@ -153,3 +160,4 @@ articles:
     contents:
     - anatomy
     - custom-extensions
+    - database-guide
