@@ -154,7 +154,6 @@ create_table_name <- function(data_type, sub, ses, task, run = NULL, eye_suffix 
 #' @param eye_suffix Optional eye suffix for binocular data
 #' @param epoch_label Optional epoch label for epoched data (used in table naming)
 #' @param append Whether to append to existing table (default TRUE)
-#' @param drop_existing_subject Whether to drop all existing entries for this subject before inserting (default TRUE)
 #' @param verbose Whether to print verbose output
 #'
 #' @return Logical indicating success
@@ -171,7 +170,6 @@ write_eyeris_data_to_db <- function(
   eye_suffix = NULL,
   epoch_label = NULL,
   append = TRUE,
-  drop_existing_subject = TRUE,
   verbose = FALSE
 ) {
   if (is.null(con)) {
@@ -192,57 +190,6 @@ write_eyeris_data_to_db <- function(
 
   tryCatch(
     {
-      # drop existing entries for this subject if requested
-      if (drop_existing_subject) {
-        # check if table exists
-        if (DBI::dbExistsTable(con, table_name)) {
-          # delete rows for this specific subject
-          delete_query <- paste0(
-            "DELETE FROM `", table_name, "` WHERE subject_id = '", sub, "'"
-          )
-
-          if (!is.null(ses)) {
-            delete_query <- paste0(delete_query, " AND session_id = '", ses, "'")
-          }
-
-          if (!is.null(task)) {
-            delete_query <- paste0(delete_query, " AND task_name = '", task, "'")
-          }
-
-          if (!is.null(run)) {
-            delete_query <- paste0(delete_query, " AND run_number = '", run, "'")
-          }
-
-          if (!is.null(eye_suffix)) {
-            delete_query <- paste0(delete_query, " AND eye_suffix = '", eye_suffix, "'")
-          }
-
-          if (!is.null(epoch_label)) {
-            delete_query <- paste0(delete_query, " AND epoch_label = '", epoch_label, "'")
-          }
-
-          tryCatch(
-            {
-              DBI::dbExecute(con, delete_query)
-              if (verbose) {
-                cli::cli_alert_info(
-                  glue::glue("[INFO] Dropped existing entries for subject '{sub}' from table '{table_name}'"),
-                  wrap = TRUE
-                )
-              }
-            },
-            error = function(e) {
-              if (verbose) {
-                cli::cli_alert_warning(
-                  glue::glue("[WARN] Failed to drop existing entries: {e$message}"),
-                  wrap = TRUE
-                )
-              }
-            }
-          )
-        }
-      }
-
       metadata_cols <- data.frame(
         subject_id = sub,
         session_id = ses,
@@ -268,7 +215,8 @@ write_eyeris_data_to_db <- function(
       data <- cbind(metadata_cols, data)
 
       # when dropping existing entries, create fresh table
-      actual_append <- if (drop_existing_subject) FALSE else append
+      # actual_append <- if (drop_existing_subject) FALSE else append
+      actual_append <- append
 
       if (verbose) {
         cli::cli_alert_info(
@@ -562,7 +510,6 @@ eyeris_db_disconnect <- function(con) {
 #' @param run Run number (optional)
 #' @param eye_suffix Eye suffix for binocular data (optional)
 #' @param epoch_label Epoch label for epoched data (optional, used in table naming)
-#' @param drop_existing_subject Whether to drop all existing entries for this subject before inserting (default TRUE)
 #' @param verbose Whether to print verbose output
 #'
 #' @return Logical indicating success
@@ -580,7 +527,6 @@ write_csv_and_db <- function(
   run = NULL,
   eye_suffix = NULL,
   epoch_label = NULL,
-  drop_existing_subject = TRUE,
   verbose = FALSE
 ) {
   csv_success <- TRUE
@@ -615,7 +561,6 @@ write_csv_and_db <- function(
       eye_suffix = eye_suffix,
       epoch_label = epoch_label,
       append = TRUE,
-      drop_existing_subject = drop_existing_subject,
       verbose = FALSE # suppress individual DB logging to avoid duplication
     )
 
