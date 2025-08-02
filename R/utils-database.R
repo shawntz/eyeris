@@ -36,7 +36,7 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
 
       if (verbose) {
         if (file.exists(full_db_path)) {
-          cli::cli_alert_info(glue::glue("[INFO] Connected to existing eyeris database: {full_db_path}"), wrap = TRUE)
+          cli::cli_alert_success(glue::glue("[OKAY] Connected to existing eyeris project database: {full_db_path}"), wrap = TRUE)
         } else {
           cli::cli_alert_success(glue::glue("[OKAY] Created new eyeris database: {full_db_path}"), wrap = TRUE)
         }
