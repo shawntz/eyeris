@@ -97,7 +97,7 @@ Below is a table of all main `eyeris` functions, organized by feature, with link
 | **Demo (Monocular) Dataset**              | [eyelink_asc_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_demo_dataset.html)              | Load a demo monocular recording EyeLink dataset for testing and examples.                                                      |
 | **Demo (Binocular) Dataset**              | [eyelink_asc_binocular_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_binocular_demo_dataset.html)              | Load a demo binocular recording EyeLink dataset for testing and examples.                                                      |
 | **Logging Commands**       | [eyelogger()](https://shawnschwartz.com/eyeris/reference/eyelogger.html)                                            | Automatically capture all console output and errors to timestamped log files.                             |
-| **Database Storage**       | [eyeris_extract_data()](https://shawnschwartz.com/eyeris/reference/eyeris_extract_data.html)            | High-performance database storage and querying alternative to CSV files.                                   |
+| **Database Storage**       | [eyeris_db_collect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.html)            | High-performance database storage and querying alternative to CSV files.                                   |
 | **Database Summary**       | [eyeris_db_summary()](https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html)                | Get comprehensive overview of database contents and metadata.                                              |
 | **Database Connection**    | [eyeris_db_connect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.html)                | Connect to eyeris databases for custom queries and operations.                                             |
 | **Custom Extensions**      | _See vignette: [Custom Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)_ | Learn how to write your own pipeline steps and integrate them with `eyeris`.                               |
@@ -252,14 +252,14 @@ Extract all your data with one function call:
 
 ```{r database-extraction, eval=FALSE}
 # Extract ALL data for ALL subjects
-all_data <- eyeris_extract_data("~/my_study", "study_database")
+all_data <- eyeris_db_collect("~/my_study", "study_database")
 
 # Access specific data types
 timeseries_data <- all_data$timeseries
 confounds_data <- all_data$run_confounds
 
 # Targeted extraction: specific subjects and data types
-subset_data <- eyeris_extract_data(
+subset_data <- eyeris_db_collect(
   "~/my_study", 
   "study_database",
   subjects = c("001", "002", "003"),

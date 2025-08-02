@@ -198,11 +198,11 @@ subject_001_tables <- eyeris_db_list_tables(con, subject = "001")
 
 ## Simple Data Extraction
 
-The `eyeris_extract_data()` function provides easy one-liner access to your data:
+The `eyeris_db_collect()` function provides easy one-liner access to your data:
 
 ```{r simple-extraction}
 # Extract ALL data for ALL subjects (returns a named list)
-all_data <- eyeris_extract_data("~/processed_study_data", "attention_study_db")
+all_data <- eyeris_db_collect("~/processed_study_data", "attention_study_db")
 
 # View available data types
 names(all_data)
@@ -217,21 +217,21 @@ confounds_data <- all_data$run_confounds
 
 ```{r targeted-extraction}
 # Extract data for specific subjects only
-subset_subjects <- eyeris_extract_data(
+subset_subjects <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db",
   subjects = c("001", "002", "003")
 )
 
 # Extract specific data types only
-behavioral_data <- eyeris_extract_data(
+behavioral_data <- eyeris_db_collect(
   bids_dir = "~/processed_study_data", 
   db_path = "attention_study_db",
   data_types = c("events", "epochs", "confounds_summary")
 )
 
 # Extract data for specific sessions and tasks
-session_01_data <- eyeris_extract_data(
+session_01_data <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db", 
   sessions = "01",
@@ -243,7 +243,7 @@ session_01_data <- eyeris_extract_data(
 
 ```{r binocular-extraction}
 # Extract data from both eyes
-binocular_data <- eyeris_extract_data(
+binocular_data <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db"
 )
@@ -253,7 +253,7 @@ binocular_data <- eyeris_extract_data(
 unique(binocular_data$timeseries$eye_suffix)  # Should show "eyeL" and "eyeR"
 
 # Extract data for specific eye only
-left_eye_data <- eyeris_extract_data(
+left_eye_data <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db", 
   eye_suffixes = "eyeL"
@@ -264,7 +264,7 @@ left_eye_data <- eyeris_extract_data(
 
 ```{r epoch-extraction}
 # Extract specific epoch data
-trial_epochs <- eyeris_extract_data(
+trial_epochs <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db",
   data_types = c("epochs", "confounds_events", "confounds_summary"),
@@ -272,7 +272,7 @@ trial_epochs <- eyeris_extract_data(
 )
 
 # Multiple epoch types
-multiple_epochs <- eyeris_extract_data(
+multiple_epochs <- eyeris_db_collect(
   bids_dir = "~/processed_study_data", 
   db_path = "attention_study_db",
   data_types = "epochs",
@@ -284,7 +284,7 @@ multiple_epochs <- eyeris_extract_data(
 
 ```{r output-formats}
 # Default: Returns named list of dataframes (one per data type)
-list_format <- eyeris_extract_data(
+list_format <- eyeris_db_collect(
   "~/processed_study_data",
   return_list = TRUE  # Default
 )
@@ -294,7 +294,7 @@ pupil_data <- list_format$timeseries
 trial_data <- list_format$epochs
 
 # Alternative: Single combined dataframe with data_type column
-combined_format <- eyeris_extract_data(
+combined_format <- eyeris_db_collect(
   "~/processed_study_data", 
   return_list = FALSE
 )
@@ -379,7 +379,7 @@ epoch_data <- eyeris_db_read(
 
 ```{r analysis-example-1}
 # Extract all timeseries data
-pupil_data <- eyeris_extract_data(
+pupil_data <- eyeris_db_collect(
   "~/processed_study_data",
   data_types = "timeseries"
 )$timeseries
@@ -408,7 +408,7 @@ print(pupil_summary)
 
 ```{r analysis-example-2}
 # Extract epochs and events together
-epoch_data <- eyeris_extract_data(
+epoch_data <- eyeris_db_collect(
   "~/processed_study_data", 
   data_types = c("epochs", "events")
 )
@@ -448,7 +448,7 @@ window_stats <- event_analysis %>%
 
 ```{r analysis-example-3}
 # Extract confounds data for quality control
-confounds_data <- eyeris_extract_data(
+confounds_data <- eyeris_db_collect(
   "~/processed_study_data",
   data_types = c("run_confounds", "confounds_summary")
 )
@@ -484,7 +484,7 @@ print(exclude_list)
 ```{r performance-comparison}
 # Benchmark database approach
 system.time({
-  db_data <- eyeris_extract_data(
+  db_data <- eyeris_db_collect(
     "~/processed_study_data",
     subjects = c("001", "002", "003", "004", "005"),
     data_types = "timeseries"
@@ -542,7 +542,7 @@ process_data <- function() {
   on.exit(eyeris_db_disconnect(con))
   
   # Your analysis code here
-  results <- eyeris_extract_data("~/data", "study_db")
+  results <- eyeris_db_collect("~/data", "study_db")
   return(results)
 }
 ```
@@ -587,7 +587,7 @@ analyze_cloud_data <- function() {
   download_from_cloud("cloud_study_db.eyerisdb")
   
   # Extract only the data you need
-  analysis_data <- eyeris_extract_data(
+  analysis_data <- eyeris_db_collect(
     "local_processing",
     data_types = c("epochs", "confounds_summary"),
     subjects = target_subjects
@@ -606,7 +606,7 @@ analyze_cloud_data <- function() {
 # Safe database operations with error handling
 safe_extract <- function(bids_dir, db_path, ...) {
   tryCatch({
-    data <- eyeris_extract_data(bids_dir, db_path, ...)
+    data <- eyeris_db_collect(bids_dir, db_path, ...)
     return(data)
   }, error = function(e) {
     cat("Error extracting data:", e$message, "\n")
@@ -693,7 +693,7 @@ migrate_csv_to_database <- function(bids_dir, db_path) {
 export_database_subset <- function(bids_dir, db_path, output_dir) {
   
   # Extract data from database
-  data <- eyeris_extract_data(bids_dir, db_path, 
+  data <- eyeris_db_collect(bids_dir, db_path, 
                              subjects = c("001", "002"),
                              data_types = c("timeseries", "events"))
   
@@ -719,7 +719,7 @@ The eyeris database functionality provides a powerful, scalable alternative to C
 - **Data integrity**: ACID compliance and automatic validation
 - **Flexibility**: SQL queries and cross-platform compatibility
 
-Whether you're running a small pilot study or a large-scale multi-site experiment, eyeris databases can streamline your workflow and improve analysis efficiency. Start with the simple `eyeris_extract_data()` function for most use cases, and leverage direct SQL queries when you need maximum flexibility.
+Whether you're running a small pilot study or a large-scale multi-site experiment, eyeris databases can streamline your workflow and improve analysis efficiency. Start with the simple `eyeris_db_collect()` function for most use cases, and leverage direct SQL queries when you need maximum flexibility.
 
 For questions or issues with database functionality, please refer to the eyeris documentation or open an issue on the GitHub repository.
 

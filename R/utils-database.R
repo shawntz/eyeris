@@ -621,7 +621,7 @@ write_csv_and_db <- function(
 #' @examples
 #' \donttest{
 #' # Extract all data for all subjects (returns list of dataframes)
-#' all_data <- eyeris_extract_data("~/my_bids_project")
+#' all_data <- eyeris_db_collect("~/my_bids_project")
 #'
 #' # View available data types
 #' names(all_data)
@@ -631,28 +631,28 @@ write_csv_and_db <- function(
 #' epochs_data <- all_data$epochs
 #'
 #' # Extract specific subjects and data types
-#' subset_data <- eyeris_extract_data(
+#' subset_data <- eyeris_db_collect(
 #'   bids_dir = "~/my_bids_project",
 #'   subjects = c("001", "002", "003"),
 #'   data_types = c("blinks", "epochs", "timeseries")
 #' )
 #'
 #' # Extract epoch data for specific epoch label
-#' epoch_data <- eyeris_extract_data(
+#' epoch_data <- eyeris_db_collect(
 #'   bids_dir = "~/my_bids_project",
 #'   data_types = "epochs",
 #'   epoch_labels = "prepostprobe"
 #' )
 #'
 #' # Return as single combined dataframe instead of list
-#' combined_data <- eyeris_extract_data(
+#' combined_data <- eyeris_db_collect(
 #'   bids_dir = "~/my_bids_project",
 #'   return_list = FALSE
 #' )
 #' }
 #'
 #' @export
-eyeris_extract_data <- function(
+eyeris_db_collect <- function(
   bids_dir,
   db_path = "my-project",
   subjects = NULL,
