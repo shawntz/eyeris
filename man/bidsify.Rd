@@ -8,13 +8,11 @@ bidsify(
   eyeris,
   save_all = TRUE,
   epochs_list = NULL,
-  merge_epochs = FALSE,
   bids_dir = NULL,
   participant_id = NULL,
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = deprecated(),
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
@@ -23,7 +21,8 @@ bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
-  db_drop_existing_subject = TRUE,
+  merge_epochs = deprecated(),
+  merge_runs = deprecated(),
   pdf_report = deprecated()
 )
 }
@@ -34,9 +33,6 @@ bidsify(
 or only a subset of them. Defaults to \code{TRUE}}
 
 \item{epochs_list}{List of epochs to be saved. Defaults to \code{NULL}}
-
-\item{merge_epochs}{Logical flag indicating whether epochs should be saved
-as one file or as separate files. Defaults to \code{FALSE} (no merge)}
 
 \item{bids_dir}{Base bids_directory. Defaults to \code{NULL}}
 
@@ -56,10 +52,6 @@ embedded within the \strong{same} \code{.asc} file, this parameter is ignored an
 blocks are automatically numbered as runs (block 1 = run-01, block 2 =
 run-02, etc.) in the order they appeared/were recorded. Defaults to \code{NULL}
 (no override)}
-
-\item{merge_runs}{\strong{(Deprecated)} This parameter is deprecated and will be
-ignored. All runs are now saved as separate files following BIDS conventions.
-This parameter will be removed in a future version}
 
 \item{save_raw}{Logical flag indicating whether to save_raw pupil data in
 addition to epoched data. Defaults to \code{TRUE}}
@@ -93,9 +85,13 @@ for centralized data storage and querying}
 If just a filename, the database will be created in the \verb{derivatives/}
 directory. If a full path is provided, it will be used as specified}
 
-\item{db_drop_existing_subject}{Logical flag indicating whether to drop all existing
-entries for the current subject before inserting new data. This prevents duplicate
-entries when re-running bidsify on the same subject. Defaults to \code{TRUE}}
+\item{merge_epochs}{\strong{(Deprecated)} This parameter is deprecated and will be
+ignored. All epochs are now saved as separate files following BIDS conventions.
+This parameter will be removed in a future version}
+
+\item{merge_runs}{\strong{(Deprecated)} This parameter is deprecated and will be
+ignored. All runs are now saved as separate files following BIDS conventions.
+This parameter will be removed in a future version}
 
 \item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead}
 }

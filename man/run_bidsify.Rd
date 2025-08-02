@@ -8,7 +8,6 @@ run_bidsify(
   eyeris,
   save_all = TRUE,
   epochs_list = NULL,
-  merge_epochs = FALSE,
   bids_dir = NULL,
   participant_id = NULL,
   session_num = NULL,
@@ -23,7 +22,6 @@ run_bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
-  db_drop_existing_subject = TRUE,
   raw_binocular_object = NULL
 )
 }
@@ -33,8 +31,6 @@ run_bidsify(
 \item{save_all}{Whether to save all data}
 
 \item{epochs_list}{A list of epochs to include}
-
-\item{merge_epochs}{Whether to merge epochs}
 
 \item{bids_dir}{The directory to save the bids data}
 
@@ -63,8 +59,6 @@ run_bidsify(
 \item{db_enabled}{Whether to save data to the database}
 
 \item{db_path}{The path to the database}
-
-\item{db_drop_existing_subject}{Whether to drop all existing entries for the current subject before inserting new data}
 
 \item{raw_binocular_object}{The raw binocular object}
 }

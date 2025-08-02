@@ -15,7 +15,6 @@ write_eyeris_data_to_db(
   eye_suffix = NULL,
   epoch_label = NULL,
   append = TRUE,
-  drop_existing_subject = TRUE,
   verbose = FALSE
 )
 }
@@ -39,8 +38,6 @@ write_eyeris_data_to_db(
 \item{epoch_label}{Optional epoch label for epoched data (used in table naming)}
 
 \item{append}{Whether to append to existing table (default TRUE)}
-
-\item{drop_existing_subject}{Whether to drop all existing entries for this subject before inserting (default TRUE)}
 
 \item{verbose}{Whether to print verbose output}
 }

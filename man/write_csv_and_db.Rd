@@ -16,7 +16,6 @@ write_csv_and_db(
   run = NULL,
   eye_suffix = NULL,
   epoch_label = NULL,
-  drop_existing_subject = TRUE,
   verbose = FALSE
 )
 }
@@ -42,8 +41,6 @@ write_csv_and_db(
 \item{eye_suffix}{Eye suffix for binocular data (optional)}
 
 \item{epoch_label}{Epoch label for epoched data (optional, used in table naming)}
-
-\item{drop_existing_subject}{Whether to drop all existing entries for this subject before inserting (default TRUE)}
 
 \item{verbose}{Whether to print verbose output}
 }
