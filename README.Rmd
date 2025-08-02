@@ -116,7 +116,7 @@ Below is a table of all main `eyeris` functions, organized by feature, with link
 ### 💯 Advanced Topics
 - [🫀 Anatomy of an `eyeris` Object](https://shawnschwartz.com/eyeris/articles/anatomy.html)
 - [🛠 Building Your Own Custom Pipeline Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)
-- [🗄️ Database Storage Guide: Scalable Alternative to CSV Files](https://shawnschwartz.com/eyeris/articles/database-guide.html)
+- [🗄 Database Storage Guide: Scalable Alternative to CSV Files](https://shawnschwartz.com/eyeris/articles/database-guide.html)
 
 ## 📦 Package Installation
 
@@ -195,7 +195,7 @@ plot_gaze_heatmap(
 )
 ```
 
-## 🗄️ Database Storage: Scalable Alternative to CSV Files
+## 🗄 Database Storage: Scalable Alternative to CSV Files
 
 `eyeris` includes powerful database functionality powered by DuckDB that provides a scalable, efficient alternative to CSV file storage. This is especially valuable for large studies, cloud computing, and collaborative research projects.
 
@@ -206,7 +206,7 @@ plot_gaze_heatmap(
 - Faster queries: filter and aggregate at the database level instead of loading all data into R
 - Reduced memory usage: load only the data you need
 
-**☁️ Cloud Computing Optimized**
+**☁ Cloud Computing Optimized**
 - Dramatically reduce I/O costs on AWS, GCP, Azure
 - Single database file vs. thousands of CSV files for data transfer
 - Bandwidth efficient and cost-effective for large datasets
