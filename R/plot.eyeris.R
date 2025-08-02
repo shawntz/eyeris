@@ -242,29 +242,27 @@ plot.eyeris <- function(
   # blocks handler
   if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
     available_blocks <- get_block_numbers(x)
+    available_blocks_sorted <- sort(as.numeric(available_blocks), na.last = NA)
 
     if (block %in% available_blocks) {
       pupil_data <- x$timeseries[[paste0("block_", block)]]
       if (verbose) {
         cli::cli_alert_info(sprintf(
-          "[INFO] Plotting block %d from possible blocks: %s",
+          "[INFO] Plotting block %d with sampling rate %d Hz from possible blocks: %s",
           block,
-          toString(available_blocks)
+          hz,
+          toString(available_blocks_sorted)
         ))
       }
     } else {
       cli::cli_abort(sprintf(
         "[EXIT] Block %d does not exist. Available blocks: %d",
         block,
-        toString(available_blocks)
+        toString(available_blocks_sorted)
       ))
     }
   } else {
     pupil_data <- x$timeseries$block_1
-  }
-
-  if (verbose) {
-    alert("info", paste("[INFO] Plotting with sampling rate:", hz, "Hz"))
   }
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
