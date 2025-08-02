@@ -22,7 +22,8 @@ run_bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
-  raw_binocular_object = NULL
+  raw_binocular_object = NULL,
+  skip_db_cleanup = FALSE
 )
 }
 \arguments{
