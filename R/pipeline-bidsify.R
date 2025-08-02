@@ -498,17 +498,20 @@ run_bidsify <- function(
   run_num_for_blinks_events <- if (has_multiple_runs) "all" else run_num
 
   # for binocular data, create left/right subdirectories within the eye directory
-  if (!is.null(eye_suffix)) {
-    if (eye_suffix == "eye-L") {
-      p <- file.path(p, eye_suffix)
-      check_and_create_dir(dir, p, verbose = verbose)
-    } else if (eye_suffix == "eye-R") {
-      p <- file.path(p, eye_suffix)
+  # only create directories if CSV files are being written
+  if (csv_enabled) {
+    if (!is.null(eye_suffix)) {
+      if (eye_suffix == "eye-L") {
+        p <- file.path(p, eye_suffix)
+        check_and_create_dir(dir, p, verbose = verbose)
+      } else if (eye_suffix == "eye-R") {
+        p <- file.path(p, eye_suffix)
+        check_and_create_dir(dir, p, verbose = verbose)
+      }
+    } else {
+      p <- file.path(p, "eye")
       check_and_create_dir(dir, p, verbose = verbose)
     }
-  } else {
-    p <- file.path(p, "eye")
-    check_and_create_dir(dir, p, verbose = verbose)
   }
 
   if (!is.null(eyeris$blinks)) {
@@ -1782,7 +1785,7 @@ run_bidsify <- function(
         epoch_label <- sub("^epoch_", "", epoch_name)
 
         epoch_folder <- file.path(dir, p, paste0("epoch_", epoch_label))
-        if (!dir.exists(epoch_folder)) {
+        if (csv_enabled && !dir.exists(epoch_folder)) {
           dir.create(epoch_folder, recursive = TRUE)
         }
 
@@ -1962,7 +1965,7 @@ run_bidsify <- function(
         epoch_label <- sub("^epoch_", "", epoch_name)
 
         epoch_folder <- file.path(dir, p, paste0("epoch_", epoch_label))
-        if (!dir.exists(epoch_folder)) {
+        if (csv_enabled && !dir.exists(epoch_folder)) {
           dir.create(epoch_folder, recursive = TRUE)
         }
 
