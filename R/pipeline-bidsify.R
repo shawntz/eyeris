@@ -260,7 +260,9 @@ run_bidsify <- function(
 
   if (verbose) {
     cli::cli_alert_info(
-      glue::glue("[INFO] Starting BIDSify for sub-{participant_id} {eye_log_string} at {format(start_time, '%Y-%m-%d %H:%M:%S')}")
+      glue::glue(
+        "[INFO] Starting BIDSify for sub-{participant_id} {eye_log_string} at {format(start_time, '%Y-%m-%d %H:%M:%S')}"
+      )
     )
   }
 
