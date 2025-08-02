@@ -250,6 +250,20 @@ run_bidsify <- function(
   verbose = TRUE,
   raw_binocular_object = NULL
 ) {
+  start_time <- Sys.time()
+
+  if (is.null(eye_suffix)) {
+    eye_log_string <- "(monocular)"
+  } else {
+    eye_log_string <- paste0("(binocular: ", eye_suffix, ")")
+  }
+
+  if (verbose) {
+    cli::cli_alert_info(
+      glue::glue("[INFO] Starting BIDSify for sub-{participant_id} {eye_log_string} at {format(start_time, '%Y-%m-%d %H:%M:%S')}")
+    )
+  }
+
   actual_block_count <- length(eyeris$timeseries)
 
   if (actual_block_count > 1) {
@@ -2703,6 +2717,14 @@ run_bidsify <- function(
       report_path = report_path,
       eye_suffix = eye_suffix,
       verbose = verbose
+    )
+  }
+
+  end_time <- Sys.time()
+  duration <- round(difftime(end_time, start_time, units = "secs"), 2)
+  if (verbose) {
+    cli::cli_alert_info(
+      glue::glue("[INFO] Finished BIDSify for sub-{sub} at {format(end_time, '%Y-%m-%d %H:%M:%S')} (Duration: {duration} seconds)")
     )
   }
 }
