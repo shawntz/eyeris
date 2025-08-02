@@ -338,8 +338,7 @@ export_confounds_to_csv <- function(
   ses = NULL,
   task = NULL,
   eye_suffix = NULL,
-  epoch_label = NULL,
-  drop_existing_subject = FALSE
+  epoch_label = NULL
 ) {
   # handle binocular objects
   if (is_binocular_object(confounds_list)) {
@@ -356,8 +355,7 @@ export_confounds_to_csv <- function(
       ses,
       task,
       "eye-L",
-      epoch_label,
-      drop_existing_subject
+      epoch_label
     )
 
     right_files <- export_confounds_to_csv(
@@ -372,8 +370,7 @@ export_confounds_to_csv <- function(
       ses,
       task,
       "eye-R",
-      epoch_label,
-      drop_existing_subject
+      epoch_label
     )
 
     # return combined file paths
@@ -453,7 +450,6 @@ export_confounds_to_csv <- function(
       task = task,
       run = actual_run_num,
       eye_suffix = eye_suffix,
-      drop_existing_subject = drop_existing_subject,
       verbose = verbose
     )
 
