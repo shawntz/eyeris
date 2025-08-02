@@ -1,6 +1,9 @@
 con <- eyeris_db_connect(
-  file.path("~/Downloads", "debugging")
+
 )
+
+eyeris::eyeris_extract_data(file.path("~/Downloads", "debugging")) -> pop
+pop |> View()
 
 tables <- eyeris_db_list_tables(con)
 tables
@@ -28,8 +31,6 @@ data |> View()
 
 data <- eyeris_db_read(con, data_type = "timeseries", subject = "056")
 data |> View()
-
-# TODO: prevent duplicate entries (drop all entries for given subid beforehand)
 
 
 
