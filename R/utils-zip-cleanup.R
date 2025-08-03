@@ -15,9 +15,7 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
   figures_dir <- file.path(report_path, "source", "figures")
 
   if (!dir.exists(figures_dir)) {
-    if (verbose) {
-      cli::cli_alert_warning("[WARN] Source figures directory not found: %s", figures_dir)
-    }
+    log_warn("Source figures directory not found: {figures_dir}", verbose = verbose)
     return(NULL)
   }
 
@@ -26,9 +24,7 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
   run_dirs <- run_dirs[grepl("run-\\d+$", basename(run_dirs))]
 
   if (length(run_dirs) == 0) {
-    if (verbose) {
-      cli::cli_alert_info("[INFO] No run directories found in: %s", figures_dir)
-    }
+    log_info("No run directories found in: {figures_dir}", verbose = verbose)
     return(NULL)
   }
 
@@ -51,9 +47,7 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
     }
 
     if (length(image_files) == 0) {
-      if (verbose) {
-        cli::cli_alert_info("[INFO] No image files found in: %s", run_dir)
-      }
+      log_info("No image files found in: {run_dir}", verbose = verbose)
       next
     }
 
@@ -101,15 +95,10 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
 
             created_zips <- c(created_zips, file.path(run_dir, zip_filename))
 
-            if (verbose) {
-              cli::cli_alert_success(
-                sprintf(
-                  "[OKAY] Created %s with %d images, removed individual files",
-                  zip_filename,
-                  length(relative_files)
-                )
-              )
-            }
+            log_success(
+              "Created {zip_filename} with {length(relative_files)} images, removed individual files",
+              verbose = verbose
+            )
           }
         }
 
@@ -119,18 +108,16 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
         tryCatch(
           setwd(current_dir), # finally return to original directory
           error = function(setwd_error) {
-            if (verbose) {
-              cli::cli_alert_warning(
-                sprintf("[WARN] Failed to return to original directory: %s", setwd_error$message)
-              )
-            }
+            log_warn(
+              "Failed to return to original directory: {setwd_error$message}",
+              verbose = verbose
+            )
           }
         )
-        if (verbose) {
-          cli::cli_alert_warning(
-            sprintf("[WARN] Failed to create zip for %s: %s", run_name, e$message)
-          )
-        }
+        log_warn(
+          "Failed to create zip for {run_name}: {e$message}",
+          verbose = verbose
+        )
       }
     )
   }
@@ -151,9 +138,7 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
 #'
 #' @keywords internal
 cleanup_source_figures_post_render <- function(report_path, eye_suffix = NULL, verbose = FALSE) {
-  if (verbose) {
-    cli::cli_alert_info("[INFO] Starting post-render cleanup of source figure files...")
-  }
+  log_info("Starting post-render cleanup of source figure files...", verbose = verbose)
 
   zip_files <- zip_and_cleanup_source_figures(
     report_path = report_path,
@@ -162,15 +147,12 @@ cleanup_source_figures_post_render <- function(report_path, eye_suffix = NULL, v
   )
 
   if (!is.null(zip_files) && length(zip_files) > 0) {
-    if (verbose) {
-      cli::cli_alert_success(
-        sprintf("[OKAY] Post-render cleanup complete. Created %d zip files.", length(zip_files))
-      )
-    }
+    log_success(
+      "Post-render cleanup complete. Created {length(zip_files)} zip files.",
+      verbose = verbose
+    )
   } else {
-    if (verbose) {
-      cli::cli_alert_info("[INFO] No figure files found to cleanup.")
-    }
+    log_info("No figure files found to cleanup.", verbose = verbose)
   }
 
   invisible(zip_files)
