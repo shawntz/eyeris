@@ -365,10 +365,12 @@ run_bidsify <- function(
     new_block_name <- paste0("block_", run_num_stripped)
 
     if (!is.null(run_num)) {
-      cli::cli_alert_info(
-        sprintf("[INFO] Using run_num = %s for single block data", run_num),
-        wrap = TRUE
-      )
+      if (verbose) {
+        cli::cli_alert_info(
+          sprintf("[INFO] Using run_num = %s for single block data", run_num),
+          wrap = TRUE
+        )
+      }
 
       names(eyeris$timeseries)[1] <- new_block_name
 
@@ -612,30 +614,36 @@ run_bidsify <- function(
   for (epoch_name in names(epochs_to_save)) {
     epoch_data <- epochs_to_save[[epoch_name]]
     if (is.list(epoch_data)) {
-      cli::cli_alert_info(
-        sprintf("[INFO]     %s:", epoch_name),
-        wrap = TRUE
-      )
+      if (verbose) {
+        cli::cli_alert_info(
+          sprintf("[INFO]     %s:", epoch_name),
+          wrap = TRUE
+        )
+      }
       for (block_name in names(epoch_data)) {
         block_data <- epoch_data[[block_name]]
         if (is.data.frame(block_data)) {
-          cli::cli_alert_info(
-            sprintf(
-              "[INFO]         %s: data.frame with %d rows",
-              block_name,
-              nrow(block_data)
-            ),
-            wrap = TRUE
-          )
+          if (verbose) {
+            cli::cli_alert_info(
+              sprintf(
+                "[INFO]         %s: data.frame with %d rows",
+                block_name,
+                nrow(block_data)
+              ),
+              wrap = TRUE
+            )
+          }
         } else {
-          cli::cli_alert_info(
-            sprintf(
+          if (verbose) {
+            cli::cli_alert_info(
+              sprintf(
               "[INFO] %s: list with %d elements",
               block_name,
               length(block_data)
             ),
             wrap = TRUE
           )
+          }
         }
       }
     }
@@ -1983,7 +1991,8 @@ run_bidsify <- function(
               ses = ses,
               task = task,
               run = sprintf("%02d", run_dir_num),
-              eye_suffix = eye_suffix
+              eye_suffix = eye_suffix,
+              verbose = verbose
             )
           }
         }
@@ -1997,7 +2006,8 @@ run_bidsify <- function(
       eye_suffix = eye_suffix,
       sub = sub,
       ses = ses,
-      task = task
+      task = task,
+      verbose = verbose
     )
 
     render_report(report_output)
