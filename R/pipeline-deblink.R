@@ -149,11 +149,8 @@ deblink_pupil <- function(x, prev_op, extend) {
     extend_backward <- extend[1]
     extend_forward <- extend[2]
   } else {
-    cli::cli_abort(
-      paste(
-        "[EXIT] extend must either be a single integer (symmetric) or a vector of",
-        "length 2 (asymmetric) in the format `c(backward, forward)`!"
-      )
+    log_error(
+      "extend must either be a single integer (symmetric) or a vector of length 2 (asymmetric) in the format `c(backward, forward)`!"
     )
   }
 
