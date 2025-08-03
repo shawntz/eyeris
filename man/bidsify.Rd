@@ -111,7 +111,7 @@ At this time, however, this function instead takes a more BIDS-inspired
 approach to organizing the output files for preprocessed pupil data.
 }
 \examples{
-# Bleed around blink periods just long enough to remove majority of
+# bleed around blink periods just long enough to remove majority of
 #  deflections due to eyelid movements
 \donttest{
 demo_data <- eyelink_asc_demo_dataset()
