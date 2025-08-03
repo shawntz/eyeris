@@ -334,9 +334,9 @@ Thanks for checking out `eyeris`! 🧠
 
 -   Initial beta release
 
-------------------------------------------------------------------------
+---
 
-## Commit message tags reference:
+# Commit message tags reference:
 
 -   **BF:** bug fix (in the *release* branch)
 -   **FF:** feature fix (bug fixes in the *dev* branch)
