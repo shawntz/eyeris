@@ -66,7 +66,7 @@
 #' @seealso [lifecycle::deprecate_warn()]
 #'
 #' @examples
-#' # Bleed around blink periods just long enough to remove majority of
+#' # bleed around blink periods just long enough to remove majority of
 #' #  deflections due to eyelid movements
 #' \donttest{
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -1182,7 +1182,7 @@ run_bidsify <- function(
             )
           }
         } else {
-          # No info found, create minimal row
+          # if no info found, create minimal row
           epoch_summaries[[epoch_name]] <- data.frame(
             epoch_type = epoch_name,
             stringsAsFactors = FALSE
@@ -1197,7 +1197,7 @@ run_bidsify <- function(
         }
       }
 
-      # Combine all epoch summaries into one data frame
+      # combine all epoch summaries into one data frame
       if (length(epoch_summaries) > 0) {
         epoch_summary <- do.call(rbind, epoch_summaries)
         rownames(epoch_summary) <- NULL
