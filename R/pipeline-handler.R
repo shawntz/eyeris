@@ -161,19 +161,14 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         length(prev_operation) == 0 ||
         prev_operation == ""
     ) {
-      cli::cli_abort(
-        paste0(
-          "[EXIT] Latest pointer is empty or NULL.",
-          "This indicates a pipeline initialization error."
-        )
+      log_error(
+        "Latest pointer is empty or NULL. This indicates a pipeline initialization error."
       )
     }
     if (grepl("_([^_]+)_\\1", prev_operation)) {
-      cli::cli_abort(paste(
-        "[EXIT] Corrupted latest pointer detected:",
-        prev_operation,
-        "This indicates a pipeline error. Please restart the pipeline."
-      ))
+      log_error(
+        "Corrupted latest pointer detected: {prev_operation}. This indicates a pipeline error. Please restart the pipeline."
+      )
     }
     is_multiblock <- FALSE
   }
@@ -182,11 +177,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   if (!is_multiblock) {
     output_col <- paste0(prev_operation, "_", new_suffix)
     if (grepl("_([^_]+)_\\1", output_col)) {
-      cli::cli_abort(paste(
-        "[EXIT] Attempting to create corrupted column name:",
-        output_col,
-        "This indicates a pipeline processing error. Please check your data."
-      ))
+      log_error(
+        "Attempting to create corrupted column name: {output_col}. This indicates a pipeline processing error. Please check your data."
+      )
     }
   }
 
@@ -213,30 +206,20 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
             length(block_prev_operation) == 0 ||
             block_prev_operation == ""
         ) {
-          cli::cli_abort(paste(
-            "[EXIT] Latest pointer for block",
-            i_block,
-            "is empty or NULL."
-          ))
+          log_error(
+            "Latest pointer for block {i_block} is empty or NULL."
+          )
         }
         if (grepl("_([^_]+)_\\1", block_prev_operation)) {
-          cli::cli_abort(paste(
-            "[EXIT] Corrupted latest pointer detected for block",
-            i_block,
-            ":",
-            block_prev_operation,
-            "This indicates a pipeline error. Please restart the pipeline."
-          ))
+          log_error(
+            "Corrupted latest pointer detected for block {i_block}: {block_prev_operation}. This indicates a pipeline error. Please restart the pipeline."
+          )
         }
         block_output_col <- paste0(block_prev_operation, "_", new_suffix)
         if (grepl("_([^_]+)_\\1", block_output_col)) {
-          cli::cli_abort(paste(
-            "[EXIT] Attempting to create corrupted column name for block",
-            i_block,
-            ":",
-            block_output_col,
-            "This indicates a pipeline error. Please check your data."
-          ))
+          log_error(
+            "Attempting to create corrupted column name for block {i_block}: {block_output_col}. This indicates a pipeline error. Please check your data."
+          )
         }
         if (new_suffix == "detrend") {
           list_detrend <- do.call(
