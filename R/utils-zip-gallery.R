@@ -115,15 +115,12 @@ create_epoch_images_zip <- function(
                 "\nNO DATA"
               )
             )
-            if (verbose) {
-              cli::cli_alert_warning(
-                paste(
-                  "[WARN] eyeris: no finite pupillometry data to plot for",
-                  "current epoch...",
-                  "plotting empty epoch plot."
-                )
-              )
-            }
+            log_warn(
+              "eyeris: no finite pupillometry data to plot for",
+              "current epoch...",
+              "plotting empty epoch plot.",
+              verbose = verbose
+            )
             text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
           }
 
@@ -196,11 +193,10 @@ create_epoch_images_zip <- function(
 
         setwd(current_dir)
 
-        if (verbose) {
-          cli::cli_alert_success(
-            sprintf("[OKAY] Created epoch images zip: %s (%d images)", zip_path, length(created_files))
-          )
-        }
+        log_success(
+          "Created epoch images zip: {zip_path} ({length(created_files)} images)",
+          verbose = verbose
+        )
       }
     },
     finally = {
