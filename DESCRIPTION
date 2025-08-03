@@ -3,6 +3,7 @@ Type: Package
 Title: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
 Version: 2.1.1.9002
 Date: 2025-08-02
+Language: en-US
 Authors@R: 
   c(
     person(given = "Shawn", family = "Schwartz", role = c("aut", "cre"), 
