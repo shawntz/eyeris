@@ -321,26 +321,16 @@ run_bidsify <- function(
     eye_log_string <- paste0("(binocular: ", eye_suffix, ")")
   }
 
-  if (verbose) {
-    cli::cli_alert_info(
-      glue::glue(
-        "[INFO] Starting BIDSify for sub-{participant_id} {eye_log_string} at {format(start_time, '%Y-%m-%d %H:%M:%S')}"
-      )
-    )
-  }
+  log_info("Starting BIDSify for sub-{participant_id} {eye_log_string}", verbose = verbose)
 
   actual_block_count <- length(eyeris$timeseries)
 
   if (actual_block_count > 1) {
     # case: multiple blocks: show warning if run_num was provided
     if (!is.null(run_num)) {
-      cli::cli_alert_warning(
-        paste0(
-          "[WARN] `run_num` is ignored when data contains multiple blocks.",
-          "Blocks will be automatically numbered as runs (block 1 = run-01,",
-          "block 2 = run-02, etc.) in the order they appeared/were recorded."
-        ),
-        wrap = TRUE
+      log_warn(
+        "`run_num` is ignored when data contains multiple blocks. Blocks will be automatically numbered as runs (block 1 = run-01, block 2 = run-02, etc.) in the order they appeared/were recorded.",
+        verbose = verbose
       )
     }
     has_multiple_runs <- TRUE
@@ -350,9 +340,7 @@ run_bidsify <- function(
     has_multiple_runs <- FALSE
     num_runs <- 1
 
-    if (verbose) {
-      cli::cli_alert_info("[INFO] Only 1 block detected...", wrap = TRUE)
-    }
+      log_info("Only 1 block detected...", verbose = verbose)
 
     original_block_name <- names(eyeris$timeseries)[1]
     original_block_number <- substr(original_block_name, 7, nchar(original_block_name))
@@ -365,12 +353,10 @@ run_bidsify <- function(
     new_block_name <- paste0("block_", run_num_stripped)
 
     if (!is.null(run_num)) {
-      if (verbose) {
-        cli::cli_alert_info(
-          sprintf("[INFO] Using run_num = %s for single block data", run_num),
-          wrap = TRUE
+        log_info(
+          "Using run_num = {run_num} for single block data",
+          verbose = verbose
         )
-      }
 
       names(eyeris$timeseries)[1] <- new_block_name
 
@@ -505,9 +491,9 @@ run_bidsify <- function(
   any_epochs <- n_epochs > 0
 
   if (verbose && any_epochs) {
-    cli::cli_alert_info(
-      sprintf("[INFO] Filtered epochs: %s", paste(epochs, collapse = ", ")),
-      wrap = TRUE
+    log_info(
+      "Filtered epochs: {paste(epochs, collapse = ', ')}",
+      verbose = verbose
     )
   }
 
@@ -520,9 +506,9 @@ run_bidsify <- function(
   }
 
   if (verbose && any_epochs) {
-    cli::cli_alert_info(
-      sprintf("[INFO] Epoch names to save: %s", paste(names(epochs_to_save), collapse = ", ")),
-      wrap = TRUE
+    log_info(
+      "Epoch names to save: {paste(names(epochs_to_save), collapse = ', ')}",
+      verbose = verbose
     )
   }
 
@@ -536,16 +522,19 @@ run_bidsify <- function(
     )
 
     if (is.null(db_con)) {
-      cli::cli_alert_warning("[WARN] Database connection failed", wrap = TRUE)
+      log_warn(
+        "Database connection failed",
+        verbose = verbose
+      )
       db_enabled <- FALSE
     }
   }
 
   # fallback: enable csv if DB fails and csv was disabled
   if (!csv_enabled && !db_enabled) {
-    cli::cli_alert_warning(
-      "[WARN] Database failed and CSV disabled - enabling CSV as fallback to prevent data loss",
-      wrap = TRUE
+    log_warn(
+      "Database failed and CSV disabled - enabling CSV as fallback to prevent data loss",
+      verbose = verobse
     )
     csv_enabled <- TRUE
   }
@@ -559,12 +548,10 @@ run_bidsify <- function(
         target_tables <- all_tables[grepl(paste0("_", sub, "_"), all_tables)]
 
         if (length(target_tables) > 0) {
-          if (verbose) {
-            cli::cli_alert_info(
-              glue::glue("[INFO] Cleaning up existing data for sub-{sub} in database..."),
-              wrap = TRUE
+            log_info(
+              "Cleaning up existing data for sub-{sub} in database...",
+              verbose = verbose
             )
-          }
 
           tables_cleaned <- 0
           for (table_name in target_tables) {
@@ -574,39 +561,31 @@ run_bidsify <- function(
               {
                 DBI::dbExecute(db_con, drop_query)
                 tables_cleaned <- tables_cleaned + 1
-                if (verbose) {
-                  cli::cli_alert_info(
-                    glue::glue("[INFO] Dropped table: {table_name} for sub-{sub}"),
-                    wrap = TRUE
+                  log_info(
+                    "Dropped table: {table_name} for sub-{sub}",
+                    verbose = verbose
                   )
-                }
               },
               error = function(e) {
-                if (verbose) {
-                  cli::cli_alert_warning(
-                    glue::glue("[WARN] Could not drop table '{table_name}': {e$message}"),
-                    wrap = TRUE
+                  log_warn(
+                    "Could not drop table '{table_name}': {e$message}",
+                    verbose = verbose
                   )
-                }
               }
             )
           }
 
-          if (verbose) {
-            cli::cli_alert_success(
-              glue::glue("[OKAY] Cleaned existing data from {tables_cleaned} tables for sub-{sub}"),
-              wrap = TRUE
+            log_success(
+              "Cleaned existing data from {tables_cleaned} tables for sub-{sub}",
+              verbose = verbose
             )
-          }
         }
       },
       error = function(e) {
-        if (verbose) {
-          cli::cli_alert_warning(
-            glue::glue("[WARN] Error during database cleanup: {e$message}"),
-            wrap = TRUE
+          log_warn(
+            "Error during database cleanup: {e$message}",
+            verbose = verbose
           )
-        }
       }
     )
   }
@@ -614,36 +593,23 @@ run_bidsify <- function(
   for (epoch_name in names(epochs_to_save)) {
     epoch_data <- epochs_to_save[[epoch_name]]
     if (is.list(epoch_data)) {
-      if (verbose) {
-        cli::cli_alert_info(
-          sprintf("[INFO]     %s:", epoch_name),
-          wrap = TRUE
+        log_info(
+          "{epoch_name}:",
+          verbose = verbose
         )
-      }
+
       for (block_name in names(epoch_data)) {
         block_data <- epoch_data[[block_name]]
         if (is.data.frame(block_data)) {
-          if (verbose) {
-            cli::cli_alert_info(
-              sprintf(
-                "[INFO]         %s: data.frame with %d rows",
-                block_name,
-                nrow(block_data)
-              ),
-              wrap = TRUE
+            log_info(
+                "{block_name}: data.frame with {nrow(block_data)} rows",
+              verbose = verbose
             )
-          }
         } else {
-          if (verbose) {
-            cli::cli_alert_info(
-              sprintf(
-              "[INFO] %s: list with %d elements",
-              block_name,
-              length(block_data)
-            ),
-            wrap = TRUE
+            log_info(
+              "{block_name}: list with {length(block_data)} elements",
+              verbose = verbose
           )
-          }
         }
       }
     }
@@ -709,9 +675,7 @@ run_bidsify <- function(
       eye_suffix = eye_suffix
     )
 
-    if (verbose) {
-      cli::cli_alert_info(glue::glue("[INFO] Writing blinks data to {file.path(dir, p, bids_fname)}..."), wrap = TRUE)
-    }
+      log_info("Writing blinks data to {file.path(dir, p, bids_fname)}...", verbose = verbose)
 
     if (is_binocular_object(eyeris)) {
       if (eye_suffix == "eye-L") {
@@ -748,9 +712,7 @@ run_bidsify <- function(
       eye_suffix = eye_suffix
     )
 
-    if (verbose) {
-      cli::cli_alert_info(glue::glue("[INFO] Writing events data to {file.path(dir, p, bids_fname)}..."), wrap = TRUE)
-    }
+      log_info("Writing events data to {file.path(dir, p, bids_fname)}...", verbose = verbose)
 
     if (is_binocular_object(eyeris)) {
       if (eye_suffix == "eye-L") {
@@ -790,44 +752,34 @@ run_bidsify <- function(
       for (epoch_id in names(epochs_to_save)) {
         current_label <- substr(epoch_id, 7, nchar(epoch_id))
 
-        if (verbose) {
-          cli::cli_alert_info(glue::glue("[INFO] Processing epoch: {epoch_id} (label: {current_label})"), wrap = TRUE)
-        }
+          log_info("Processing epoch: {epoch_id} (label: {current_label})", verbose = verbose)
 
         for (i in names(eyeris$timeseries)) {
           run_epochs <- epochs_to_save[[epoch_id]][[i]]
           run_epochs$run <- sprintf("%02d", get_block_numbers(i))
 
-          if (verbose) {
-            cli::cli_alert_info(glue::glue("[INFO] Processing run {i} for epoch {epoch_id}"), wrap = TRUE)
-          }
+            log_info("Processing run {i} for epoch {epoch_id}", verbose = verbose)
 
           if (is.null(run_epochs)) {
-            if (verbose) {
-              cli::cli_alert_warning(
-                glue::glue("[WARN] Skipping run {i} for epoch {epoch_id} - no data"),
-                wrap = TRUE
+              log_warn(
+                "Skipping run {i} for epoch {epoch_id} - no data",
+                verbose = verbose
               )
-            }
             next
           }
 
           if (!is.data.frame(run_epochs) || nrow(run_epochs) == 0) {
-            if (verbose) {
-              cli::cli_alert_warning(
-                glue::glue("[WARN] Skipping run {i} for epoch {epoch_id} - empty or invalid data"),
-                wrap = TRUE
+              log_warn(
+                "Skipping run {i} for epoch {epoch_id} - empty or invalid data",
+                verbose = verbose
               )
-            }
             next
           }
 
-          if (verbose) {
-            cli::cli_alert_info(
-              glue::glue("[INFO] Run {i} for epoch {epoch_id} has {nrow(run_epochs)} rows"),
-              wrap = TRUE
+            log_info(
+              "Run {i} for epoch {epoch_id} has {nrow(run_epochs)} rows",
+              verbose = verbose
             )
-          }
 
           evs <- get_epoch_events(eyeris, epoch_id)
           c_bline <- has_baseline(eyeris, current_label)
@@ -863,12 +815,10 @@ run_bidsify <- function(
       for (epoch_id in names(epochs_to_save)) {
         current_label <- substr(epoch_id, 7, nchar(epoch_id))
 
-        if (verbose) {
-          cli::cli_alert_info(
-            sprintf("[INFO] Processing single-run epoch: %s (label: %s)", epoch_id, current_label),
-            wrap = TRUE
+          log_info(
+            "Processing single-run epoch: {epoch_id} (label: {current_label})",
+            verbose = verbose
           )
-        }
 
         epoch_entry <- epochs_to_save[[epoch_id]]
         block_names <- setdiff(names(epoch_entry), "info")
@@ -876,23 +826,17 @@ run_bidsify <- function(
         for (block_name in block_names) {
           block_data <- epoch_entry[[block_name]]
           if (is.null(block_data) || !is.data.frame(block_data) || nrow(block_data) == 0) {
-            if (verbose) {
-              cli::cli_alert_warning(
-                "[WARN] Skipping block %s for epoch %s - empty or invalid data",
-                block_name,
-                epoch_id,
-                wrap = TRUE
+              log_warn(
+                "Skipping block {block_name} for epoch {epoch_id} - empty or invalid data",
+                verbose = verbose
               )
-            }
             next
           }
 
-          if (verbose) {
-            cli::cli_alert_info(
-              sprintf("[INFO] Block %s for epoch %s has %d rows", block_name, epoch_id, nrow(block_data)),
-              wrap = TRUE
+            log_info(
+              "Block {block_name} for epoch {epoch_id} has {nrow(block_data)} rows",
+              verbose = verbose
             )
-          }
 
           evs <- get_epoch_events(eyeris, epoch_id)
           c_bline <- has_baseline(eyeris, current_label)
@@ -942,7 +886,7 @@ run_bidsify <- function(
           any_written <- TRUE
         }
         if (!any_written && verbose) {
-          cli::cli_alert_warning(glue::glue("[WARN] No valid blocks found for epoch {epoch_id}"), wrap = TRUE)
+          log_warn("No valid blocks found for epoch {epoch_id}", verbose = verbose)
         }
       }
     }
@@ -986,7 +930,7 @@ run_bidsify <- function(
       if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
         run_data <- eyeris$timeseries[[1]]
       } else {
-        cli::cli_abort("[EXIT] eyeris$timeseries is either not a list or is empty. Cannot access the first element.")
+        log_error("eyeris$timeseries is either not a list or is empty. Cannot access the first element.", verbose = verbose)
       }
       # use run_num if provided, otherwise default to 1
       run_num_to_use <- if (!is.null(run_num)) {
@@ -994,7 +938,7 @@ run_bidsify <- function(
         if (!is.na(run_num_numeric)) {
           sprintf("%02d", run_num_numeric)
         } else {
-          cli::cli_alert_warning("[WARN] Invalid run_num provided. Defaulting to '01'.", wrap = TRUE)
+          log_warn("Invalid run_num provided. Defaulting to '01'.", verbose = verbose)
           "01"
         }
       } else {
@@ -1183,12 +1127,10 @@ run_bidsify <- function(
 
           epoch_summaries[[epoch_name]] <- epoch_row
 
-          if (verbose) {
-            cli::cli_alert_info(
-              paste0("[INFO] Created epoch summary for ", epoch_name, " with ", length(unlisted_info), " fields"),
-              wrap = TRUE
+            log_info(
+              "Created epoch summary for {epoch_name} with {length(unlisted_info)} fields",
+              verbose = verbose
             )
-          }
         } else {
           # if no info found, create minimal row
           epoch_summaries[[epoch_name]] <- data.frame(
@@ -1196,12 +1138,10 @@ run_bidsify <- function(
             stringsAsFactors = FALSE
           )
 
-          if (verbose) {
-            cli::cli_alert_warning(
-              paste0("[WARN] No epoch info found for ", epoch_name),
-              wrap = TRUE
+            log_warn(
+              "No epoch info found for {epoch_name}",
+              verbose = verbose
             )
-          }
         }
       }
 
@@ -1364,9 +1304,9 @@ run_bidsify <- function(
                     result <- paste(epoch_events, collapse = ", ")
                   }
                   escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
-                  cli::cli_alert_info(
-                    paste0("[INFO] Found epoch events in epoch structure: ", escaped_result),
-                    wrap = TRUE
+                  log_info(
+                    "Found epoch events in epoch structure: {escaped_result}",
+                    verbose = verbose
                   )
                 }
               }
@@ -1693,12 +1633,10 @@ run_bidsify <- function(
 
         dev.off()
 
-        if (verbose) {
-          cli::cli_alert_success(
-            glue::glue("[OKAY] Created gaze heatmap for run-{sprintf('%02d', i_run)}"),
-            wrap = TRUE
+          log_success(
+            "Created gaze heatmap for run-{sprintf('%02d', i_run)}",
+            verbose = verbose
           )
-        }
       }
 
       # generate binocular correlation plots if binocular data is detected
@@ -1746,12 +1684,10 @@ run_bidsify <- function(
 
         dev.off()
 
-        if (verbose) {
-          cli::cli_alert_info(
-            glue::glue("[INFO] Created binocular correlation plot for run-{sprintf('%02d', i_run)}"),
-            wrap = TRUE
+          log_info(
+            "Created binocular correlation plot for run-{sprintf('%02d', i_run)}",
+            verbose = verbose
           )
-        }
       }
     }
 
@@ -1761,12 +1697,10 @@ run_bidsify <- function(
         epoch_data <- epochs_to_save[[i]]
 
         if (is.null(epoch_data) || !is.list(epoch_data)) {
-          if (verbose) {
-            cli::cli_alert_warning(
-              glue::glue("[WARN] Skipping epoch {i} for report generation - no valid data"),
-              wrap = TRUE
+           log_warn(
+              "Skipping epoch {i} for report generation - no valid data",
+              verbose = verbose
             )
-          }
           next
         }
 
@@ -1776,12 +1710,10 @@ run_bidsify <- function(
               !is.data.frame(epoch_data[[bn]]) ||
               nrow(epoch_data[[bn]]) == 0
           ) {
-            if (verbose) {
-              cli::cli_alert_warning(
-                glue::glue("[WARN] Skipping block {bn} for epoch {i} - no valid data"),
-                wrap = TRUE
+              log_warn(
+                "Skipping block {bn} for epoch {i} - no valid data",
+                verbose = verbose
               )
-            }
             next
           }
 
@@ -1884,13 +1816,9 @@ run_bidsify <- function(
                     "\nNO DATA"
                   )
                 )
-                cli::cli_alert_warning(
-                  paste(
-                    "[WARN] eyeris: no finite pupillometry data to plot for
-                        current epoch...",
-                    "plotting empty epoch plot."
-                  ),
-                  wrap = TRUE
+                log_warn(
+                    "eyeris: no finite pupillometry data to plot for current epoch... plotting empty epoch plot.",
+                  verbose = verbose
                 )
                 text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
               }
@@ -1954,12 +1882,10 @@ run_bidsify <- function(
 
               dev.off()
 
-              if (verbose) {
-                cli::cli_alert_success(
-                  glue::glue("[OKAY] Created gaze heatmap for epoch {group} (run-{sprintf('%02d', run_dir_num)})"),
-                  wrap = TRUE
+                log_success(
+                  "Created gaze heatmap for epoch {group} (run-{sprintf('%02d', run_dir_num)})",
+                  verbose = verbose
                 )
-              }
             }
           }
 
@@ -2020,13 +1946,7 @@ run_bidsify <- function(
 
   end_time <- Sys.time()
   duration <- round(difftime(end_time, start_time, units = "secs"), 2)
-  if (verbose) {
-    cli::cli_alert_info(
-      glue::glue(
-        "[INFO] Finished BIDSify for sub-{sub} at {format(end_time, '%Y-%m-%d %H:%M:%S')} (Duration: {duration} seconds)"
-      )
-    )
-  }
+  log_info("Finished BIDSify for sub-{sub} (Duration: {duration} seconds)", verbose = verbose)
 }
 
 #' Make a BIDS-compatible filename
@@ -2132,24 +2052,21 @@ find_baseline_structure <- function(eyeris, epoch_label) {
   baseline_names <- names(eyeris)[grep("^baseline_", names(eyeris))]
 
   if (length(baseline_names) > 0) {
-    cli::cli_alert_info(
-      paste0(
-        "[INFO] Available baseline structures: ",
-        paste(baseline_names, collapse = ", ")
-      ),
-      wrap = TRUE
+    log_info(
+        "Available baseline structures: {paste(baseline_names, collapse = ", ")}",
+        verbose = verbose
     )
-    cli::cli_alert_info(
-      paste0("[INFO] Looking for epoch label: ", epoch_label),
-      wrap = TRUE
+    log_info(
+      "Looking for epoch label: {epoch_label}",
+      verbose = verbose
     )
   }
 
   for (baseline_name in baseline_names) {
     if (grepl(paste0("_epoch_", epoch_label, "$"), baseline_name)) {
-      cli::cli_alert_info(
-        paste0("[INFO] Found matching baseline structure: ", baseline_name),
-        wrap = TRUE
+      log_info(
+        "Found matching baseline structure: {baseline_name}",
+        verbose = verbose
       )
       return(
         list(
@@ -2160,12 +2077,9 @@ find_baseline_structure <- function(eyeris, epoch_label) {
     }
   }
 
-  cli::cli_alert_warning(
-    paste0(
-      "[WARN] No baseline structure found for epoch label: ",
-      epoch_label
-    ),
-    wrap = TRUE
+  log_warn(
+      "No baseline structure found for epoch label: {epoch_label}",
+      verbose = verbose
   )
   NULL
 }
@@ -2255,9 +2169,9 @@ get_epoch_events <- function(eyeris, epoch_id, block_name = "block_1") {
     result <- format_event_string(info$epoch_events)
     if (!is.null(result)) {
       escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
-      cli::cli_alert_info(
-        paste0("[INFO] Found epoch events in structure: ", escaped_result),
-        wrap = TRUE
+      log_info(
+        "Found epoch events in structure: {escaped_result}",
+        verbose = verbose
       )
       return(result)
     }
@@ -2270,7 +2184,7 @@ get_baseline_events <- function(eyeris, epoch_id, block_name = "block_1") {
   if (!is.null(info) && !is.na(info$baseline_events)) {
     result <- format_event_string(info$baseline_events)
     if (!is.na(result)) {
-      cli::cli_alert_info("[INFO] Found baseline events: ", result, wrap = TRUE)
+      log_info("Found baseline events: {result}", verbose = verbose)
       return(result)
     }
   }
@@ -2282,7 +2196,7 @@ get_baseline_type <- function(eyeris, epoch_id, block_name = "block_1") {
   if (!is.null(info) && !is.na(info$baseline_type)) {
     result <- format_event_string(info$baseline_type)
     if (!is.na(result)) {
-      cli::cli_alert_info("[INFO] Found baseline type: ", result, wrap = TRUE)
+      log_info("Found baseline type: {result}", verbose = verbose)
       return(result)
     }
   }
