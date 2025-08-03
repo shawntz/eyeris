@@ -131,44 +131,75 @@ might want to choose database storage over traditional CSV files.</p>
 <div class="section level4">
 <h4 id="the-case-for-database-storage">The Case for Database Storage<a class="anchor" aria-label="anchor" href="#the-case-for-database-storage"></a>
 </h4>
-<p><strong>1. Scalability and Performance</strong> - <strong>Massive
-datasets</strong>: When processing hundreds or thousands of subjects,
-CSV files can become unwieldy. A single database file can efficiently
-store data from thousands of participants. - <strong>Faster
-queries</strong>: Instead of reading multiple CSV files and filtering in
-<code>R</code>, databases can filter and aggregate data at the storage
-level, dramatically reducing memory usage and processing time. -
-<strong>Concurrent access</strong>: Multiple researchers can query the
-same database simultaneously without file locking issues.</p>
-<p><strong>2. Cloud Computing Advantages</strong> - <strong>Reduced I/O
-costs</strong>: On cloud platforms (AWS, GCP, Azure), reading many small
-CSV files incurs significant I/O costs. A single database file reduces
-these costs dramatically. - <strong>Bandwidth efficiency</strong>:
-Transferring one database file is much faster than syncing thousands of
-CSV files. - <strong>Storage optimization</strong>: Databases compress
-data more efficiently than individual CSV files.</p>
-<p><strong>3. Data Integrity and Management</strong> - <strong>Schema
-validation</strong>: Built-in data type validation prevents corruption.
-- <strong>Metadata storage</strong>: Databases automatically track
-creation timestamps, data types, and relationships.</p>
-<p><strong>4. Analysis Efficiency</strong> - <strong><code>SQL</code>
-queries</strong>: Leverage the power of <code>SQL</code> for complex
-filtering, aggregation, and joins. - <strong>Memory efficiency</strong>:
-Load only the data you need instead of entire datasets. -
+<p><strong>1. Scalability and Performance</strong></p>
+<ul>
+<li>
+<strong>Massive datasets</strong>: When processing hundreds or
+thousands of subjects, CSV files can become unwieldy. A single database
+file can efficiently store data from thousands of participants.</li>
+<li>
+<strong>Faster queries</strong>: Instead of reading multiple CSV
+files and filtering in <code>R</code>, databases can filter and
+aggregate data at the storage level, dramatically reducing memory usage
+and processing time.</li>
+<li>
+<strong>Concurrent access</strong>: Multiple researchers can query
+the same database simultaneously without file locking issues.</li>
+</ul>
+<p><strong>2. Cloud Computing Advantages</strong></p>
+<ul>
+<li>
+<strong>Reduced I/O costs</strong>: On cloud platforms (AWS, GCP,
+Azure), reading many small CSV files incurs significant I/O costs. A
+single database file reduces these costs dramatically.</li>
+<li>
+<strong>Bandwidth efficiency</strong>: Transferring one database
+file is much faster than syncing thousands of CSV files.</li>
+<li>
+<strong>Storage optimization</strong>: Databases compress data more
+efficiently than individual CSV files.</li>
+</ul>
+<p><strong>3. Data Integrity and Management</strong></p>
+<ul>
+<li>
+<strong>Schema validation</strong>: Built-in data type validation
+prevents corruption.</li>
+<li>
+<strong>Metadata storage</strong>: Databases automatically track
+creation timestamps, data types, and relationships.</li>
+</ul>
+<p><strong>4. Analysis Efficiency</strong></p>
+<ul>
+<li>
+<strong><code>SQL</code> queries</strong>: Leverage the power of
+<code>SQL</code> for complex filtering, aggregation, and joins.</li>
+<li>
+<strong>Memory efficiency</strong>: Load only the data you need
+instead of entire datasets.</li>
+<li>
 <strong>Cross-platform compatibility</strong>: <code>DuckDB</code>
 databases work across <code>R</code>, <code>Python</code>, and other
-analysis platforms.</p>
+analysis platforms.</li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="when-to-use-csv-vs-a-database">When to Use CSV vs a Database<a class="anchor" aria-label="anchor" href="#when-to-use-csv-vs-a-database"></a>
 </h4>
-<p><strong>Use CSV files when:</strong> - Small datasets (&lt; 10
-subjects) - Simple analysis workflows - Need human-readable data formats
-- Working with external tools that require CSV input</p>
-<p><strong>Use databases when:</strong> - Large datasets (&gt; 20
-subjects) - Complex queries across multiple data types - Cloud computing
-environments - Collaborative research projects - Long-term data storage
-and archival</p>
+<p><strong>Use CSV files when:</strong></p>
+<ul>
+<li>Small datasets (&lt; 10 subjects)</li>
+<li>Simple analysis workflows</li>
+<li>Need human-readable data formats</li>
+<li>Working with external tools that require CSV input</li>
+</ul>
+<p><strong>Use databases when:</strong></p>
+<ul>
+<li>Large datasets (&gt; 20 subjects)</li>
+<li>Complex queries across multiple data types</li>
+<li>Cloud computing environments</li>
+<li>Collaborative research projects</li>
+<li>Long-term data storage and archival</li>
+</ul>
 </div>
 </div>
 </div>
