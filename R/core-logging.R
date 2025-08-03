@@ -77,7 +77,7 @@ log_message <- function(
 #' log_info("Found {nrow(data)} rows", "in dataset")
 #' }
 #'
-#' @export
+#' @keywords internal
 log_info <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
   log_message("INFO", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
@@ -96,7 +96,7 @@ log_info <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) 
 #' log_success("Processed {n_files} files successfully")
 #' }
 #'
-#' @export
+#' @keywords internal
 log_success <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
   log_message("OKAY", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
@@ -115,7 +115,7 @@ log_success <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame(
 #' log_warn("Found {missing_count} missing values")
 #' }
 #'
-#' @export
+#' @keywords internal
 log_warn <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
   log_message("WARN", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
@@ -133,7 +133,7 @@ log_warn <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) 
 #' log_error("File not found: {file_path}")
 #' }
 #'
-#' @export
+#' @keywords internal
 log_error <- function(..., wrap = TRUE, .envir = parent.frame()) {
   log_message("EXIT", ..., verbose = TRUE, wrap = wrap, .envir = .envir)
 }

@@ -27,3 +27,4 @@ log_info("Found {nrow(data)} rows", "in dataset")
 }
 
 }
+\keyword{internal}

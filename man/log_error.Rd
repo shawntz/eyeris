@@ -24,3 +24,4 @@ log_error("File not found: {file_path}")
 }
 
 }
+\keyword{internal}

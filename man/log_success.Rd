@@ -26,3 +26,4 @@ log_success("Processed {n_files} files successfully")
 }
 
 }
+\keyword{internal}

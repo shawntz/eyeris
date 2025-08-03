@@ -1,5 +1,5 @@
 ---
-title: "Working with `eyeris` Databases: A Complete Guide"
+title: "Working with eyeris Databases: A Complete Guide"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Working with eyeris Databases: A Complete Guide}
