@@ -148,7 +148,7 @@ downsample <- function(
 #' @keywords internal
 downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, rs) {
   if (any(is.na(x[[prev_op]]))) {
-    cli::cli_abort("[EXIT] NAs detected in pupil data. Need to interpolate first.")
+    log_error("NAs detected in pupil data. Need to interpolate first.")
     return(x[[prev_op]])
   } else {
     prev_pupil <- x[[prev_op]]
@@ -157,25 +157,14 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
   decimation_factor <- current_fs / target_fs
 
   if (decimation_factor < 1) {
-    cli::cli_abort(
-      paste(
-        "[EXIT] Target sampling frequency (",
-        target_fs,
-        " Hz) must be less than",
-        "current sampling frequency (",
-        current_fs,
-        " Hz)"
-      )
+    log_error(
+      "Target sampling frequency ({target_fs} Hz) must be less than current sampling frequency ({current_fs} Hz)"
     )
   }
 
   if (decimation_factor != round(decimation_factor)) {
-    cli::cli_abort(
-      paste(
-        "[EXIT] Decimation factor must be an integer. Current: ",
-        decimation_factor,
-        ". Consider using a different target_fs."
-      )
+    log_error(
+      "Decimation factor must be an integer. Current: {decimation_factor}. Consider using a different target_fs."
     )
   }
 
@@ -188,14 +177,8 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
   wp <- ws - wt
 
   if (wp < 4) {
-    cli::cli_abort(
-      paste(
-        "[EXIT] Passband frequency (",
-        round(wp, 2),
-        " Hz) is too low.",
-        "This would likely cause loss of actual pupillary responses.",
-        "Consider using a higher target_fs or the binning function instead."
-      )
+    log_error(
+      "Passband frequency ({round(wp, 2)} Hz) is too low. This would likely cause loss of actual pupillary responses. Consider using a higher target_fs or the binning function instead."
     )
   }
 
