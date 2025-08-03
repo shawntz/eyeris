@@ -118,26 +118,20 @@ zscore <- function(eyeris, call_info = NULL) {
 zscore_pupil <- function(x, prev_op) {
   # validate the previous operation column name
   if (is.null(prev_op) || length(prev_op) == 0 || prev_op == "") {
-    cli::cli_abort("[EXIT] Previous operation column name is empty or NULL.")
+    log_error("Previous operation column name is empty or NULL.")
   }
 
   if (!prev_op %in% colnames(x)) {
-    cli::cli_abort(paste(
-      "[EXIT] Column '",
-      prev_op,
-      "' not found in data.",
-      "Available columns:",
-      paste(colnames(x), collapse = ", ")
-    ))
+    log_error(
+      "Column '{prev_op}' not found in data. Available columns: {paste(colnames(x), collapse = ', ')}"
+    )
   }
 
   # check for duplicate suffixes in column name (might indicate corruption)
   if (grepl("_([^_]+)_\\1", prev_op)) {
-    cli::cli_abort(paste(
-      "[EXIT] Corrupted column name detected:",
-      prev_op,
-      "This might indicate an eyeris pipeline processing error."
-    ))
+    log_error(
+      "Corrupted column name detected: {prev_op}. This might indicate an eyeris pipeline processing error."
+    )
   }
 
   pupil_col <- dplyr::sym(prev_op)
