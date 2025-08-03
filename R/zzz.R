@@ -26,7 +26,10 @@ utils::globalVariables(c(
   "e",
   "text_unique",
   "verbose",
-  "last_col"
+  "last_col",
+  "csv_enabled",
+  "merge_epochs",
+  "merge_runs"
 ))
 
 .onAttach <- function(libname, pkgname) {

@@ -15,8 +15,6 @@
 #' @param save_all Logical flag indicating whether all epochs are to be saved
 #' or only a subset of them. Defaults to `TRUE`
 #' @param epochs_list List of epochs to be saved. Defaults to `NULL`
-#' @param merge_epochs Logical flag indicating whether epochs should be saved
-#' as one file or as separate files. Defaults to `FALSE` (no merge)
 #' @param bids_dir Base bids_directory. Defaults to `NULL`
 #' @param participant_id BIDS subject ID. Defaults to `NULL`
 #' @param session_num BIDS session ID. Defaults to `NULL`
@@ -31,12 +29,6 @@
 #' blocks are automatically numbered as runs (block 1 = run-01, block 2 =
 #' run-02, etc.) in the order they appeared/were recorded. Defaults to `NULL`
 #' (no override)
-#' @param merge_runs Logical flag indicating whether multiple runs (either
-#' from multiple recording blocks existing within the **same** `.asc` file
-#' (see above), or manually specified) should be combined into a single
-#' output file. When `TRUE`, adds a 'run' column to identify the source run
-#' Defaults to `FALSE` (i.e., separate files per block/run -- the standard
-#' BIDS-like-behavior)
 #' @param save_raw Logical flag indicating whether to save_raw pupil data in
 #' addition to epoched data. Defaults to `TRUE`
 #' @param html_report Logical flag indicating whether to save out the `eyeris`
@@ -52,7 +44,20 @@
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `FALSE` to suppress messages about the current
 #' processing step and run silently
+#' @param csv_enabled Logical flag indicating whether to create CSV files.
+#' Defaults to `TRUE`. Set to `FALSE` to skip CSV creation (useful for
+#' cloud computing when only database storage is needed)
+#' @param db_enabled Logical flag indicating whether to create a database.
+#' Defaults to `FALSE`. Set to `TRUE` to enable DuckDB database creation
+#' for efficient storage and querying of large datasets
+#' @param db_path Path/name for the database file. Defaults to `"my-project"`.
+#' The `.eyerisdb` extension will be added automatically. If just a filename,
+#' the database will be created in the `derivatives/` directory
 #'
+#' @param merge_epochs **(Deprecated)** This parameter no longer has any effect.
+#' All epochs are now saved as separate files following BIDS conventions
+#' @param merge_runs **(Deprecated)** This parameter no longer has any effect.
+#' All runs are now saved as separate files following BIDS conventions
 #' @param pdf_report **(Deprecated)** Use `html_report = TRUE` instead
 #'
 #' @return Invisibly returns `NULL`. Called for its side effects
@@ -119,21 +124,24 @@ bidsify <- function(
   eyeris,
   save_all = TRUE,
   epochs_list = NULL,
-  merge_epochs = FALSE,
   bids_dir = NULL,
   participant_id = NULL,
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = FALSE,
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
   report_epoch_grouping_var_col = "matched_event",
   verbose = TRUE,
+  csv_enabled = TRUE,
+  db_enabled = FALSE,
+  db_path = "my-project",
+  merge_epochs = deprecated(),
+  merge_runs = deprecated(),
   pdf_report = deprecated()
 ) {
-  # deprecation warning for pdf_report ---------------------------------
+  # deprecation warnings ---------------------------------
   if (is_present(pdf_report)) {
     deprecate_warn(
       "1.3.0",
@@ -141,6 +149,22 @@ bidsify <- function(
       "bidsify(html_report)"
     )
     html_report <- pdf_report
+  }
+  
+  if (is_present(merge_epochs)) {
+    deprecate_warn(
+      "2.1.2",
+      "bidsify(merge_epochs)",
+      details = "This parameter no longer has any effect. All epochs are now saved as separate files following BIDS conventions."
+    )
+  }
+  
+  if (is_present(merge_runs)) {
+    deprecate_warn(
+      "2.1.2", 
+      "bidsify(merge_runs)",
+      details = "This parameter no longer has any effect. All runs are now saved as separate files following BIDS conventions."
+    )
   }
 
   # setup --------------------------------------------------------------
@@ -152,58 +176,63 @@ bidsify <- function(
       left_eyeris,
       save_all = save_all,
       epochs_list = epochs_list,
-      merge_epochs = merge_epochs,
       bids_dir = bids_dir,
       participant_id = participant_id,
       session_num = session_num,
       task_name = task_name,
       run_num = run_num,
-      merge_runs = merge_runs,
       save_raw = save_raw,
       html_report = html_report,
       report_seed = report_seed,
       report_epoch_grouping_var_col = report_epoch_grouping_var_col,
       eye_suffix = "eye-L",
       verbose = verbose,
-      raw_binocular_object = eyeris$raw_binocular_object
+      csv_enabled = csv_enabled,
+      db_enabled = db_enabled,
+      db_path = db_path,
+      raw_binocular_object = eyeris$raw_binocular_object,
+      skip_db_cleanup = FALSE
     )
 
     run_bidsify(
       right_eyeris,
       save_all = save_all,
       epochs_list = epochs_list,
-      merge_epochs = merge_epochs,
       bids_dir = bids_dir,
       participant_id = participant_id,
       session_num = session_num,
       task_name = task_name,
       run_num = run_num,
-      merge_runs = merge_runs,
       save_raw = save_raw,
       html_report = html_report,
       report_seed = report_seed,
       report_epoch_grouping_var_col = report_epoch_grouping_var_col,
       eye_suffix = "eye-R",
       verbose = verbose,
-      raw_binocular_object = eyeris$raw_binocular_object
+      csv_enabled = csv_enabled,
+      db_enabled = db_enabled,
+      db_path = db_path,
+      raw_binocular_object = eyeris$raw_binocular_object,
+      skip_db_cleanup = TRUE
     )
   } else {
     run_bidsify(
       eyeris,
       save_all = save_all,
       epochs_list = epochs_list,
-      merge_epochs = merge_epochs,
       bids_dir = bids_dir,
       participant_id = participant_id,
       session_num = session_num,
       task_name = task_name,
       run_num = run_num,
-      merge_runs = merge_runs,
       save_raw = save_raw,
       html_report = html_report,
       report_seed = report_seed,
       report_epoch_grouping_var_col = report_epoch_grouping_var_col,
       verbose = verbose,
+      csv_enabled = csv_enabled,
+      db_enabled = db_enabled,
+      db_path = db_path,
       raw_binocular_object = eyeris$raw_binocular_object
     )
   }
@@ -213,20 +242,22 @@ bidsify <- function(
 #' @param eyeris An eyeris object
 #' @param save_all Whether to save all data
 #' @param epochs_list A list of epochs to include
-#' @param merge_epochs Whether to merge epochs
 #' @param bids_dir The directory to save the bids data
 #' @param participant_id The participant id
 #' @param session_num The session number
 #' @param task_name The task name
 #' @param run_num The run number
-#' @param merge_runs Whether to merge runs
 #' @param save_raw Whether to save raw data
 #' @param html_report Whether to generate an html report
 #' @param report_seed The seed for the report
 #' @param report_epoch_grouping_var_col The column to use for grouping epochs in the report
 #' @param eye_suffix The suffix to add to the eye data
 #' @param verbose Whether to print verbose output
+#' @param csv_enabled Whether to create CSV files
+#' @param db_enabled Whether to create a database
+#' @param db_path Path/name for the database file
 #' @param raw_binocular_object The raw binocular object
+#' @param skip_db_cleanup Whether to skip database cleanup
 #'
 #' @return A eyeris object
 #'
@@ -235,20 +266,22 @@ run_bidsify <- function(
   eyeris,
   save_all = TRUE,
   epochs_list = NULL,
-  merge_epochs = FALSE,
   bids_dir = NULL,
   participant_id = NULL,
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = FALSE,
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
   report_epoch_grouping_var_col = "matched_event",
   eye_suffix = NULL,
   verbose = TRUE,
-  raw_binocular_object = NULL
+  csv_enabled = TRUE,
+  db_enabled = FALSE,
+  db_path = "my-project",
+  raw_binocular_object = NULL,
+  skip_db_cleanup = FALSE
 ) {
   start_time <- Sys.time()
 
