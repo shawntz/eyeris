@@ -55,15 +55,15 @@ run_bidsify(
 
 \item{verbose}{Whether to print verbose output}
 
-\item{csv_enabled}{Whether to create CSV files}
+\item{csv_enabled}{Whether to save csv files}
 
-\item{db_enabled}{Whether to create a database}
+\item{db_enabled}{Whether to save data to the database}
 
-\item{db_path}{Path/name for the database file}
+\item{db_path}{The path to the database}
 
 \item{raw_binocular_object}{The raw binocular object}
 
-\item{skip_db_cleanup}{Whether to skip database cleanup}
+\item{skip_db_cleanup}{Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands}
 }
 \value{
 A eyeris object
