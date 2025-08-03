@@ -38,6 +38,7 @@
 #'   * "left": Uses only the left eye pupil size.
 #'   * "right": Uses only the right eye pupil size.
 #'   * "both": Uses both the left and right eye pupil sizes independently.
+#' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return An object of S3 class `eyeris` with the following attributes:
 #' \enumerate{
@@ -98,7 +99,8 @@ load_asc <- function(
     "left",
     "right",
     "both"
-  )
+  ),
+  verbose = TRUE
 ) {
   binocular_mode <- match.arg(binocular_mode)
 
@@ -134,9 +136,11 @@ load_asc <- function(
   binocular <- has_left && has_right
 
   if (binocular) {
-    cli::cli_alert_info(
-      "[INFO] Binocular data detected. Processing {.val {binocular_mode}} mode."
-    )
+    if (verbose) {
+      cli::cli_alert_info(
+        "[INFO] Binocular data detected. Processing {.val {binocular_mode}} mode."
+      )
+    }
 
     # create left and right eye data frames to store original binocular data before merging
     x_left <- x
