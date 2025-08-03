@@ -162,7 +162,7 @@
 #'     events = "PROBE_START_{trial}",
 #'     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
 #'     label = "prePostProbe", # custom epoch label name
-#'     baseline = TRUE, # Calculate and apply baseline correction
+#'     baseline = TRUE, # calculate and apply baseline correction
 #'     baseline_type = "sub", # "sub"tractive baseline calculation is default
 #'     baseline_events = "DELAY_STOP_*",
 #'     baseline_period = c(-1, 0)
@@ -177,7 +177,7 @@
 #'     events = "PROBE_START_{trial}",
 #'     limits = c(0, 1), # grab 0 seconds prior to and 1 second post PROBE event
 #'     label = "prePostProbe", # custom epoch label name
-#'     baseline = TRUE, # Calculate and apply baseline correction
+#'     baseline = TRUE, # calculate and apply baseline correction
 #'     baseline_type = "sub", # "sub"tractive baseline calculation is default
 #'     baseline_events = c(
 #'       "DELAY_START_*",
