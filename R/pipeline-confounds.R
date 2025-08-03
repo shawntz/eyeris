@@ -72,13 +72,13 @@ summarize_confounds <- function(eyeris) {
   available_blocks <- get_block_numbers(eyeris)
 
   if (is.null(available_blocks)) {
-    cli::cli_abort("[EXIT] eyeris no blocks found error.")
+    log_error("eyeris no blocks found error.")
   }
 
   hz <- eyeris$info$sample.rate
   if (is.null(hz)) {
-    cli::cli_abort(
-      paste0("[EXIT] Sampling rate (Hz) must be present in tracker", "metadata (i.e., eyeris$info)")
+    log_error(
+      "Sampling rate (Hz) must be present in tracker metadata (i.e., eyeris$info)"
     )
   }
 
