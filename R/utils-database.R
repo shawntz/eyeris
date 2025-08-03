@@ -388,23 +388,23 @@ eyeris_db_read <- function(
       query <- paste0("SELECT * FROM (", query, ") as combined_data WHERE 1=1")
 
       if (!is.null(subject)) {
-        query <- paste(query, "AND subject_id =", shQuote(subject))
+        query <- paste(query, "AND subject_id =", paste0("'", subject, "'"))
       }
 
       if (!is.null(session)) {
-        query <- paste(query, "AND session_id =", shQuote(session))
+        query <- paste(query, "AND session_id =", paste0("'", session, "'"))
       }
 
       if (!is.null(task)) {
-        query <- paste(query, "AND task_name =", shQuote(task))
+        query <- paste(query, "AND task_name =", paste0("'", task, "'"))
       }
 
       if (!is.null(run)) {
-        query <- paste(query, "AND run_number =", shQuote(run))
+        query <- paste(query, "AND run_number =", paste0("'", run, "'"))
       }
 
       if (!is.null(eye_suffix)) {
-        query <- paste(query, "AND eye_suffix =", shQuote(eye_suffix))
+        query <- paste(query, "AND eye_suffix =", paste0("'", eye_suffix, "'"))
       }
 
       # dev note: epoch_label filtering is handled by table selection above
