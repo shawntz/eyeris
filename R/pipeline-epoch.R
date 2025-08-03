@@ -392,30 +392,18 @@ epoch_pupil <- function(
     }
   }
 
-  if (verbose) {
-    alert("info", alert_str)
-  }
+  log_info(alert_str, verbose = verbose)
 
   if (is.list(evs)) {
     # manual method (with only 1 block at a time)
-    cli::cli_alert_warning(
-      paste0(
-        "[WARN] Manual epoching only works with 1 block at a time. ",
-        "\nManual epoch input must be a list of 2 dataframes and 1 numeric: ",
-        "\n  - `start_events` (df), `end_events` (df), and `block` (numeric) ",
-        "\nPlease be sure to explicitly indicate the block number in your ",
-        "input list! (see example #9 in the documentation for more details)."
-      ),
-      wrap = TRUE
+    log_warn(
+      "Manual epoching only works with 1 block at a time. Manual epoch input must be a list of 2 dataframes and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure to explicitly indicate the block number in your input list! (see example #9 in the documentation for more details).",
+      verbose = verbose
     )
 
     if (!is.list(evs) || length(evs) != 3) {
-      cli::cli_abort(
-        paste0(
-          "[EXIT] Manual epoch input must be a list of 2 dataframes and 1 numeric:",
-          "\n`start_events` (df), `end_events` (df), and `block` (numeric)"
-        ),
-        wrap = TRUE
+      log_error(
+        "Manual epoch input must be a list of 2 dataframes and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric)"
       )
     }
 
@@ -423,12 +411,8 @@ epoch_pupil <- function(
   } else if (is.character(evs)) {
     block_names <- names(x$events)
   } else {
-    cli::cli_abort(
-      paste0(
-        "[EXIT] Error: Invalid data structure provided.",
-        "Expected an `eyeris` dataframe containing",
-        "a valid timeseries column.",
-      )
+    log_error(
+      "Error: Invalid data structure provided. Expected an `eyeris` dataframe containing a valid timeseries column."
     )
   }
 
@@ -443,17 +427,10 @@ epoch_pupil <- function(
       ) |>
         nrow()
 
-      if (verbose) {
-        alert(
-          "info",
-          sprintf(
-            "[INFO] Block %s: found %d matching events for %s",
-            block_int,
-            n_events,
-            clean_string(msg_s)
-          )
-        )
-      }
+      log_info(
+        "Block {block_int}: found {n_events} matching events for {clean_string(msg_s)}",
+        verbose = verbose
+      )
     } else {
       n_events <- length(evs[[1]]$time)
     }
@@ -513,56 +490,40 @@ epoch_pupil <- function(
       x[[epoch_id]]$info[[bn]] <- epoch_info
     }
 
-    if (verbose) {
-      alert(
-        "success",
-        sprintf(
-          "[OKAY] Block %d: pupil data from %d unique event messages extracted",
-          block_int,
-          n_epochs
-        )
-      )
-    }
+    log_success(
+      "Block {block_int}: pupil data from {n_epochs} unique event messages extracted",
+      verbose = verbose
+    )
 
-    msg_str <- "\n[OKAY] Pupil epoching completed in %.2f seconds"
+    msg_str <- "Pupil epoching completed in %.2f seconds"
 
     if (a_bline && n_events > 0) {
       baseline_id <- processed_data[[bn]]$baseline$id
       x[[baseline_id]][[bn]] <- processed_data[[bn]]$baseline$res
 
-      if (verbose) {
-        alert(
-          "success",
-          sprintf(
-            "[OKAY] Block %d: %d epochs baselined",
-            block_int,
-            length(x[[baseline_id]][[bn]])
-          )
-        )
-      }
-      msg_str <- "\n[OKAY] Pupil epoching and baselining completed in %.2f secs"
+      log_success(
+        "Block {block_int}: {length(x[[baseline_id]][[bn]])} epochs baselined",
+        verbose = verbose
+      )
+      msg_str <- "Pupil epoching and baselining completed in %.2f secs"
     } else {
-      msg_str <- "\n[OKAY] Pupil epoching completed in %.2f seconds"
+      msg_str <- "Pupil epoching completed in %.2f seconds"
     }
 
     elapsed <- difftime(Sys.time(), start_time, units = "secs")
 
-    if (verbose) {
-      alert(
-        "success",
-        sprintf(
-          msg_str,
-          as.numeric(elapsed)
-        )
-      )
-    }
+    log_success(
+      sprintf(
+      msg_str,
+      as.numeric(elapsed)
+      ),
+      verbose = verbose
+    )
   }
 
   # recalculate epoched confounds if they exist, since new epochs were created
   if (!is.null(x$confounds$unepoched_timeseries)) {
-    if (verbose) {
-      alert("info", "[INFO] Recalculating epoched confounds for new epochs...")
-    }
+    log_info("Recalculating epoched confounds for new epochs...", verbose = verbose)
 
     # check for epoch data and compute confounds if present
     epoch_names <- grep("^epoch_", names(x), value = TRUE)
@@ -619,7 +580,7 @@ epoch_and_baseline_block <- function(
 ) {
   # input validation ---------------------------------------------------
   if (!is.list(x$timeseries)) {
-    cli::cli_abort("[EXIT] Input timeseries must be a list of blocks")
+    log_error("Input timeseries must be a list of blocks")
   }
 
   x$timeseries <- lapply(x$timeseries, function(block) {
@@ -637,10 +598,8 @@ epoch_and_baseline_block <- function(
   dt <- data.table::as.data.table(block_data)
 
   if (!"time_orig" %in% names(dt)) {
-    cli::cli_abort(
-      sprintf(
-        "[EXIT] Block '%s' doesn't contain the expected `time_orig` column."
-      )
+    log_error(
+      "Block '{block_name}' doesn't contain the expected `time_orig` column."
     )
   }
 
@@ -757,9 +716,7 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbo
   n_timestamps <- nrow(timestamps$start)
 
   if (n_timestamps == 0 && !is.null(n_timestamps)) {
-    if (verbose) {
-      alert("info", "[INFO] * No timestamps to process in this block... skipping.")
-    }
+    log_info("* No timestamps to process in this block... skipping.", verbose = verbose)
 
     return(list())
   }
@@ -787,19 +744,12 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbo
       length(epochs) > 0 &&
       length(epochs) != n_timestamps
   ) {
-    cli::cli_abort(sprintf(
-      paste0(
-        "[EXIT] Expected %d samples but got %d samples.",
-        "Check data for a possible matching error.",
-        n_timestamps,
-        length(epochs)
-      )
-    ))
+    log_error(
+      "Expected {n_timestamps} samples but got {length(epochs)} samples. Check data for a possible matching error."
+    )
   }
 
-  if (verbose) {
-    alert("success", "[OKAY] Done!")
-  }
+  log_success("Done!", verbose = verbose)
 
   epochs
 }
@@ -826,15 +776,15 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
   block_num <- ts_list[[3]]
 
   if (!is.data.frame(s_df)) {
-    cli::cli_abort("[EXIT] List item 1 must be a data frame (`start_events`)!")
+    log_error("List item 1 must be a data frame (`start_events`)!")
   }
 
   if (!is.data.frame(e_df)) {
-    cli::cli_abort("[EXIT] List item 2 must be a data frame (`end_events`)!")
+    log_error("List item 2 must be a data frame (`end_events`)!")
   }
 
   if (!is.numeric(block_num)) {
-    cli::cli_abort("[EXIT] List item 3 must be a numeric (`block`)!")
+    log_error("List item 3 must be a numeric (`block`)!")
   }
 
   epochs <- vector("list", nrow(s_df))
@@ -993,7 +943,7 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz, verbose) {
 #' @keywords internal
 epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
   if (nrow(start) != nrow(end)) {
-    cli::cli_abort("[EXIT] Start and end timestamps must have the same number of rows")
+    log_error("Start and end timestamps must have the same number of rows")
   }
 
   epochs <- vector("list", nrow(start))
