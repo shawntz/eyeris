@@ -22,16 +22,41 @@ including available subjects, sessions, tasks, and data types.
 }
 \examples{
 \donttest{
-# Get database summary
-summary <- eyeris_db_summary("~/my_bids_project")
+demo_data <- eyelink_asc_demo_dataset()
 
-# View available subjects
+demo_data |>
+  eyeris::glassbox() |>
+  eyeris::epoch(
+    events = "PROBE_{startstop}_{trial}",
+    limits = c(-1, 1),
+    label = "prePostProbe"
+  ) |>
+  eyeris::bidsify(
+    bids_dir = file.path(tempdir(), "my-cool-memory-project"),
+    participant_id = "001",
+    session_num = "01",
+    task_name = "assocret",
+    run_num = "03", # override default run-01 (block_1) to use run-03 instead
+    db_enabled = TRUE,
+    db_path = "my-cool-memory-study",
+  )
+
+# get database summary
+summary <- eyeris_db_summary(
+             file.path(
+               tempdir(),
+               "my-cool-memory-project"
+             ),
+             db_path = "my-cool-memory-study"
+           )
+
+# view available subjects
 summary$subjects
 
-# View available data types
+# view available data types
 summary$data_types
 
-# View table counts
+# view table counts
 summary$table_counts
 }
 
