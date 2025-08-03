@@ -258,52 +258,50 @@ plot(eyeris_preproc,
 
 ## 🗄 Database Storage: Scalable Alternative to CSV Files
 
-`eyeris` includes powerful database functionality powered by DuckDB that
-provides a scalable, efficient alternative to CSV file storage. This is
-especially valuable for large studies, cloud computing, and
+`eyeris` includes powerful database functionality powered by `DuckDB`
+that provides a scalable, efficient alternative to CSV file storage.
+This is especially valuable for large studies, cloud computing, and
 collaborative research projects.
 
 ### Why Use Databases?
 
 **🚀 Performance at Scale** - Handle hundreds of subjects efficiently
 vs. managing thousands of CSV files - Faster queries: filter and
-aggregate at the database level instead of loading all data into R -
+aggregate at the database level instead of loading all data into `R` -
 Reduced memory usage: load only the data you need
 
-**☁ Cloud Computing Optimized** - Dramatically reduce I/O costs on AWS,
-GCP, Azure - Single database file vs. thousands of CSV files for data
-transfer - Bandwidth efficient and cost-effective for large datasets
+**💯 Cloud Computing Optimized** - Reduce I/O costs on AWS, GCP, Azure -
+Single database file vs. thousands of CSV files for data transfer -
+Bandwidth efficient and cost-effective for large datasets
 
-**🔒 Data Integrity** - ACID compliance ensures data integrity during
-concurrent access - Built-in schema validation prevents data
+**🔒 Data Integrity** - Built-in schema validation prevents data
 corruption - Automatic metadata tracking and timestamps
 
-### Quick Start: Database Creation
+### Quick Start: `eyeris` Project Database Creation
 
-Enable database storage alongside or instead of CSV files:
+Enable `eyeris` project database storage alongside or instead of CSV
+files:
 
 ``` r
-# Create database alongside CSV files
 bidsify(
   processed_data,
   bids_dir = "~/my_study",
   participant_id = "001",
   session_num = "01", 
   task_name = "memory_task",
-  csv_enabled = TRUE,    # Traditional CSV files
-  db_enabled = TRUE,     # Also create database
+  csv_enabled = TRUE,    # keep traditional BIDS-style CSV output files
+  db_enabled = TRUE,     # but also create an eyeris project database
   db_path = "study_database"
 )
 
-# Cloud-optimized: Database only (no CSV files)
 bidsify(
   processed_data,
   bids_dir = "~/my_study",
   participant_id = "001", 
   session_num = "01",
   task_name = "memory_task", 
-  csv_enabled = FALSE,   # Skip CSV creation
-  db_enabled = TRUE,     # Database only
+  csv_enabled = FALSE,   # skip CSV creation
+  db_enabled = TRUE,     # cloud-optimized: Database only (no CSV files)
   db_path = "study_database"
 )
 ```
@@ -313,14 +311,14 @@ bidsify(
 Extract all your data with one function call:
 
 ``` r
-# Extract ALL data for ALL subjects
+# extract ALL data for ALL subjects
 all_data <- eyeris_db_collect("~/my_study", "study_database")
 
-# Access specific data types
+# access specific data types
 timeseries_data <- all_data$timeseries
 confounds_data <- all_data$run_confounds
 
-# Targeted extraction: specific subjects and data types
+# targeted extraction: specific subjects and data types
 subset_data <- eyeris_db_collect(
   "~/my_study", 
   "study_database",
@@ -332,29 +330,19 @@ subset_data <- eyeris_db_collect(
 ### Database Overview and Management
 
 ``` r
-# Get comprehensive database summary
+# get a comprehensive database summary
 summary <- eyeris_db_summary("~/my_study", "study_database")
-summary$subjects      # All subjects in database
-summary$data_types    # Available data types  
-summary$total_tables  # Number of tables
+summary$subjects      # all subjects in database
+summary$data_types    # available data types  
+summary$total_tables  # number of tables
 
-# Connect for custom operations
+# connect to eyeris database for custom operations
 con <- eyeris_db_connect("~/my_study", "study_database")
 # ... custom SQL queries ...
 eyeris_db_disconnect(con)
 ```
 
-### Performance Benefits
-
-For large studies (\>50 subjects), databases provide significant
-advantages:
-
-- **Storage efficiency**: 30-50% smaller than equivalent CSV files
-- **Query speed**: 5-10x faster data extraction for targeted analyses  
-- **Memory usage**: Load only needed data instead of entire datasets
-- **Cloud costs**: Dramatically reduced I/O and bandwidth costs
-
-> **💡 Tip**: Use `csv_enabled = FALSE, db_enabled = TRUE` for cloud
+> **💡 Pro Tip**: Use `csv_enabled = FALSE, db_enabled = TRUE` for cloud
 > computing to maximize efficiency and minimize costs.
 
 > **📖 Complete Guide**: See the [Database Storage
