@@ -1,9 +1,9 @@
 [format]
-line-width = 120
+line-width = 90
 indent-width = 2
 indent-style = "space"
 line-ending = "native"
-persistent-line-breaks = true
+persistent-line-breaks = false
 exclude = []
 default-exclude = true
 skip = []

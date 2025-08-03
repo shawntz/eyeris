@@ -4,6 +4,8 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST DEV RELEASES"
+    - text: "v2.1.1.9002 (devel)"
+      href: news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9001 (devel)"
       href: news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9000 (devel)"
@@ -107,6 +109,17 @@ reference:
       - plot_binocular_correlation
       - eyeris_color_palette
 
+  - title: "🗄 Database Storage & Analysis"
+    desc: >
+      High-performance database storage and querying powered by DuckDB. Scalable alternative to CSV files for large studies, cloud computing, and collaborative research.
+    contents:
+      - eyeris_db_collect
+      - eyeris_db_summary
+      - eyeris_db_connect
+      - eyeris_db_disconnect
+      - eyeris_db_read
+      - eyeris_db_list_tables
+
   - title: "🔧 Preprocessing Steps"
     desc: >
       Modular functions used by the `glassbox` pipeline for cleaning and transforming pupil data.
@@ -149,3 +162,4 @@ articles:
     contents:
     - anatomy
     - custom-extensions
+    - database-guide

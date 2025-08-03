@@ -36,10 +36,7 @@
 #' @export
 detrend <- function(eyeris, call_info = NULL) {
   call_info <- if (is.null(call_info)) {
-    list(
-      call_stack = match.call(),
-      parameters = list()
-    )
+    list(call_stack = match.call(), parameters = list())
   } else {
     call_info
   }
@@ -104,9 +101,5 @@ detrend_pupil <- function(x, prev_op) {
   coefficients <- fit$coefficients
   residuals <- fit$residuals
 
-  list(
-    fitted_values = fitted_values,
-    coefficients = coefficients,
-    residuals = residuals
-  )
+  list(fitted_values = fitted_values, coefficients = coefficients, residuals = residuals)
 }

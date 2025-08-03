@@ -8,20 +8,22 @@ run_bidsify(
   eyeris,
   save_all = TRUE,
   epochs_list = NULL,
-  merge_epochs = FALSE,
   bids_dir = NULL,
   participant_id = NULL,
   session_num = NULL,
   task_name = NULL,
   run_num = NULL,
-  merge_runs = FALSE,
   save_raw = TRUE,
   html_report = TRUE,
   report_seed = 0,
   report_epoch_grouping_var_col = "matched_event",
   eye_suffix = NULL,
   verbose = TRUE,
-  raw_binocular_object = NULL
+  csv_enabled = TRUE,
+  db_enabled = FALSE,
+  db_path = "my-project",
+  raw_binocular_object = NULL,
+  skip_db_cleanup = FALSE
 )
 }
 \arguments{
@@ -30,8 +32,6 @@ run_bidsify(
 \item{save_all}{Whether to save all data}
 
 \item{epochs_list}{A list of epochs to include}
-
-\item{merge_epochs}{Whether to merge epochs}
 
 \item{bids_dir}{The directory to save the bids data}
 
@@ -42,8 +42,6 @@ run_bidsify(
 \item{task_name}{The task name}
 
 \item{run_num}{The run number}
-
-\item{merge_runs}{Whether to merge runs}
 
 \item{save_raw}{Whether to save raw data}
 
@@ -57,7 +55,15 @@ run_bidsify(
 
 \item{verbose}{Whether to print verbose output}
 
+\item{csv_enabled}{Whether to save csv files}
+
+\item{db_enabled}{Whether to save data to the database}
+
+\item{db_path}{The path to the database}
+
 \item{raw_binocular_object}{The raw binocular object}
+
+\item{skip_db_cleanup}{Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands}
 }
 \value{
 A eyeris object

@@ -1,6 +1,10 @@
 # test that is_binocular_object function exists
 test_that("is_binocular_object function exists", {
-  expect_true(exists("is_binocular_object", where = asNamespace("eyeris"), inherits = FALSE))
+  expect_true(exists(
+    "is_binocular_object",
+    where = asNamespace("eyeris"),
+    inherits = FALSE
+  ))
 })
 
 test_that("deblink function uses binocular detection", {
@@ -36,6 +40,9 @@ test_that("is_binocular_object correctly identifies binocular and non-binocular 
   regular_result <- eyeris:::is_binocular_object(regular_obj)
   binocular_result <- eyeris:::is_binocular_object(binocular_obj)
 
-  expect_false(regular_result, info = "Regular object should not be identified as binocular")
+  expect_false(
+    regular_result,
+    info = "Regular object should not be identified as binocular"
+  )
   expect_true(binocular_result, info = "Binocular object should be correctly identified")
 })

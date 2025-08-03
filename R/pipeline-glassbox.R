@@ -131,20 +131,12 @@ glassbox <- function(
 
   # handle deprecated parameters
   if (is_present(confirm)) {
-    deprecate_warn(
-      "1.1.0",
-      "glassbox(confirm)",
-      "glassbox(interactive_preview)"
-    )
+    deprecate_warn("1.1.0", "glassbox(confirm)", "glassbox(interactive_preview)")
     interactive_preview <- confirm
   }
 
   if (is_present(num_previews)) {
-    deprecate_warn(
-      "1.1.0",
-      "glassbox(num_previews)",
-      "glassbox(preview_n)"
-    )
+    deprecate_warn("1.1.0", "glassbox(num_previews)", "glassbox(preview_n)")
     preview_n <- num_previews
   }
 
@@ -198,64 +190,58 @@ glassbox <- function(
 
   # guard params that accept lists in the event a boolean is supplied
   if ("load_asc" %in% names(list(...)) && isTRUE(list(...)$load_asc)) {
-    cli::cli_alert_warning(
-      paste(
-        "[WARN] `load_asc` expects a list of args (not a boolean)...",
-        "using default: `list(block = \"auto\")`"
-      )
+    log_warn(
+      "`load_asc` expects a list of args (not a boolean)... using default: `list(block = 'auto')`",
+      verbose = TRUE
     )
     params$load_asc <- default_params$load_asc
   }
 
   if ("deblink" %in% names(list(...)) && isTRUE(list(...)$deblink)) {
-    cli::cli_alert_warning(
-      paste(
-        "[WARN] `deblink` expects a list of args (not a boolean)...",
-        "using default: `list(extend = 50)`"
-      )
+    log_warn(
+      "`deblink` expects a list of args (not a boolean)... using default: `list(extend = 50)`",
+      verbose = TRUE
     )
     params$deblink <- default_params$deblink
   }
 
   if ("detransient" %in% names(list(...)) && isTRUE(list(...)$detransient)) {
-    cli::cli_alert_warning(
-      paste(
-        "[WARN] `detransient` expects a list of args (not a boolean)...",
-        "using default: `list(n = 16, mad_thresh = NULL)`"
-      )
+    log_warn(
+      "`detransient` expects a list of args (not a boolean)... using default: `list(n = 16, mad_thresh = NULL)`",
+      verbose = TRUE
     )
     params$detransient <- default_params$detransient
   }
 
   if ("lpfilt" %in% names(list(...)) && isTRUE(list(...)$lpfilt)) {
-    cli::cli_alert_warning(paste(
-      "[WARN] `lpfilt` expects a list of args (not a boolean)...",
-      "using default:",
-      "`list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose)`"
-    ))
+    log_warn(
+      "`lpfilt` expects a list of args (not a boolean)... using default: `list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = verbose)`",
+      verbose = TRUE
+    )
     params$lpfilt <- default_params$lpfilt
   }
 
   if ("downsample" %in% names(list(...)) && isTRUE(list(...)$downsample)) {
-    cli::cli_alert_warning(paste(
-      "[WARN] `downsample` expects a list of args (not a boolean)...",
-      "using default: `list(target_fs = 100, plot_freqz = verbose)`"
-    ))
+    log_warn(
+      "`downsample` expects a list of args (not a boolean)... using default: `list(target_fs = 100, plot_freqz = verbose)`",
+      verbose = TRUE
+    )
     params$downsample <- default_params$downsample
   }
 
   if ("bin" %in% names(list(...)) && isTRUE(list(...)$bin)) {
-    cli::cli_alert_warning(paste(
-      "[WARN] `bin` expects a list of args (not a boolean)...",
-      "using default: `list(bins_per_second = 10, method = \"mean\")`"
-    ))
+    log_warn(
+      "`bin` expects a list of args (not a boolean)... using default: `list(bins_per_second = 10, method = 'mean')`",
+      verbose = TRUE
+    )
     params$bin <- default_params$bin
   }
 
   # abort if both downsample and bin are enabled
-  step_status <- evaluate_pipeline_step_params(
-    list(downsample = params$downsample, bin = params$bin)
-  )
+  step_status <- evaluate_pipeline_step_params(list(
+    downsample = params$downsample,
+    bin = params$bin
+  ))
 
   if (
     !is.null(params$downsample) &&
@@ -263,12 +249,8 @@ glassbox <- function(
       step_status[1] &&
       step_status[2]
   ) {
-    cli::cli_abort(
-      c(
-        "[EXIT] Both 'downsample' and 'bin' steps are enabled.",
-        "x You cannot use both downsampling and binning in the same glassbox.",
-        "i Please enable only one (or neither) of these steps."
-      )
+    log_error(
+      "Both 'downsample' and 'bin' steps are enabled. You cannot use both downsampling and binning in the same glassbox. Please enable only one (or neither) of these steps."
     )
   }
 
@@ -277,21 +259,11 @@ glassbox <- function(
 
   if (
     which_steps[["detrend"]] &&
-      !any(which_steps[c(
-        "deblink",
-        "detransient",
-        "interpolate",
-        "lpfilt"
-      )])
+      !any(which_steps[c("deblink", "detransient", "interpolate", "lpfilt")])
   ) {
-    cli::cli_alert_warning(
-      paste(
-        "[WARN] Detrend is enabled but no other preprocessing steps are",
-        "enabled. This may cause plotting issues since there will be no pupil",
-        "columns to detrend against. Consider enabling at least one",
-        "preprocessing step before detrending, or disable detrending if you",
-        "want to work with raw data."
-      )
+    log_warn(
+      "Detrend is enabled but no other preprocessing steps are enabled. This may cause plotting issues since there will be no pupil columns to detrend against. Consider enabling at least one preprocessing step before detrending, or disable detrending if you want to work with raw data.",
+      verbose = TRUE
     )
   }
 
@@ -309,7 +281,8 @@ glassbox <- function(
         result <- eyeris::load_asc(
           data,
           block = params$load_asc$block,
-          binocular_mode = params$load_asc$binocular_mode
+          binocular_mode = params$load_asc$binocular_mode,
+          verbose = verbose
         )
         if (!is.list(result$params)) {
           result$params <- list()
@@ -317,7 +290,7 @@ glassbox <- function(
         result$params[["load_asc"]] <- call_info
         result
       } else {
-        cli::cli_abort("[EXIT] No data loaded... the glassbox pipeline cannot proceed.")
+        log_error("No data loaded... the glassbox pipeline cannot proceed.")
       }
     },
     deblink = function(data, params, original_call) {
@@ -326,11 +299,7 @@ glassbox <- function(
           call = original_call,
           parameters = list(extend = params$deblink$extend)
         )
-        eyeris::deblink(
-          data,
-          extend = params$deblink$extend,
-          call_info = call_info
-        )
+        eyeris::deblink(data, extend = params$deblink$extend, call_info = call_info)
       } else {
         data
       }
@@ -356,10 +325,7 @@ glassbox <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list(verbose = verbose)
-        )
+        call_info <- list(call = original_call, parameters = list(verbose = verbose))
         eyeris::interpolate(data, verbose = verbose, call_info = call_info)
       } else {
         data
@@ -443,10 +409,7 @@ glassbox <- function(
     },
     detrend = function(data, params, original_call) {
       if (which_steps[["detrend"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list()
-        )
+        call_info <- list(call = original_call, parameters = list())
         eyeris::detrend(data, call_info = call_info)
       } else {
         data
@@ -454,10 +417,7 @@ glassbox <- function(
     },
     zscore = function(data, params, original_call) {
       if (which_steps[["zscore"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list()
-        )
+        call_info <- list(call = original_call, parameters = list())
         eyeris::zscore(data, call_info = call_info)
       } else {
         data
@@ -471,16 +431,15 @@ glassbox <- function(
   next_step <- c()
 
   if (which_steps[["load_asc"]]) {
-    if (verbose) {
-      cli::cli_alert_success("[OKAY] Running eyeris::load_asc()")
-    }
+    log_success("Running eyeris::load_asc()", verbose = verbose)
     file <- pipeline[["load_asc"]](file, params, original_call)
 
     # handle binocular objects
     if (is_binocular_object(file)) {
-      if (verbose) {
-        cli::cli_alert_info("[INFO] Detected binocular data - processing left and right eyes separately")
-      }
+      log_info(
+        "Detected binocular data - processing left and right eyes separately",
+        verbose = verbose
+      )
 
       # process left eye
       left_result <- glassbox_internal(
@@ -535,14 +494,10 @@ glassbox <- function(
       )
 
       if (!prompt_user()) {
-        if (verbose) {
-          cli::cli_alert_info(
-            paste(
-              "[INFO] Process cancelled after loading data.",
-              "Adjust your parameters and re-run!\n"
-            )
-          )
-        }
+        log_info(
+          "Process cancelled after loading data. Adjust your parameters and re-run!",
+          verbose = verbose
+        )
         return(file)
       }
     }
@@ -563,9 +518,7 @@ glassbox <- function(
     all_params <- list()
 
     for (block_name in block_names) {
-      if (verbose) {
-        cli::cli_alert_info(paste0("[INFO] Processing block: ", block_name))
-      }
+      log_info("Processing block: {block_name}", verbose = verbose)
 
       temp_file <- file
       temp_file$timeseries <- list(file$timeseries[[block_name]])
@@ -601,11 +554,7 @@ glassbox <- function(
           skip_plot <- TRUE
 
           if (!is.null(temp_file$latest[[block_name]])) {
-            expected_col <- paste0(
-              temp_file$latest[[block_name]],
-              "_",
-              step_name
-            )
+            expected_col <- paste0(temp_file$latest[[block_name]], "_", step_name)
             block_data <- temp_file$timeseries[[block_name]]
             if (expected_col %in% colnames(block_data)) {
               temp_file$latest[[block_name]] <- expected_col
@@ -617,30 +566,10 @@ glassbox <- function(
           }
         }
 
-        if (verbose) {
-          if (action == "Running ") {
-            cli::cli_alert_success(
-              paste0(
-                "[OKAY] ",
-                action,
-                "eyeris::",
-                step_name,
-                "() for ",
-                block_name
-              )
-            )
-          } else {
-            cli::cli_alert_warning(
-              paste0(
-                "[WARN] ",
-                action,
-                "eyeris::",
-                step_name,
-                "() for ",
-                block_name
-              )
-            )
-          }
+        if (action == "Running ") {
+          log_success("{action}eyeris::{step_name}() for {block_name}", verbose = verbose)
+        } else {
+          log_warn("Skipping eyeris::{step_name}() for {block_name}", verbose = verbose)
         }
 
         step_to_run <- pipeline[[step_name]]
@@ -652,31 +581,16 @@ glassbox <- function(
           },
           error = function(e) {
             if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
-              cli::cli_alert_danger(
-                paste0(
-                  "[WARN] ",
-                  "Because missing pupil samples were not ",
-                  "interpolated, there is a mismatch in the number of samples ",
-                  "in the detrended data. Please set `interpolate` to `TRUE` ",
-                  "before detrending data OR disable detrending by setting ",
-                  "`detrend` to `FALSE`."
-                )
+              log_warn(
+                "Because missing pupil samples were not interpolated, there is a mismatch in the number of samples in the detrended data. Please set `interpolate` to `TRUE` before detrending data OR disable detrending by setting `detrend` to `FALSE`.",
+                verbose = TRUE
               )
             }
 
-            if (verbose) {
-              cli::cli_alert_warning(
-                paste0(
-                  "[WARN] ",
-                  "Skipping eyeris::",
-                  step_name,
-                  "() for ",
-                  block_name,
-                  ": ",
-                  e$message
-                )
-              )
-            }
+            log_warn(
+              "Skipping eyeris::{step_name}() for {block_name}: {e$message}",
+              verbose = verbose
+            )
             err_thrown <<- TRUE
             block_step_counter <<- block_step_counter - 1
 
@@ -690,8 +604,7 @@ glassbox <- function(
             if (length(pupil_cols) > 0) {
               # use last valid pupil column
               temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
-              block_states[[block_name]]$latest_pointer <-
-                temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
             } else {
               # fallback to original pointer for this block
               if (is.list(original_latest)) {
@@ -699,8 +612,7 @@ glassbox <- function(
               } else {
                 temp_file$latest[[block_name]] <- original_latest
               }
-              block_states[[block_name]]$latest_pointer <-
-                temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
             }
 
             temp_file
@@ -712,19 +624,18 @@ glassbox <- function(
             action == "Running " &&
             (step_name == "downsample" || step_name == "bin")
         ) {
-          cli::cli_alert_info(
-            paste(
-              "[INFO] Decimating sampling rate from",
-              temp_file$info$sample.rate,
-              "Hz -->",
-              temp_file$decimated.sample.rate,
-              "Hz..."
-            )
+          log_success(
+            "Decimating sampling rate from {temp_file$info$sample.rate} Hz --> {temp_file$decimated.sample.rate} Hz...",
+            verbose = verbose
           )
         }
 
         if (interactive_preview && !err_thrown && !skip_plot) {
-          pupil_steps <- grep("^pupil_", colnames(temp_file$timeseries[[block_name]]), value = TRUE)
+          pupil_steps <- grep(
+            "^pupil_",
+            colnames(temp_file$timeseries[[block_name]]),
+            value = TRUE
+          )
 
           if (block_step_counter + 1 <= length(names(pipeline))) {
             next_step <- c(next_step, pupil_steps[block_step_counter])
@@ -751,18 +662,10 @@ glassbox <- function(
 
           if (step_name != "zscore") {
             if (!prompt_user()) {
-              if (verbose) {
-                cli::cli_alert_info(
-                  paste(
-                    "[INFO] Process cancelled after running the",
-                    step_name,
-                    "step for",
-                    block_name,
-                    ".",
-                    "Adjust your parameters and re-run!\n"
-                  )
-                )
-              }
+              log_info(
+                "Process cancelled after running the {step_name} step for {block_name}. Adjust your parameters and re-run!",
+                verbose = verbose
+              )
               break
             }
           }
@@ -787,15 +690,14 @@ glassbox <- function(
       }
 
       # update block state with final state
-      block_states[[block_name]]$latest_pointer <-
-        temp_file$latest[[block_name]]
+      block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
       block_states[[block_name]]$steps_completed <- block_step_counter - 1
 
       # update main file's latest pointer for current block
       if (is.list(file$latest)) {
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       } else {
-        # Convert to list if it wasn't already
+        # convert to list if it wasn't already
         file$latest <- list()
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       }
@@ -814,28 +716,21 @@ glassbox <- function(
       file$params <- all_params
     }
 
-    if (verbose) {
-      cli::cli_alert_info("[INFO] Block processing summary:")
-      for (block_name in names(block_states)) {
-        state <- block_states[[block_name]]
-        status <- if (state$has_errors) "ERRORS" else "OK"
-        cli::cli_alert_info(sprintf(
-          "[INFO] %s: %s (steps: %d, latest: %s)",
-          block_name,
-          status,
-          state$steps_completed,
-          state$latest_pointer
-        ))
-      }
+    log_info("Block processing summary:", verbose = verbose)
+    for (block_name in names(block_states)) {
+      state <- block_states[[block_name]]
+      status <- if (state$has_errors) "ERRORS" else "OK"
+      log_info(
+        "{block_name}: {status} (steps: {state$steps_completed}, latest: {state$latest_pointer})",
+        verbose = verbose
+      )
     }
   } else {
-    cli::cli_abort("[EXIT] No data blocks found error.")
+    log_error("No data blocks found error.")
   }
 
   # generate confounds after all other steps
-  if (verbose) {
-    cli::cli_alert_success("[OKAY] Running eyeris::summarize_confounds()")
-  }
+  log_success("Running eyeris::summarize_confounds()", verbose = verbose)
 
   file <- eyeris::summarize_confounds(file)
 
@@ -876,40 +771,37 @@ plot_with_seed <- function(
     seed <- rlang::`%||%`(seed, sample.int(.Machine$integer.max, 1))
   }
 
-  withr::with_seed(
-    seed,
-    {
-      if (!is.null(block_name)) {
-        bn <- get_block_numbers(block_name)
-        plot(
-          file,
-          steps = step_counter,
-          preview_n = preview_n,
-          seed = seed,
-          preview_duration = preview_duration,
-          preview_window = preview_window,
-          only_linear_trend = only_linear_trend,
-          next_step = next_step,
-          block = bn,
-          suppress_prompt = FALSE,
-          verbose = verbose
-        )
-      } else {
-        plot(
-          file,
-          steps = step_counter,
-          preview_n = preview_n,
-          seed = seed,
-          preview_duration = preview_duration,
-          preview_window = preview_window,
-          only_linear_trend = only_linear_trend,
-          next_step = next_step,
-          suppress_prompt = FALSE,
-          verbose = verbose
-        )
-      }
+  withr::with_seed(seed, {
+    if (!is.null(block_name)) {
+      bn <- get_block_numbers(block_name)
+      plot(
+        file,
+        steps = step_counter,
+        preview_n = preview_n,
+        seed = seed,
+        preview_duration = preview_duration,
+        preview_window = preview_window,
+        only_linear_trend = only_linear_trend,
+        next_step = next_step,
+        block = bn,
+        suppress_prompt = FALSE,
+        verbose = verbose
+      )
+    } else {
+      plot(
+        file,
+        steps = step_counter,
+        preview_n = preview_n,
+        seed = seed,
+        preview_duration = preview_duration,
+        preview_window = preview_window,
+        only_linear_trend = only_linear_trend,
+        next_step = next_step,
+        suppress_prompt = FALSE,
+        verbose = verbose
+      )
     }
-  )
+  })
 }
 
 #' Prompt user for continuation
@@ -997,11 +889,7 @@ glassbox_internal <- function(
           call = original_call,
           parameters = list(extend = params$deblink$extend)
         )
-        eyeris::deblink(
-          data,
-          extend = params$deblink$extend,
-          call_info = call_info
-        )
+        eyeris::deblink(data, extend = params$deblink$extend, call_info = call_info)
       } else {
         data
       }
@@ -1027,10 +915,7 @@ glassbox_internal <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list(verbose = verbose)
-        )
+        call_info <- list(call = original_call, parameters = list(verbose = verbose))
         eyeris::interpolate(data, verbose = verbose, call_info = call_info)
       } else {
         data
@@ -1114,10 +999,7 @@ glassbox_internal <- function(
     },
     detrend = function(data, params, original_call) {
       if (which_steps[["detrend"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list()
-        )
+        call_info <- list(call = original_call, parameters = list())
         eyeris::detrend(data, call_info = call_info)
       } else {
         data
@@ -1125,10 +1007,7 @@ glassbox_internal <- function(
     },
     zscore = function(data, params, original_call) {
       if (which_steps[["zscore"]]) {
-        call_info <- list(
-          call = original_call,
-          parameters = list()
-        )
+        call_info <- list(call = original_call, parameters = list())
         eyeris::zscore(data, call_info = call_info)
       } else {
         data
@@ -1155,9 +1034,7 @@ glassbox_internal <- function(
     all_params <- list()
 
     for (block_name in block_names) {
-      if (verbose) {
-        cli::cli_alert_info(paste0("[INFO] Processing block: ", block_name))
-      }
+      log_info("Processing block: {block_name}", verbose = verbose)
 
       temp_file <- file
       temp_file$timeseries <- list(file$timeseries[[block_name]])
@@ -1193,11 +1070,7 @@ glassbox_internal <- function(
           skip_plot <- TRUE
 
           if (!is.null(temp_file$latest[[block_name]])) {
-            expected_col <- paste0(
-              temp_file$latest[[block_name]],
-              "_",
-              step_name
-            )
+            expected_col <- paste0(temp_file$latest[[block_name]], "_", step_name)
             block_data <- temp_file$timeseries[[block_name]]
             if (expected_col %in% colnames(block_data)) {
               temp_file$latest[[block_name]] <- expected_col
@@ -1209,32 +1082,11 @@ glassbox_internal <- function(
           }
         }
 
-        if (verbose) {
-          if (action == "Running ") {
-            cli::cli_alert_success(
-              paste0(
-                "[OKAY] ",
-                action,
-                "eyeris::",
-                step_name,
-                "() for ",
-                block_name
-              )
-            )
-          } else {
-            cli::cli_alert_warning(
-              paste0(
-                "[SKIP] ",
-                action,
-                "eyeris::",
-                step_name,
-                "() for ",
-                block_name
-              )
-            )
-          }
+        if (action == "Running ") {
+          log_success("{action}eyeris::{step_name}() for {block_name}", verbose = verbose)
+        } else {
+          log_warn("Skipping eyeris::{step_name}() for {block_name}", verbose = verbose)
         }
-
         step_to_run <- pipeline[[step_name]]
         err_thrown <- FALSE
 
@@ -1244,31 +1096,16 @@ glassbox_internal <- function(
           },
           error = function(e) {
             if (!which_steps[["interpolate"]] && which_steps[["detrend"]]) {
-              cli::cli_alert_danger(
-                paste0(
-                  "[WARN] ",
-                  "Because missing pupil samples were not ",
-                  "interpolated, there is a mismatch in the number of samples ",
-                  "in the detrended data. Please set `interpolate` to `TRUE` ",
-                  "before detrending data OR disable detrending by setting ",
-                  "`detrend` to `FALSE`."
-                )
+              log_warn(
+                "Because missing pupil samples were not interpolated, there is a mismatch in the number of samples in the detrended data. Please set `interpolate` to `TRUE` before detrending data OR disable detrending by setting `detrend` to `FALSE`.",
+                verbose = TRUE
               )
             }
 
-            if (verbose) {
-              cli::cli_alert_warning(
-                paste0(
-                  "[WARN] ",
-                  "Skipping eyeris::",
-                  step_name,
-                  "() for ",
-                  block_name,
-                  ": ",
-                  e$message
-                )
-              )
-            }
+            log_warn(
+              "Skipping eyeris::{step_name}() for {block_name}: {e$message}",
+              verbose = verbose
+            )
             err_thrown <<- TRUE
             block_step_counter <<- block_step_counter - 1
 
@@ -1282,8 +1119,7 @@ glassbox_internal <- function(
             if (length(pupil_cols) > 0) {
               # use last valid pupil column
               temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
-              block_states[[block_name]]$latest_pointer <-
-                temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
             } else {
               # fallback to original pointer for this block
               if (is.list(original_latest)) {
@@ -1291,8 +1127,7 @@ glassbox_internal <- function(
               } else {
                 temp_file$latest[[block_name]] <- original_latest
               }
-              block_states[[block_name]]$latest_pointer <-
-                temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
             }
 
             temp_file
@@ -1304,19 +1139,18 @@ glassbox_internal <- function(
             action == "Running " &&
             (step_name == "downsample" || step_name == "bin")
         ) {
-          cli::cli_alert_success(
-            paste(
-              "[OKAY] Decimating sampling rate from",
-              temp_file$info$sample.rate,
-              "Hz -->",
-              temp_file$decimated.sample.rate,
-              "Hz..."
-            )
+          log_success(
+            "Decimating sampling rate from {temp_file$info$sample.rate} Hz --> {temp_file$decimated.sample.rate} Hz...",
+            verbose = verbose
           )
         }
 
         if (interactive_preview && !err_thrown && !skip_plot) {
-          pupil_steps <- grep("^pupil_", colnames(temp_file$timeseries[[block_name]]), value = TRUE)
+          pupil_steps <- grep(
+            "^pupil_",
+            colnames(temp_file$timeseries[[block_name]]),
+            value = TRUE
+          )
 
           if (block_step_counter + 1 <= length(names(pipeline))) {
             next_step <- c(next_step, pupil_steps[block_step_counter])
@@ -1343,18 +1177,10 @@ glassbox_internal <- function(
 
           if (step_name != "zscore") {
             if (!prompt_user()) {
-              if (verbose) {
-                cli::cli_alert_info(
-                  paste(
-                    "[INFO] Process cancelled after running the",
-                    step_name,
-                    "step for",
-                    block_name,
-                    ".",
-                    "Adjust your parameters and re-run!\n"
-                  )
-                )
-              }
+              log_info(
+                "Process cancelled after running the {step_name} step for {block_name}. Adjust your parameters and re-run!",
+                verbose = verbose
+              )
               break
             }
           }
@@ -1379,15 +1205,14 @@ glassbox_internal <- function(
       }
 
       # update block state with final state
-      block_states[[block_name]]$latest_pointer <-
-        temp_file$latest[[block_name]]
+      block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
       block_states[[block_name]]$steps_completed <- block_step_counter - 1
 
       # update main file's latest pointer for current block
       if (is.list(file$latest)) {
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       } else {
-        # Convert to list if it wasn't already
+        # convert to list if it wasn't already
         file$latest <- list()
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       }
@@ -1406,29 +1231,21 @@ glassbox_internal <- function(
       file$params <- all_params
     }
 
-    if (verbose) {
-      cat("\nBlock processing summary:\n")
-      for (block_name in names(block_states)) {
-        state <- block_states[[block_name]]
-        status <- if (state$has_errors) "ERRORS" else "OK"
-        cat(sprintf(
-          "  %s: %s (steps: %d, latest: %s)\n",
-          block_name,
-          status,
-          state$steps_completed,
-          state$latest_pointer
-        ))
-      }
-      cat("\n")
+    log_info("Block processing summary:", verbose = verbose)
+    for (block_name in names(block_states)) {
+      state <- block_states[[block_name]]
+      status <- if (state$has_errors) "ERRORS" else "OK"
+      log_info(
+        "{block_name}: {status} (steps: {state$steps_completed}, latest: {state$latest_pointer})",
+        verbose = verbose
+      )
     }
   } else {
-    cli::cli_abort("[EXIT] No data blocks found error.")
+    log_error("No data blocks found error.")
   }
 
   # generate confounds after all other steps
-  if (verbose) {
-    cli::cli_alert_success("[OKAY] Running eyeris::summarize_confounds()")
-  }
+  log_success("Running eyeris::summarize_confounds()", verbose = verbose)
 
   file <- eyeris::summarize_confounds(file)
 

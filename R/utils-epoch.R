@@ -34,7 +34,7 @@ make_epoch_label <- function(evs, label, epoched_data) {
         epoched_data[[1]]$end_msg[1]
       ))
     } else {
-      cli::cli_abort("[EXIT] No epoched data available for label generation")
+      log_error("No epoched data available for label generation")
     }
   } else {
     paste0("epoch_", label)
@@ -159,7 +159,14 @@ slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
 #' @return A list containing start and end timestamps
 #'
 #' @keywords internal
-get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits, baseline_mode = FALSE) {
+get_timestamps <- function(
+  evs,
+  timestamped_events,
+  msg_s,
+  msg_e,
+  limits,
+  baseline_mode = FALSE
+) {
   start_ts <- NULL
   end_ts <- NULL
 
@@ -189,10 +196,7 @@ get_timestamps <- function(evs, timestamped_events, msg_s, msg_e, limits, baseli
       }
     }
   }
-  return(list(
-    start = start_ts,
-    end = end_ts
-  ))
+  return(list(start = start_ts, end = end_ts))
 }
 
 #' Process event messages and merge with timeseries
@@ -225,7 +229,7 @@ merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE
     "|"
   )
 
-  # Use text_unique if available, otherwise fall back to text
+  # use text_unique if available, otherwise fall back to text
   if ("text_unique" %in% colnames(events)) {
     event_messages <- dplyr::pull(events, text_unique)
     event_text_original <- dplyr::pull(events, text)
@@ -258,11 +262,7 @@ merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE
     prefix <- substr(metadata_template, 1, nchar(metadata_template) - 1)
 
     for (char in special_chars) {
-      prefix <- stringr::str_replace_all(
-        prefix,
-        stringr::fixed(char),
-        paste0("\\", char)
-      )
+      prefix <- stringr::str_replace_all(prefix, stringr::fixed(char), paste0("\\", char))
     }
 
     regex_pattern <- paste0("^", prefix, ".*$")

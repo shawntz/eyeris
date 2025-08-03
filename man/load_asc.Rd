@@ -7,7 +7,8 @@
 load_asc(
   file,
   block = "auto",
-  binocular_mode = c("average", "left", "right", "both")
+  binocular_mode = c("average", "left", "right", "both"),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ following are valid options:
 \item "right": Uses only the right eye pupil size.
 \item "both": Uses both the left and right eye pupil sizes independently.
 }}
+
+\item{verbose}{Logical. Whether to print verbose output (default TRUE).}
 }
 \value{
 An object of S3 class \code{eyeris} with the following attributes:

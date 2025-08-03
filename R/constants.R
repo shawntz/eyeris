@@ -67,13 +67,5 @@ eyelink_asc_binocular_demo_dataset <- function() {
 #'
 #' @export
 eyeris_color_palette <- function() {
-  c(
-    "#E41A1C",
-    "#377EB8",
-    "#4DAF4A",
-    "#984EA3",
-    "#FF7F00",
-    "#F781BF",
-    "#A65628"
-  )
+  c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#F781BF", "#A65628")
 }

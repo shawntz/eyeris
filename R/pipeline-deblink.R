@@ -54,10 +54,7 @@
 #' @export
 deblink <- function(eyeris, extend = 50, call_info = NULL) {
   call_info <- if (is.null(call_info)) {
-    list(
-      call_stack = match.call(),
-      parameters = list(extend = extend)
-    )
+    list(call_stack = match.call(), parameters = list(extend = extend))
   } else {
     call_info
   }
@@ -66,20 +63,10 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
   if (is_binocular_object(eyeris)) {
     # process left and right eyes independently
     left_result <- eyeris$left |>
-      pipeline_handler(
-        deblink_pupil,
-        "deblink",
-        extend = extend,
-        call_info = call_info
-      )
+      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
 
     right_result <- eyeris$right |>
-      pipeline_handler(
-        deblink_pupil,
-        "deblink",
-        extend = extend,
-        call_info = call_info
-      )
+      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
 
     # return combined structure
     list_out <- list(
@@ -95,12 +82,7 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
   } else {
     # regular eyeris object, process normally
     eyeris |>
-      pipeline_handler(
-        deblink_pupil,
-        "deblink",
-        extend = extend,
-        call_info = call_info
-      )
+      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
   }
 }
 
@@ -149,38 +131,36 @@ deblink_pupil <- function(x, prev_op, extend) {
     extend_backward <- extend[1]
     extend_forward <- extend[2]
   } else {
-    cli::cli_abort(
-      paste(
-        "[EXIT] extend must either be a single integer (symmetric) or a vector of",
-        "length 2 (asymmetric) in the format `c(backward, forward)`!"
-      )
+    log_error(
+      "extend must either be a single integer (symmetric) or a vector of length 2 (asymmetric) in the format `c(backward, forward)`!"
     )
   }
 
   x |>
-    dplyr::select(
-      time = time_orig,
-      pupil = !!column
-    ) |>
+    dplyr::select(time = time_orig, pupil = !!column) |>
     dplyr::mutate(
       blink = ifelse(is.na(pupil), 1, 0),
       blink.lag = dplyr::lag(blink),
       blink.lead = dplyr::lead(blink),
-      blink.start = ifelse(blink == 1 & !is.na(blink.lag) & blink.lag == 0, time, as.numeric(NA)),
+      blink.start = ifelse(
+        blink == 1 & !is.na(blink.lag) & blink.lag == 0,
+        time,
+        as.numeric(NA)
+      ),
       blink.start = zoo::na.locf(blink.start, na.rm = FALSE, fromLast = TRUE),
-      blink.end = ifelse(blink == 1 & !is.na(blink.lead) & blink.lead == 0, time, as.numeric(NA)),
+      blink.end = ifelse(
+        blink == 1 & !is.na(blink.lead) & blink.lead == 0,
+        time,
+        as.numeric(NA)
+      ),
       blink.end = zoo::na.locf(blink.end, na.rm = FALSE),
       blink = ifelse(
-        !is.na(blink.start) &
-          time >= blink.start - extend_backward &
-          time <= blink.start,
+        !is.na(blink.start) & time >= blink.start - extend_backward & time <= blink.start,
         1,
         blink
       ),
       blink = ifelse(
-        !is.na(blink.end) &
-          time <= blink.end + extend_forward &
-          time >= blink.end,
+        !is.na(blink.end) & time <= blink.end + extend_forward & time >= blink.end,
         1,
         blink
       ),

@@ -4,12 +4,14 @@
 \alias{find_baseline_structure}
 \title{Find baseline structure name for a given epoch}
 \usage{
-find_baseline_structure(eyeris, epoch_label)
+find_baseline_structure(eyeris, epoch_label, verbose = TRUE)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
 \item{epoch_label}{The epoch label (without "epoch_" prefix)}
+
+\item{verbose}{Logical. Whether to print detailed output (default TRUE)}
 }
 \value{
 The baseline structure name or \code{NULL} if not found
