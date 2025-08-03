@@ -795,7 +795,7 @@ glassbox <- function(
       if (is.list(file$latest)) {
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       } else {
-        # Convert to list if it wasn't already
+        # convert to list if it wasn't already
         file$latest <- list()
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       }
@@ -1387,7 +1387,7 @@ glassbox_internal <- function(
       if (is.list(file$latest)) {
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       } else {
-        # Convert to list if it wasn't already
+        # convert to list if it wasn't already
         file$latest <- list()
         file$latest[[block_name]] <- temp_file$latest[[block_name]]
       }
