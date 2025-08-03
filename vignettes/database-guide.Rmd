@@ -30,20 +30,24 @@ The `eyeris` package provides powerful database functionality that serves as an 
 ### The Case for Database Storage
 
 **1. Scalability and Performance**
+
 - **Massive datasets**: When processing hundreds or thousands of subjects, CSV files can become unwieldy. A single database file can efficiently store data from thousands of participants.
 - **Faster queries**: Instead of reading multiple CSV files and filtering in `R`, databases can filter and aggregate data at the storage level, dramatically reducing memory usage and processing time.
 - **Concurrent access**: Multiple researchers can query the same database simultaneously without file locking issues.
 
 **2. Cloud Computing Advantages** 
+
 - **Reduced I/O costs**: On cloud platforms (AWS, GCP, Azure), reading many small CSV files incurs significant I/O costs. A single database file reduces these costs dramatically.
 - **Bandwidth efficiency**: Transferring one database file is much faster than syncing thousands of CSV files.
 - **Storage optimization**: Databases compress data more efficiently than individual CSV files.
 
 **3. Data Integrity and Management**
+
 - **Schema validation**: Built-in data type validation prevents corruption.
 - **Metadata storage**: Databases automatically track creation timestamps, data types, and relationships.
 
 **4. Analysis Efficiency**
+
 - **`SQL` queries**: Leverage the power of `SQL` for complex filtering, aggregation, and joins.
 - **Memory efficiency**: Load only the data you need instead of entire datasets.
 - **Cross-platform compatibility**: `DuckDB` databases work across `R`, `Python`, and other analysis platforms.
@@ -51,12 +55,14 @@ The `eyeris` package provides powerful database functionality that serves as an 
 ### When to Use CSV vs a Database
 
 **Use CSV files when:**
+
 - Small datasets (< 10 subjects)
 - Simple analysis workflows
 - Need human-readable data formats
 - Working with external tools that require CSV input
 
 **Use databases when:**
+
 - Large datasets (> 20 subjects)
 - Complex queries across multiple data types
 - Cloud computing environments
