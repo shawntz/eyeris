@@ -9,7 +9,7 @@ epoch_only_start_msg(eyeris, start, hz, verbose)
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{start}{A dataframe containing the start timestamps}
+\item{start}{A data frame containing the start timestamps}
 
 \item{hz}{Sampling rate in Hz}
 

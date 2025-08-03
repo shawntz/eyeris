@@ -111,5 +111,5 @@ demo_data |>
 \code{\link[eyelinker:read.asc]{eyelinker::read.asc()}} which this function wraps.
 
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step
-as part of the full eyeris glassbox preprocessing pipeline.
+as part of the full \code{eyeris} glassbox preprocessing pipeline.
 }

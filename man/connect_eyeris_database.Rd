@@ -17,7 +17,7 @@ connect_eyeris_database(bids_dir, db_path = "my-project", verbose = FALSE)
 DBI database connection object
 }
 \description{
-Creates a new DuckDB database for the eyeris project or connects to an existing one.
+Creates a new \code{DuckDB} database for the \code{eyeris} project or connects to an existing one.
 The database will be created in the BIDS derivatives directory.
 }
 \keyword{internal}

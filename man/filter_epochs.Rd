@@ -15,6 +15,6 @@ filter_epochs(eyeris, epochs)
 A character vector of epoch names that start with "epoch_"
 }
 \description{
-Extracts names of epoch-related elements from an eyeris object.
+Extracts names of epoch-related elements from an \code{eyeris} object.
 }
 \keyword{internal}

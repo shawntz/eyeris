@@ -1,11 +1,11 @@
-#' Index metadata from dataframe
+#' Index metadata from data frame
 #'
-#' Extracts a single row of metadata from a dataframe.
+#' Extracts a single row of metadata from a data frame.
 #'
-#' @param x The dataframe to index
+#' @param x The data frame to index
 #' @param i The row index
 #'
-#' @return A single row from the dataframe
+#' @return A single row from the data frame
 #'
 #' @keywords internal
 index_metadata <- function(x, i) {
@@ -68,16 +68,16 @@ sanitize_event_tag <- function(string, prefix = "epoch_") {
   paste0(prefix, gsub("\\d", "", camel_case_str))
 }
 
-#' Slice epoch from raw timeseries data
+#' Slice epoch from raw time series data
 #'
-#' Extracts a time segment from raw timeseries data based on start and
+#' Extracts a time segment from raw time series data based on start and
 #' end times.
 #'
-#' @param x_raw The raw timeseries dataframe
+#' @param x_raw The raw time series data frame
 #' @param s Start time in milliseconds
 #' @param e End time in milliseconds
 #'
-#' @return A dataframe containing the epoch data
+#' @return A data frame containing the epoch data
 #'
 #' @keywords internal
 slice_epoch <- function(x_raw, s, e) {
@@ -92,12 +92,12 @@ slice_epoch <- function(x_raw, s, e) {
 
 #' Slice epochs with no explicit limits
 #'
-#' Creates epochs using adjacent timestamps without explicit time limits.
+#' Creates epochs using adjacent time stamps without explicit time limits.
 #'
-#' @param x_raw The raw timeseries dataframe
-#' @param all_ts A dataframe containing timestamp information
+#' @param x_raw The raw time series data frame
+#' @param all_ts A data frame containing timestamp information
 #'
-#' @return A list of epoch dataframes
+#' @return A list of epoch data frames
 #'
 #' @keywords internal
 slice_epochs_no_limits <- function(x_raw, all_ts) {
@@ -126,12 +126,12 @@ slice_epochs_no_limits <- function(x_raw, all_ts) {
 #'
 #' Creates epochs using explicit time limits around a central timestamp.
 #'
-#' @param x_raw The raw timeseries dataframe
+#' @param x_raw The raw time series data frame
 #' @param cur_ts The central timestamp
 #' @param lims Time limits in seconds (negative for before, positive for after)
 #' @param hz Sampling rate in Hz
 #'
-#' @return A dataframe containing the epoch data
+#' @return A data frame containing the epoch data
 #'
 #' @keywords internal
 slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
@@ -150,7 +150,7 @@ slice_epochs_with_limits <- function(x_raw, cur_ts, lims, hz) {
 #' Extracts start and end timestamps from events data based on message patterns.
 #'
 #' @param evs Event messages or list of events
-#' @param timestamped_events Events dataframe with timestamps
+#' @param timestamped_events Events data frame with timestamps
 #' @param msg_s Start message pattern
 #' @param msg_e End message pattern
 #' @param limits Time limits for wildcard mode
@@ -199,16 +199,16 @@ get_timestamps <- function(
   return(list(start = start_ts, end = end_ts))
 }
 
-#' Process event messages and merge with timeseries
+#' Process event messages and merge with time series
 #'
 #' Matches event messages against templates and extracts metadata,
 #' supporting both exact matches and pattern matching with wildcards.
 #'
-#' @param events Events dataframe with timestamps and messages
+#' @param events Events data frame with timestamps and messages
 #' @param metadata_template Template pattern to match against
 #' @param merge Whether to merge results (default: `TRUE`)
 #'
-#' @return A dataframe with matched events and extracted metadata
+#' @return A data frame with matched events and extracted metadata
 #'
 #' @keywords internal
 merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE) {

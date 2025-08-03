@@ -31,7 +31,7 @@ create_table_name(
 Character string with table name
 }
 \description{
-Generates a standardized table name for eyeris data based on the data type
+Generates a standardized table name for \code{eyeris} data based on the data type
 and subject information.
 }
 \keyword{internal}

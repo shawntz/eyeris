@@ -35,7 +35,7 @@
 #' @return An `eyeris` object with downsampled data and updated sampling rate.
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full `eyeris` glassbox preprocessing pipeline.
 #' [eyeris::bin()] for binning functionality.
 #'
 #' @examples

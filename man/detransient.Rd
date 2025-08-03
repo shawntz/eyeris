@@ -38,7 +38,7 @@ here directly via this \code{mad_thresh} parameter.
 it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
-An \code{eyeris} object with a new column in \code{timeseries}:
+An \code{eyeris} object with a new column in \verb{time series}:
 \verb{pupil_raw_\{...\}_detransient}
 }
 \description{
@@ -107,5 +107,5 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.
+part of the full \code{eyeris} glassbox preprocessing pipeline.
 }

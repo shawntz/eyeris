@@ -29,7 +29,7 @@ must also indicate "(y)es" or "(n)o" to either proceed or cancel the
 current \code{glassbox} pipeline operation (set to \code{TRUE})}
 
 \item{preview_n}{Number of random example "epochs" to generate for
-previewing the effect of each preprocessing step on the pupil timeseries}
+previewing the effect of each preprocessing step on the pupil time series}
 
 \item{preview_duration}{Time in seconds of each randomly selected preview}
 
@@ -55,7 +55,7 @@ the current processing step and run silently}
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead}
 
 \item{detrend_data}{\strong{(Deprecated)} A flag to indicate whether to run the
-\code{detrend} step (set to \code{FALSE} by default). Detrending your pupil timeseries
+\code{detrend} step (set to \code{FALSE} by default). Detrending your pupil time series
 can have unintended consequences; we thus recommend that users understand the
 implications of detrending -- in addition to whether detrending is
 appropriate for the research design and question(s) -- before using this
@@ -93,10 +93,10 @@ Third, \code{glassbox} provides an "interactive" framework where you can evaluat
 the consequences of the parameters within each step on your data in real
 time, facilitating a fairly easy-to-use workflow for parameter optimization
 on your particular dataset. This process essentially takes each of the
-opinionated steps and provides a pre-/post-plot of the timeseries data for
+opinionated steps and provides a pre-/post-plot of the time series data for
 each step so you can adjust parameters and re-run the pipeline until you are
 satisfied with the choices of your parameters and their consequences on your
-pupil timeseries data.
+pupil time series data.
 }
 \examples{
 demo_data <- eyelink_asc_demo_dataset()

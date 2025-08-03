@@ -30,7 +30,7 @@ create_epoch_images_zip(
 
 \item{pupil_steps}{Vector of pupil processing steps}
 
-\item{eyeris_object}{The full eyeris object (needed for screen dimensions)}
+\item{eyeris_object}{The full \code{eyeris} object (needed for screen dimensions)}
 
 \item{eye_suffix}{Optional eye suffix for binocular data}
 

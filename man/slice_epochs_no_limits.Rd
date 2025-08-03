@@ -7,14 +7,14 @@
 slice_epochs_no_limits(x_raw, all_ts)
 }
 \arguments{
-\item{x_raw}{The raw timeseries dataframe}
+\item{x_raw}{The raw time series data frame}
 
-\item{all_ts}{A dataframe containing timestamp information}
+\item{all_ts}{A data frame containing timestamp information}
 }
 \value{
-A list of epoch dataframes
+A list of epoch data frames
 }
 \description{
-Creates epochs using adjacent timestamps without explicit time limits.
+Creates epochs using adjacent time stamps without explicit time limits.
 }
 \keyword{internal}

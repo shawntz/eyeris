@@ -10,10 +10,10 @@ is_binocular_object(x)
 \item{x}{The \code{eyeris} object to check}
 }
 \value{
-Logical indicating whether the object is a binocular eyeris object
+Logical indicating whether the object is a binocular \code{eyeris} object
 }
 \description{
-Detects whether an object is a binocular eyeris object created with
+Detects whether an object is a binocular \code{eyeris} object created with
 \code{binocular_mode = "both"}.
 }
 \keyword{internal}

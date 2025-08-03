@@ -24,7 +24,7 @@ process_eyeris_data(x, block, eye, hz, pupil_type, file, binoc, binoc_mode)
 \item{binoc_mode}{Binocular mode ("average", "left", "right", "both")}
 }
 \value{
-An eyeris object
+An \code{eyeris} object
 }
 \description{
 Process eyeris data and create eyeris object

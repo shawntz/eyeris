@@ -17,7 +17,7 @@ eyeris_db_summary(bids_dir, db_path = "my-project", verbose = TRUE)
 A named list containing summary information about the database contents
 }
 \description{
-Provides a quick overview of the contents of an eyeris database,
+Provides a quick overview of the contents of an \code{eyeris} database,
 including available subjects, sessions, tasks, and data types.
 }
 \examples{

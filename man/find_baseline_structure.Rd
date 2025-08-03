@@ -18,6 +18,6 @@ The baseline structure name or \code{NULL} if not found
 }
 \description{
 Helper function to find the correct baseline structure name that matches
-the complex baseline naming scheme used by eyeris.
+the complex baseline naming scheme used by \code{eyeris}.
 }
 \keyword{internal}

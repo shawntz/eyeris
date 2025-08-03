@@ -7,12 +7,12 @@
 check_epoch_manual_input_data(ts_list)
 }
 \arguments{
-\item{ts_list}{A list containing both start \emph{and} end timestamp dataframes}
+\item{ts_list}{A list containing both start \emph{and} end timestamp data frames}
 }
 \value{
 No return value; throws error if structure is invalid
 }
 \description{
-Validates that the events argument is a list of two dataframes.
+Validates that the events argument is a list of two data frames.
 }
 \keyword{internal}

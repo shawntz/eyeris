@@ -293,7 +293,7 @@ test_that("database integration works correctly", {
       stringsAsFactors = FALSE
     )
 
-    # test epoched timeseries with epoch label
+    # test epoched time series with epoch label
     result <- write_eyeris_data_to_db(
       data = test_data,
       con = con,

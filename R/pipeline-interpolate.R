@@ -33,7 +33,7 @@
 #' `pupil_raw_{...}_interpolate`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as
-#' part of the full eyeris glassbox preprocessing pipeline.
+#' part of the full `eyeris` glassbox preprocessing pipeline.
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()

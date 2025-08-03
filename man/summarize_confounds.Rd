@@ -25,7 +25,7 @@ Each step contains metrics such as:
 Calculates various confounding variables for pupil data, including blink
 statistics, gaze position metrics, and pupil size characteristics. These
 confounds are calculated separately for each preprocessing step, recording
-block, and epoched timeseries in the eyeris object.
+block, and epoched time series in the \code{eyeris} object.
 }
 \examples{
 # load demo dataset
@@ -41,10 +41,10 @@ confounds <- demo_data |>
   ) |>
   eyeris::summarize_confounds()
 
-# access confounds for entire timeseries for a specific block and step
+# access confounds for entire time series for a specific block and step
 confounds$confounds$unepoched_timeseries
 
-# access confounds for a specific epoched timeseries
+# access confounds for a specific epoched time series
 # for a specific block and step
 confounds$confounds$epoched_timeseries
 confounds$confounds$epoched_epoch_wide

@@ -2,19 +2,19 @@
 % Please edit documentation in R/utils-epoch.R
 \name{merge_events_with_timeseries}
 \alias{merge_events_with_timeseries}
-\title{Process event messages and merge with timeseries}
+\title{Process event messages and merge with time series}
 \usage{
 merge_events_with_timeseries(events, metadata_template, merge = TRUE)
 }
 \arguments{
-\item{events}{Events dataframe with timestamps and messages}
+\item{events}{Events data frame with timestamps and messages}
 
 \item{metadata_template}{Template pattern to match against}
 
 \item{merge}{Whether to merge results (default: \code{TRUE})}
 }
 \value{
-A dataframe with matched events and extracted metadata
+A data frame with matched events and extracted metadata
 }
 \description{
 Matches event messages against templates and extracts metadata,

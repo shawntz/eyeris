@@ -2,14 +2,14 @@
 % Please edit documentation in R/pipeline-epoch.R
 \name{epoch_manually}
 \alias{epoch_manually}
-\title{Manually epoch using provided start/end dataframes of timestamps}
+\title{Manually epoch using provided start/end data frames of timestamps}
 \usage{
 epoch_manually(eyeris, ts_list, hz, verbose)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{ts_list}{A list containing start/end dataframes of timestamps}
+\item{ts_list}{A list containing start/end data frames of timestamps}
 
 \item{hz}{Sampling rate in Hz}
 
@@ -19,7 +19,7 @@ epoch_manually(eyeris, ts_list, hz, verbose)
 A list containing epoch results
 }
 \description{
-This function manually epochs data using provided start/end dataframes
+This function manually epochs data using provided start/end data frames
 of timestamps.
 }
 \details{

@@ -7,7 +7,7 @@
 slice_epochs_with_limits(x_raw, cur_ts, lims, hz)
 }
 \arguments{
-\item{x_raw}{The raw timeseries dataframe}
+\item{x_raw}{The raw time series data frame}
 
 \item{cur_ts}{The central timestamp}
 
@@ -16,7 +16,7 @@ slice_epochs_with_limits(x_raw, cur_ts, lims, hz)
 \item{hz}{Sampling rate in Hz}
 }
 \value{
-A dataframe containing the epoch data
+A data frame containing the epoch data
 }
 \description{
 Creates epochs using explicit time limits around a central timestamp.

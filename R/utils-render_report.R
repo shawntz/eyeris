@@ -14,7 +14,7 @@ render_report <- function(rmd_f) {
 
 #' Create eyeris report
 #'
-#' Generates a comprehensive HTML report for eyeris preprocessing results.
+#' Generates a comprehensive HTML report for `eyeris` preprocessing results.
 #'
 #' @param eyeris An `eyeris` object containing preprocessing results
 #' @param out Output directory for the report
@@ -22,7 +22,7 @@ render_report <- function(rmd_f) {
 #' @param eye_suffix Optional eye suffix (e.g., "eye-L", "eye-R") for binocular data
 #' @param ... Additional parameters passed from bidsify
 #'
-#' @return Path to the generated R Markdown file
+#' @return Path to the generated `R Markdown` file
 #'
 #' @keywords internal
 make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
@@ -260,11 +260,11 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   rmd_f
 }
 
-#' Create markdown table from dataframe
+#' Create markdown table from data frame
 #'
-#' Converts a dataframe into a markdown table.
+#' Converts a data frame into a markdown table.
 #'
-#' @param df The dataframe to convert
+#' @param df The data frame to convert
 #'
 #' @return A character string containing the markdown table content
 #'
@@ -279,11 +279,11 @@ make_md_table <- function(df) {
   md_table
 }
 
-#' Create multiline markdown table from dataframe
+#' Create multiline markdown table from data frame
 #'
-#' Converts a dataframe into a multiline markdown table.
+#' Converts a data frame into a multiline markdown table.
 #'
-#' @param df The dataframe to convert
+#' @param df The data frame to convert
 #'
 #' @return A character string containing the markdown table content
 #'
@@ -411,7 +411,7 @@ print_plots <- function(plots, eye_suffix = NULL) {
 
 #' Save detrend plots for each block
 #'
-#' Generates and saves detrend diagnostic plots for each block in the eyeris
+#' Generates and saves detrend diagnostic plots for each block in the `eyeris`
 #' object.
 #'
 #' @param eyeris An `eyeris` object containing preprocessing results
@@ -485,7 +485,7 @@ save_detrend_plots <- function(
 #' multiple preprocessing stages overlaid on the same time series, allowing
 #' users to see how each step modifies the pupil signal.
 #'
-#' @param pupil_data A data frame containing pupil timeseries data with
+#' @param pupil_data A data frame containing pupil time series data with
 #'   multiple preprocessing columns (e.g., `eyeris$timeseries$block_1`)
 #' @param pupil_steps Character vector of column names containing pupil data
 #'   at different preprocessing stages
@@ -630,7 +630,7 @@ make_prog_summary_plot <- function(
 
 #' Save progressive summary plots for each block
 #'
-#' Generates and saves progressive summary plots for each block in the eyeris
+#' Generates and saves progressive summary plots for each block in the `eyeris`
 #' object.
 #'
 #' @param eyeris An `eyeris` object containing preprocessing results
@@ -663,7 +663,7 @@ save_progressive_summary_plots <- function(
   )))
 
   md_content <- paste(
-    "This visualization shows how the pupil timeseries changes across",
+    "This visualization shows how the pupil time series changes across",
     "preprocessing steps. ",
     "Each layer represents a different",
     "preprocessing step, with the earliest step at the back ",

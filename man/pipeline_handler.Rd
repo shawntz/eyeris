@@ -7,26 +7,26 @@
 pipeline_handler(eyeris, operation, new_suffix, ...)
 }
 \arguments{
-\item{eyeris}{An object of class \code{eyeris} containing timeseries data
-in a list of dataframes (one per block), various metadata collected
+\item{eyeris}{An object of class \code{eyeris} containing time series data
+in a list of data frames (one per block), various metadata collected
 by the tracker, and \code{eyeris} specific pointers for tracking the
 preprocessing history for that specific instance of the \code{eyeris} object}
 
-\item{operation}{The name of the function to apply to the timeseries data.
-This custom function should accept a dataframe \code{x}, a string \code{prev_op}
+\item{operation}{The name of the function to apply to the time series data.
+This custom function should accept a data frame \code{x}, a string \code{prev_op}
 (i.e., the name of the previous pupil column -- which you DO NOT need to
 supply as a literal string as this is inferred from the \code{latest} pointer
 within the \code{eyeris} object), and any custom parameters you would like}
 
 \item{new_suffix}{A character string indicating the suffix you would like
 to be appended to the name of the previous operation's column, which will
-be used for the new column name in the updated preprocessed dataframe(s)}
+be used for the new column name in the updated preprocessed data frame(s)}
 
 \item{...}{Additional (optional) arguments passed to the \code{operation} method}
 }
 \value{
 An updated \code{eyeris} object with the new column added to the
-\code{timeseries} dataframe and the \code{latest} pointer updated to the name of the
+\code{timeseries} data frame and the \code{latest} pointer updated to the name of the
 most recently added column plus all previous columns (ie, the history "trace"
 of preprocessing steps from start-to-present)
 }
@@ -45,7 +45,7 @@ Following the \code{eyeris} protocol also ensures:
 \item all operations follow a predictable structure, and
 \item that new pupil data columns based on previous operations in the
 chain are able to be dynamically constructed within the core
-timeseries data frame.
+time series data frame.
 }
 }
 \examples{
