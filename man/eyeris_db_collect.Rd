@@ -64,7 +64,7 @@ eyeris::bidsify(
   session_num = "01",
   task_name = "assocret",
   run_num = "03", # override default run-01 (block_1) to use run-03 instead
-  db_enabled = TRUE # Enable database storage
+  db_enabled = TRUE # enable database storage
 )
 
 # extract all data for all subjects (returns list of dataframes)
