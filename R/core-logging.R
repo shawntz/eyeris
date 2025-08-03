@@ -45,13 +45,16 @@ log_message <- function(
 
   # apply glue interpolation if there are braces, but handle errors gracefully
   if (grepl("\\{.*\\}", message_text)) {
-    tryCatch({
-      message_text <- glue::glue(message_text, .envir = .envir)
-    }, error = function(e) {
-      # if glue fails, just use the original message without interpolation
-      # i.e., this handles cases where {} contains JSON, structured data, etc.
-      message_text <<- message_text
-    })
+    tryCatch(
+      {
+        message_text <- glue::glue(message_text, .envir = .envir)
+      },
+      error = function(e) {
+        # if glue fails, just use the original message without interpolation
+        # i.e., this handles cases where {} contains JSON, structured data, etc.
+        message_text <<- message_text
+      }
+    )
   }
 
   full_message <- paste(get_log_timestamp(), paste0("[", level, "]"), message_text)
