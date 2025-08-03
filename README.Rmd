@@ -101,6 +101,7 @@ Below is a table of all main `eyeris` functions, organized by feature, with link
 | **Database Summary**       | [eyeris_db_summary()](https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html)                | Get comprehensive overview of database contents and metadata.                                              |
 | **Database Connection**    | [eyeris_db_connect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.html)                | Connect to eyeris databases for custom queries and operations.                                             |
 | **Custom Extensions**      | _See vignette: [Custom Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)_ | Learn how to write your own pipeline steps and integrate them with `eyeris`.                               |
+| **Internal API Reference** | _See vignette: [Internal API Reference](https://shawnschwartz.com/eyeris/articles/internal-api.html)_ | Comprehensive documentation of all internal functions for advanced users and developers.                   |
 
 > For a full list of all functions, see the [eyeris reference index](https://shawnschwartz.com/eyeris/reference/index.html).
 

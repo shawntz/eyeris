@@ -1,0 +1,703 @@
+---
+title: "Internal API Reference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Internal API Reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+See below comprehensive documentation for all internal functions in the `eyeris` `R` package. These functions are primarily intended for advanced users and developers who need to customize the preprocessing pipeline or understand the internal workings of the package.
+
+## Overview
+
+The `eyeris` package is built with a modular architecture where each preprocessing step is implemented through both public (exported) and internal functions. The public functions provide the user-facing API, while the internal functions contain the core processing logic.
+
+**Note**: Functions marked with `@keywords internal` are not exported and should be accessed using the `:::` operator (e.g., `eyeris:::function_name()`). Use these functions at your own discretion as they may change without notice in future versions.
+
+---
+
+## Core Processing Functions
+
+### Blink Removal
+
+#### `deblink_pupil()`
+**File**: `R/pipeline-deblink.R`  
+**Description**: Internal function to remove blink artifacts from pupil data by extending NA padding around detected blinks.
+
+```r
+eyeris:::deblink_pupil(x, prev_op, extend)
+```
+
+**Parameters**:
+
+- `x`: A data frame containing pupil data
+- `prev_op`: The name of the previous operation's pupil column
+- `extend`: Number of samples to extend padding before/after blinks
+
+**Returns**: A numeric vector with blink artifacts removed (set to NA)
+
+---
+
+### Transient Artifact Removal
+
+#### `detransient_pupil()`
+**File**: `R/pipeline-detransient.R`  
+**Description**: Internal function to remove transient artifacts from pupil data using speed-based thresholding.
+
+```r
+eyeris:::detransient_pupil(x, prev_op, n, mad_thresh)
+```
+
+**Parameters**:
+
+- `x`: A data frame containing pupil data with columns `time_secs` and the previous operation's pupil column
+- `prev_op`: The name of the previous operation's pupil column
+- `n`: The constant used to compute the median absolute deviation (MAD) threshold (default: 16)
+- `mad_thresh`: Optional threshold override
+
+**Returns**: A numeric vector with transient artifacts removed (set to NA)
+
+#### `speed()`
+**File**: `R/pipeline-detransient.R`  
+**Description**: Calculate pupil speed using finite differences between consecutive time points.
+
+```r
+eyeris:::speed(x, y)
+```
+
+**Parameters**:
+
+- `x`: A numeric vector of pupil data
+- `y`: A numeric vector of time data
+
+**Returns**: A vector of pupil speeds at each time point
+
+---
+
+### Interpolation
+
+#### `interpolate_pupil()`
+**File**: `R/pipeline-interpolate.R`  
+**Description**: Interpolate missing pupil data using linear interpolation.
+
+```r
+eyeris:::interpolate_pupil(x, prev_op, verbose)
+```
+
+**Parameters**:
+
+- `x`: A data frame containing pupil data
+- `prev_op`: The name of the previous operation's pupil column
+- `verbose`: Logical, whether to print verbose output
+
+**Returns**: A vector of interpolated pupil values
+
+---
+
+### Filtering and Signal Processing
+
+#### `lpfilt_pupil()`
+**File**: `R/pipeline-lpfilt.R`  
+**Description**: Internal function to apply low-pass filtering to pupil data using Butterworth filter design.
+
+```r
+eyeris:::lpfilt_pupil(x, prev_op, wp, ws, rp, rs, fs, plot_freqz)
+```
+
+**Parameters**:
+
+- `x`: A data frame containing pupil data
+- `prev_op`: Previous operation's pupil column name
+- `wp`: Passband frequency (Hz)
+- `ws`: Stopband frequency (Hz)
+- `rp`: Maximum ripple in passband (dB)
+- `rs`: Minimum attenuation in stopband (dB)
+- `fs`: Sampling frequency
+- `plot_freqz`: Whether to plot frequency response
+
+**Returns**: A vector of filtered pupil data
+
+#### `downsample_pupil()`
+**File**: `R/pipeline-downsample.R`  
+**Description**: Internal function to downsample pupil data with anti-aliasing filtering.
+
+```r
+eyeris:::downsample_pupil(x, prev_op, target_fs, plot_freqz, current_fs, rp, rs)
+```
+
+**Parameters**:
+
+- `x`: Data frame containing pupil data
+- `prev_op`: Previous operation's column name
+- `target_fs`: Target sampling frequency
+- `plot_freqz`: Whether to plot frequency response
+- `current_fs`: Current sampling frequency
+- `rp`, `rs`: Filter design parameters
+
+**Returns**: A list containing the downsampled data and the decimated sample rate
+
+#### `bin_pupil()`
+**File**: `R/pipeline-bin.R`  
+**Description**: Bin pupil data into specified time bins using averaging or other methods.
+
+```r
+eyeris:::bin_pupil(x, prev_op, bins_per_second, method, current_fs)
+```
+
+**Parameters**:
+
+- `x`: Data frame containing pupil data
+- `prev_op`: Previous operation's column name
+- `bins_per_second`: Number of bins per second
+- `method`: Binning method ("mean", "median", etc.)
+- `current_fs`: Current sampling frequency
+
+**Returns**: A data frame with binned pupil data
+
+---
+
+### Statistical Processing
+
+#### `detrend_pupil()`
+**File**: `R/pipeline-detrend.R`  
+**Description**: Internal function to detrend pupil data using linear regression.
+
+```r
+eyeris:::detrend_pupil(x, prev_op)
+```
+
+**Parameters**:
+
+- `x`: Data frame containing pupil data
+- `prev_op`: Previous operation's column name
+
+**Returns**: A list containing the fitted values, coefficients, and residuals
+
+#### `zscore_pupil()`
+**File**: `R/pipeline-zscore.R`  
+**Description**: Internal function to z-score normalize pupil data.
+
+```r
+eyeris:::zscore_pupil(x, prev_op)
+```
+
+**Parameters**:
+
+- `x`: Data frame containing pupil data
+- `prev_op`: Previous operation's column name
+
+**Returns**: A numeric vector of z-scored pupil data
+
+#### `get_zscores()`
+**File**: `R/pipeline-zscore.R`  
+**Description**: Calculate z-scores for a numeric vector.
+
+```r
+eyeris:::get_zscores(x)
+```
+
+**Parameters**:
+
+- `x`: Numeric vector
+
+**Returns**: A numeric vector of z-scores
+
+---
+
+## Epoching Functions
+
+### Core Epoching Logic
+
+#### `epoch_pupil()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Main epoching and baselining logic that coordinates the epoching process.
+
+```r
+eyeris:::epoch_pupil(x, prev_op, evs, lims, label, c_bline, a_bline, bline_type, bline_evs, bline_per, hz, verbose)
+```
+
+**Parameters**:
+
+- `x`: Data frame containing pupil data
+- `prev_op`: Previous operation's column name
+- `evs`: Event specification (start/end messages or timestamps)
+- `lims`: Time limits around events
+- `label`: Epoch label
+- `c_bline`, `a_bline`: **Deprecated** baseline calculation and application options
+- `bline_type`: Baseline type ("divisive", "subtractive")
+- `bline_evs`: Baseline events
+- `bline_per`: Baseline period
+- `hz`: Sampling frequency
+- `verbose`: Verbose output
+
+**Returns**: A list containing epoch and baseline results
+
+#### `epoch_and_baseline_block()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Block-by-block epoch and baseline handler for multi-block data.
+
+```r
+eyeris:::epoch_and_baseline_block(x, blk, lab, evs, lims, msg_s, msg_e, c_bline, a_bline, bline_type, bline_evs, bline_per, hz, verbose)
+```
+
+**Returns**: A list containing epoch and baseline results for the specified block
+
+#### `process_epoch_and_baselines()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Epoch and baseline processor that handles the core epoching mathematics.
+
+```r
+eyeris:::process_epoch_and_baselines(eyeris, timestamps, evs, lims, hz, verbose)
+```
+
+**Returns**: A list containing epoch and baseline results
+
+### Epoching Strategies
+
+#### `epoch_manually()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Manually epoch using provided start/end dataframes of timestamps.
+
+```r
+eyeris:::epoch_manually(eyeris, ts_list, hz, verbose)
+```
+
+#### `epoch_only_start_msg()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Epoch based on a single event message without explicit limits.
+
+```r
+eyeris:::epoch_only_start_msg(eyeris, start, hz, verbose)
+```
+
+#### `epoch_start_msg_and_limits()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Epoch using a start message with fixed limits around it.
+
+```r
+eyeris:::epoch_start_msg_and_limits(eyeris, start, lims, hz, verbose)
+```
+
+#### `epoch_start_end_msg()`
+**File**: `R/pipeline-epoch.R`  
+**Description**: Epoch using both start and end messages with explicit timestamps.
+
+```r
+eyeris:::epoch_start_end_msg(eyeris, start, end, hz, verbose)
+```
+
+---
+
+## Confounds Analysis Functions
+
+### Core Confounds Calculation
+
+#### `get_confounds_for_step()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Calculate comprehensive confounding variables for a single pupil data processing step.
+
+```r
+eyeris:::get_confounds_for_step(pupil_df, pupil_vec, screen_width, screen_height, hz)
+```
+
+**Parameters**:
+
+- `pupil_df`: Data frame containing pupil data
+- `pupil_vec`: Vector of pupil values for current step
+- `screen_width`, `screen_height`: Screen dimensions in pixels
+- `hz`: Sampling frequency
+
+**Returns**: A data frame containing confounds metrics for the current step
+
+#### `calculate_epoched_confounds()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Calculate confounds specifically for epoched data.
+
+```r
+eyeris:::calculate_epoched_confounds(eyeris, epoch_names, hz, verbose)
+```
+
+**Returns**: An updated `eyeris` object with epoched confounds
+
+### Data Quality Metrics
+
+#### `tag_blinks()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Tag blinks in pupil data based on missing values and physiological constraints.
+
+```r
+eyeris:::tag_blinks(pupil_df, pupil_vec)
+```
+
+**Returns**: A data frame with added column: `is_blink`
+
+#### `calc_euclidean_dist()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Calculate Euclidean distance between consecutive gaze points.
+
+```r
+eyeris:::calc_euclidean_dist(x1, y1, x2, y2)
+```
+
+**Returns**: A numeric vector of Euclidean distances
+
+#### `normalize_gaze_coords()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Normalize gaze coordinates to screen-relative units (0-1 range).
+
+```r
+eyeris:::normalize_gaze_coords(pupil_df, screen_width, screen_height)
+```
+
+**Returns**: A data frame with added normalized coordinate columns
+
+#### `tag_gaze_coords()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Tag gaze coordinates as on-screen or off-screen.
+
+```r
+eyeris:::tag_gaze_coords(pupil_df, screen_width, screen_height, overshoot_buffer)
+```
+
+**Returns**: A data frame with added column: `is_offscreen`
+
+### Export Functions
+
+#### `export_confounds_to_csv()`
+**File**: `R/pipeline-confounds.R`  
+**Description**: Export confounds data to CSV files and/or database with comprehensive error handling.
+
+```r
+eyeris:::export_confounds_to_csv(confounds_list, output_dir, filename_prefix, verbose, run_num, csv_enabled, db_con, sub, ses, task, eye_suffix, epoch_label)
+```
+
+**Returns**: Invisibly returns a vector of created file paths
+
+---
+
+## Logging System
+
+### Core Logging Functions
+
+#### `get_log_timestamp()`
+**File**: `R/core-logging.R`  
+**Description**: Generate formatted timestamp for logging messages.
+
+```r
+eyeris:::get_log_timestamp()
+```
+
+**Returns**: Character string with current timestamp in format `[YYYY-MM-DD HH:MM:SS]`
+
+#### `log_message()`
+**File**: `R/core-logging.R`  
+**Description**: Core logging function with timestamp and `glue`-style string interpolation.
+
+```r
+eyeris:::log_message(level, ..., verbose, wrap, .envir)
+```
+
+**Parameters**:
+
+- `level`: Log level ("INFO", "SUCCESS", "WARN", "ERROR")
+- `...`: Message components (supports `glue` syntax)
+- `verbose`: Whether to display the message
+- `wrap`: Whether to wrap long messages
+- `.envir`: Environment for variable evaluation
+
+#### `log_info()`, `log_success()`, `log_warn()`, `log_error()`
+**File**: `R/core-logging.R`  
+**Description**: Specialized logging functions for different message types.
+
+```r
+eyeris:::log_info(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
+eyeris:::log_success(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
+eyeris:::log_warn(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
+eyeris:::log_error(..., wrap = TRUE, .envir = parent.frame())
+```
+
+---
+
+## Validation and Quality Control
+
+### Input Validation
+
+#### `check_input()`
+**File**: `R/utils-checks.R`  
+**Description**: Check if input argument is provided and not `NULL`.
+
+```r
+eyeris:::check_input(arg)
+```
+
+#### `check_data()`
+**File**: `R/utils-checks.R`  
+**Description**: Comprehensive validation of `eyeris` object data structure.
+
+```r
+eyeris:::check_data(eyeris, fun)
+```
+
+#### `check_time_monotonic()`
+**File**: `R/utils-checks.R`  
+**Description**: Verify that time series data is monotonically increasing.
+
+```r
+eyeris:::check_time_monotonic(time_vector, time_col_name)
+```
+
+#### `is_binocular_object()`
+**File**: `R/utils-checks.R`  
+**Description**: Determine if an `eyeris` object contains binocular data.
+
+```r
+eyeris:::is_binocular_object(x)
+```
+
+**Returns**: Logical indicating if object is binocular
+
+### Directory Management
+
+#### `check_and_create_dir()`
+**File**: `R/utils-checks.R`  
+**Description**: Check for directory existence and create if needed with proper error handling.
+
+```r
+eyeris:::check_and_create_dir(basedir, dir, verbose)
+```
+
+---
+
+## Database Functions
+
+### Connection Management
+
+#### `connect_eyeris_database()`
+**File**: `R/utils-database.R`  
+**Description**: Connect to `eyeris` `DuckDB` database with comprehensive error handling.
+
+```r
+eyeris:::connect_eyeris_database(bids_dir, db_path, verbose)
+```
+
+**Returns**: `DuckDB` connection object or `NULL` on failure
+
+#### `disconnect_eyeris_database()`
+**File**: `R/utils-database.R`  
+**Description**: Safely disconnect from `eyeris` `DuckDB` database.
+
+```r
+eyeris:::disconnect_eyeris_database(con, verbose)
+```
+
+**Returns**: `TRUE` if successful, `FALSE` otherwise
+
+### Data Management
+
+#### `create_table_name()`
+**File**: `R/utils-database.R`  
+**Description**: Generate standardized table names for `eyeris` project database storage.
+
+```r
+eyeris:::create_table_name(data_type, sub, ses, task, run, eye_suffix, epoch_label)
+```
+
+**Returns**: A standardized table name string
+
+#### `write_eyeris_data_to_db()`
+**File**: `R/utils-database.R`  
+**Description**: Write `eyeris` data to `DuckDB` database with error handling and validation.
+
+```r
+eyeris:::write_eyeris_data_to_db(data, db_con, data_type, sub, ses, task, run, eye_suffix, epoch_label, verbose)
+```
+
+**Returns**: `TRUE` if successful, `FALSE` otherwise
+
+#### `write_csv_and_db()`
+**File**: `R/utils-database.R`  
+**Description**: Write data to both CSV file and database with fallback handling.
+
+```r
+eyeris:::write_csv_and_db(data, csv_path, csv_enabled, db_con, data_type, sub, ses, task, run, eye_suffix, epoch_label, verbose)
+```
+
+**Returns**: `TRUE` if at least one write operation succeeded
+
+---
+
+## Utility Functions
+
+### String Processing
+
+#### `clean_string()`
+**File**: `R/utils-parsers.R`  
+**Description**: Clean and sanitize strings for use in filenames or labels.
+
+```r
+eyeris:::clean_string(str)
+```
+
+**Returns**: Cleaned string with special characters removed/replaced
+
+#### `sanitize_event_tag()`
+**File**: `R/utils-epoch.R`  
+**Description**: Sanitize event tags for safe use in filenames and labels.
+
+```r
+eyeris:::sanitize_event_tag(string, prefix)
+```
+
+**Returns**: Sanitized string suitable for filesystem use
+
+### Data Parsing
+
+#### `get_block_numbers()`
+**File**: `R/utils-parsers.R`  
+**Description**: Extract block numbers from `eyeris` object or block names.
+
+```r
+eyeris:::get_block_numbers(x)
+```
+
+**Returns**: Numeric vector of block numbers
+
+### BIDS Compliance
+
+#### `make_bids_fname()`
+**File**: `R/pipeline-bidsify.R`  
+**Description**: Generate BIDS-compatible filenames for data export.
+
+```r
+eyeris:::make_bids_fname(sub_id, task_name, run_num, desc, ses_id, epoch_name, epoch_events, baseline_events, baseline_type, eye_suffix)
+```
+
+**Returns**: A BIDS-compatible filename string
+
+#### `run_bidsify()`
+**File**: `R/pipeline-bidsify.R`  
+**Description**: Internal function to run bidsify operation on a single eye's data.
+
+```r
+eyeris:::run_bidsify(eyeris, save_all, epochs_list, bids_dir, participant_id, session_num, task_name, run_num, save_raw, html_report, ...)
+```
+
+**Returns**: An `eyeris` object (typically for chaining)
+
+---
+
+## Progress and Error Handling
+
+### Progress Bars
+
+#### `progress_bar()`
+**File**: `R/utils-progress_bar.R`  
+**Description**: Create a customizable progress bar for long-running operations.
+
+```r
+eyeris:::progress_bar(total, msg, width, show_eta, clear)
+```
+
+**Returns**: A progress bar object from the progress package
+
+#### `counter_bar()`
+**File**: `R/utils-progress_bar.R`  
+**Description**: Create a simple counter-style progress bar.
+
+```r
+eyeris:::counter_bar(total, msg, width)
+```
+
+#### `tick()`
+**File**: `R/utils-progress_bar.R`  
+**Description**: Advance a progress bar by specified number of steps.
+
+```r
+eyeris:::tick(pb, by)
+```
+
+### Error Handling
+
+#### `error_handler()`
+**File**: `R/utils-error_handler.R`  
+**Description**: Generic error handler for `eyeris` functions with standardized error reporting.
+
+```r
+eyeris:::error_handler(e, e_class)
+```
+
+---
+
+## Report Generation
+
+### R Markdown Reports
+
+#### `render_report()`
+**File**: `R/utils-render_report.R`  
+**Description**: Render an `R Markdown` report to `HTML` with proper error handling.
+
+```r
+eyeris:::render_report(rmd_f)
+```
+
+#### `make_report()`
+**File**: `R/utils-render_report.R`  
+**Description**: Generate comprehensive `eyeris` preprocessing report in `R Markdown` format.
+
+```r
+eyeris:::make_report(eyeris, out, plots, eye_suffix, ...)
+```
+
+**Returns**: Path to the generated `R Markdown` file
+
+---
+
+## Advanced Usage Notes
+
+### Function Chaining
+Many internal functions are designed to work within the pipeline architecture:
+
+```r
+# example of internal function chaining
+eyeris_obj |>
+  eyeris:::deblink_pupil(prev_op = "pupil_raw", extend = 100) |>
+  eyeris:::detransient_pupil(prev_op = "pupil_raw_deblink", n = 16) |>
+  eyeris:::interpolate_pupil(prev_op = "pupil_raw_deblink_detransient", verbose = TRUE)
+```
+
+### Error Handling
+All internal functions include comprehensive error handling:
+
+```r
+# Internal functions validate inputs and provide informative errors
+try({
+  eyeris:::check_data(invalid_object, "function_name")
+}, silent = TRUE)
+```
+
+### Performance Considerations
+
+- Internal functions are optimized for performance within the pipeline
+- Use vectorized operations where possible
+- Progress bars are available for long-running operations
+- Database operations include connection pooling and error recovery
+
+### Development Guidelines
+
+When using internal functions:
+
+1. **Stability**: Internal functions may change without notice
+2. **Documentation**: Always refer to this documentation for current signatures
+3. **Testing**: Test thoroughly when using internal functions directly
+4. **Error Handling**: Implement appropriate error handling in your code
+5. **Performance**: Consider performance implications of bypassing the main pipeline
