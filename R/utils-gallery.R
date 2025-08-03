@@ -150,9 +150,7 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
 
   if (is_absolute && file.exists(zip_path)) {
     full_zip_path <- zip_path
-    if (verbose) {
-      cli::cli_alert_info(sprintf("[INFO] Using absolute zip file path: %s", zip_path))
-    }
+    log_info("Using absolute zip file path: {zip_path}", verbose = verbose)
 
     # create relative path for HTML display
     if (grepl("source/figures", zip_path)) {
@@ -174,18 +172,16 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
     for (path in possible_paths) {
       if (file.exists(path)) {
         full_zip_path <- path
-        if (verbose) {
-          cli::cli_alert_info(sprintf("[INFO] Found zip file at: %s", path))
-        }
+        log_info("Found zip file at: {path}", verbose = verbose)
         break
       }
     }
 
     if (is.null(full_zip_path)) {
-      cli::cli_alert_warning(sprintf(
-        "[WARN] Zip file not found. Tried paths: %s",
-        paste(possible_paths, collapse = ", ")
-      ))
+      log_warn(
+        "Zip file not found. Tried paths: {paste(possible_paths, collapse = ', ')}",
+        verbose = TRUE
+      )
     }
 
     # then use original path for HTML display
@@ -210,13 +206,13 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
           zip_bytes <- readBin(full_zip_path, "raw", file_size)
           zip_b64 <- base64enc::base64encode(zip_bytes)
           zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
-          cli::cli_alert_success(sprintf("[OKAY] Embedded zip file as data URL (%d bytes)", file_size))
+          log_success("Embedded zip file as data URL ({file_size} bytes)", verbose = TRUE)
         } else {
-          cli::cli_alert_warning(sprintf("[WARN] Zip file too large for data URL embedding (%d bytes)", file_size))
+          log_warn("Zip file too large for data URL embedding ({file_size} bytes)", verbose = TRUE)
         }
       },
       error = function(e) {
-        cli::cli_alert_warning(sprintf("[WARN] Could not embed zip file as data URL: %s", e$message))
+        log_warn("Could not embed zip file as data URL: {e$message}", verbose = TRUE)
       }
     )
   }
