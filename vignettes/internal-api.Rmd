@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-See below comprehensive documentation for all internal functions in the `eyeris` `R` package. These functions are primarily intended for advanced users and developers who need to customize the preprocessing pipeline or understand the internal workings of the package.
+Below is comprehensive documentation for all internal functions in the `eyeris` `R` package. These functions are primarily intended for advanced users and developers who need to customize the preprocessing pipeline or understand the internal workings of the package.
 
 ## Overview
 
