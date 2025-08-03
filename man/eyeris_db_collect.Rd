@@ -13,7 +13,6 @@ eyeris_db_collect(
   tasks = NULL,
   epoch_labels = NULL,
   eye_suffixes = NULL,
-  return_list = TRUE,
   verbose = TRUE
 )
 }
@@ -38,14 +37,10 @@ Only applies to epoch-related data types}
 \item{eye_suffixes}{Vector of eye suffixes to include. If NULL (default), includes all eyes.
 Typically c("eye-L", "eye-R") for binocular data}
 
-\item{return_list}{Logical. If TRUE (default), returns a named list with one dataframe per data type.
-If FALSE, returns a single long-format dataframe with a 'data_type' column}
-
 \item{verbose}{Logical. Whether to print progress messages (default TRUE)}
 }
 \value{
-Either a named list of dataframes (one per data type) or a single combined dataframe,
-depending on the \code{return_list} parameter
+A named list of dataframes, one per data type
 }
 \description{
 A comprehensive wrapper function that simplifies extracting eyeris data from
@@ -54,35 +49,48 @@ subjects for each data type, without requiring SQL knowledge.
 }
 \examples{
 \donttest{
-# Extract all data for all subjects (returns list of dataframes)
-all_data <- eyeris_db_collect("~/my_bids_project")
+demo_data <- eyelink_asc_demo_dataset()
 
-# View available data types
+demo_data |>
+eyeris::glassbox() |>
+eyeris::epoch(
+  events = "PROBE_{startstop}_{trial}",
+  limits = c(-1, 1),
+  label = "prePostProbe"
+) |>
+eyeris::bidsify(
+  bids_dir = tempdir(),
+  participant_id = "001",
+  session_num = "01",
+  task_name = "assocret",
+  run_num = "03", # override default run-01 (block_1) to use run-03 instead
+  db_enabled = TRUE # Enable database storage
+)
+
+# extract all data for all subjects (returns list of dataframes)
+all_data <- eyeris_db_collect(tempdir())
+
+# view available data types
 names(all_data)
 
-# Access specific data type
+# access specific data type
 blinks_data <- all_data$blinks
 epochs_data <- all_data$epochs
 
-# Extract specific subjects and data types
+# extract specific subjects and data types
 subset_data <- eyeris_db_collect(
-  bids_dir = "~/my_bids_project",
-  subjects = c("001", "002", "003"),
+  bids_dir = tempdir(),
+  subjects = c("001"),
   data_types = c("blinks", "epochs", "timeseries")
 )
 
-# Extract epoch data for specific epoch label
+# extract epoch data for specific epoch label
 epoch_data <- eyeris_db_collect(
-  bids_dir = "~/my_bids_project",
+  bids_dir = tempdir(),
   data_types = "epochs",
   epoch_labels = "prepostprobe"
 )
 
-# Return as single combined dataframe instead of list
-combined_data <- eyeris_db_collect(
-  bids_dir = "~/my_bids_project",
-  return_list = FALSE
-)
 }
 
 }
