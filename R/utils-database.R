@@ -614,44 +614,54 @@ write_csv_and_db <- function(
 #'   Only applies to epoch-related data types
 #' @param eye_suffixes Vector of eye suffixes to include. If NULL (default), includes all eyes.
 #'   Typically c("eye-L", "eye-R") for binocular data
-#' @param return_list Logical. If TRUE (default), returns a named list with one dataframe per data type.
-#'   If FALSE, returns a single long-format dataframe with a 'data_type' column
 #' @param verbose Logical. Whether to print progress messages (default TRUE)
 #'
-#' @return Either a named list of dataframes (one per data type) or a single combined dataframe,
-#'   depending on the `return_list` parameter
+#' @return A named list of dataframes, one per data type
 #'
 #' @examples
 #' \donttest{
-#' # Extract all data for all subjects (returns list of dataframes)
-#' all_data <- eyeris_db_collect("~/my_bids_project")
+#' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # View available data types
+#' demo_data |>
+#' eyeris::glassbox() |>
+#' eyeris::epoch(
+#'   events = "PROBE_{startstop}_{trial}",
+#'   limits = c(-1, 1),
+#'   label = "prePostProbe"
+#' ) |>
+#' eyeris::bidsify(
+#'   bids_dir = tempdir(),
+#'   participant_id = "001",
+#'   session_num = "01",
+#'   task_name = "assocret",
+#'   run_num = "03", # override default run-01 (block_1) to use run-03 instead
+#'   db_enabled = TRUE # Enable database storage
+#' )
+#'
+#' # extract all data for all subjects (returns list of dataframes)
+#' all_data <- eyeris_db_collect(tempdir())
+#'
+#' # view available data types
 #' names(all_data)
 #'
-#' # Access specific data type
+#' # access specific data type
 #' blinks_data <- all_data$blinks
 #' epochs_data <- all_data$epochs
 #'
-#' # Extract specific subjects and data types
+#' # extract specific subjects and data types
 #' subset_data <- eyeris_db_collect(
-#'   bids_dir = "~/my_bids_project",
-#'   subjects = c("001", "002", "003"),
+#'   bids_dir = tempdir(),
+#'   subjects = c("001"),
 #'   data_types = c("blinks", "epochs", "timeseries")
 #' )
 #'
-#' # Extract epoch data for specific epoch label
+#' # extract epoch data for specific epoch label
 #' epoch_data <- eyeris_db_collect(
-#'   bids_dir = "~/my_bids_project",
+#'   bids_dir = tempdir(),
 #'   data_types = "epochs",
 #'   epoch_labels = "prepostprobe"
 #' )
 #'
-#' # Return as single combined dataframe instead of list
-#' combined_data <- eyeris_db_collect(
-#'   bids_dir = "~/my_bids_project",
-#'   return_list = FALSE
-#' )
 #' }
 #'
 #' @export
@@ -664,7 +674,6 @@ eyeris_db_collect <- function(
   tasks = NULL,
   epoch_labels = NULL,
   eye_suffixes = NULL,
-  return_list = TRUE,
   verbose = TRUE
 ) {
   # Connect to database
@@ -689,7 +698,7 @@ eyeris_db_collect <- function(
 
   if (length(all_tables) == 0) {
     cli::cli_alert_warning("[WARN] No tables found in database")
-    return(if (return_list) list() else data.frame())
+    return(list())
   }
 
   if (verbose) {
@@ -828,28 +837,7 @@ eyeris_db_collect <- function(
     }
   }
 
-  # Return format based on user preference
-  if (return_list) {
-    return(result_list)
-  } else {
-    # Combine into single dataframe with data_type column
-    if (length(result_list) == 0) {
-      return(data.frame())
-    }
-
-    combined_list <- list()
-    for (dtype in names(result_list)) {
-      df <- result_list[[dtype]]
-      df$data_type <- dtype
-      combined_list[[dtype]] <- df
-    }
-
-    # Combine all dataframes
-    combined_df <- do.call(rbind, combined_list)
-    rownames(combined_df) <- NULL
-
-    return(combined_df)
-  }
+  return(result_list)
 }
 
 #' Get summary statistics for eyeris database
@@ -865,16 +853,41 @@ eyeris_db_collect <- function(
 #'
 #' @examples
 #' \donttest{
-#' # Get database summary
-#' summary <- eyeris_db_summary("~/my_bids_project")
+#' demo_data <- eyelink_asc_demo_dataset()
 #'
-#' # View available subjects
+#' demo_data |>
+#'   eyeris::glassbox() |>
+#'   eyeris::epoch(
+#'     events = "PROBE_{startstop}_{trial}",
+#'     limits = c(-1, 1),
+#'     label = "prePostProbe"
+#'   ) |>
+#'   eyeris::bidsify(
+#'     bids_dir = file.path(tempdir(), "my-cool-memory-project"),
+#'     participant_id = "001",
+#'     session_num = "01",
+#'     task_name = "assocret",
+#'     run_num = "03", # override default run-01 (block_1) to use run-03 instead
+#'     db_enabled = TRUE,
+#'     db_path = "my-cool-memory-study",
+#'   )
+#'
+#' # get database summary
+#' summary <- eyeris_db_summary(
+#'              file.path(
+#'                tempdir(),
+#'                "my-cool-memory-project"
+#'              ),
+#'              db_path = "my-cool-memory-study"
+#'            )
+#'
+#' # view available subjects
 #' summary$subjects
 #'
-#' # View available data types
+#' # view available data types
 #' summary$data_types
 #'
-#' # View table counts
+#' # view table counts
 #' summary$table_counts
 #' }
 #'
