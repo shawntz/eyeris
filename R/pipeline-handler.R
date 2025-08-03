@@ -126,7 +126,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   dots <- list(...)
   if ("call_info" %in% names(dots)) {
     call_info <- dots$call_info
-    dots$call_info <- NULL # Remove call_info from dots
+    dots$call_info <- NULL # remove call_info from dots
   }
   if (!is.list(eyeris$params)) {
     eyeris$params <- list()
