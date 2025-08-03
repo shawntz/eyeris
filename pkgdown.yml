@@ -5,9 +5,10 @@ articles:
   anatomy: anatomy.html
   complete-pipeline: complete-pipeline.html
   custom-extensions: custom-extensions.html
+  database-guide: database-guide.html
   epoching-bids-reports: epoching-bids-reports.html
   reports: reports.html
-last_built: 2025-08-02T04:20Z
+last_built: 2025-08-03T08:54Z
 urls:
   reference: https://shawnschwartz.com/eyeris/reference
   article: https://shawnschwartz.com/eyeris/articles
