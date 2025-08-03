@@ -225,7 +225,7 @@ merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE
     "|"
   )
 
-  # Use text_unique if available, otherwise fall back to text
+  # use text_unique if available, otherwise fall back to text
   if ("text_unique" %in% colnames(events)) {
     event_messages <- dplyr::pull(events, text_unique)
     event_text_original <- dplyr::pull(events, text)
