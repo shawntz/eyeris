@@ -454,11 +454,12 @@ print_plots <- function(plots, eye_suffix = NULL) {
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return No return value; saves detrend plots to the specified directory
 #'
 #' @keywords internal
-save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL) {
+save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL, verbose = TRUE) {
   blocks <- names(eyeris$timeseries)
 
   for (block in blocks) {
@@ -499,7 +500,9 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = lis
 
       grDevices::dev.off()
 
-      cli::cli_alert_info(sprintf("[INFO] %s", detrend_path))
+      if (verbose) {
+        cli::cli_alert_info(sprintf("[INFO] %s", detrend_path))
+      }
     } else {
       cli::cli_alert_warning(sprintf("[WARN] No detrend data found for %s", run_id))
     }
