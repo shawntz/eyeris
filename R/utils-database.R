@@ -14,9 +14,7 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
   derivatives_dir <- file.path(bids_dir, "derivatives")
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
-    if (verbose) {
-      cli::cli_alert_info(glue::glue("[INFO] Created derivatives directory: {derivatives_dir}"), wrap = TRUE)
-    }
+    log_info("Created derivatives directory: {derivatives_dir}", verbose = verbose)
   }
 
   # auto-append .eyerisdb extension if not present
@@ -34,21 +32,19 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = full_db_path)
 
-      if (verbose) {
         if (file.exists(full_db_path)) {
-          cli::cli_alert_success(
-            glue::glue("[OKAY] Connected to existing eyeris project database: {full_db_path}"),
-            wrap = TRUE
+          log_success(
+            "Connected to existing eyeris project database: {full_db_path}",
+            verbose = verbose
           )
         } else {
-          cli::cli_alert_success(glue::glue("[OKAY] Created new eyeris database: {full_db_path}"), wrap = TRUE)
+          log_success("Created new eyeris database: {full_db_path}", verbose = verbose)
         }
-      }
 
       return(con)
     },
     error = function(e) {
-      cli::cli_alert_warning(glue::glue("[WARN] Failed to connect to database: {e$message}"), wrap = TRUE)
+      log_warn("Failed to connect to database: {e$message}", verbose = TRUE)
       return(NULL)
     }
   )
@@ -72,15 +68,11 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
   tryCatch(
     {
       DBI::dbDisconnect(con)
-      if (verbose) {
-        cli::cli_alert_info("[INFO] Disconnected from eyeris database", wrap = TRUE)
-      }
+      log_info("Disconnected from eyeris database", verbose = verbose)
       return(TRUE)
     },
     error = function(e) {
-      if (verbose) {
-        cli::cli_alert_warning(glue::glue("[WARN] Error disconnecting from database: {e$message}"), wrap = TRUE)
-      }
+      log_warn("Error disconnecting from database: {e$message}", verbose = verbose)
       return(FALSE)
     }
   )
@@ -176,16 +168,12 @@ write_eyeris_data_to_db <- function(
   verbose = FALSE
 ) {
   if (is.null(con)) {
-    if (verbose) {
-      cli::cli_alert_warning("[WARN] No database connection provided", wrap = TRUE)
-    }
+    log_warn("No database connection provided", verbose = verbose)
     return(FALSE)
   }
 
   if (is.null(data) || nrow(data) == 0) {
-    if (verbose) {
-      cli::cli_alert_warning("[WARN] No data to write to database", wrap = TRUE)
-    }
+    log_warn("No data to write to database", verbose = verbose)
     return(FALSE)
   }
 
@@ -221,12 +209,10 @@ write_eyeris_data_to_db <- function(
       # actual_append <- if (drop_existing_subject) FALSE else append
       actual_append <- append
 
-      if (verbose) {
-        cli::cli_alert_info(
-          glue::glue("[INFO] Writing {nrow(data)} rows to table '{table_name}' (append={actual_append})"),
-          wrap = TRUE
-        )
-      }
+      log_info(
+        "Writing {nrow(data)} rows to table '{table_name}' (append={actual_append})",
+        verbose = verbose
+      )
 
       DBI::dbWriteTable(
         conn = con,
@@ -236,23 +222,19 @@ write_eyeris_data_to_db <- function(
         overwrite = !actual_append
       )
 
-      if (verbose) {
         action <- if (append) "Added" else "Created"
-        cli::cli_alert_success(
-          glue::glue("[OKAY] {action} table '{table_name}' with {nrow(data)} rows"),
-          wrap = TRUE
+        log_success(
+          "{action} table '{table_name}' with {nrow(data)} rows",
+          verbose = verbose
         )
-      }
 
       return(TRUE)
     },
     error = function(e) {
-      if (verbose) {
-        cli::cli_alert_warning(
-          glue::glue("[WARN] Failed to write data to table '{table_name}': {e$message}"),
-          wrap = TRUE
-        )
-      }
+      log_warn(
+        "Failed to write data to table '{table_name}': {e$message}",
+        verbose = verbose
+      )
       return(FALSE)
     }
   )
@@ -271,7 +253,7 @@ write_eyeris_data_to_db <- function(
 #' @export
 eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
   if (is.null(con)) {
-    cli::cli_alert_warning("[WARN] No database connection provided", wrap = TRUE)
+    log_warn("No database connection provided", verbose = TRUE)
     return(character(0))
   }
 
@@ -294,7 +276,7 @@ eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
       return(tables)
     },
     error = function(e) {
-      cli::cli_alert_warning(glue::glue("[WARN] Failed to list tables: {e$message}"), wrap = TRUE)
+      log_warn("Failed to list tables: {e$message}", verbose = TRUE)
       return(character(0))
     }
   )
@@ -329,7 +311,7 @@ eyeris_db_read <- function(
   table_name = NULL
 ) {
   if (is.null(con)) {
-    cli::cli_abort("[EXIT] No database connection provided")
+    log_error("No database connection provided")
   }
 
   tryCatch(
@@ -344,7 +326,7 @@ eyeris_db_read <- function(
       tables <- DBI::dbListTables(con)
 
       if (length(tables) == 0) {
-        cli::cli_alert_warning("[WARN] No tables found in database", wrap = TRUE)
+        log_warn("No tables found in database", verbose = TRUE)
         return(data.frame())
       }
 
@@ -411,16 +393,16 @@ eyeris_db_read <- function(
       # and no additional WHERE clause needed since tables are already filtered by epoch
 
       # execute query
-      cli::cli_alert_info(
-        glue::glue("[INFO] Executing query: {query}"),
-        wrap = TRUE
+      log_info(
+        "Executing query: {query}",
+        verbose = TRUE
       )
       result <- DBI::dbGetQuery(con, query)
 
       return(result)
     },
     error = function(e) {
-      cli::cli_alert_warning(glue::glue("[WARN] Failed to read from database: {e$message}"), wrap = TRUE)
+      log_warn("Failed to read from database: {e$message}", verbose = TRUE)
       return(data.frame())
     }
   )
@@ -476,20 +458,19 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
   }
 
   if (!file.exists(full_db_path)) {
-    cli::cli_abort(
-      "[EXIT] No eyeris database found at: {full_db_path}\\n
-       Run bidsify() with db_enabled = TRUE to create a database first."
+    log_error(
+      "No eyeris database found at: {full_db_path}\n       Run bidsify() with db_enabled = TRUE to create a database first."
     )
   }
 
   tryCatch(
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = full_db_path)
-      cli::cli_alert_success(glue::glue("[OKAY] Connected to eyeris database: {full_db_path}"), wrap = TRUE)
+      log_success("Connected to eyeris database: {full_db_path}", verbose = TRUE)
       return(con)
     },
     error = function(e) {
-      cli::cli_abort("[EXIT] Failed to connect to database: %s", e$message)
+      log_error("Failed to connect to database: {e$message}")
     }
   )
 }
@@ -555,9 +536,7 @@ write_csv_and_db <- function(
         outputs <- c(outputs, "CSV")
       },
       error = function(e) {
-        if (verbose) {
-          cli::cli_alert_warning(glue::glue("[WARN] Failed to write CSV file: {csv_path}"), wrap = TRUE)
-        }
+        log_warn("Failed to write CSV file: {csv_path}", verbose = verbose)
         csv_success <- FALSE
       }
     )
@@ -587,9 +566,9 @@ write_csv_and_db <- function(
   if (verbose && length(outputs) > 0 && csv_success && db_success) {
     output_str <- paste(outputs, collapse = " and ")
     data_type_str <- if (is.null(data_type)) "data" else data_type
-    cli::cli_alert_success(
-      glue::glue("[OKAY] Wrote {data_type_str} data ({nrow(data)} rows) to {output_str}"),
-      wrap = TRUE
+    log_success(
+      "Wrote {data_type_str} data ({nrow(data)} rows) to {output_str}",
+      verbose = verbose
     )
   }
 
@@ -677,16 +656,14 @@ eyeris_db_collect <- function(
   verbose = TRUE
 ) {
   # connect to database
-  if (verbose) {
-    cli::cli_alert_info("[INFO] Connecting to eyeris database...")
-  }
+  log_info("Connecting to eyeris database...", verbose = verbose)
 
   con <- tryCatch(
     {
       eyeris_db_connect(bids_dir, db_path)
     },
     error = function(e) {
-      cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
+      log_error("Failed to connect to database: {e$message}")
     }
   )
 
@@ -697,13 +674,11 @@ eyeris_db_collect <- function(
   all_tables <- eyeris_db_list_tables(con)
 
   if (length(all_tables) == 0) {
-    cli::cli_alert_warning("[WARN] No tables found in database")
+    log_warn("No tables found in database", verbose = TRUE)
     return(list())
   }
 
-  if (verbose) {
-    cli::cli_alert_info("[INFO] Found {length(all_tables)} tables in database")
-  }
+  log_info("Found {length(all_tables)} tables in database", verbose = verbose)
 
   # define all possible data types
   all_data_types <- c(
@@ -724,22 +699,18 @@ eyeris_db_collect <- function(
     # validate specified data types
     invalid_types <- setdiff(data_types, all_data_types)
     if (length(invalid_types) > 0) {
-      cli::cli_alert_warning("[WARN] Invalid data types ignored: {paste(invalid_types, collapse = ', ')}")
+      log_warn("Invalid data types ignored: {paste(invalid_types, collapse = ', ')}", verbose = TRUE)
       data_types <- intersect(data_types, all_data_types)
     }
   }
 
-  if (verbose) {
-    cli::cli_alert_info("[INFO] Extracting data types: {paste(data_types, collapse = ', ')}")
-  }
+  log_info("Extracting data types: {paste(data_types, collapse = ', ')}", verbose = verbose)
 
   # extract data for each type
   result_list <- list()
 
   for (data_type in data_types) {
-    if (verbose) {
-      cli::cli_alert_info("[INFO] Processing {data_type}...")
-    }
+    log_info("Processing {data_type}...", verbose = verbose)
 
     tryCatch(
       {
@@ -788,13 +759,12 @@ eyeris_db_collect <- function(
           if (length(epoch_data_list) > 0) {
             combined_data <- do.call(rbind, epoch_data_list)
             result_list[[data_type]] <- combined_data
-          } else if (verbose) {
+          }
             # check if there are any tables for this data type at all
             type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
             if (length(type_tables) == 0) {
-              cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
+              log_warn("No tables found for data type: {data_type}", verbose = verbose)
             }
-          }
         } else {
           # handle non-epoch data types
           data <- eyeris_db_read(
@@ -808,19 +778,16 @@ eyeris_db_collect <- function(
 
           if (!is.null(data) && nrow(data) > 0) {
             result_list[[data_type]] <- data
-          } else if (verbose) {
+          }
             # check if there are any tables for this data type at all
             type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
             if (length(type_tables) == 0) {
-              cli::cli_alert_warning("[WARN] No tables found for data type: {data_type}")
+              log_warn("No tables found for data type: {data_type}", verbose = verbose)
             }
-          }
         }
       },
       error = function(e) {
-        if (verbose) {
-          cli::cli_alert_warning("[WARN] Failed to extract {data_type}: {e$message}")
-        }
+        log_warn("Failed to extract {data_type}: {e$message}", verbose = verbose)
       }
     )
   }
@@ -828,14 +795,12 @@ eyeris_db_collect <- function(
   # filter out empty results
   result_list <- result_list[lengths(result_list) > 0]
 
-  if (verbose) {
-    cli::cli_alert_success("[OKAY] Successfully extracted {length(result_list)} data types")
+    log_success("Successfully extracted {length(result_list)} data types", verbose = verbose)
     for (dtype in names(result_list)) {
       n_rows <- nrow(result_list[[dtype]])
       n_subjects <- length(unique(result_list[[dtype]]$subject_id))
-      cli::cli_alert_info("  {dtype}: {n_rows} rows across {n_subjects} subjects")
+      log_info("  {dtype}: {n_rows} rows across {n_subjects} subjects", verbose = verbose)
     }
-  }
 
   return(result_list)
 }
@@ -894,16 +859,14 @@ eyeris_db_collect <- function(
 #' @export
 eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) {
   # connect to database
-  if (verbose) {
-    cli::cli_alert_info("[INFO] Connecting to eyeris database...")
-  }
+  log_info("Connecting to eyeris database...", verbose = verbose)
 
   con <- tryCatch(
     {
       eyeris_db_connect(bids_dir, db_path)
     },
     error = function(e) {
-      cli::cli_abort("[EXIT] Failed to connect to database: {e$message}")
+      log_error("Failed to connect to database: {e$message}")
     }
   )
 
@@ -914,7 +877,7 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
   all_tables <- eyeris_db_list_tables(con)
 
   if (length(all_tables) == 0) {
-    cli::cli_alert_warning("[WARN] No tables found in database")
+    log_warn("No tables found in database", verbose = TRUE)
     return(list(
       subjects = character(0),
       sessions = character(0),
@@ -997,24 +960,24 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
     total_tables = length(all_tables)
   )
 
-  if (verbose) {
-    cli::cli_alert_success("[OKAY] Database summary:")
-    cli::cli_alert_info("  Total tables: {result$total_tables}")
-    cli::cli_alert_info(
-      "  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})"
+    log_success("Database summary:", verbose = verbose)
+    log_info("  Total tables: {result$total_tables}", verbose = verbose)
+    log_info(
+      "  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})",
+      verbose = verbose
     )
-    cli::cli_alert_info("  Sessions: {length(result$sessions)} ({paste(result$sessions, collapse = ', ')})")
-    cli::cli_alert_info("  Tasks: {length(result$tasks)} ({paste(result$tasks, collapse = ', ')})")
-    cli::cli_alert_info("  Data types: {length(result$data_types)} ({paste(result$data_types, collapse = ', ')})")
+    log_info("  Sessions: {length(result$sessions)} ({paste(result$sessions, collapse = ', ')})", verbose = verbose)
+    log_info("  Tasks: {length(result$tasks)} ({paste(result$tasks, collapse = ', ')})", verbose = verbose)
+    log_info("  Data types: {length(result$data_types)} ({paste(result$data_types, collapse = ', ')})", verbose = verbose)
     if (length(result$eye_suffixes) > 0) {
-      cli::cli_alert_info(
-        "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})"
+      log_info(
+        "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})",
+        verbose = verbose
       )
     }
 
     total_rows <- sum(table_counts, na.rm = TRUE)
-    cli::cli_alert_info("  Total rows: {total_rows}")
-  }
+    log_info("  Total rows: {total_rows}", verbose = verbose)
 
   return(result)
 }
