@@ -198,10 +198,10 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
     mad_val <- median(abs(pupil_speed - median_speed), na.rm = TRUE)
     mad_thresh <- median_speed + (n * mad_val)
   } else if (is.numeric(mad_thresh)) {
-    alert("warning", "[WARN] Using user supplied `mad_thresh`... skipping calculation")
+    log_warn("Using user supplied `mad_thresh`... skipping calculation")
     mad_val <- 0
   } else {
-    cli::cli_abort("[EXIT] `mad_thresh` must either be `NULL` or numeric.")
+    log_error("`mad_thresh` must either be `NULL` or numeric.")
   }
 
   # validate `mad_val` != 0: unrealistic outcome for real data
@@ -248,7 +248,7 @@ detransient_pupil <- function(x, prev_op, n, mad_thresh) {
       "RISK.\n\n\n"
     ))
 
-    cli::cli_abort("[EXIT] Computed property `mad_val` == 0!")
+    log_error("Computed property `mad_val` == 0!")
   }
 
   # handle case where mad_val is NA (all pupil data is NA)
