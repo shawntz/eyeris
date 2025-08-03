@@ -34,7 +34,7 @@ make_epoch_label <- function(evs, label, epoched_data) {
         epoched_data[[1]]$end_msg[1]
       ))
     } else {
-      cli::cli_abort("[EXIT] No epoched data available for label generation")
+      log_error("No epoched data available for label generation")
     }
   } else {
     paste0("epoch_", label)
