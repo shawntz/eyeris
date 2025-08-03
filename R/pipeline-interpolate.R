@@ -114,11 +114,10 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
 #' @keywords internal
 interpolate_pupil <- function(x, prev_op, verbose) {
   if (!any(is.na(x[[prev_op]]))) {
-    if (verbose) {
-      cli::cli_alert_warning(
-        "[WARN] No NAs detected in pupil data... Skipping interpolation!"
-      )
-    }
+    log_warn(
+      "No NAs detected in pupil data... Skipping interpolation!",
+      verbose = verbose
+    )
     return(x[[prev_op]])
   } else {
     prev_pupil <- x[[prev_op]]
