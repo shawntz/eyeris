@@ -46,10 +46,7 @@
 #' @export
 interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
   call_info <- if (is.null(call_info)) {
-    list(
-      call_stack = match.call(),
-      parameters = list(verbose = verbose)
-    )
+    list(call_stack = match.call(), parameters = list(verbose = verbose))
   } else {
     call_info
   }
@@ -58,20 +55,10 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
   if (is_binocular_object(eyeris)) {
     # process left and right eyes independently
     left_result <- eyeris$left |>
-      pipeline_handler(
-        interpolate_pupil,
-        "interpolate",
-        verbose,
-        call_info = call_info
-      )
+      pipeline_handler(interpolate_pupil, "interpolate", verbose, call_info = call_info)
 
     right_result <- eyeris$right |>
-      pipeline_handler(
-        interpolate_pupil,
-        "interpolate",
-        verbose,
-        call_info = call_info
-      )
+      pipeline_handler(interpolate_pupil, "interpolate", verbose, call_info = call_info)
 
     # return combined structure
     list_out <- list(
@@ -87,12 +74,7 @@ interpolate <- function(eyeris, verbose = TRUE, call_info = NULL) {
   } else {
     # regular eyeris object, process normally
     eyeris |>
-      pipeline_handler(
-        interpolate_pupil,
-        "interpolate",
-        verbose,
-        call_info = call_info
-      )
+      pipeline_handler(interpolate_pupil, "interpolate", verbose, call_info = call_info)
   }
 }
 
@@ -123,10 +105,5 @@ interpolate_pupil <- function(x, prev_op, verbose) {
     prev_pupil <- x[[prev_op]]
   }
 
-  zoo::na.approx(
-    prev_pupil,
-    na.rm = FALSE,
-    maxgap = Inf,
-    rule = 2
-  )
+  zoo::na.approx(prev_pupil, na.rm = FALSE, maxgap = Inf, rule = 2)
 }

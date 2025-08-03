@@ -214,8 +214,5 @@ parse_eyelink_info <- function(version_str, model = NA) {
     }
   }
 
-  return(list(
-    version = version_str,
-    model = model
-  ))
+  return(list(version = version_str, model = model))
 }

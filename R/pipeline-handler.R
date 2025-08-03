@@ -156,11 +156,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     is_multiblock <- TRUE
   } else {
-    if (
-      is.null(prev_operation) ||
-        length(prev_operation) == 0 ||
-        prev_operation == ""
-    ) {
+    if (is.null(prev_operation) || length(prev_operation) == 0 || prev_operation == "") {
       log_error(
         "Latest pointer is empty or NULL. This indicates a pipeline initialization error."
       )
@@ -206,9 +202,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
             length(block_prev_operation) == 0 ||
             block_prev_operation == ""
         ) {
-          log_error(
-            "Latest pointer for block {i_block} is empty or NULL."
-          )
+          log_error("Latest pointer for block {i_block} is empty or NULL.")
         }
         if (grepl("_([^_]+)_\\1", block_prev_operation)) {
           log_error(
@@ -222,10 +216,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           )
         }
         if (new_suffix == "detrend") {
-          list_detrend <- do.call(
-            operation,
-            c(list(data, block_prev_operation), dots)
-          )
+          list_detrend <- do.call(operation, c(list(data, block_prev_operation), dots))
           data["detrend_fitted_values"] <- list_detrend$fitted_values
           data[[block_output_col]] <- list_detrend$residuals
           if (!exists("detrend_coefs", eyeris)) {
@@ -233,10 +224,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           }
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
         } else if (new_suffix == "bin" || new_suffix == "downsample") {
-          list_ds_bin <- do.call(
-            operation,
-            c(list(data, block_prev_operation), dots)
-          )
+          list_ds_bin <- do.call(operation, c(list(data, block_prev_operation), dots))
           data <- list_ds_bin$downsampled_df |>
             dplyr::select(
               block,
@@ -246,10 +234,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
               -dplyr::starts_with("pupil_"),
               dplyr::starts_with("pupil_")
             ) |>
-            dplyr::relocate(
-              dplyr::ends_with("_bin"),
-              .after = last_col()
-            )
+            dplyr::relocate(dplyr::ends_with("_bin"), .after = last_col())
         } else {
           data[[block_output_col]] <- do.call(
             operation,
@@ -263,11 +248,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         }
       }
     }
-    if (
-      new_suffix != "bin" &&
-        new_suffix != "downsample" &&
-        new_suffix != "epoch"
-    ) {
+    if (new_suffix != "bin" && new_suffix != "downsample" && new_suffix != "epoch") {
       for (i_block in names(eyeris$timeseries)) {
         block_prev_operation <- eyeris$latest[[i_block]]
         block_output_col <- paste0(block_prev_operation, "_", new_suffix)
@@ -296,10 +277,7 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
         data["detrend_fitted_values"] <- list_detrend$fitted_values
         data[[output_col]] <- list_detrend$residuals
       } else {
-        data[[output_col]] <- do.call(
-          operation,
-          c(list(data, prev_operation), dots)
-        )
+        data[[output_col]] <- do.call(operation, c(list(data, prev_operation), dots))
       }
       eyeris$timeseries <- data
       if (new_suffix == "detrend") {

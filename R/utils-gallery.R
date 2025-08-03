@@ -30,9 +30,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   file.copy(system.file("www", package = "eyeris"), report_dir, recursive = TRUE)
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
-  package_version <- as.character(
-    utils::packageVersion("eyeris")
-  )
+  package_version <- as.character(utils::packageVersion("eyeris"))
 
   html_deps <- paste0(
     "<link rel='stylesheet' href='./source/www/css/bootstrap.min.css' ",
@@ -52,10 +50,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     "});</script>\n"
   )
 
-  css <- system.file(
-    file.path("rmarkdown", "css", "report.css"),
-    package = "eyeris"
-  )
+  css <- system.file(file.path("rmarkdown", "css", "report.css"), package = "eyeris")
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
@@ -208,7 +203,10 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
           zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
           log_success("Embedded zip file as data URL ({file_size} bytes)", verbose = TRUE)
         } else {
-          log_warn("Zip file too large for data URL embedding ({file_size} bytes)", verbose = TRUE)
+          log_warn(
+            "Zip file too large for data URL embedding ({file_size} bytes)",
+            verbose = TRUE
+          )
         }
       },
       error = function(e) {

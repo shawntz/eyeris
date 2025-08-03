@@ -60,12 +60,7 @@ downsample <- function(
   call_info <- if (is.null(call_info)) {
     list(
       call_stack = match.call(),
-      parameters = list(
-        target_fs = target_fs,
-        plot_freqz = plot_freqz,
-        rp = rp,
-        rs = rs
-      )
+      parameters = list(target_fs = target_fs, plot_freqz = plot_freqz, rp = rp, rs = rs)
     )
   } else {
     call_info
@@ -192,10 +187,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
     par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
     freq_response <- gsignal::freqz(filt, fs = current_fs)
     xlim_sel <- freq_response$w <= min((ws + 10), fs_nq)
-    gsignal::freqz_plot(
-      freq_response$w[xlim_sel],
-      freq_response$h[xlim_sel]
-    )
+    gsignal::freqz_plot(freq_response$w[xlim_sel], freq_response$h[xlim_sel])
     subtitle <- paste0(
       "*freq response for anti-aliasing filter* - ",
       "passband (",
@@ -212,14 +204,7 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
     plot_width <- par("pin")[1]
     scaling_factor <- 7
     cex_val <- plot_width / scaling_factor
-    graphics::mtext(
-      side = 2,
-      line = 2,
-      at = 0,
-      adj = 0.95,
-      cex = cex_val,
-      subtitle
-    )
+    graphics::mtext(side = 2, line = 2, at = 0, adj = 0.95, cex = cex_val, subtitle)
   }
 
   # apply anti-aliasing filter
@@ -232,8 +217,5 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
   downsampled_df <- x[indices, , drop = FALSE]
   downsampled_df[[paste0(prev_op, "_downsample")]] <- downsampled_data
 
-  list_out <- list(
-    downsampled_df = downsampled_df,
-    decimated.sample.rate = target_fs
-  )
+  list_out <- list(downsampled_df = downsampled_df, decimated.sample.rate = target_fs)
 }

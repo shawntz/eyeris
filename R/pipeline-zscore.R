@@ -67,10 +67,7 @@
 #' @export
 zscore <- function(eyeris, call_info = NULL) {
   call_info <- if (is.null(call_info)) {
-    list(
-      call_stack = match.call(),
-      parameters = list()
-    )
+    list(call_stack = match.call(), parameters = list())
   } else {
     call_info
   }
@@ -97,8 +94,7 @@ zscore <- function(eyeris, call_info = NULL) {
     return(list_out)
   } else {
     # regular eyeris object, process normally
-    eyeris |>
-      pipeline_handler(zscore_pupil, "z", call_info = call_info)
+    eyeris |> pipeline_handler(zscore_pupil, "z", call_info = call_info)
   }
 }
 
@@ -136,11 +132,7 @@ zscore_pupil <- function(x, prev_op) {
 
   pupil_col <- dplyr::sym(prev_op)
 
-  x |>
-    dplyr::mutate(
-      zscore = get_zscores(!!pupil_col)
-    ) |>
-    dplyr::pull(zscore)
+  x |> dplyr::mutate(zscore = get_zscores(!!pupil_col)) |> dplyr::pull(zscore)
 }
 
 get_zscores <- function(x) {

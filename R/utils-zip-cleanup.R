@@ -11,7 +11,11 @@
 #' @return List of created zip file paths
 #'
 #' @keywords internal
-zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbose = FALSE) {
+zip_and_cleanup_source_figures <- function(
+  report_path,
+  eye_suffix = NULL,
+  verbose = FALSE
+) {
   figures_dir <- file.path(report_path, "source", "figures")
 
   if (!dir.exists(figures_dir)) {
@@ -114,10 +118,7 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
             )
           }
         )
-        log_warn(
-          "Failed to create zip for {run_name}: {e$message}",
-          verbose = verbose
-        )
+        log_warn("Failed to create zip for {run_name}: {e$message}", verbose = verbose)
       }
     )
   }
@@ -137,7 +138,11 @@ zip_and_cleanup_source_figures <- function(report_path, eye_suffix = NULL, verbo
 #' @return Invisibly returns list of created zip files
 #'
 #' @keywords internal
-cleanup_source_figures_post_render <- function(report_path, eye_suffix = NULL, verbose = FALSE) {
+cleanup_source_figures_post_render <- function(
+  report_path,
+  eye_suffix = NULL,
+  verbose = FALSE
+) {
   log_info("Starting post-render cleanup of source figure files...", verbose = verbose)
 
   zip_files <- zip_and_cleanup_source_figures(

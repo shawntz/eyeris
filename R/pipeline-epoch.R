@@ -220,22 +220,14 @@ epoch <- function(
 ) {
   # handle deprecated parameters
   if (is_present(calc_baseline)) {
-    lifecycle::deprecate_warn(
-      "1.3.0",
-      "epoch(calc_baseline)",
-      "epoch(baseline)"
-    )
+    lifecycle::deprecate_warn("1.3.0", "epoch(calc_baseline)", "epoch(baseline)")
     if (isTRUE(calc_baseline)) {
       baseline <- TRUE
     }
   }
 
   if (is_present(apply_baseline)) {
-    lifecycle::deprecate_warn(
-      "1.3.0",
-      "epoch(apply_baseline)",
-      "epoch(baseline)"
-    )
+    lifecycle::deprecate_warn("1.3.0", "epoch(apply_baseline)", "epoch(baseline)")
     if (isTRUE(apply_baseline)) {
       baseline <- TRUE
     }
@@ -420,11 +412,7 @@ epoch_pupil <- function(
     block_int <- get_block_numbers(bn)
 
     if (!is.list(evs)) {
-      n_events <- merge_events_with_timeseries(
-        x$events[[bn]],
-        msg_s,
-        merge = FALSE
-      ) |>
+      n_events <- merge_events_with_timeseries(x$events[[bn]], msg_s, merge = FALSE) |>
         nrow()
 
       log_info(
@@ -435,11 +423,7 @@ epoch_pupil <- function(
       n_events <- length(evs[[1]]$time)
     }
 
-    block_metadata <- list(
-      id = block_int,
-      name = bn,
-      n_events = n_events
-    )
+    block_metadata <- list(id = block_int, name = bn, n_events = n_events)
 
     processed_data[[bn]] <- epoch_and_baseline_block(
       x,
@@ -512,13 +496,7 @@ epoch_pupil <- function(
 
     elapsed <- difftime(Sys.time(), start_time, units = "secs")
 
-    log_success(
-      sprintf(
-      msg_str,
-      as.numeric(elapsed)
-      ),
-      verbose = verbose
-    )
+    log_success(sprintf(msg_str, as.numeric(elapsed)), verbose = verbose)
   }
 
   # recalculate epoched confounds if they exist, since new epochs were created
@@ -598,9 +576,7 @@ epoch_and_baseline_block <- function(
   dt <- data.table::as.data.table(block_data)
 
   if (!"time_orig" %in% names(dt)) {
-    log_error(
-      "Block '{block_name}' doesn't contain the expected `time_orig` column."
-    )
+    log_error("Block '{block_name}' doesn't contain the expected `time_orig` column.")
   }
 
   data.table::setkey(dt, "time_orig")
@@ -632,7 +608,14 @@ epoch_and_baseline_block <- function(
     bline_msg_s <- bline_evs[1]
     bline_msg_e <- bline_evs[2]
 
-    bline_matches <- get_timestamps(bline_evs, block_events, bline_msg_s, bline_msg_e, bline_per, baseline_mode = TRUE)
+    bline_matches <- get_timestamps(
+      bline_evs,
+      block_events,
+      bline_msg_s,
+      bline_msg_e,
+      bline_per,
+      baseline_mode = TRUE
+    )
 
     check_baseline_epoch_counts(timestamps, bline_matches)
 
@@ -658,8 +641,9 @@ epoch_and_baseline_block <- function(
 
     if (a_bline) {
       for (i in seq_len(length(result))) {
-        result[[i]][[computed_baselines$baseline_cor_col_name]] <-
-          computed_baselines$baseline_cor_epochs[[i]]
+        result[[i]][[
+          computed_baselines$baseline_cor_col_name
+        ]] <- computed_baselines$baseline_cor_epochs[[i]]
       }
     }
 
@@ -725,25 +709,17 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbo
 
   if (is.character(evs) && length(evs) == 1) {
     if (is.null(lims)) {
-      epochs <- eyeris |>
-        epoch_only_start_msg(timestamps$start, hz, verbose)
+      epochs <- eyeris |> epoch_only_start_msg(timestamps$start, hz, verbose)
     } else {
-      epochs <- eyeris |>
-        epoch_start_msg_and_limits(timestamps$start, lims, hz, verbose)
+      epochs <- eyeris |> epoch_start_msg_and_limits(timestamps$start, lims, hz, verbose)
     }
   } else if (is.character(evs) && length(evs) == 2) {
-    epochs <- eyeris |>
-      epoch_start_end_msg(timestamps$start, timestamps$end, hz, verbose)
+    epochs <- eyeris |> epoch_start_end_msg(timestamps$start, timestamps$end, hz, verbose)
   } else if (is.list(evs)) {
-    epochs <- eyeris |>
-      epoch_manually(evs, hz, verbose)
+    epochs <- eyeris |> epoch_manually(evs, hz, verbose)
   }
 
-  if (
-    !is.null(n_timestamps) &&
-      length(epochs) > 0 &&
-      length(epochs) != n_timestamps
-  ) {
+  if (!is.null(n_timestamps) && length(epochs) > 0 && length(epochs) != n_timestamps) {
     log_error(
       "Expected {n_timestamps} samples but got {length(epochs)} samples. Check data for a possible matching error."
     )
@@ -797,9 +773,7 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
     i_start <- s_df$time[i]
     i_end <- e_df$time[i]
 
-    current_epoch <- eyeris |>
-      purrr::pluck("timeseries") |>
-      slice_epoch(i_start, i_end)
+    current_epoch <- eyeris |> purrr::pluck("timeseries") |> slice_epoch(i_start, i_end)
 
     duration <- nrow(current_epoch) / hz
     n_samples <- duration * hz
@@ -807,15 +781,10 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
     start_metadata_vals <- dplyr::rename_with(s_df, ~ paste0("start_", .x))
     end_metadata_vals <- dplyr::rename_with(e_df, ~ paste0("end_", .x))
 
-    metadata_vals <- dplyr::bind_cols(
-      start_metadata_vals[i, ],
-      end_metadata_vals[i, ]
-    )
+    metadata_vals <- dplyr::bind_cols(start_metadata_vals[i, ], end_metadata_vals[i, ])
 
     epochs[[i]] <- current_epoch |>
-      dplyr::mutate(
-        timebin = seq(0, duration, length.out = n_samples)
-      ) |>
+      dplyr::mutate(timebin = seq(0, duration, length.out = n_samples)) |>
       dplyr::bind_cols(metadata_vals)
 
     if (verbose) {
@@ -859,9 +828,7 @@ epoch_only_start_msg <- function(eyeris, start, hz, verbose) {
     n_samples <- duration * hz
 
     epochs[[i]] <- current_epoch |>
-      dplyr::mutate(
-        timebin = seq(0, duration, length.out = n_samples)
-      ) |>
+      dplyr::mutate(timebin = seq(0, duration, length.out = n_samples)) |>
       dplyr::bind_cols(metadata_vals) |>
       dplyr::select(-time)
 
@@ -905,11 +872,7 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz, verbose) {
 
     epochs[[i]] <- eyeris |>
       purrr::pluck("timeseries") |>
-      slice_epochs_with_limits(
-        start$time[i],
-        lims,
-        hz
-      ) |>
+      slice_epochs_with_limits(start$time[i], lims, hz) |>
       dplyr::mutate(
         timebin = seq(from = 0, to = duration, length.out = n_samples),
         .after = time_orig
@@ -961,22 +924,16 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
       ~ paste0("start_", .x)
     )
 
-    end_metadata_vals <- dplyr::rename_with(
-      index_metadata(end, i),
-      ~ paste0("end_", .x)
-    )
+    end_metadata_vals <- dplyr::rename_with(index_metadata(end, i), ~ paste0("end_", .x))
 
-    metadata_vals <- start_metadata_vals |>
-      dplyr::bind_cols(end_metadata_vals)
+    metadata_vals <- start_metadata_vals |> dplyr::bind_cols(end_metadata_vals)
 
     duration <- (i_end - i_start) / 1000 # convert to seconds
 
     epochs[[i]] <- eyeris |>
       purrr::pluck("timeseries") |>
       dplyr::filter(time_orig >= i_start, time_orig < i_end) |>
-      dplyr::mutate(
-        timebin = seq(0, duration, length.out = dplyr::n())
-      ) |>
+      dplyr::mutate(timebin = seq(0, duration, length.out = dplyr::n())) |>
       dplyr::bind_cols(metadata_vals)
 
     if (verbose) {

@@ -458,7 +458,5 @@ is_binocular_object <- function(x) {
 #'
 #' @keywords internal
 should_plot_binoc_cors <- function(x) {
-  is.list(x) &&
-    ("left" %in% names(x) && "right" %in% names(x)) ||
-    (isTRUE(x$binocular))
+  is.list(x) && ("left" %in% names(x) && "right" %in% names(x)) || (isTRUE(x$binocular))
 }

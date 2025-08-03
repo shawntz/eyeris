@@ -28,23 +28,32 @@ get_log_timestamp <- function() {
 #' @param wrap Logical. Whether to wrap long messages
 #' @param .envir Environment for glue interpolation
 #' @keywords internal
-log_message <- function(level, ..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
-  if (!verbose) return(invisible(NULL))
-  
+log_message <- function(
+  level,
+  ...,
+  verbose = TRUE,
+  wrap = TRUE,
+  .envir = parent.frame()
+) {
+  if (!verbose) {
+    return(invisible(NULL))
+  }
+
   # Collapse multiple strings with spaces
   message_parts <- list(...)
   message_text <- paste(message_parts, collapse = " ")
-  
+
   # Apply glue interpolation if there are braces
   if (grepl("\\{.*\\}", message_text)) {
     message_text <- glue::glue(message_text, .envir = .envir)
   }
-  
+
   # Prepend timestamp and log level
   full_message <- paste(get_log_timestamp(), paste0("[", level, "]"), message_text)
-  
+
   # Call appropriate cli function based on level
-  switch(level,
+  switch(
+    level,
     "INFO" = cli::cli_alert_info(full_message, wrap = wrap),
     "OKAY" = cli::cli_alert_success(full_message, wrap = wrap),
     "WARN" = cli::cli_alert_warning(full_message, wrap = wrap),

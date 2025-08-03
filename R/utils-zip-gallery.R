@@ -40,9 +40,9 @@ create_epoch_images_zip <- function(
   temp_dir <- tempfile("epoch_images_")
   dir.create(temp_dir, recursive = TRUE)
 
-  epoch_groups <- as.vector(
-    unique(epochs_to_save[[epoch_index]][[block_name]][report_epoch_grouping_var_col])[[1]]
-  )
+  epoch_groups <- as.vector(unique(epochs_to_save[[epoch_index]][[block_name]][
+    report_epoch_grouping_var_col
+  ])[[1]])
 
   created_files <- c()
 
@@ -50,9 +50,7 @@ create_epoch_images_zip <- function(
     {
       for (group in epoch_groups) {
         group_df <- epochs_to_save[[epoch_index]][[block_name]]
-        group_df <- group_df[
-          group_df[[report_epoch_grouping_var_col]] == group,
-        ]
+        group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
 
         for (pstep in seq_along(pupil_steps)) {
           if (grepl("z", pupil_steps[pstep])) {
@@ -67,19 +65,21 @@ create_epoch_images_zip <- function(
 
           file_out <- file.path(
             temp_dir,
-            sprintf(
-              "run-%02d_%s_%d",
-              run_dir_num,
-              group,
-              pstep
-            )
+            sprintf("run-%02d_%s_%d", run_dir_num, group, pstep)
           )
           if (!is.null(eye_suffix)) {
             file_out <- paste0(file_out, "_", eye_suffix)
           }
           file_out <- paste0(file_out, ".png")
 
-          png(file_out, width = 3.25, height = 2.5, units = "in", res = 600, pointsize = 6)
+          png(
+            file_out,
+            width = 3.25,
+            height = 2.5,
+            units = "in",
+            res = 600,
+            pointsize = 6
+          )
 
           y_values <- group_df[[pupil_steps[pstep]]]
           if (any(is.finite(y_values))) {
@@ -94,10 +94,7 @@ create_epoch_images_zip <- function(
                 group,
                 "\n",
                 pupil_steps[pstep],
-                sprintf(
-                  " (Run %d)",
-                  run_dir_num
-                )
+                sprintf(" (Run %d)", run_dir_num)
               )
             )
           } else {
@@ -108,12 +105,7 @@ create_epoch_images_zip <- function(
               type = "n",
               xlab = "time (s)",
               ylab = y_label,
-              main = paste0(
-                group,
-                "\n",
-                pupil_steps[pstep],
-                "\nNO DATA"
-              )
+              main = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA")
             )
             log_warn(
               "eyeris: no finite pupillometry data to plot for",
@@ -131,25 +123,26 @@ create_epoch_images_zip <- function(
 
       for (group in epoch_groups) {
         group_df <- epochs_to_save[[epoch_index]][[block_name]]
-        group_df <- group_df[
-          group_df[[report_epoch_grouping_var_col]] == group,
-        ]
+        group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
 
         if (all(c("eye_x", "eye_y") %in% colnames(group_df))) {
           heatmap_filename <- file.path(
             temp_dir,
-            sprintf(
-              "run-%02d_%s_gaze_heatmap",
-              run_dir_num,
-              group
-            )
+            sprintf("run-%02d_%s_gaze_heatmap", run_dir_num, group)
           )
           if (!is.null(eye_suffix)) {
             heatmap_filename <- paste0(heatmap_filename, "_", eye_suffix)
           }
           heatmap_filename <- paste0(heatmap_filename, ".png")
 
-          png(heatmap_filename, width = 6, height = 4, units = "in", res = 300, pointsize = 10)
+          png(
+            heatmap_filename,
+            width = 6,
+            height = 4,
+            units = "in",
+            res = 300,
+            pointsize = 10
+          )
 
           tryCatch(
             {

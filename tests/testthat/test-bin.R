@@ -8,11 +8,7 @@ test_that("bin() works as expected", {
 
   # test bin() --------------------------------------------------------------
   bins_per_second <- 10
-  binned <- eyeris::bin(
-    data,
-    bins_per_second = bins_per_second,
-    method = "mean"
-  )
+  binned <- eyeris::bin(data, bins_per_second = bins_per_second, method = "mean")
   expect_equal(binned$decimated.sample.rate, bins_per_second)
   expect_lt(nrow(binned$timeseries$block_1), nrow(data$timeseries$block_1))
   expect_true(!any(is.na(binned$timeseries$block_1$pupil_raw_interpolate_bin)))

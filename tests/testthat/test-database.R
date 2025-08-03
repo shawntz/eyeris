@@ -120,7 +120,13 @@ test_that("database integration works correctly", {
     expect_equal(unique(data$data_type), "epochs")
 
     # test filtering
-    filtered_data <- eyeris_db_read(user_con, data_type = "epochs", subject = "002", session = "02", task = "memory")
+    filtered_data <- eyeris_db_read(
+      user_con,
+      data_type = "epochs",
+      subject = "002",
+      session = "02",
+      task = "memory"
+    )
     expect_equal(nrow(filtered_data), 2)
 
     eyeris_db_disconnect(user_con)
@@ -204,20 +210,40 @@ test_that("database integration works correctly", {
     # test default path
     con1 <- connect_eyeris_database(temp_bids_dir, verbose = FALSE)
     expect_s4_class(con1, "duckdb_connection")
-    expect_true(file.exists(file.path(temp_bids_dir, "derivatives", "my-project.eyerisdb")))
+    expect_true(file.exists(file.path(
+      temp_bids_dir,
+      "derivatives",
+      "my-project.eyerisdb"
+    )))
     disconnect_eyeris_database(con1, verbose = FALSE)
 
     # test custom name (extension should be auto-added)
     con2 <- connect_eyeris_database(temp_bids_dir, "custom-study", verbose = FALSE)
     expect_s4_class(con2, "duckdb_connection")
-    expect_true(file.exists(file.path(temp_bids_dir, "derivatives", "custom-study.eyerisdb")))
+    expect_true(file.exists(file.path(
+      temp_bids_dir,
+      "derivatives",
+      "custom-study.eyerisdb"
+    )))
     disconnect_eyeris_database(con2, verbose = FALSE)
 
     # test name with extension already present
-    con3 <- connect_eyeris_database(temp_bids_dir, "already-has.eyerisdb", verbose = FALSE)
+    con3 <- connect_eyeris_database(
+      temp_bids_dir,
+      "already-has.eyerisdb",
+      verbose = FALSE
+    )
     expect_s4_class(con3, "duckdb_connection")
-    expect_true(file.exists(file.path(temp_bids_dir, "derivatives", "already-has.eyerisdb")))
-    expect_false(file.exists(file.path(temp_bids_dir, "derivatives", "already-has.eyerisdb.eyerisdb")))
+    expect_true(file.exists(file.path(
+      temp_bids_dir,
+      "derivatives",
+      "already-has.eyerisdb"
+    )))
+    expect_false(file.exists(file.path(
+      temp_bids_dir,
+      "derivatives",
+      "already-has.eyerisdb.eyerisdb"
+    )))
     disconnect_eyeris_database(con3, verbose = FALSE)
   })
 
@@ -287,12 +313,20 @@ test_that("database integration works correctly", {
     expect_true("epoch_timeseries_005_01_epochtest_run01_prepostprobe" %in% tables)
 
     # verify data contains epoch label metadata
-    table_data <- DBI::dbReadTable(con, "epoch_timeseries_005_01_epochtest_run01_prepostprobe")
+    table_data <- DBI::dbReadTable(
+      con,
+      "epoch_timeseries_005_01_epochtest_run01_prepostprobe"
+    )
     expect_true("epoch_label" %in% colnames(table_data))
     expect_equal(unique(table_data$epoch_label), "prePostProbe")
 
     # test reading data with epoch label filter
-    filtered_data <- eyeris_db_read(con, data_type = "epoch_timeseries", subject = "005", epoch_label = "prePostProbe")
+    filtered_data <- eyeris_db_read(
+      con,
+      data_type = "epoch_timeseries",
+      subject = "005",
+      epoch_label = "prePostProbe"
+    )
     expect_true(nrow(filtered_data) > 0)
     expect_equal(unique(filtered_data$epoch_label), "prePostProbe")
     expect_equal(unique(filtered_data$subject_id), "005")

@@ -8,11 +8,7 @@ test_that("downsample() works as expected", {
 
   # test downsample() -------------------------------------------------------
   target_fs <- 500
-  downsampled <- eyeris::downsample(
-    data,
-    target_fs = target_fs,
-    plot_freqz = FALSE
-  )
+  downsampled <- eyeris::downsample(data, target_fs = target_fs, plot_freqz = FALSE)
   expect_equal(downsampled$decimated.sample.rate, target_fs)
   expect_lt(nrow(downsampled$timeseries$block_1), nrow(data$timeseries$block_1))
   expect_true(

@@ -32,14 +32,14 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = full_db_path)
 
-        if (file.exists(full_db_path)) {
-          log_success(
-            "Connected to existing eyeris project database: {full_db_path}",
-            verbose = verbose
-          )
-        } else {
-          log_success("Created new eyeris database: {full_db_path}", verbose = verbose)
-        }
+      if (file.exists(full_db_path)) {
+        log_success(
+          "Connected to existing eyeris project database: {full_db_path}",
+          verbose = verbose
+        )
+      } else {
+        log_success("Created new eyeris database: {full_db_path}", verbose = verbose)
+      }
 
       return(con)
     },
@@ -93,7 +93,15 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
 #' @return Character string with table name
 #'
 #' @keywords internal
-create_table_name <- function(data_type, sub, ses, task, run = NULL, eye_suffix = NULL, epoch_label = NULL) {
+create_table_name <- function(
+  data_type,
+  sub,
+  ses,
+  task,
+  run = NULL,
+  eye_suffix = NULL,
+  epoch_label = NULL
+) {
   # base table name
   table_name <- paste0(data_type, "_", sub, "_", ses, "_", task)
 
@@ -222,11 +230,11 @@ write_eyeris_data_to_db <- function(
         overwrite = !actual_append
       )
 
-        action <- if (append) "Added" else "Created"
-        log_success(
-          "{action} table '{table_name}' with {nrow(data)} rows",
-          verbose = verbose
-        )
+      action <- if (append) "Added" else "Created"
+      log_success(
+        "{action} table '{table_name}' with {nrow(data)} rows",
+        verbose = verbose
+      )
 
       return(TRUE)
     },
@@ -393,10 +401,7 @@ eyeris_db_read <- function(
       # and no additional WHERE clause needed since tables are already filtered by epoch
 
       # execute query
-      log_info(
-        "Executing query: {query}",
-        verbose = TRUE
-      )
+      log_info("Executing query: {query}", verbose = TRUE)
       result <- DBI::dbGetQuery(con, query)
 
       return(result)
@@ -542,7 +547,13 @@ write_csv_and_db <- function(
     )
   }
 
-  if (!is.null(db_con) && !is.null(data_type) && !is.null(sub) && !is.null(ses) && !is.null(task)) {
+  if (
+    !is.null(db_con) &&
+      !is.null(data_type) &&
+      !is.null(sub) &&
+      !is.null(ses) &&
+      !is.null(task)
+  ) {
     db_success <- write_eyeris_data_to_db(
       data = data,
       con = db_con,
@@ -699,12 +710,18 @@ eyeris_db_collect <- function(
     # validate specified data types
     invalid_types <- setdiff(data_types, all_data_types)
     if (length(invalid_types) > 0) {
-      log_warn("Invalid data types ignored: {paste(invalid_types, collapse = ', ')}", verbose = TRUE)
+      log_warn(
+        "Invalid data types ignored: {paste(invalid_types, collapse = ', ')}",
+        verbose = TRUE
+      )
       data_types <- intersect(data_types, all_data_types)
     }
   }
 
-  log_info("Extracting data types: {paste(data_types, collapse = ', ')}", verbose = verbose)
+  log_info(
+    "Extracting data types: {paste(data_types, collapse = ', ')}",
+    verbose = verbose
+  )
 
   # extract data for each type
   result_list <- list()
@@ -722,13 +739,22 @@ eyeris_db_collect <- function(
             if (length(type_tables) > 0) {
               # extract unique epoch labels from table names
               # handles both eye-L/eye-R and eyeL/eyeR formats
-              epoch_pattern <- paste0(data_type, "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$")
+              epoch_pattern <- paste0(
+                data_type,
+                "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$"
+              )
               extracted_labels <- unique(gsub(epoch_pattern, "\\1", type_tables))
               # remove failed matches (when pattern doesn't match, return original string)
               extracted_labels <- extracted_labels[
-                extracted_labels != type_tables & !is.na(extracted_labels) & extracted_labels != ""
+                extracted_labels != type_tables &
+                  !is.na(extracted_labels) &
+                  extracted_labels != ""
               ]
-              epoch_labels_to_use <- if (length(extracted_labels) > 0) extracted_labels else NULL
+              epoch_labels_to_use <- if (length(extracted_labels) > 0) {
+                extracted_labels
+              } else {
+                NULL
+              }
             } else {
               epoch_labels_to_use <- NULL
             }
@@ -760,11 +786,11 @@ eyeris_db_collect <- function(
             combined_data <- do.call(rbind, epoch_data_list)
             result_list[[data_type]] <- combined_data
           }
-            # check if there are any tables for this data type at all
-            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
-            if (length(type_tables) == 0) {
-              log_warn("No tables found for data type: {data_type}", verbose = verbose)
-            }
+          # check if there are any tables for this data type at all
+          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+          if (length(type_tables) == 0) {
+            log_warn("No tables found for data type: {data_type}", verbose = verbose)
+          }
         } else {
           # handle non-epoch data types
           data <- eyeris_db_read(
@@ -779,11 +805,11 @@ eyeris_db_collect <- function(
           if (!is.null(data) && nrow(data) > 0) {
             result_list[[data_type]] <- data
           }
-            # check if there are any tables for this data type at all
-            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
-            if (length(type_tables) == 0) {
-              log_warn("No tables found for data type: {data_type}", verbose = verbose)
-            }
+          # check if there are any tables for this data type at all
+          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+          if (length(type_tables) == 0) {
+            log_warn("No tables found for data type: {data_type}", verbose = verbose)
+          }
         }
       },
       error = function(e) {
@@ -795,12 +821,15 @@ eyeris_db_collect <- function(
   # filter out empty results
   result_list <- result_list[lengths(result_list) > 0]
 
-    log_success("Successfully extracted {length(result_list)} data types", verbose = verbose)
-    for (dtype in names(result_list)) {
-      n_rows <- nrow(result_list[[dtype]])
-      n_subjects <- length(unique(result_list[[dtype]]$subject_id))
-      log_info("  {dtype}: {n_rows} rows across {n_subjects} subjects", verbose = verbose)
-    }
+  log_success(
+    "Successfully extracted {length(result_list)} data types",
+    verbose = verbose
+  )
+  for (dtype in names(result_list)) {
+    n_rows <- nrow(result_list[[dtype]])
+    n_subjects <- length(unique(result_list[[dtype]]$subject_id))
+    log_info("  {dtype}: {n_rows} rows across {n_subjects} subjects", verbose = verbose)
+  }
 
   return(result_list)
 }
@@ -909,7 +938,10 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
     tryCatch(
       {
         # query just one row to get metadata
-        sample_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM \"", table, "\" LIMIT 1"))
+        sample_data <- DBI::dbGetQuery(
+          con,
+          paste0("SELECT * FROM \"", table, "\" LIMIT 1")
+        )
         if (nrow(sample_data) > 0) {
           if ("subject_id" %in% colnames(sample_data)) {
             subjects <- c(subjects, sample_data$subject_id)
@@ -935,7 +967,10 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
   for (table in all_tables) {
     tryCatch(
       {
-        count <- DBI::dbGetQuery(con, paste0("SELECT COUNT(*) as n FROM \"", table, "\""))$n
+        count <- DBI::dbGetQuery(
+          con,
+          paste0("SELECT COUNT(*) as n FROM \"", table, "\"")
+        )$n
         table_counts[table] <- count
       },
       error = function(e) {
@@ -960,24 +995,33 @@ eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) 
     total_tables = length(all_tables)
   )
 
-    log_success("Database summary:", verbose = verbose)
-    log_info("  Total tables: {result$total_tables}", verbose = verbose)
+  log_success("Database summary:", verbose = verbose)
+  log_info("  Total tables: {result$total_tables}", verbose = verbose)
+  log_info(
+    "  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})",
+    verbose = verbose
+  )
+  log_info(
+    "  Sessions: {length(result$sessions)} ({paste(result$sessions, collapse = ', ')})",
+    verbose = verbose
+  )
+  log_info(
+    "  Tasks: {length(result$tasks)} ({paste(result$tasks, collapse = ', ')})",
+    verbose = verbose
+  )
+  log_info(
+    "  Data types: {length(result$data_types)} ({paste(result$data_types, collapse = ', ')})",
+    verbose = verbose
+  )
+  if (length(result$eye_suffixes) > 0) {
     log_info(
-      "  Subjects: {length(result$subjects)} ({paste(head(result$subjects, 5), collapse = ', ')}{if(length(result$subjects) > 5) '...' else ''})",
+      "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})",
       verbose = verbose
     )
-    log_info("  Sessions: {length(result$sessions)} ({paste(result$sessions, collapse = ', ')})", verbose = verbose)
-    log_info("  Tasks: {length(result$tasks)} ({paste(result$tasks, collapse = ', ')})", verbose = verbose)
-    log_info("  Data types: {length(result$data_types)} ({paste(result$data_types, collapse = ', ')})", verbose = verbose)
-    if (length(result$eye_suffixes) > 0) {
-      log_info(
-        "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})",
-        verbose = verbose
-      )
-    }
+  }
 
-    total_rows <- sum(table_counts, na.rm = TRUE)
-    log_info("  Total rows: {total_rows}", verbose = verbose)
+  total_rows <- sum(table_counts, na.rm = TRUE)
+  log_info("  Total rows: {total_rows}", verbose = verbose)
 
   return(result)
 }

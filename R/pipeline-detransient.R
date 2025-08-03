@@ -99,10 +99,7 @@
 #' @export
 detransient <- function(eyeris, n = 16, mad_thresh = NULL, call_info = NULL) {
   call_info <- if (is.null(call_info)) {
-    list(
-      call_stack = match.call(),
-      parameters = list(n = n, mad_thresh = mad_thresh)
-    )
+    list(call_stack = match.call(), parameters = list(n = n, mad_thresh = mad_thresh))
   } else {
     call_info
   }
