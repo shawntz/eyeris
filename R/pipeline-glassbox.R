@@ -309,7 +309,8 @@ glassbox <- function(
         result <- eyeris::load_asc(
           data,
           block = params$load_asc$block,
-          binocular_mode = params$load_asc$binocular_mode
+          binocular_mode = params$load_asc$binocular_mode,
+          verbose = verbose
         )
         if (!is.list(result$params)) {
           result$params <- list()
