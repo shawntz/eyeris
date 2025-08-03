@@ -4,12 +4,14 @@
 \alias{print_lightbox_img_html}
 \title{Print lightbox image HTML for zip-based gallery}
 \usage{
-print_lightbox_img_html(zip_path, image_filenames = NULL)
+print_lightbox_img_html(zip_path, image_filenames = NULL, verbose = TRUE)
 }
 \arguments{
 \item{zip_path}{Path to the zip file containing images (can be absolute or relative)}
 
 \item{image_filenames}{Vector of image filenames within the zip}
+
+\item{verbose}{Logical. Whether to print verbose output (default TRUE).}
 }
 \value{
 A character string containing HTML code for the lightbox gallery

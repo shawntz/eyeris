@@ -134,11 +134,12 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 #'
 #' @param zip_path Path to the zip file containing images (can be absolute or relative)
 #' @param image_filenames Vector of image filenames within the zip
+#' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return A character string containing HTML code for the lightbox gallery
 #'
 #' @keywords internal
-print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
+print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = TRUE) {
   # use legacy mode if zip_path is actually a vector of individual image paths
   if (length(zip_path) > 1 || !grepl("\\.zip$", zip_path)) {
     return(print_lightbox_img_html_legacy(zip_path))
@@ -149,7 +150,9 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
 
   if (is_absolute && file.exists(zip_path)) {
     full_zip_path <- zip_path
-    cli::cli_alert_info(sprintf("[INFO] Using absolute zip file path: %s", zip_path))
+    if (verbose) {
+      cli::cli_alert_info(sprintf("[INFO] Using absolute zip file path: %s", zip_path))
+    }
 
     # create relative path for HTML display
     if (grepl("source/figures", zip_path)) {
@@ -171,7 +174,9 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL) {
     for (path in possible_paths) {
       if (file.exists(path)) {
         full_zip_path <- path
-        cli::cli_alert_info(sprintf("[INFO] Found zip file at: %s", path))
+        if (verbose) {
+          cli::cli_alert_info(sprintf("[INFO] Found zip file at: %s", path))
+        }
         break
       }
     }
