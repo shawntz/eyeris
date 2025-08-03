@@ -149,19 +149,19 @@ lpfilt <- function(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE, 
 #' @keywords internal
 lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
   if (any(is.na(x[[prev_op]]))) {
-    cli::cli_abort("[EXIT] NAs detected in pupil data. Need to interpolate first.")
+    log_error("NAs detected in pupil data. Need to interpolate first.")
   } else {
     prev_pupil <- x[[prev_op]]
   }
 
   # additional validation to prevent "non-numeric matrix extent" error
   if (!is.numeric(prev_pupil) || length(prev_pupil) == 0) {
-    cli::cli_abort("[EXIT] Invalid pupil data: data must be numeric and non-empty.")
+    log_error("Invalid pupil data: data must be numeric and non-empty.")
   }
 
   if (any(!is.finite(prev_pupil))) {
-    cli::cli_abort(
-      "[EXIT] Non-finite values detected in pupil data. Need to clean data first."
+    log_error(
+      "Non-finite values detected in pupil data. Need to clean data first."
     )
   }
 
