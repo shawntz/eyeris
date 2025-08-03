@@ -18,25 +18,13 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
   }
 
   if (dir.exists(dir)) {
-    if (verbose) {
-      cli::cli_alert_warning(
-        sprintf("[WARN] '%s' already exists. Skipping creation...", dir)
-      )
-    }
+    log_warn("'{dir}' already exists. Skipping creation...", verbose = verbose)
   } else {
-    if (verbose) {
-      cli::cli_alert_info(
-        sprintf("[INFO] '%s' does not exist. Creating...", dir)
-      )
-    }
+    log_info("'{dir}' does not exist. Creating...", verbose = verbose)
 
     dir.create(dir, recursive = TRUE)
 
-    if (verbose) {
-      cli::cli_alert_success(
-        sprintf("[OKAY] BIDS directory successfully created at: '%s'", dir)
-      )
-    }
+    log_success("BIDS directory successfully created at: '{dir}'", verbose = verbose)
   }
 }
 
@@ -414,24 +402,18 @@ count_epochs <- function(epochs) {
 #' @keywords internal
 check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
   if (is.null(time_vector) || length(time_vector) == 0) {
-    cli::cli_abort(paste(
-      "[EXIT] Time vector is NULL or empty. Cannot validate monotonicity.",
-      "Time column:",
-      time_col_name
-    ))
+    log_error(
+      "Time vector is NULL or empty. Cannot validate monotonicity. Time column: {time_col_name}"
+    )
   }
 
   # remove NA values for the check
   time_clean <- time_vector[!is.na(time_vector)]
 
   if (length(time_clean) < 2) {
-    cli::cli_abort(paste(
-      "[EXIT] Insufficient non-NA time points to validate monotonicity.",
-      "Need at least 2 points, got",
-      length(time_clean),
-      "Time column:",
-      time_col_name
-    ))
+    log_error(
+      "Insufficient non-NA time points to validate monotonicity. Need at least 2 points, got {length(time_clean)}. Time column: {time_col_name}"
+    )
   }
 
   # check if time series is monotonically increasing
@@ -440,18 +422,9 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
     diffs <- diff(time_clean)
     first_violation_idx <- which(diffs < 0)[1]
 
-    cli::cli_abort(paste(
-      "[EXIT] Time series is not monotonically increasing.",
-      "First violation at index",
-      first_violation_idx + 1,
-      "where time decreases from",
-      time_clean[first_violation_idx],
-      "to",
-      time_clean[first_violation_idx + 1],
-      "Time column:",
-      time_col_name,
-      "This may indicate EDF file errors or data corruption."
-    ))
+    log_error(
+      "Time series is not monotonically increasing. First violation at index {first_violation_idx + 1} where time decreases from {time_clean[first_violation_idx]} to {time_clean[first_violation_idx + 1]}. Time column: {time_col_name}. This may indicate EDF file errors or data corruption."
+    )
   }
 }
 
