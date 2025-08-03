@@ -243,9 +243,9 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
     "\n## Preprocessing Summaries\n\n",
-    save_progressive_summary_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
+    save_progressive_summary_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix, verbose = params$verbose),
     "\n\n## Preprocessed Data Previews\n\n",
-    save_detrend_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix),
+    save_detrend_plots(eyeris = eyeris, out_dir = out, eye_suffix = eye_suffix, verbose = params$verbose),
     print_plots(plots, eye_suffix = eye_suffix),
     "\n",
     block_heatmaps_md,
@@ -660,11 +660,12 @@ make_prog_summary_plot <- function(
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return A character string containing markdown references to the saved plots
 #'
 #' @keywords internal
-save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL) {
+save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = list(), eye_suffix = NULL, verbose = TRUE) {
   run_dirs <- list.dirs(
     file.path(out_dir, "source", "figures"),
     recursive = FALSE,
