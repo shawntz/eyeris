@@ -558,7 +558,7 @@ eyeris:::clean_string(str)
 eyeris:::sanitize_event_tag(string, prefix)
 ```
 
-**Returns**: Sanitized string suitable for filesystem use
+**Returns**: Sanitized string suitable for file system use
 
 ### Data Parsing
 
