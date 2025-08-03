@@ -287,6 +287,7 @@ bidsify <- function(
 #' @param db_enabled Whether to save data to the database
 #' @param db_path The path to the database
 #' @param raw_binocular_object The raw binocular object
+#' @param skip_db_cleanup Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands
 #'
 #' @return A eyeris object
 #'
