@@ -153,9 +153,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
         auto_unbox = TRUE
       )
     } else {
-      cli::cli_alert_warning(
-        sprintf("[WARN] Metadata file already exists for %s: %s", run_id, meta_path)
-      )
+      log_warn("Metadata file already exists for {run_id}: {meta_path}")
     }
 
     if (file.exists(meta_path)) {
@@ -500,11 +498,9 @@ save_detrend_plots <- function(eyeris, out_dir, preview_n = 3, plot_params = lis
 
       grDevices::dev.off()
 
-      if (verbose) {
-        cli::cli_alert_info(sprintf("[INFO] %s", detrend_path))
-      }
+      log_info("{detrend_path}", verbose = verbose)
     } else {
-      cli::cli_alert_warning(sprintf("[WARN] No detrend data found for %s", run_id))
+      log_warn("No detrend data found for {run_id}")
     }
   }
 }
@@ -724,9 +720,7 @@ save_progressive_summary_plots <- function(eyeris, out_dir, preview_n = 3, plot_
 
     pupil_data <- eyeris$timeseries[[block]]
     if (is.null(pupil_data)) {
-      cli::cli_alert_warning(
-        sprintf("[WARN] No pupil data for %s", run_id)
-      )
+      log_warn("No pupil data for {run_id}")
       next
     }
 
