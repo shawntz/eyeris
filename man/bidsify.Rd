@@ -73,23 +73,25 @@ column name. To disable these epoch-level diagnostic plots, set to \code{NULL}}
 Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current
 processing step and run silently}
 
-\item{csv_enabled}{Logical flag indicating whether to create CSV files.
-Defaults to \code{TRUE}. Set to \code{FALSE} to skip CSV creation (useful for
-cloud computing when only database storage is needed)}
+\item{csv_enabled}{Logical flag indicating whether to write CSV output files.
+Defaults to \code{TRUE}. Set to \code{FALSE} to disable CSV file generation, useful
+for large-scale cloud compute environments when using database storage only}
 
-\item{db_enabled}{Logical flag indicating whether to create a database.
-Defaults to \code{FALSE}. Set to \code{TRUE} to enable DuckDB database creation
-for efficient storage and querying of large datasets}
+\item{db_enabled}{Logical flag indicating whether to write data to a DuckDB
+database. Defaults to \code{FALSE}. When \code{TRUE}, creates or connects to a database
+for centralized data storage and querying}
 
-\item{db_path}{Path/name for the database file. Defaults to \code{"my-project"}.
-The \code{.eyerisdb} extension will be added automatically. If just a filename,
-the database will be created in the \verb{derivatives/} directory}
+\item{db_path}{Database filename or path. Defaults to \code{"eyeris-proj.eyerisdb"}.
+If just a filename, the database will be created in the \verb{derivatives/}
+directory. If a full path is provided, it will be used as specified}
 
-\item{merge_epochs}{\strong{(Deprecated)} This parameter no longer has any effect.
-All epochs are now saved as separate files following BIDS conventions}
+\item{merge_epochs}{\strong{(Deprecated)} This parameter is deprecated and will be
+ignored. All epochs are now saved as separate files following BIDS conventions.
+This parameter will be removed in a future version}
 
-\item{merge_runs}{\strong{(Deprecated)} This parameter no longer has any effect.
-All runs are now saved as separate files following BIDS conventions}
+\item{merge_runs}{\strong{(Deprecated)} This parameter is deprecated and will be
+ignored. All runs are now saved as separate files following BIDS conventions.
+This parameter will be removed in a future version}
 
 \item{pdf_report}{\strong{(Deprecated)} Use \code{html_report = TRUE} instead}
 }
@@ -160,6 +162,35 @@ demo_data |>
     session_num = "01",
     task_name = "assocret",
     run_num = "03" # override default run-01 (block_1) to use run-03 instead
+  )
+
+# example with database storage enabled
+demo_data |>
+  eyeris::glassbox() |>
+  eyeris::epoch(
+    events = "PROBE_{startstop}_{trial}",
+    limits = c(-1, 1),
+    label = "prePostProbe"
+  ) |>
+  eyeris::bidsify(
+    bids_dir = tempdir(),
+    participant_id = "001",
+    session_num = "01",
+    task_name = "assocret",
+    db_enabled = TRUE,  # enable eyerisdb database storage
+    db_path = "my-project"  # custom project database name
+  )
+
+# example for large-scale cloud compute (database only, no CSV files)
+demo_data |>
+  eyeris::glassbox() |>
+  eyeris::bidsify(
+    bids_dir = tempdir(),
+    participant_id = "001",
+    session_num = "01",
+    task_name = "assocret",
+    csv_enabled = FALSE,  # disable CSV files
+    db_enabled = TRUE     # database storage only
   )
 }
 
