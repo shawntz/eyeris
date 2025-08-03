@@ -3,18 +3,18 @@
 ## ⚠ **development version** — unreleased
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
 
-- **DuckDB database integration**: Added optional DuckDB database functionality to `bidsify()` as an alternative to CSV files for large-scale analyses. When `db_enabled = TRUE`, all eyeris data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (`eyeris_db_collect()`, `eyeris_db_connect()`, `eyeris_db_read()`, `eyeris_db_list_tables()`), and dplyr-style data access. CSV file generation can be optionally disabled with `csv_enabled = FALSE` for cloud compute environments, by @shawntz in #256.
+- **NF - DuckDB database integration**: Added optional `DuckDB` database functionality to `bidsify()` as an alternative to CSV files for large-scale analyses. When `db_enabled = TRUE`, all `eyeris` data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (`eyeris_db_collect()`, `eyeris_db_connect()`, `eyeris_db_read()`, `eyeris_db_list_tables()`), and `dplyr`-style data access. CSV file generation can be optionally disabled with `csv_enabled = FALSE` for cloud compute environments, by @shawntz in #256.
 
 ## 🚨 **Breaking changes & deprecations**
 
-- **DEPRECATED: `merge_runs` and `merge_epochs` parameters in `bidsify()`**: Both `merge_runs` and `merge_epochs` parameters are now deprecated and will be removed in version 2.2.0. All runs and epochs are now saved as separate files following proper BIDS conventions, which is the recommended approach for neuroimaging data standards. Users relying on these features should update their analysis workflows to handle separate run and epoch files. Deprecation warnings will be shown when these parameters are used.
+- **DEPRECATED: `merge_runs` and `merge_epochs` parameters in `bidsify()`**: Both `merge_runs` and `merge_epochs` parameters are now deprecated. All runs and epochs are now saved as separate files following proper BIDS conventions, which is the recommended approach for neuroimaging data standards. Users relying on these features should update their analysis workflows to handle separate run and epoch files. Deprecation warnings will be shown when these parameters are used.
 
 ## 🔧 Major code improvements
 
 - **Simplified `bidsify()` function**: Significantly refactored and streamlined the `pipeline-bidsify.R` file to improve maintainability and reduce code complexity:
   - **Removed merge_runs and merge_epochs logic**: Eliminated ~250+ lines of complex conditional logic for merging runs and epochs, simplifying the codebase while ensuring BIDS compliance
   - **Consolidated baseline data access**: Updated helper functions to prioritize baseline information stored within `epoch_xx$block_1$baseline` structure, providing consistent data access patterns while maintaining backward compatibility with legacy storage locations
-  - **Simplified epoch summary generation**: Replaced 257 lines of repetitive `sapply()` calls with a clean 77-line implementation using `unlist()` approach for generating `*_desc-epoch_summary.csv` files, dramatically improving code readability and maintainability
+  - **Simplified epoch summary generation**: Replaced 257 lines of repetitive `sapply()` calls with a clean 77-line implementation using `unlist()` approach for generating `*_desc-epoch_summary.csv` files, improving code readability and maintainability
   - **Added helper functions**: Created centralized functions (`get_epoch_info()`, `get_baseline_events()`, `get_baseline_type()`, `has_baseline()`) to eliminate code duplication and provide consistent data access across the pipeline
 
 # eyeris 2.1.1.9001 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
