@@ -38,8 +38,12 @@ jobs:
           md_files <- list.files("wiki_md", pattern = "\\.md$", full.names = TRUE)
           toc <- "# 📚 Table of Contents\n\n"
           for (f in md_files) {
-            title <- readLines(f, warn = FALSE)[1]
-            title <- gsub("^# ", "", title)  # strip markdown heading
+            lines <- readLines(f, warn = FALSE)
+            if (length(lines) > 0 && nzchar(lines[1])) {
+              title <- gsub("^# ", "", lines[1])  # strip markdown heading
+            } else {
+              title <- tools::file_path_sans_ext(basename(f))  # fallback to filename
+            }
             filename <- basename(f)
             toc <- paste0(toc, "- [", title, "](", filename, ")\n")
           }
