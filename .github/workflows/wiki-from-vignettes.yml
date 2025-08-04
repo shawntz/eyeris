@@ -39,9 +39,17 @@ jobs:
           dir.create("wiki_md", showWarnings = FALSE, recursive = TRUE)
           rmd_files <- list.files("vignettes", pattern = "\\.Rmd$", full.names = TRUE)
           for (f in rmd_files) {
-            out_file <- file.path("wiki_md", paste0(tools::file_path_sans_ext(basename(f)), ".md"))
-            dir.create(dirname(out_file), showWarnings = FALSE, recursive = TRUE)
-            rmarkdown::render(f, output_format = rmarkdown::github_document(), output_file = out_file)
+            # Render to github_document format in the same directory as the Rmd
+            rmarkdown::render(f, output_format = rmarkdown::github_document())
+            
+            # Move the generated .md file to wiki_md directory
+            md_file <- file.path(dirname(f), paste0(tools::file_path_sans_ext(basename(f)), ".md"))
+            target_file <- file.path("wiki_md", paste0(tools::file_path_sans_ext(basename(f)), ".md"))
+            
+            if (file.exists(md_file)) {
+              file.copy(md_file, target_file, overwrite = TRUE)
+              file.remove(md_file) # Clean up the original
+            }
           }
         shell: Rscript {0}
 
