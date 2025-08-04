@@ -3,7 +3,44 @@
 ## ⚠ **development version** — unreleased
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
 
-- - **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
+- **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
+
+- **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
+
+  > Further cleans up number of derived files in `eyeris` BIDS directories (which is especially useful for cloud compute deployments).
+  >
+  > The new behavior will be:
+  > 
+  > 1. Create zip files in the `figures/` directory (i.e., one level up from the run directories)
+  > 2. Remove existing zip files when reprocessing
+  > 3. Remove the entire `run-XX/` directories after successful zip creation
+  >
+  > As such, the final file structure will be:
+  
+  ```bash
+    sub-01/
+    └── ses-enc/
+        ├── sub-01.html
+        └── source/
+            ├── figures/
+            │   ├── run-01.zip  # now contains all images from run-01/
+            │   ├── run-02.zip  # now contains all images from run-02/
+            │   └── run-03.zip  # now contains all images from run-03/
+            └── logs/
+                ├── run-01_metadata.json
+                ├── run-02_metadata.json
+                └── run-03_metadata.json
+  ```
+
+## 🔧 Minor improvements and fixes
+
+- **RF - post-render cleanup to remove figures directory**: The `cleanup_source_figures_post_render()` function now removes the entire `source/figures` directory after report generation, as images are embedded in the `HTML`. Documentation and comments updated to reflect this change, and unused parameters are noted for compatibility, by @shawntz in #261.
+
+- **RF - increase zip file embed size limit to 1GB**: Raised the maximum allowed zip file size for data `URL` embedding from `10MB` to `1GB` in `print_lightbox_img_html()`. Updated warning message to reflect the new limit, by @shawntz in #261.
+
+- **RF - update report title in `make_report` function**: Changed the report title from 'preprocessing summary report' to 'preprocessing report' for consistency and clarity, by @shawntz in #261.
+
+- **CHORE - update logo image URL**: Changed the `logo` image source in `README` files to use a `GitHub raw URL` for better compatibility, by @shawntz in #261.
 
 # eyeris 2.1.1.9002 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
