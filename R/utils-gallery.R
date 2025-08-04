@@ -196,15 +196,15 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
     tryCatch(
       {
         file_size <- file.info(full_zip_path)$size
-        # only embed if file size is reasonable (< 10MB)
-        if (file_size < 10 * 1024 * 1024) {
+        # only embed if file size is reasonable (< 1GB)
+        if (file_size < 1024 * 1024 * 1024) {
           zip_bytes <- readBin(full_zip_path, "raw", file_size)
           zip_b64 <- base64enc::base64encode(zip_bytes)
           zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
           log_success("Embedded zip file as data URL ({file_size} bytes)", verbose = TRUE)
         } else {
           log_warn(
-            "Zip file too large for data URL embedding ({file_size} bytes)",
+            "Zip file too large for data URL embedding ({file_size} bytes, limit: 1GB)",
             verbose = TRUE
           )
         }
