@@ -131,7 +131,11 @@ glassbox <- function(
 
   # handle deprecated parameters
   if (is_present(confirm)) {
-    deprecate_warn("1.1.0", "glassbox(confirm)", "glassbox(interactive_preview)")
+    deprecate_warn(
+      "1.1.0",
+      "glassbox(confirm)",
+      "glassbox(interactive_preview)"
+    )
     interactive_preview <- confirm
   }
 
@@ -184,7 +188,12 @@ glassbox <- function(
   params <- utils::modifyList(default_params, list(...))
 
   # handle method parameter for bin operation
-  if ("method" %in% names(list(...)) && !is.null(params$bin) && is.list(params$bin)) {
+  if (
+    "method" %in%
+      names(list(...)) &&
+      !is.null(params$bin) &&
+      is.list(params$bin)
+  ) {
     params$bin$method <- list(...)$method
   }
 
@@ -299,7 +308,11 @@ glassbox <- function(
           call = original_call,
           parameters = list(extend = params$deblink$extend)
         )
-        eyeris::deblink(data, extend = params$deblink$extend, call_info = call_info)
+        eyeris::deblink(
+          data,
+          extend = params$deblink$extend,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -325,7 +338,10 @@ glassbox <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
-        call_info <- list(call = original_call, parameters = list(verbose = verbose))
+        call_info <- list(
+          call = original_call,
+          parameters = list(verbose = verbose)
+        )
         eyeris::interpolate(data, verbose = verbose, call_info = call_info)
       } else {
         data
@@ -554,7 +570,11 @@ glassbox <- function(
           skip_plot <- TRUE
 
           if (!is.null(temp_file$latest[[block_name]])) {
-            expected_col <- paste0(temp_file$latest[[block_name]], "_", step_name)
+            expected_col <- paste0(
+              temp_file$latest[[block_name]],
+              "_",
+              step_name
+            )
             block_data <- temp_file$timeseries[[block_name]]
             if (expected_col %in% colnames(block_data)) {
               temp_file$latest[[block_name]] <- expected_col
@@ -567,9 +587,15 @@ glassbox <- function(
         }
 
         if (action == "Running ") {
-          log_success("{action}eyeris::{step_name}() for {block_name}", verbose = verbose)
+          log_success(
+            "{action}eyeris::{step_name}() for {block_name}",
+            verbose = verbose
+          )
         } else {
-          log_warn("Skipping eyeris::{step_name}() for {block_name}", verbose = verbose)
+          log_warn(
+            "Skipping eyeris::{step_name}() for {block_name}",
+            verbose = verbose
+          )
         }
 
         step_to_run <- pipeline[[step_name]]
@@ -604,7 +630,9 @@ glassbox <- function(
             if (length(pupil_cols) > 0) {
               # use last valid pupil column
               temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
-              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+                block_name
+              ]]
             } else {
               # fallback to original pointer for this block
               if (is.list(original_latest)) {
@@ -612,7 +640,9 @@ glassbox <- function(
               } else {
                 temp_file$latest[[block_name]] <- original_latest
               }
-              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+                block_name
+              ]]
             }
 
             temp_file
@@ -690,7 +720,9 @@ glassbox <- function(
       }
 
       # update block state with final state
-      block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+      block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+        block_name
+      ]]
       block_states[[block_name]]$steps_completed <- block_step_counter - 1
 
       # update main file's latest pointer for current block
@@ -889,7 +921,11 @@ glassbox_internal <- function(
           call = original_call,
           parameters = list(extend = params$deblink$extend)
         )
-        eyeris::deblink(data, extend = params$deblink$extend, call_info = call_info)
+        eyeris::deblink(
+          data,
+          extend = params$deblink$extend,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -915,7 +951,10 @@ glassbox_internal <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
-        call_info <- list(call = original_call, parameters = list(verbose = verbose))
+        call_info <- list(
+          call = original_call,
+          parameters = list(verbose = verbose)
+        )
         eyeris::interpolate(data, verbose = verbose, call_info = call_info)
       } else {
         data
@@ -1070,7 +1109,11 @@ glassbox_internal <- function(
           skip_plot <- TRUE
 
           if (!is.null(temp_file$latest[[block_name]])) {
-            expected_col <- paste0(temp_file$latest[[block_name]], "_", step_name)
+            expected_col <- paste0(
+              temp_file$latest[[block_name]],
+              "_",
+              step_name
+            )
             block_data <- temp_file$timeseries[[block_name]]
             if (expected_col %in% colnames(block_data)) {
               temp_file$latest[[block_name]] <- expected_col
@@ -1083,9 +1126,15 @@ glassbox_internal <- function(
         }
 
         if (action == "Running ") {
-          log_success("{action}eyeris::{step_name}() for {block_name}", verbose = verbose)
+          log_success(
+            "{action}eyeris::{step_name}() for {block_name}",
+            verbose = verbose
+          )
         } else {
-          log_warn("Skipping eyeris::{step_name}() for {block_name}", verbose = verbose)
+          log_warn(
+            "Skipping eyeris::{step_name}() for {block_name}",
+            verbose = verbose
+          )
         }
         step_to_run <- pipeline[[step_name]]
         err_thrown <- FALSE
@@ -1119,7 +1168,9 @@ glassbox_internal <- function(
             if (length(pupil_cols) > 0) {
               # use last valid pupil column
               temp_file$latest[[block_name]] <- pupil_cols[length(pupil_cols)]
-              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+                block_name
+              ]]
             } else {
               # fallback to original pointer for this block
               if (is.list(original_latest)) {
@@ -1127,7 +1178,9 @@ glassbox_internal <- function(
               } else {
                 temp_file$latest[[block_name]] <- original_latest
               }
-              block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+              block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+                block_name
+              ]]
             }
 
             temp_file
@@ -1205,7 +1258,9 @@ glassbox_internal <- function(
       }
 
       # update block state with final state
-      block_states[[block_name]]$latest_pointer <- temp_file$latest[[block_name]]
+      block_states[[block_name]]$latest_pointer <- temp_file$latest[[
+        block_name
+      ]]
       block_states[[block_name]]$steps_completed <- block_step_counter - 1
 
       # update main file's latest pointer for current block

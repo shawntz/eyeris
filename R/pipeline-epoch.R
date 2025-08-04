@@ -220,14 +220,22 @@ epoch <- function(
 ) {
   # handle deprecated parameters
   if (is_present(calc_baseline)) {
-    lifecycle::deprecate_warn("1.3.0", "epoch(calc_baseline)", "epoch(baseline)")
+    lifecycle::deprecate_warn(
+      "1.3.0",
+      "epoch(calc_baseline)",
+      "epoch(baseline)"
+    )
     if (isTRUE(calc_baseline)) {
       baseline <- TRUE
     }
   }
 
   if (is_present(apply_baseline)) {
-    lifecycle::deprecate_warn("1.3.0", "epoch(apply_baseline)", "epoch(baseline)")
+    lifecycle::deprecate_warn(
+      "1.3.0",
+      "epoch(apply_baseline)",
+      "epoch(baseline)"
+    )
     if (isTRUE(apply_baseline)) {
       baseline <- TRUE
     }
@@ -412,7 +420,11 @@ epoch_pupil <- function(
     block_int <- get_block_numbers(bn)
 
     if (!is.list(evs)) {
-      n_events <- merge_events_with_timeseries(x$events[[bn]], msg_s, merge = FALSE) |>
+      n_events <- merge_events_with_timeseries(
+        x$events[[bn]],
+        msg_s,
+        merge = FALSE
+      ) |>
         nrow()
 
       log_info(
@@ -501,7 +513,10 @@ epoch_pupil <- function(
 
   # recalculate epoched confounds if they exist, since new epochs were created
   if (!is.null(x$confounds$unepoched_timeseries)) {
-    log_info("Recalculating epoched confounds for new epochs...", verbose = verbose)
+    log_info(
+      "Recalculating epoched confounds for new epochs...",
+      verbose = verbose
+    )
 
     # check for epoch data and compute confounds if present
     epoch_names <- grep("^epoch_", names(x), value = TRUE)
@@ -576,7 +591,9 @@ epoch_and_baseline_block <- function(
   dt <- data.table::as.data.table(block_data)
 
   if (!"time_orig" %in% names(dt)) {
-    log_error("Block '{block_name}' doesn't contain the expected `time_orig` column.")
+    log_error(
+      "Block '{block_name}' doesn't contain the expected `time_orig` column."
+    )
   }
 
   data.table::setkey(dt, "time_orig")
@@ -696,11 +713,21 @@ epoch_and_baseline_block <- function(
 #' @return A list containing epoch and baseline results
 #'
 #' @keywords internal
-process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbose) {
+process_epoch_and_baselines <- function(
+  eyeris,
+  timestamps,
+  evs,
+  lims,
+  hz,
+  verbose
+) {
   n_timestamps <- nrow(timestamps$start)
 
   if (n_timestamps == 0 && !is.null(n_timestamps)) {
-    log_info("* No timestamps to process in this block... skipping.", verbose = verbose)
+    log_info(
+      "* No timestamps to process in this block... skipping.",
+      verbose = verbose
+    )
 
     return(list())
   }
@@ -711,15 +738,21 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbo
     if (is.null(lims)) {
       epochs <- eyeris |> epoch_only_start_msg(timestamps$start, hz, verbose)
     } else {
-      epochs <- eyeris |> epoch_start_msg_and_limits(timestamps$start, lims, hz, verbose)
+      epochs <- eyeris |>
+        epoch_start_msg_and_limits(timestamps$start, lims, hz, verbose)
     }
   } else if (is.character(evs) && length(evs) == 2) {
-    epochs <- eyeris |> epoch_start_end_msg(timestamps$start, timestamps$end, hz, verbose)
+    epochs <- eyeris |>
+      epoch_start_end_msg(timestamps$start, timestamps$end, hz, verbose)
   } else if (is.list(evs)) {
     epochs <- eyeris |> epoch_manually(evs, hz, verbose)
   }
 
-  if (!is.null(n_timestamps) && length(epochs) > 0 && length(epochs) != n_timestamps) {
+  if (
+    !is.null(n_timestamps) &&
+      length(epochs) > 0 &&
+      length(epochs) != n_timestamps
+  ) {
     log_error(
       "Expected {n_timestamps} samples but got {length(epochs)} samples. Check data for a possible matching error."
     )
@@ -773,7 +806,9 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
     i_start <- s_df$time[i]
     i_end <- e_df$time[i]
 
-    current_epoch <- eyeris |> purrr::pluck("timeseries") |> slice_epoch(i_start, i_end)
+    current_epoch <- eyeris |>
+      purrr::pluck("timeseries") |>
+      slice_epoch(i_start, i_end)
 
     duration <- nrow(current_epoch) / hz
     n_samples <- duration * hz
@@ -781,7 +816,10 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
     start_metadata_vals <- dplyr::rename_with(s_df, ~ paste0("start_", .x))
     end_metadata_vals <- dplyr::rename_with(e_df, ~ paste0("end_", .x))
 
-    metadata_vals <- dplyr::bind_cols(start_metadata_vals[i, ], end_metadata_vals[i, ])
+    metadata_vals <- dplyr::bind_cols(
+      start_metadata_vals[i, ],
+      end_metadata_vals[i, ]
+    )
 
     epochs[[i]] <- current_epoch |>
       dplyr::mutate(timebin = seq(0, duration, length.out = n_samples)) |>
@@ -924,7 +962,10 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
       ~ paste0("start_", .x)
     )
 
-    end_metadata_vals <- dplyr::rename_with(index_metadata(end, i), ~ paste0("end_", .x))
+    end_metadata_vals <- dplyr::rename_with(
+      index_metadata(end, i),
+      ~ paste0("end_", .x)
+    )
 
     metadata_vals <- start_metadata_vals |> dplyr::bind_cols(end_metadata_vals)
 

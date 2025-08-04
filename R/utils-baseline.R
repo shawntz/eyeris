@@ -27,7 +27,14 @@ make_baseline_label <- function(baselined_data, epoch_id) {
 #' @return A list of baseline epoch data frames
 #'
 #' @keywords internal
-extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) {
+extract_baseline_epochs <- function(
+  x,
+  df,
+  evs,
+  time_range,
+  matched_epochs,
+  hz
+) {
   check_baseline_inputs(evs, time_range)
 
   time_col <- "time_orig"
@@ -41,7 +48,12 @@ extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) 
     n_samples <- duration / (1 / hz)
 
     for (i in seq_len(nrow(start))) {
-      current_epoch <- slice_epochs_with_limits(df, start$time[i], time_range, hz)
+      current_epoch <- slice_epochs_with_limits(
+        df,
+        start$time[i],
+        time_range,
+        hz
+      )
       baselines[[i]] <- current_epoch
     }
   } else {
@@ -56,7 +68,8 @@ extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) 
       duration <- (i_end - i_start) / hz
       n_samples <- duration * hz
 
-      baselines[[i]] <- df |> dplyr::filter(time_orig >= i_start & time_orig < i_end)
+      baselines[[i]] <- df |>
+        dplyr::filter(time_orig >= i_start & time_orig < i_end)
     }
   }
 

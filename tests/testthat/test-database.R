@@ -134,7 +134,11 @@ test_that("database integration works correctly", {
 
   # test 4: csv and database helper function
   test_that("write_csv_and_db helper function works", {
-    con <- connect_eyeris_database(temp_bids_dir, "helper-test", verbose = FALSE)
+    con <- connect_eyeris_database(
+      temp_bids_dir,
+      "helper-test",
+      verbose = FALSE
+    )
 
     test_data <- data.frame(
       value = c(100, 200, 300),
@@ -218,7 +222,11 @@ test_that("database integration works correctly", {
     disconnect_eyeris_database(con1, verbose = FALSE)
 
     # test custom name (extension should be auto-added)
-    con2 <- connect_eyeris_database(temp_bids_dir, "custom-study", verbose = FALSE)
+    con2 <- connect_eyeris_database(
+      temp_bids_dir,
+      "custom-study",
+      verbose = FALSE
+    )
     expect_s4_class(con2, "duckdb_connection")
     expect_true(file.exists(file.path(
       temp_bids_dir,
@@ -310,7 +318,9 @@ test_that("database integration works correctly", {
 
     # check table was created with epoch label
     tables <- DBI::dbListTables(con)
-    expect_true("epoch_timeseries_005_01_epochtest_run01_prepostprobe" %in% tables)
+    expect_true(
+      "epoch_timeseries_005_01_epochtest_run01_prepostprobe" %in% tables
+    )
 
     # verify data contains epoch label metadata
     table_data <- DBI::dbReadTable(

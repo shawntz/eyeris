@@ -57,7 +57,11 @@ log_message <- function(
     )
   }
 
-  full_message <- paste(get_log_timestamp(), paste0("[", level, "]"), message_text)
+  full_message <- paste(
+    get_log_timestamp(),
+    paste0("[", level, "]"),
+    message_text
+  )
 
   switch(
     level,
@@ -85,7 +89,12 @@ log_message <- function(
 #' }
 #'
 #' @keywords internal
-log_info <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
+log_info <- function(
+  ...,
+  verbose = TRUE,
+  wrap = TRUE,
+  .envir = parent.frame()
+) {
   log_message("INFO", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
 
@@ -104,7 +113,12 @@ log_info <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) 
 #' }
 #'
 #' @keywords internal
-log_success <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
+log_success <- function(
+  ...,
+  verbose = TRUE,
+  wrap = TRUE,
+  .envir = parent.frame()
+) {
   log_message("OKAY", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
 
@@ -123,7 +137,12 @@ log_success <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame(
 #' }
 #'
 #' @keywords internal
-log_warn <- function(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame()) {
+log_warn <- function(
+  ...,
+  verbose = TRUE,
+  wrap = TRUE,
+  .envir = parent.frame()
+) {
   log_message("WARN", ..., verbose = verbose, wrap = wrap, .envir = .envir)
 }
 

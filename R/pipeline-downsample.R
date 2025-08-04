@@ -60,7 +60,12 @@ downsample <- function(
   call_info <- if (is.null(call_info)) {
     list(
       call_stack = match.call(),
-      parameters = list(target_fs = target_fs, plot_freqz = plot_freqz, rp = rp, rs = rs)
+      parameters = list(
+        target_fs = target_fs,
+        plot_freqz = plot_freqz,
+        rp = rp,
+        rs = rs
+      )
     )
   } else {
     call_info
@@ -141,7 +146,15 @@ downsample <- function(
 #' @return A list containing the downsampled data and the decimated sample rate
 #'
 #' @keywords internal
-downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, rs) {
+downsample_pupil <- function(
+  x,
+  prev_op,
+  target_fs,
+  plot_freqz,
+  current_fs,
+  rp,
+  rs
+) {
   if (any(is.na(x[[prev_op]]))) {
     log_error("NAs detected in pupil data. Need to interpolate first.")
     return(x[[prev_op]])
@@ -204,7 +217,14 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
     plot_width <- par("pin")[1]
     scaling_factor <- 7
     cex_val <- plot_width / scaling_factor
-    graphics::mtext(side = 2, line = 2, at = 0, adj = 0.95, cex = cex_val, subtitle)
+    graphics::mtext(
+      side = 2,
+      line = 2,
+      at = 0,
+      adj = 0.95,
+      cex = cex_val,
+      subtitle
+    )
   }
 
   # apply anti-aliasing filter
@@ -217,5 +237,8 @@ downsample_pupil <- function(x, prev_op, target_fs, plot_freqz, current_fs, rp, 
   downsampled_df <- x[indices, , drop = FALSE]
   downsampled_df[[paste0(prev_op, "_downsample")]] <- downsampled_data
 
-  list_out <- list(downsampled_df = downsampled_df, decimated.sample.rate = target_fs)
+  list_out <- list(
+    downsampled_df = downsampled_df,
+    decimated.sample.rate = target_fs
+  )
 }

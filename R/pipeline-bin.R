@@ -168,7 +168,10 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   bin_centers <- seq(min_time + bin_duration / 2, max_time, by = bin_duration)
 
   # pre-compute bin assignments for all time points
-  bin_assignments <- findInterval(time_secs_inferred, bin_centers - bin_duration / 2)
+  bin_assignments <- findInterval(
+    time_secs_inferred,
+    bin_centers - bin_duration / 2
+  )
 
   binned_df <- data.frame(time_secs = bin_centers, stringsAsFactors = FALSE)
 
@@ -200,7 +203,10 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   }
 
   binned_bin_col <- bin_vector(prev_pupil, bin_assignments, bin_centers, method)
-  binned_df <- cbind(binned_df, setNames(list(binned_bin_col), paste0(prev_op, "_bin")))
+  binned_df <- cbind(
+    binned_df,
+    setNames(list(binned_bin_col), paste0(prev_op, "_bin"))
+  )
 
   # process all remaining cols from the orig df
   cols_to_process <- 0
@@ -219,7 +225,12 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
   for (col in names(x)) {
     if (col != prev_op && col != time_col && !grepl("_bin$", col)) {
       if (is.numeric(x[[col]])) {
-        binned_df[[col]] <- bin_vector(x[[col]], bin_assignments, bin_centers, method)
+        binned_df[[col]] <- bin_vector(
+          x[[col]],
+          bin_assignments,
+          bin_centers,
+          method
+        )
       } else {
         binned_df[[col]] <- sapply(seq_along(bin_centers), function(i) {
           bin_indices <- which(bin_assignments == i)
@@ -234,5 +245,8 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
     }
   }
 
-  list_out <- list(downsampled_df = binned_df, decimated.sample.rate = bins_per_second)
+  list_out <- list(
+    downsampled_df = binned_df,
+    decimated.sample.rate = bins_per_second
+  )
 }

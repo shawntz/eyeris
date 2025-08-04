@@ -50,7 +50,9 @@ create_epoch_images_zip <- function(
     {
       for (group in epoch_groups) {
         group_df <- epochs_to_save[[epoch_index]][[block_name]]
-        group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
+        group_df <- group_df[
+          group_df[[report_epoch_grouping_var_col]] == group,
+        ]
 
         for (pstep in seq_along(pupil_steps)) {
           if (grepl("z", pupil_steps[pstep])) {
@@ -123,7 +125,9 @@ create_epoch_images_zip <- function(
 
       for (group in epoch_groups) {
         group_df <- epochs_to_save[[epoch_index]][[block_name]]
-        group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
+        group_df <- group_df[
+          group_df[[report_epoch_grouping_var_col]] == group,
+        ]
 
         if (all(c("eye_x", "eye_y") %in% colnames(group_df))) {
           heatmap_filename <- file.path(
@@ -153,7 +157,11 @@ create_epoch_images_zip <- function(
                 screen_height = eyeris_object$info$screen.y,
                 n_bins = 30,
                 col_palette = "viridis",
-                main = sprintf("%s\nGaze Heatmap (run-%02d)", group, run_dir_num),
+                main = sprintf(
+                  "%s\nGaze Heatmap (run-%02d)",
+                  group,
+                  run_dir_num
+                ),
                 eye_suffix = eye_suffix
               )
             },

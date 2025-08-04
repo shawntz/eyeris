@@ -101,5 +101,9 @@ detrend_pupil <- function(x, prev_op) {
   coefficients <- fit$coefficients
   residuals <- fit$residuals
 
-  list(fitted_values = fitted_values, coefficients = coefficients, residuals = residuals)
+  list(
+    fitted_values = fitted_values,
+    coefficients = coefficients,
+    residuals = residuals
+  )
 }

@@ -24,7 +24,10 @@ check_and_create_dir <- function(basedir, dir = NULL, verbose = TRUE) {
 
     dir.create(dir, recursive = TRUE)
 
-    log_success("BIDS directory successfully created at: '{dir}'", verbose = verbose)
+    log_success(
+      "BIDS directory successfully created at: '{dir}'",
+      verbose = verbose
+    )
   }
 }
 
@@ -208,7 +211,10 @@ check_pupil_cols <- function(eyeris, fun) {
           block_num,
           fun
         )
-        stop(structure(list(message = err_m, call = match.call()), class = err_c))
+        stop(structure(
+          list(message = err_m, call = match.call()),
+          class = err_c
+        ))
       }
     }
   } else {
@@ -458,5 +464,7 @@ is_binocular_object <- function(x) {
 #'
 #' @keywords internal
 should_plot_binoc_cors <- function(x) {
-  is.list(x) && ("left" %in% names(x) && "right" %in% names(x)) || (isTRUE(x$binocular))
+  is.list(x) &&
+    ("left" %in% names(x) && "right" %in% names(x)) ||
+    (isTRUE(x$binocular))
 }

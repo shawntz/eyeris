@@ -1,9 +1,61 @@
+# eyeris 2.1.1.9003 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+## ⚠ **development version** — unreleased
+_Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+- **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
+
+- **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
+
+  > Further cleans up number of derived files in `eyeris` BIDS directories (which is especially useful for cloud compute deployments).
+  >
+  > The new behavior will be:
+  > 
+  > 1. Create zip files in the `figures/` directory (i.e., one level up from the run directories)
+  > 2. Remove existing zip files when reprocessing
+  > 3. Remove the entire `run-XX/` directories after successful zip creation
+  >
+  > As such, the final file structure will be:
+  
+  ```bash
+    sub-01/
+    └── ses-enc/
+        ├── sub-01.html
+        └── source/
+            ├── figures/
+            │   ├── run-01.zip  # now contains all images from run-01/
+            │   ├── run-02.zip  # now contains all images from run-02/
+            │   └── run-03.zip  # now contains all images from run-03/
+            └── logs/
+                ├── run-01_metadata.json
+                ├── run-02_metadata.json
+                └── run-03_metadata.json
+  ```
+
+## 🔧 Minor improvements and fixes
+
+- **RF - post-render cleanup to remove figures directory**: The `cleanup_source_figures_post_render()` function now removes the entire `source/figures` directory after report generation, as images are embedded in the `HTML`. Documentation and comments updated to reflect this change, and unused parameters are noted for compatibility, by @shawntz in #261.
+
+- **RF - increase zip file embed size limit to 1GB**: Raised the maximum allowed zip file size for data `URL` embedding from `10MB` to `1GB` in `print_lightbox_img_html()`. Updated warning message to reflect the new limit, by @shawntz in #261.
+
+- **RF - update report title in `make_report` function**: Changed the report title from 'preprocessing summary report' to 'preprocessing report' for consistency and clarity, by @shawntz in #261.
+
+- **CHORE - update logo image URL**: Changed the `logo` image source in `README` files to use a `GitHub raw URL` for better compatibility, by @shawntz in #261.
+
 # eyeris 2.1.1.9002 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
 
 - **NF - DuckDB database integration**: Added optional `DuckDB` database functionality to `bidsify()` as an alternative to CSV files for large-scale analyses. When `db_enabled = TRUE`, all `eyeris` data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (`eyeris_db_collect()`, `eyeris_db_connect()`, `eyeris_db_read()`, `eyeris_db_list_tables()`), and `dplyr`-style data access. CSV file generation can be optionally disabled with `csv_enabled = FALSE` for cloud compute environments, by @shawntz in #256.
+
+- **DOC**: Added a comprehensive 'Internal API Reference' vignette documenting all internal functions for advanced users and developers and updated the README to link to the new vignette/included it in the pkgdown docs site configuration, by @shawntz in #257.
+
+- **RF**: Updated documentation and comments across multiple files to improve clarity and align terminology throughout the codebase, especially in function descriptions, parameter names, and return value documentation, by @shawntz in #257.
+
+- **FF**: Updated the `log_message()` function to use `tryCatch` when applying `glue` interpolation, ensuring that errors (e.g., from malformed braces or embedded `JSON`) do not interrupt logging; now, the original message is used if interpolation fails, by @shawntz in #258.
+
+- **CHORE**: Add a GitHub Actions workflow to auto-render vignettes and publish them to the `eyeris` GitHub repo wiki, by @shawntz in #259.
 
 ## 🚨 **Breaking changes & deprecations**
 
