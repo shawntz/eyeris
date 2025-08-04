@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing <a href="https://shawnschwartz.com/eyeris/" title="eyeris website"><img src="man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing <a href="https://shawnschwartz.com/eyeris/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 [![dev branch status](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/badges/dev-branch-version.svg)](https://github.com/shawntz/eyeris/tree/dev)
