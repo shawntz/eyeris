@@ -179,7 +179,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     }
   }
 
-  title <- "`eyeris` preprocessing summary report"
+  title <- "`eyeris` preprocessing report"
 
   content <- paste0(
     "---\n",
