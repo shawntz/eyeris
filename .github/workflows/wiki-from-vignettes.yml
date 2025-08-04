@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("rmarkdown"))
+          install.packages("rmarkdown")
 
       - name: Render vignettes to .md
         run: |
