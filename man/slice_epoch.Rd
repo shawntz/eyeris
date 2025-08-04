@@ -2,22 +2,22 @@
 % Please edit documentation in R/utils-epoch.R
 \name{slice_epoch}
 \alias{slice_epoch}
-\title{Slice epoch from raw timeseries data}
+\title{Slice epoch from raw time series data}
 \usage{
 slice_epoch(x_raw, s, e)
 }
 \arguments{
-\item{x_raw}{The raw timeseries dataframe}
+\item{x_raw}{The raw time series data frame}
 
 \item{s}{Start time in milliseconds}
 
 \item{e}{End time in milliseconds}
 }
 \value{
-A dataframe containing the epoch data
+A data frame containing the epoch data
 }
 \description{
-Extracts a time segment from raw timeseries data based on start and
+Extracts a time segment from raw time series data based on start and
 end times.
 }
 \keyword{internal}

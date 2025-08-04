@@ -28,10 +28,10 @@
 
 \item{steps}{Which steps to plot; defaults to \code{all} (i.e., plot all steps).
 Otherwise, pass in a vector containing the index of the step(s) you want to
-plot, with index \code{1} being the original raw pupil timeseries}
+plot, with index \code{1} being the original raw pupil time series}
 
 \item{preview_n}{Number of random example "epochs" to generate for
-previewing the effect of each preprocessing step on the pupil timeseries}
+previewing the effect of each preprocessing step on the pupil time series}
 
 \item{preview_duration}{Time in seconds of each randomly selected preview}
 
@@ -55,12 +55,12 @@ parameters within and across \code{eyeris} workflow steps}
 
 \item{block}{For multi-block recordings, specifies which block to plot.
 Defaults to 1. When a single \code{.asc} data file contains multiple
-recording blocks, this parameter determines which block's timeseries to
+recording blocks, this parameter determines which block's time series to
 visualize. Must be a positive integer not exceeding the total number of
 blocks in the recording}
 
 \item{plot_distributions}{Logical flag to indicate whether to plot both
-diagnostic pupil timeseries \emph{and} accompanying histograms of the pupil
+diagnostic pupil time series \emph{and} accompanying histograms of the pupil
 samples at each processing step. Defaults to \code{FALSE}}
 
 \item{suppress_prompt}{Logical flag to disable interactive confirmation
@@ -87,12 +87,12 @@ or "both". Defaults to "left". For "both", currently plots left eye data
 \item{num_previews}{\strong{(Deprecated)} Use \code{preview_n} instead}
 }
 \value{
-No return value; iteratively plots a subset of the pupil timeseries
+No return value; iteratively plots a subset of the pupil time series
 from each preprocessing step run
 }
 \description{
 S3 plotting method for objects of class \code{eyeris}. Plots a single-panel
-timeseries for a subset of the pupil timeseries at each preprocessing step.
+timeseries for a subset of the pupil time series at each preprocessing step.
 The intended use of this function is to provide a simple method for
 qualitatively assessing the consequences of the preprocessing recipe and
 parameters on the raw pupillary signal.
@@ -107,7 +107,7 @@ my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::lpfilt(plot_freqz = TRUE) |>
   eyeris::zscore()
 
-# controlling the timeseries range (i.e., preview window) in your plots:
+# controlling the time series range (i.e., preview window) in your plots:
 
 ## example 1: using the default 10000 to 20000 ms time subset
 plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)

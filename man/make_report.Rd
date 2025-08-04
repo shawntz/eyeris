@@ -18,9 +18,9 @@ make_report(eyeris, out, plots, eye_suffix = NULL, ...)
 \item{...}{Additional parameters passed from bidsify}
 }
 \value{
-Path to the generated R Markdown file
+Path to the generated \verb{R Markdown} file
 }
 \description{
-Generates a comprehensive HTML report for eyeris preprocessing results.
+Generates a comprehensive HTML report for \code{eyeris} preprocessing results.
 }
 \keyword{internal}

@@ -3,7 +3,7 @@
 #' Calculates various confounding variables for pupil data, including blink
 #' statistics, gaze position metrics, and pupil size characteristics. These
 #' confounds are calculated separately for each preprocessing step, recording
-#' block, and epoched timeseries in the eyeris object.
+#' block, and epoched time series in the `eyeris` object.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #'
@@ -30,10 +30,10 @@
 #'   ) |>
 #'   eyeris::summarize_confounds()
 #'
-#' # access confounds for entire timeseries for a specific block and step
+#' # access confounds for entire time series for a specific block and step
 #' confounds$confounds$unepoched_timeseries
 #'
-#' # access confounds for a specific epoched timeseries
+#' # access confounds for a specific epoched time series
 #' # for a specific block and step
 #' confounds$confounds$epoched_timeseries
 #' confounds$confounds$epoched_epoch_wide
@@ -462,7 +462,7 @@ export_confounds_to_csv <- function(
 
 #' Calculate confounds for epoched data
 #'
-#' Helper function to calculate confounds for epoched timeseries data.
+#' Helper function to calculate confounds for epoched time series data.
 #' This function is used internally by both `summarize_confounds()`
 #' and `epoch()`.
 #'

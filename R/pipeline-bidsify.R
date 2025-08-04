@@ -1,8 +1,8 @@
-#' Save out pupil timeseries data in a BIDS-like structure
+#' Save out pupil time series data in a BIDS-like structure
 #'
 #' This method provides a structured way to save out pupil data in a BIDS-like
 #' structure. The method saves out epoched data as well as the raw pupil
-#' timeseries, and formats the directory and filename structures based on the
+#' time series, and formats the directory and filename structures based on the
 #' metadata you provide.
 #'
 #' In the future, we intend for this function to save out the data in an
@@ -39,7 +39,7 @@
 #' for epoch-by-epoch diagnostic plots in an interactive rendered HTML report.
 #' Column name must exist (i.e., be a custom grouping variable name set within
 #' the metadata template of your `epoch()` call).
-#' Defaults to `"matched_event"`, which all epoched dataframes have as a valid
+#' Defaults to `"matched_event"`, which all epoched data frames have as a valid
 #' column name. To disable these epoch-level diagnostic plots, set to `NULL`
 #' @param verbose A flag to indicate whether to print detailed logging messages.
 #' Defaults to `TRUE`. Set to `FALSE` to suppress messages about the current
@@ -47,7 +47,7 @@
 #' @param csv_enabled Logical flag indicating whether to write CSV output files.
 #' Defaults to `TRUE`. Set to `FALSE` to disable CSV file generation, useful
 #' for large-scale cloud compute environments when using database storage only
-#' @param db_enabled Logical flag indicating whether to write data to a DuckDB
+#' @param db_enabled Logical flag indicating whether to write data to a `DuckDB`
 #' database. Defaults to `FALSE`. When `TRUE`, creates or connects to a database
 #' for centralized data storage and querying
 #' @param db_path Database filename or path. Defaults to `"eyeris-proj.eyerisdb"`.
@@ -80,7 +80,7 @@
 #'     session_num = "01",
 #'     task_name = "assocret",
 #'     run_num = "01",
-#'     save_raw = TRUE, # save out raw timeseries
+#'     save_raw = TRUE, # save out raw time series
 #'     html_report = TRUE, # generate interactive report document
 #'     report_seed = 0 # make randomly selected plot epochs reproducible
 #'   )
@@ -265,7 +265,7 @@ bidsify <- function(
 }
 
 #' Internal function to run bidsify on a single eye
-#' @param eyeris An eyeris object
+#' @param eyeris An `eyeris` object
 #' @param save_all Whether to save all data
 #' @param epochs_list A list of epochs to include
 #' @param bids_dir The directory to save the bids data
@@ -285,7 +285,7 @@ bidsify <- function(
 #' @param raw_binocular_object The raw binocular object
 #' @param skip_db_cleanup Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands
 #'
-#' @return A eyeris object
+#' @return An `eyeris` object
 #'
 #' @keywords internal
 run_bidsify <- function(
@@ -933,7 +933,7 @@ run_bidsify <- function(
         )
       })
     } else {
-      # single run (monocular) case: write the raw timeseries
+      # single run (monocular) case: write the raw time series
       if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
         run_data <- eyeris$timeseries[[1]]
       } else {
@@ -979,7 +979,7 @@ run_bidsify <- function(
     }
   }
 
-  # for binocular data, save timeseries in the appropriate left/right subdirectory
+  # for binocular data, save time series in the appropriate left/right subdirectory
   if (save_raw && !is.null(eye_suffix)) {
     if (has_multiple_runs) {
       # save each run separately
@@ -1014,7 +1014,7 @@ run_bidsify <- function(
         )
       })
     } else {
-      # single run (binocular) case: write the raw timeseries
+      # single run (binocular) case: write the raw time series
       if (is.list(eyeris$timeseries) && length(eyeris$timeseries) > 0) {
         run_data <- eyeris$timeseries[[1]]
       } else {
@@ -1046,7 +1046,7 @@ run_bidsify <- function(
     }
   }
 
-  # first export confounds for unepoched timeseries
+  # first export confounds for unepoched time series
   if (!is.null(eyeris$confounds$unepoched_timeseries)) {
     if (length(block_numbers) == 1) {
       # case: single block
@@ -1513,7 +1513,7 @@ run_bidsify <- function(
         dev.off()
       }
 
-      # make full timeseries plots for all intermediate steps
+      # make full time series plots for all intermediate steps
       for (i_step in seq_along(pupil_steps)) {
         for (p in seq_along(plot_types)[1]) {
           plot_dist <- p %% 2 == 0
@@ -2059,7 +2059,7 @@ make_bids_fname <- function(
 #' Find baseline structure name for a given epoch
 #'
 #' Helper function to find the correct baseline structure name that matches
-#' the complex baseline naming scheme used by eyeris.
+#' the complex baseline naming scheme used by `eyeris`.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param epoch_label The epoch label (without "epoch_" prefix)

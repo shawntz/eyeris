@@ -19,7 +19,7 @@ calculate_epoched_confounds(eyeris, epoch_names, hz, verbose = TRUE)
 An updated \code{eyeris} object with epoched confounds
 }
 \description{
-Helper function to calculate confounds for epoched timeseries data.
+Helper function to calculate confounds for epoched time series data.
 This function is used internally by both \code{summarize_confounds()}
 and \code{epoch()}.
 }

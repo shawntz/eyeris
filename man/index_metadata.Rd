@@ -2,19 +2,19 @@
 % Please edit documentation in R/utils-epoch.R
 \name{index_metadata}
 \alias{index_metadata}
-\title{Index metadata from dataframe}
+\title{Index metadata from data frame}
 \usage{
 index_metadata(x, i)
 }
 \arguments{
-\item{x}{The dataframe to index}
+\item{x}{The data frame to index}
 
 \item{i}{The row index}
 }
 \value{
-A single row from the dataframe
+A single row from the data frame
 }
 \description{
-Extracts a single row of metadata from a dataframe.
+Extracts a single row of metadata from a data frame.
 }
 \keyword{internal}

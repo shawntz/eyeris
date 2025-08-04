@@ -13,9 +13,9 @@
 #' subsequent event string of the same type); (2) a vector containing both
 #' `start` and `end` event message strings -- here, `limits` will be ignored and
 #' the duration of each trial epoch will be the number of samples between each
-#' matched `start` and `end` event message pair; or (3) a list of 2 dataframes
+#' matched `start` and `end` event message pair; or (3) a list of 2 data frames
 #' that manually specify start/end event timestamp-message pairs to pull out of
-#' the raw timeseries data -- here, it is required that each raw timestamp and
+#' the raw time series data -- here, it is required that each raw timestamp and
 #' event message be provided in the following format:
 #'
 #' list(
@@ -94,7 +94,7 @@
 #'
 #' @return An `eyeris` object with a new nested list of data frames: `$epoch_*`.
 #'   The epochs are organized hierarchically by block and preprocessing step.
-#'   Each epoch contains the pupil timeseries data for the specified time window
+#'   Each epoch contains the pupil time series data for the specified time window
 #'   around each event message, along with metadata about the event.
 #'
 #'   When using `bidsify()` to export the data, filenames will include both
@@ -389,13 +389,13 @@ epoch_pupil <- function(
   if (is.list(evs)) {
     # manual method (with only 1 block at a time)
     log_warn(
-      "Manual epoching only works with 1 block at a time. Manual epoch input must be a list of 2 dataframes and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure to explicitly indicate the block number in your input list! (see example #9 in the documentation for more details).",
+      "Manual epoching only works with 1 block at a time. Manual epoch input must be a list of 2 data frames and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure to explicitly indicate the block number in your input list! (see example #9 in the documentation for more details).",
       verbose = verbose
     )
 
     if (!is.list(evs) || length(evs) != 3) {
       log_error(
-        "Manual epoch input must be a list of 2 dataframes and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric)"
+        "Manual epoch input must be a list of 2 data frames and 1 numeric: `start_events` (df), `end_events` (df), and `block` (numeric)"
       )
     }
 
@@ -404,7 +404,7 @@ epoch_pupil <- function(
     block_names <- names(x$events)
   } else {
     log_error(
-      "Error: Invalid data structure provided. Expected an `eyeris` dataframe containing a valid timeseries column."
+      "Error: Invalid data structure provided. Expected an `eyeris` data frame containing a valid time series column."
     )
   }
 
@@ -558,7 +558,7 @@ epoch_and_baseline_block <- function(
 ) {
   # input validation ---------------------------------------------------
   if (!is.list(x$timeseries)) {
-    log_error("Input timeseries must be a list of blocks")
+    log_error("Input times eries must be a list of blocks")
   }
 
   x$timeseries <- lapply(x$timeseries, function(block) {
@@ -730,16 +730,16 @@ process_epoch_and_baselines <- function(eyeris, timestamps, evs, lims, hz, verbo
   epochs
 }
 
-#' Manually epoch using provided start/end dataframes of timestamps
+#' Manually epoch using provided start/end data frames of timestamps
 #'
-#' This function manually epochs data using provided start/end dataframes
+#' This function manually epochs data using provided start/end data frames
 #' of timestamps.
 #'
 #' This function is called by the internal [process_epoch_and_baselines()]
 #' function.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
-#' @param ts_list A list containing start/end dataframes of timestamps
+#' @param ts_list A list containing start/end data frames of timestamps
 #' @param hz Sampling rate in Hz
 #' @param verbose A flag to indicate whether to print detailed logging messages
 #'
@@ -803,7 +803,7 @@ epoch_manually <- function(eyeris, ts_list, hz, verbose) {
 #' This function is called by the internal [epoch_only_start_msg()] function.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
-#' @param start A dataframe containing the start timestamps
+#' @param start A data frame containing the start timestamps
 #' @param hz Sampling rate in Hz
 #' @param verbose A flag to indicate whether to print detailed logging messages
 #'
@@ -848,7 +848,7 @@ epoch_only_start_msg <- function(eyeris, start, hz, verbose) {
 #' function.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
-#' @param start A dataframe containing the start timestamps
+#' @param start A data frame containing the start timestamps
 #' @param lims Time limits for epochs (numeric vector)
 #' @param hz Sampling rate in Hz
 #' @param verbose A flag to indicate whether to print detailed logging messages
@@ -896,8 +896,8 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz, verbose) {
 #' This function is called by the internal [epoch_start_end_msg()] function.
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
-#' @param start A dataframe containing the start timestamps
-#' @param end A dataframe containing the end timestamps
+#' @param start A data frame containing the start timestamps
+#' @param end A data frame containing the end timestamps
 #' @param hz Sampling rate in Hz
 #' @param verbose A flag to indicate whether to print detailed logging messages
 #'

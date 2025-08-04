@@ -15,6 +15,6 @@ disconnect_eyeris_database(con, verbose = FALSE)
 Logical indicating success
 }
 \description{
-Safely disconnects from the eyeris project database.
+Safely disconnects from the \code{eyeris} project database.
 }
 \keyword{internal}

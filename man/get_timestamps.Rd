@@ -16,7 +16,7 @@ get_timestamps(
 \arguments{
 \item{evs}{Event messages or list of events}
 
-\item{timestamped_events}{Events dataframe with timestamps}
+\item{timestamped_events}{Events data frame with timestamps}
 
 \item{msg_s}{Start message pattern}
 

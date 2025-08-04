@@ -9,7 +9,7 @@ epoch_start_msg_and_limits(eyeris, start, lims, hz, verbose)
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
 
-\item{start}{A dataframe containing the start timestamps}
+\item{start}{A data frame containing the start timestamps}
 
 \item{lims}{Time limits for epochs (numeric vector)}
 

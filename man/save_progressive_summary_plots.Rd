@@ -30,7 +30,7 @@ save_progressive_summary_plots(
 A character string containing markdown references to the saved plots
 }
 \description{
-Generates and saves progressive summary plots for each block in the eyeris
+Generates and saves progressive summary plots for each block in the \code{eyeris}
 object.
 }
 \keyword{internal}

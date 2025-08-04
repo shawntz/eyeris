@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline-bidsify.R
 \name{bidsify}
 \alias{bidsify}
-\title{Save out pupil timeseries data in a BIDS-like structure}
+\title{Save out pupil time series data in a BIDS-like structure}
 \usage{
 bidsify(
   eyeris,
@@ -66,7 +66,7 @@ Defaults to \code{0}. See \code{\link[=plot]{plot()}} for a more detailed descri
 for epoch-by-epoch diagnostic plots in an interactive rendered HTML report.
 Column name must exist (i.e., be a custom grouping variable name set within
 the metadata template of your \code{epoch()} call).
-Defaults to \code{"matched_event"}, which all epoched dataframes have as a valid
+Defaults to \code{"matched_event"}, which all epoched data frames have as a valid
 column name. To disable these epoch-level diagnostic plots, set to \code{NULL}}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
@@ -77,7 +77,7 @@ processing step and run silently}
 Defaults to \code{TRUE}. Set to \code{FALSE} to disable CSV file generation, useful
 for large-scale cloud compute environments when using database storage only}
 
-\item{db_enabled}{Logical flag indicating whether to write data to a DuckDB
+\item{db_enabled}{Logical flag indicating whether to write data to a \code{DuckDB}
 database. Defaults to \code{FALSE}. When \code{TRUE}, creates or connects to a database
 for centralized data storage and querying}
 
@@ -101,7 +101,7 @@ Invisibly returns \code{NULL}. Called for its side effects
 \description{
 This method provides a structured way to save out pupil data in a BIDS-like
 structure. The method saves out epoched data as well as the raw pupil
-timeseries, and formats the directory and filename structures based on the
+time series, and formats the directory and filename structures based on the
 metadata you provide.
 }
 \details{
@@ -125,7 +125,7 @@ demo_data |>
     session_num = "01",
     task_name = "assocret",
     run_num = "01",
-    save_raw = TRUE, # save out raw timeseries
+    save_raw = TRUE, # save out raw time series
     html_report = TRUE, # generate interactive report document
     report_seed = 0 # make randomly selected plot epochs reproducible
   )

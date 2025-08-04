@@ -13,7 +13,7 @@ plot_detrend_overlay(
 )
 }
 \arguments{
-\item{pupil_data}{A single block of pupil timeseries data
+\item{pupil_data}{A single block of pupil time series data
 (e.g. \code{eyeris$timeseries$block_1})}
 
 \item{preview_n}{Number of columns for \code{par(mfrow)}. Default = 3.}

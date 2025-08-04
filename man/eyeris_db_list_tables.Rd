@@ -17,5 +17,5 @@ eyeris_db_list_tables(con, data_type = NULL, subject = NULL)
 Character vector of table names
 }
 \description{
-Lists all tables in the eyeris project database with optional filtering.
+Lists all tables in the \code{eyeris} project database with optional filtering.
 }

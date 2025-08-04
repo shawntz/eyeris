@@ -9,12 +9,12 @@ check_epoch_msg_values(eyeris, events)
 \arguments{
 \item{eyeris}{The \code{eyeris} object containing events}
 
-\item{events}{A dataframe containing event messages to validate}
+\item{events}{A data frame containing event messages to validate}
 }
 \value{
 No return value; throws error if invalid messages are found
 }
 \description{
-Validates that specified event messages exist in the eyeris object.
+Validates that specified event messages exist in the \code{eyeris} object.
 }
 \keyword{internal}

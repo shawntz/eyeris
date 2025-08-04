@@ -13,5 +13,5 @@ eyeris_db_disconnect(con)
 Logical indicating success
 }
 \description{
-User-friendly function to disconnect from the eyeris project database.
+User-friendly function to disconnect from the \code{eyeris} project database.
 }

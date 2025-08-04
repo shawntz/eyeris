@@ -2,14 +2,14 @@
 % Please edit documentation in R/utils-baseline.R
 \name{extract_baseline_epochs}
 \alias{extract_baseline_epochs}
-\title{Extract baseline epochs from timeseries data}
+\title{Extract baseline epochs from time series data}
 \usage{
 extract_baseline_epochs(x, df, evs, time_range, matched_epochs, hz)
 }
 \arguments{
 \item{x}{An \code{eyeris} object containing the latest pupil column pointer}
 
-\item{df}{The timeseries dataframe}
+\item{df}{The time series data frame}
 
 \item{evs}{Event messages for baseline extraction}
 
@@ -20,10 +20,10 @@ extract_baseline_epochs(x, df, evs, time_range, matched_epochs, hz)
 \item{hz}{Sampling rate in Hz}
 }
 \value{
-A list of baseline epoch dataframes
+A list of baseline epoch data frames
 }
 \description{
-Extracts baseline periods from timeseries data based on event messages
+Extracts baseline periods from time series data based on event messages
 and time ranges or start/end messages.
 }
 \keyword{internal}

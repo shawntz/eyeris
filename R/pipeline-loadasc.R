@@ -64,7 +64,7 @@
 #' @seealso [eyelinker::read.asc()] which this function wraps.
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step
-#' as part of the full eyeris glassbox preprocessing pipeline.
+#' as part of the full `eyeris` glassbox preprocessing pipeline.
 #'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
@@ -266,7 +266,8 @@ load_asc <- function(
 #' @param binoc Boolean binocular data detected
 #' @param binoc_mode Binocular mode ("average", "left", "right", "both")
 #'
-#' @return An eyeris object
+#' @return An `eyeris` object
+#'
 #' @keywords internal
 process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, binoc_mode) {
   # raw data processing
@@ -334,7 +335,7 @@ process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, bino
     # fallback to direct assignment if all block cases fail
     list_out$timeseries <- list("block_1" = raw_df)
 
-    # omit the block column from the timeseries, events, and blinks
+    # omit the block column from the time series, events, and blinks
     list_out$timeseries$block_1 <- list_out$timeseries$block_1 |> dplyr::select(-block)
     list_out$events <- x$msg |> dplyr::select(-block)
     list_out$blinks <- x$blinks |> dplyr::select(-block)

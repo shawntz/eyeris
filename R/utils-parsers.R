@@ -110,7 +110,7 @@ format_call_stack <- function(callstack) {
 
 #' Extract block numbers from eyeris object or character vector
 #'
-#' Extracts numeric block numbers from block names or an eyeris object.
+#' Extracts numeric block numbers from block names or an `eyeris` object.
 #'
 #' @param x Either a character vector of block names or an `eyeris` object
 #'
@@ -181,7 +181,7 @@ convert_nested_dt <- function(nested_dt) {
 
 #' Filter epoch names from eyeris object
 #'
-#' Extracts names of epoch-related elements from an eyeris object.
+#' Extracts names of epoch-related elements from an `eyeris` object.
 #'
 #' @param eyeris An `eyeris` object
 #' @param epochs A vector of epoch names to filter

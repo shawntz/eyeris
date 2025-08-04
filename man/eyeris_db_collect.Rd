@@ -40,10 +40,10 @@ Typically c("eye-L", "eye-R") for binocular data}
 \item{verbose}{Logical. Whether to print progress messages (default TRUE)}
 }
 \value{
-A named list of dataframes, one per data type
+A named list of data frames, one per data type
 }
 \description{
-A comprehensive wrapper function that simplifies extracting eyeris data from
+A comprehensive wrapper function that simplifies extracting \code{eyeris} data from
 the database. Provides easy one-liner access to aggregate data across multiple
 subjects for each data type, without requiring SQL knowledge.
 }
@@ -67,7 +67,7 @@ eyeris::bidsify(
   db_enabled = TRUE # enable database storage
 )
 
-# extract all data for all subjects (returns list of dataframes)
+# extract all data for all subjects (returns list of data frames)
 all_data <- eyeris_db_collect(tempdir())
 
 # view available data types

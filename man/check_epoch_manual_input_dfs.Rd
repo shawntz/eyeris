@@ -2,17 +2,17 @@
 % Please edit documentation in R/utils-checks.R
 \name{check_epoch_manual_input_dfs}
 \alias{check_epoch_manual_input_dfs}
-\title{Check epoch manual input dataframe format}
+\title{Check epoch manual input data frame format}
 \usage{
 check_epoch_manual_input_dfs(ts_list)
 }
 \arguments{
-\item{ts_list}{A list containing start and end timestamp dataframes}
+\item{ts_list}{A list containing start and end timestamp data frames}
 }
 \value{
 No return value; throws error if format is invalid
 }
 \description{
-Validates that start and end timestamp dataframes have required columns.
+Validates that start and end timestamp data frames have required columns.
 }
 \keyword{internal}

@@ -1,7 +1,7 @@
 #' Plot pre-processed pupil data from `eyeris`
 #'
 #' S3 plotting method for objects of class `eyeris`. Plots a single-panel
-#' timeseries for a subset of the pupil timeseries at each preprocessing step.
+#' timeseries for a subset of the pupil time series at each preprocessing step.
 #' The intended use of this function is to provide a simple method for
 #' qualitatively assessing the consequences of the preprocessing recipe and
 #' parameters on the raw pupillary signal.
@@ -10,9 +10,9 @@
 #' @param ... Additional arguments to be passed to `plot`
 #' @param steps Which steps to plot; defaults to `all` (i.e., plot all steps).
 #' Otherwise, pass in a vector containing the index of the step(s) you want to
-#' plot, with index `1` being the original raw pupil timeseries
+#' plot, with index `1` being the original raw pupil time series
 #' @param preview_n Number of random example "epochs" to generate for
-#' previewing the effect of each preprocessing step on the pupil timeseries
+#' previewing the effect of each preprocessing step on the pupil time series
 #' @param preview_duration Time in seconds of each randomly selected preview
 #' @param preview_window The start and stop raw timestamps used to subset the
 #' preprocessed data from each step of the `eyeris` workflow for visualization
@@ -32,11 +32,11 @@
 #' parameters within and across `eyeris` workflow steps
 #' @param block For multi-block recordings, specifies which block to plot.
 #' Defaults to 1. When a single `.asc` data file contains multiple
-#' recording blocks, this parameter determines which block's timeseries to
+#' recording blocks, this parameter determines which block's time series to
 #' visualize. Must be a positive integer not exceeding the total number of
 #' blocks in the recording
 #' @param plot_distributions Logical flag to indicate whether to plot both
-#' diagnostic pupil timeseries *and* accompanying histograms of the pupil
+#' diagnostic pupil time series *and* accompanying histograms of the pupil
 #' samples at each processing step. Defaults to `FALSE`
 #' @param suppress_prompt Logical flag to disable interactive confirmation
 #' prompts during plotting. Defaults to `TRUE`, which avoids hanging behavior in
@@ -57,7 +57,7 @@
 #' (use eye="right" for right eye data)
 #' @param num_previews **(Deprecated)** Use `preview_n` instead
 #'
-#' @return No return value; iteratively plots a subset of the pupil timeseries
+#' @return No return value; iteratively plots a subset of the pupil time series
 #' from each preprocessing step run
 #'
 #' @seealso [lifecycle::deprecate_warn()]
@@ -72,7 +72,7 @@
 #'   eyeris::lpfilt(plot_freqz = TRUE) |>
 #'   eyeris::zscore()
 #'
-#' # controlling the timeseries range (i.e., preview window) in your plots:
+#' # controlling the time series range (i.e., preview window) in your plots:
 #'
 #' ## example 1: using the default 10000 to 20000 ms time subset
 #' plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
@@ -535,14 +535,14 @@ plot.eyeris <- function(
 
 #' Draw random epochs for plotting
 #'
-#' Generates random time segments from the timeseries data for preview plotting.
+#' Generates random time segments from the time series data for preview plotting.
 #'
-#' @param x A dataframe containing timeseries data
+#' @param x A data frame containing time series data
 #' @param n Number of random epochs to draw
 #' @param d Duration of each epoch in seconds
 #' @param hz Sampling rate in Hz
 #'
-#' @return A list of dataframes, each containing a random epoch segment
+#' @return A list of data frames, each containing a random epoch segment
 #'
 #' @keywords internal
 draw_random_epochs <- function(x, n, d, hz) {
@@ -743,7 +743,7 @@ draw_na_lines <- function(x, y, ...) {
 #' `glassbox()` interactive preview mode. It uses `robust_plot()` to show the
 #' most recent detrended pupil signal overlaid with the fitted linear trend.
 #'
-#' @param pupil_data A single block of pupil timeseries data
+#' @param pupil_data A single block of pupil time series data
 #' (e.g. `eyeris$timeseries$block_1`)
 #' @param preview_n Number of columns for `par(mfrow)`. Default = 3.
 #' @param plot_params A named list of additional parameters to forward to
@@ -828,7 +828,7 @@ plot_detrend_overlay <- function(
 
   legend(
     "topleft",
-    legend = c("pupil timeseries", "linear trend"),
+    legend = c("pupil time series", "linear trend"),
     col = c("black", "blue"),
     lwd = 2,
     lty = c(1, 1)
@@ -850,8 +850,8 @@ plot_detrend_overlay <- function(
 #'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param block Block number to plot (default: 1)
-#' @param screen_width Screen width in pixels from eyeris$info$screen.x
-#' @param screen_height Screen height in pixels from eyeris$info$screen.y
+#' @param screen_width Screen width in pixels from `eyeris$info$screen.x`
+#' @param screen_height Screen height in pixels from `eyeris$info$screen.y`
 #' @param n_bins Number of bins for the heatmap grid (default: 50)
 #' @param col_palette Color palette for the heatmap (default: "viridis")
 #' @param main Title for the plot (default: "Fixation Heatmap")
@@ -898,7 +898,7 @@ plot_gaze_heatmap <- function(
   } else {
     df <- eyeris
     if (is.null(screen_width) || is.null(screen_height)) {
-      log_error("Screen width and height must be provided with dataframe inputs.")
+      log_error("Screen width and height must be provided with data frame inputs.")
     }
   }
 

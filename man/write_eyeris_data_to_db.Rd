@@ -45,7 +45,7 @@ write_eyeris_data_to_db(
 Logical indicating success
 }
 \description{
-Writes eyeris data to the project database as an alternative to CSV files.
+Writes \code{eyeris} data to the project database as an alternative to CSV files.
 Creates or updates tables as needed.
 }
 \keyword{internal}

@@ -39,19 +39,26 @@ log_message <- function(
     return(invisible(NULL))
   }
 
-  # Collapse multiple strings with spaces
+  # collapse multiple strings with spaces
   message_parts <- list(...)
   message_text <- paste(message_parts, collapse = " ")
 
-  # Apply glue interpolation if there are braces
+  # apply glue interpolation if there are braces, but handle errors gracefully
   if (grepl("\\{.*\\}", message_text)) {
-    message_text <- glue::glue(message_text, .envir = .envir)
+    tryCatch(
+      {
+        message_text <- glue::glue(message_text, .envir = .envir)
+      },
+      error = function(e) {
+        # if glue fails, just use the original message without interpolation
+        # i.e., this handles cases where {} contains JSON, structured data, etc.
+        message_text <<- message_text
+      }
+    )
   }
 
-  # Prepend timestamp and log level
   full_message <- paste(get_log_timestamp(), paste0("[", level, "]"), message_text)
 
-  # Call appropriate cli function based on level
   switch(
     level,
     "INFO" = cli::cli_alert_info(full_message, wrap = wrap),

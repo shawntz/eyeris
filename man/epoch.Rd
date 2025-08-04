@@ -29,9 +29,9 @@ around or no \code{limits} (which then just grabs the data epochs between each
 subsequent event string of the same type); (2) a vector containing both
 \code{start} and \code{end} event message strings -- here, \code{limits} will be ignored and
 the duration of each trial epoch will be the number of samples between each
-matched \code{start} and \code{end} event message pair; or (3) a list of 2 dataframes
+matched \code{start} and \code{end} event message pair; or (3) a list of 2 data frames
 that manually specify start/end event timestamp-message pairs to pull out of
-the raw timeseries data -- here, it is required that each raw timestamp and
+the raw time series data -- here, it is required that each raw timestamp and
 event message be provided in the following format:
 
 list(
@@ -122,7 +122,7 @@ it will be generated from the function call}
 \value{
 An \code{eyeris} object with a new nested list of data frames: \verb{$epoch_*}.
 The epochs are organized hierarchically by block and preprocessing step.
-Each epoch contains the pupil timeseries data for the specified time window
+Each epoch contains the pupil time series data for the specified time window
 around each event message, along with metadata about the event.
 
 When using \code{bidsify()} to export the data, filenames will include both
