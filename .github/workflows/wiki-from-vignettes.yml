@@ -65,5 +65,5 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "update wiki from vignettes and README [skip ci]" || echo "no changes to commit"
+          git commit -m "update wiki from vignettes and README (triggered by ${{ github.sha }}) [skip ci]" || echo "no changes to commit"
           git push
