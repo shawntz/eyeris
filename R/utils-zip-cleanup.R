@@ -44,7 +44,6 @@ zip_and_cleanup_source_figures <- function(
     }
     zip_filename <- paste0(zip_filename, ".zip")
     existing_zip_path <- file.path(figures_dir, zip_filename)
-    
     if (file.exists(existing_zip_path)) {
       unlink(existing_zip_path)
       log_info("Removed existing zip file: {zip_filename}", verbose = verbose)
@@ -96,7 +95,6 @@ zip_and_cleanup_source_figures <- function(
             # move zip file to parent figures directory
             final_zip_path <- file.path(figures_dir, zip_filename)
             file.rename(zip_filename, final_zip_path)
-            
             created_zips <- c(created_zips, final_zip_path)
 
             log_success(
@@ -107,14 +105,10 @@ zip_and_cleanup_source_figures <- function(
         }
 
         setwd(current_dir)
-        
         # remove the entire run directory after successful zip creation
         if (file.exists(final_zip_path)) {
           unlink(run_dir, recursive = TRUE)
-          log_success(
-            "Removed run directory: {run_name}",
-            verbose = verbose
-          )
+          log_success("Removed run directory: {run_name}", verbose = verbose)
         }
       },
       error = function(e) {
