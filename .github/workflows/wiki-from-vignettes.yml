@@ -1,0 +1,69 @@
+name: Update GitHub Wiki from Vignettes/README
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'vignettes/**'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("rmarkdown"))
+
+      - name: Render vignettes to .md
+        run: |
+          dir.create("wiki_md", showWarnings = FALSE)
+          rmd_files <- list.files("vignettes", pattern = "\\.Rmd$", full.names = TRUE)
+          for (f in rmd_files) {
+            out_file <- file.path("wiki_md", paste0(tools::file_path_sans_ext(basename(f)), ".md"))
+            rmarkdown::render(f, output_format = "rmarkdown::github_document", output_file = out_file)
+          }
+        shell: Rscript {0}
+
+      - name: Generate Table of Contents
+        run: |
+          md_files <- list.files("wiki_md", pattern = "\\.md$", full.names = TRUE)
+          toc <- "# 📚 Table of Contents\n\n"
+          for (f in md_files) {
+            lines <- readLines(f, warn = FALSE)
+            if (length(lines) > 0 && nzchar(lines[1])) {
+              title <- gsub("^# ", "", lines[1])  # strip markdown heading
+            } else {
+              title <- tools::file_path_sans_ext(basename(f))  # fallback to filename
+            }
+            filename <- basename(f)
+            toc <- paste0(toc, "- [", title, "](", filename, ")\n")
+          }
+          writeLines(toc, "wiki_md/Table_of_Contents.md")
+        shell: Rscript {0}
+
+      - name: Clone GitHub wiki
+        run: |
+          git clone https://github.com/${{ github.repository }}.wiki.git wiki_out
+
+      - name: Copy rendered markdown and README → Home.md
+        run: |
+          cp wiki_md/*.md wiki_out/
+          cp README.md wiki_out/Home.md
+
+      - name: Commit and push to wiki
+        run: |
+          cd wiki_out
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "update wiki from vignettes and README (triggered by ${{ github.sha }}) [skip ci]" || echo "no changes to commit"
+          git push
