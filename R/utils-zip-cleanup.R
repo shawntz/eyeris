@@ -106,7 +106,7 @@ zip_and_cleanup_source_figures <- function(
 
         setwd(current_dir)
         # remove the entire run directory after successful zip creation
-        if (file.exists(final_zip_path)) {
+        if (!is.null(final_zip_path) && file.exists(final_zip_path)) {
           unlink(run_dir, recursive = TRUE)
           log_success("Removed run directory: {run_name}", verbose = verbose)
         }
