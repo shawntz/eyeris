@@ -62,6 +62,7 @@
     <li><a class="dropdown-item" href="articles/anatomy.html">Anatomy of an eyeris Object</a></li>
     <li><a class="dropdown-item" href="articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
     <li><a class="dropdown-item" href="articles/database-guide.html">Working with eyeris Databases: A Complete Guide</a></li>
+    <li><a class="dropdown-item" href="articles/internal-api.html">Internal API Reference</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -279,6 +280,11 @@
 <td><em>See vignette: <a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">Custom Extensions</a></em></td>
 <td>Learn how to write your own pipeline steps and integrate them with <code>eyeris</code>.</td>
 </tr>
+<tr class="even">
+<td><strong>Internal API Reference</strong></td>
+<td><em>See vignette: <a href="https://shawnschwartz.com/eyeris/articles/internal-api.html">Internal API Reference</a></em></td>
+<td>Comprehensive documentation of all internal functions for advanced users and developers.</td>
+</tr>
 </tbody>
 </table>
 <blockquote>
@@ -358,20 +364,20 @@
 <span>  <span class="va">demo_data</span>,</span>
 <span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; ℹ [2025-08-03 01:50:00] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; ! [2025-08-03 01:50:00] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; ! [2025-08-03 01:50:00] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; ! [2025-08-03 01:50:00] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; ℹ [2025-08-03 01:50:00] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; ℹ [2025-08-03 01:50:00] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:10] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; ℹ [2025-08-03 13:56:10] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:10] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:11] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:11] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:11] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; ! [2025-08-03 13:56:11] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; ! [2025-08-03 13:56:11] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; ! [2025-08-03 13:56:11] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:11] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; ℹ [2025-08-03 13:56:11] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; ℹ [2025-08-03 13:56:11] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; ✔ [2025-08-03 01:50:00] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ [2025-08-03 13:56:11] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-wise-correction-of-pupillary-signal">Step-wise correction of pupillary signal<a class="anchor" aria-label="anchor" href="#step-wise-correction-of-pupillary-signal"></a>
@@ -394,12 +400,12 @@
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">end_time</span><span class="op">)</span>,</span>
 <span>  add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ℹ [2025-08-03 01:50:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
+<span><span class="co">#&gt; ℹ [2025-08-03 13:56:11] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
 <span><span class="co">#&gt; possible blocks: 1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-1.png" width="100%"><img src="reference/figures/README-timeseries-plot-2.png" width="100%"><img src="reference/figures/README-timeseries-plot-3.png" width="100%"><img src="reference/figures/README-timeseries-plot-4.png" width="100%"><img src="reference/figures/README-timeseries-plot-5.png" width="100%"><img src="reference/figures/README-timeseries-plot-6.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [2025-08-03 01:50:00] [INFO] Creating progressive summary plot for block_1</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; ℹ [2025-08-03 13:56:11] [INFO] Creating progressive summary plot for block_1</span></span></code></pre></div>
 <p><img src="reference/figures/README-timeseries-plot-7.png" width="100%"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [2025-08-03 01:50:01] [OKAY] Progressive summary plot created successfully!</span></span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; ✔ [2025-08-03 13:56:12] [OKAY] Progressive summary plot created successfully!</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">plot_gaze_heatmap</span>(</span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">eyeris =</span> eyeris_preproc,</span>
