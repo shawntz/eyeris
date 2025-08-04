@@ -36,11 +36,12 @@ jobs:
 
       - name: Render vignettes to .md
         run: |
-          dir.create("wiki_md", showWarnings = FALSE)
+          dir.create("wiki_md", showWarnings = FALSE, recursive = TRUE)
           rmd_files <- list.files("vignettes", pattern = "\\.Rmd$", full.names = TRUE)
           for (f in rmd_files) {
             out_file <- file.path("wiki_md", paste0(tools::file_path_sans_ext(basename(f)), ".md"))
-            rmarkdown::render(f, output_format = "rmarkdown::github_document", output_file = out_file)
+            dir.create(dirname(out_file), showWarnings = FALSE, recursive = TRUE)
+            rmarkdown::render(f, output_format = rmarkdown::github_document(), output_file = out_file)
           }
         shell: Rscript {0}
 
