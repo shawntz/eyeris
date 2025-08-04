@@ -1757,168 +1757,33 @@ run_bidsify <- function(
           epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
           check_and_create_dir(epochs_out, verbose = verbose)
 
-          epoch_groups <- as.vector(unique(epochs_to_save[[i]][[bn]][
-            report_epoch_grouping_var_col
-          ])[[1]])
+          # create zip file with all epoch images for this run/epoch combination
+          epoch_zip_path <- create_epoch_images_zip(
+            epochs_to_save = epochs_to_save,
+            epoch_index = i,
+            block_name = bn,
+            run_dir_num = run_dir_num,
+            epochs_out = epochs_out,
+            pupil_steps = pupil_steps,
+            eyeris_object = eyeris,
+            eye_suffix = eye_suffix,
+            report_epoch_grouping_var_col = report_epoch_grouping_var_col,
+            verbose = verbose
+          )
 
-          for (group in epoch_groups) {
-            group_df <- epochs_to_save[[i]][[bn]]
-            group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
-
-            for (pstep in seq_along(pupil_steps)) {
-              if (grepl("z", pupil_steps[pstep])) {
-                y_units <- "(z)"
-              } else {
-                y_units <- "(a.u.)"
-              }
-
-              colorpal <- eyeris_color_palette()
-              colors <- c("black", colorpal)
-
-              y_label <- paste("pupil size", y_units)
-
-              file_out <- file.path(
-                epochs_out,
-                sprintf("run-%02d_%s_%d", run_dir_num, group, pstep)
-              )
-
-              if (!is.null(eye_suffix)) {
-                file_out <- paste0(file_out, "_", eye_suffix)
-              }
-
-              file_out <- paste0(file_out, ".png")
-
-              png(
-                file_out,
-                width = 3.25,
-                height = 2.5,
-                units = "in",
-                res = 600,
-                pointsize = 6
-              )
-              y_values <- group_df[[pupil_steps[pstep]]]
-              if (any(is.finite(y_values))) {
-                plot(
-                  group_df$timebin,
-                  y_values,
-                  type = "l",
-                  xlab = "time (s)",
-                  ylab = y_label,
-                  col = colors[pstep],
-                  main = paste0(
-                    group,
-                    "\n",
-                    pupil_steps[pstep],
-                    sprintf(" (Run %d)", run_dir_num)
-                  )
-                )
-              } else {
-                plot(
-                  NA,
-                  xlim = range(group_df$timebin, na.rm = TRUE),
-                  ylim = c(0, 1),
-                  type = "n",
-                  xlab = "time (s)",
-                  ylab = y_label,
-                  main = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA")
-                )
-                log_warn(
-                  "eyeris: no finite pupillometry data to plot for current epoch... plotting empty epoch plot.",
-                  verbose = verbose
-                )
-                text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
-              }
-              dev.off()
-            }
-          }
-
-          for (group in epoch_groups) {
-            group_df <- epochs_to_save[[i]][[bn]]
-            group_df <- group_df[group_df[[report_epoch_grouping_var_col]] == group, ]
-
-            if (
-              all(c("eye_x", "eye_y") %in% colnames(group_df)) &&
-                all(c("screen.x", "screen.y") %in% colnames(eyeris$info))
-            ) {
-              heatmap_filename <- file.path(
-                epochs_out,
-                sprintf("run-%02d_%s_gaze_heatmap", run_dir_num, group)
-              )
-
-              if (!is.null(eye_suffix)) {
-                heatmap_filename <- paste0(heatmap_filename, "_", eye_suffix)
-              }
-
-              heatmap_filename <- paste0(heatmap_filename, ".png")
-
-              png(
-                heatmap_filename,
-                width = 6,
-                height = 4,
-                units = "in",
-                res = 300,
-                pointsize = 10
-              )
-
-              tryCatch(
-                {
-                  plot_gaze_heatmap(
-                    eyeris = group_df,
-                    block = run_dir_num,
-                    screen_width = eyeris$info$screen.x,
-                    screen_height = eyeris$info$screen.y,
-                    n_bins = 30,
-                    col_palette = "viridis",
-                    main = sprintf("%s\nGaze Heatmap (run-%02d)", group, run_dir_num),
-                    eye_suffix = eye_suffix
-                  )
-                },
-                error = function(e) {
-                  plot(
-                    NA,
-                    xlim = c(0, 1),
-                    ylim = c(0, 1),
-                    type = "n",
-                    xlab = "",
-                    ylab = "",
-                    main = paste("Error creating gaze heatmap for epoch", group)
-                  )
-                  text(0.5, 0.5, paste("Error:", e$message), cex = 0.8, col = "red")
-                }
-              )
-
-              dev.off()
-
-              log_success(
-                "Created gaze heatmap for epoch {group} (run-{sprintf('%02d', run_dir_num)})",
-                verbose = verbose
-              )
-            }
-          }
-
-          if (any_epochs) {
-            epochs <- list.files(
-              epochs_out,
-              full.names = FALSE,
-              pattern = "\\.(jpg|jpeg|png|gif)$",
-              ignore.case = TRUE
-            )
-
-            epochs <- file.path(
+          if (any_epochs && file.exists(epoch_zip_path)) {
+            # create relative path for HTML display
+            zip_relative_path <- file.path(
               "source",
               "figures",
               sprintf("run-%02d", run_dir_num),
               names(epochs_to_save)[i],
-              epochs
+              basename(epoch_zip_path)
             )
-
-            if (!is.null(eye_suffix)) {
-              epochs <- epochs[grepl(eye_suffix, epochs)]
-            }
 
             make_gallery(
               eyeris,
-              epochs,
+              epoch_zip_path, # pass absolute path for file finding
               report_path,
               sprintf(
                 "%s%s",

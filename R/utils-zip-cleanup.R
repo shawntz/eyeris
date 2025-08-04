@@ -131,14 +131,14 @@ zip_and_cleanup_source_figures <- function(
 
 #' Clean up source figures after report generation
 #'
-#' Wrapper function to zip and cleanup source figure files after the main
-#' HTML report has been generated and the R Markdown source has been cleaned up.
+#' Removes the entire source/figures directory after the main HTML report has
+#' been generated since all images are now embedded in the HTML as data URLs.
 #'
 #' @param report_path Path to the report directory
-#' @param eye_suffix Optional eye suffix for binocular data
+#' @param eye_suffix Optional eye suffix for binocular data (unused but kept for compatibility)
 #' @param verbose Whether to print verbose output
 #'
-#' @return Invisibly returns list of created zip files
+#' @return Invisibly returns TRUE if cleanup was successful, FALSE otherwise
 #'
 #' @keywords internal
 cleanup_source_figures_post_render <- function(
@@ -148,20 +148,22 @@ cleanup_source_figures_post_render <- function(
 ) {
   log_info("Starting post-render cleanup of source figure files...", verbose = verbose)
 
-  zip_files <- zip_and_cleanup_source_figures(
-    report_path = report_path,
-    eye_suffix = eye_suffix,
-    verbose = verbose
-  )
+  figures_dir <- file.path(report_path, "source", "figures")
 
-  if (!is.null(zip_files) && length(zip_files) > 0) {
-    log_success(
-      "Post-render cleanup complete. Created {length(zip_files)} zip files.",
-      verbose = verbose
-    )
-  } else {
-    log_info("No figure files found to cleanup.", verbose = verbose)
+  if (!dir.exists(figures_dir)) {
+    log_info("Source figures directory not found: {figures_dir}", verbose = verbose)
+    return(invisible(FALSE))
   }
 
-  invisible(zip_files)
+  tryCatch(
+    {
+      unlink(figures_dir, recursive = TRUE)
+      log_success("Removed entire source/figures directory (images embedded in HTML)", verbose = verbose)
+      return(invisible(TRUE))
+    },
+    error = function(e) {
+      log_warn("Failed to remove source/figures directory: {e$message}", verbose = verbose)
+      return(invisible(FALSE))
+    }
+  )
 }

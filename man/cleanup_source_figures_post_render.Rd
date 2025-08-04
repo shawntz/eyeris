@@ -13,15 +13,15 @@ cleanup_source_figures_post_render(
 \arguments{
 \item{report_path}{Path to the report directory}
 
-\item{eye_suffix}{Optional eye suffix for binocular data}
+\item{eye_suffix}{Optional eye suffix for binocular data (unused but kept for compatibility)}
 
 \item{verbose}{Whether to print verbose output}
 }
 \value{
-Invisibly returns list of created zip files
+Invisibly returns TRUE if cleanup was successful, FALSE otherwise
 }
 \description{
-Wrapper function to zip and cleanup source figure files after the main
-HTML report has been generated and the R Markdown source has been cleaned up.
+Removes the entire source/figures directory after the main HTML report has
+been generated since all images are now embedded in the HTML as data URLs.
 }
 \keyword{internal}
