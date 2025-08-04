@@ -17,8 +17,8 @@ If includes path, will use as provided.}
 Database connection object for use with other eyeris database functions
 }
 \description{
-User-friendly function to connect to an existing eyeris project database.
-This function provides easy access for users to query their eyeris data.
+User-friendly function to connect to an existing \code{eyeris} project database.
+This function provides easy access for users to query their \code{eyeris} data.
 }
 \examples{
 \donttest{

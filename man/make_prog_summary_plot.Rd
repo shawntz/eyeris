@@ -15,7 +15,7 @@ make_prog_summary_plot(
 )
 }
 \arguments{
-\item{pupil_data}{A data frame containing pupil timeseries data with
+\item{pupil_data}{A data frame containing pupil time series data with
 multiple preprocessing columns (e.g., \code{eyeris$timeseries$block_1})}
 
 \item{pupil_steps}{Character vector of column names containing pupil data

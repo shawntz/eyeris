@@ -16,9 +16,9 @@ compute_baseline(
 \arguments{
 \item{x}{An \code{eyeris} object containing the latest pupil column pointer}
 
-\item{epochs}{A list of epoch dataframes}
+\item{epochs}{A list of epoch data frames}
 
-\item{baseline_epochs}{A list of baseline epoch dataframes}
+\item{baseline_epochs}{A list of baseline epoch data frames}
 
 \item{mode}{The baseline correction mode ("sub" for subtractive,
 "div" for divisive)}

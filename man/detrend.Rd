@@ -13,7 +13,7 @@ detrend(eyeris, call_info = NULL)
 it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
-An \code{eyeris} object with two new columns in \code{timeseries}:
+An \code{eyeris} object with two new columns in \verb{time series}:
 \code{detrend_fitted_betas}, and \verb{pupil_raw_\{...\}_detrend}
 }
 \description{
@@ -43,5 +43,5 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline
+part of the full \code{eyeris} glassbox preprocessing pipeline
 }

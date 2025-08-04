@@ -10,7 +10,7 @@
 #' @param run_dir_num Run directory number
 #' @param epochs_out Output directory for the epoch files
 #' @param pupil_steps Vector of pupil processing steps
-#' @param eyeris_object The full eyeris object (needed for screen dimensions)
+#' @param eyeris_object The full `eyeris` object (needed for screen dimensions)
 #' @param eye_suffix Optional eye suffix for binocular data
 #' @param report_epoch_grouping_var_col Column name for grouping epochs
 #' @param verbose Whether to print verbose output

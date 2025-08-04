@@ -2,12 +2,12 @@
 % Please edit documentation in R/utils-checks.R
 \name{check_column}
 \alias{check_column}
-\title{Check if column exists in dataframe}
+\title{Check if column exists in data frame}
 \usage{
 check_column(df, col_name)
 }
 \arguments{
-\item{df}{The dataframe to check}
+\item{df}{The data frame to check}
 
 \item{col_name}{The column name to look for}
 }
@@ -15,6 +15,6 @@ check_column(df, col_name)
 No return value; throws error if column doesn't exist
 }
 \description{
-Validates that a specified column exists in a dataframe.
+Validates that a specified column exists in a data frame.
 }
 \keyword{internal}

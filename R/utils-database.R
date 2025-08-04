@@ -1,6 +1,6 @@
 #' Create or connect to eyeris project database
 #'
-#' Creates a new DuckDB database for the eyeris project or connects to an existing one.
+#' Creates a new `DuckDB` database for the `eyeris` project or connects to an existing one.
 #' The database will be created in the BIDS derivatives directory.
 #'
 #' @param bids_dir Path to the BIDS directory containing derivatives
@@ -52,7 +52,7 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
 
 #' Disconnect from eyeris database
 #'
-#' Safely disconnects from the eyeris project database.
+#' Safely disconnects from the `eyeris` project database.
 #'
 #' @param con Database connection object
 #' @param verbose Whether to print verbose output
@@ -80,7 +80,7 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
 
 #' Create table name for eyeris data
 #'
-#' Generates a standardized table name for eyeris data based on the data type
+#' Generates a standardized table name for `eyeris` data based on the data type
 #' and subject information.
 #'
 #' @param data_type Type of data ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")
@@ -144,7 +144,7 @@ create_table_name <- function(
 
 #' Write eyeris data to database
 #'
-#' Writes eyeris data to the project database as an alternative to CSV files.
+#' Writes `eyeris` data to the project database as an alternative to CSV files.
 #' Creates or updates tables as needed.
 #'
 #' @param data Data frame to write
@@ -250,7 +250,7 @@ write_eyeris_data_to_db <- function(
 
 #' List available tables in eyeris database
 #'
-#' Lists all tables in the eyeris project database with optional filtering.
+#' Lists all tables in the `eyeris` project database with optional filtering.
 #'
 #' @param con Database connection
 #' @param data_type Optional filter by data type
@@ -292,7 +292,7 @@ eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
 
 #' Read eyeris data from database
 #'
-#' Reads eyeris data from the project database with dplyr-style interface.
+#' Reads `eyeris` data from the project database with dplyr-style interface.
 #'
 #' @param con Database connection
 #' @param data_type Type of data to read ("timeseries", "epochs", "epoch_timeseries", "epoch_summary", "events", "blinks")
@@ -415,8 +415,8 @@ eyeris_db_read <- function(
 
 #' Connect to eyeris project database (user-facing)
 #'
-#' User-friendly function to connect to an existing eyeris project database.
-#' This function provides easy access for users to query their eyeris data.
+#' User-friendly function to connect to an existing `eyeris` project database.
+#' This function provides easy access for users to query their `eyeris` data.
 #'
 #' @param bids_dir Path to the BIDS directory containing the database
 #' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
@@ -482,7 +482,7 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
 
 #' Disconnect from eyeris database (user-facing)
 #'
-#' User-friendly function to disconnect from the eyeris project database.
+#' User-friendly function to disconnect from the `eyeris` project database.
 #'
 #' @param con Database connection object
 #'
@@ -588,7 +588,7 @@ write_csv_and_db <- function(
 
 #' Extract and aggregate eyeris data across subjects from database
 #'
-#' A comprehensive wrapper function that simplifies extracting eyeris data from
+#' A comprehensive wrapper function that simplifies extracting `eyeris` data from
 #' the database. Provides easy one-liner access to aggregate data across multiple
 #' subjects for each data type, without requiring SQL knowledge.
 #'
@@ -606,7 +606,7 @@ write_csv_and_db <- function(
 #'   Typically c("eye-L", "eye-R") for binocular data
 #' @param verbose Logical. Whether to print progress messages (default TRUE)
 #'
-#' @return A named list of dataframes, one per data type
+#' @return A named list of data frames, one per data type
 #'
 #' @examples
 #' \donttest{
@@ -628,7 +628,7 @@ write_csv_and_db <- function(
 #'   db_enabled = TRUE # enable database storage
 #' )
 #'
-#' # extract all data for all subjects (returns list of dataframes)
+#' # extract all data for all subjects (returns list of data frames)
 #' all_data <- eyeris_db_collect(tempdir())
 #'
 #' # view available data types
@@ -836,7 +836,7 @@ eyeris_db_collect <- function(
 
 #' Get summary statistics for eyeris database
 #'
-#' Provides a quick overview of the contents of an eyeris database,
+#' Provides a quick overview of the contents of an `eyeris` database,
 #' including available subjects, sessions, tasks, and data types.
 #'
 #' @param bids_dir Path to the BIDS directory containing the database

@@ -2,17 +2,17 @@
 % Please edit documentation in R/utils-render_report.R
 \name{make_md_table}
 \alias{make_md_table}
-\title{Create markdown table from dataframe}
+\title{Create markdown table from data frame}
 \usage{
 make_md_table(df)
 }
 \arguments{
-\item{df}{The dataframe to convert}
+\item{df}{The data frame to convert}
 }
 \value{
 A character string containing the markdown table content
 }
 \description{
-Converts a dataframe into a markdown table.
+Converts a data frame into a markdown table.
 }
 \keyword{internal}

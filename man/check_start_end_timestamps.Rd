@@ -7,15 +7,15 @@
 check_start_end_timestamps(start, end)
 }
 \arguments{
-\item{start}{The start timestamp dataframe}
+\item{start}{The start timestamp data frame}
 
-\item{end}{The end timestamp dataframe}
+\item{end}{The end timestamp data frame}
 }
 \value{
 No return value; throws error if timestamps are unbalanced
 }
 \description{
-Validates that start and end timestamp dataframes have the same number
+Validates that start and end timestamp data frames have the same number
 of rows.
 }
 \keyword{internal}

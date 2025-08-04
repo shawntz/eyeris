@@ -12,9 +12,9 @@ check_data(eyeris, fun)
 \item{fun}{The function name for error message}
 }
 \value{
-No return value; throws error if object is not eyeris class
+No return value; throws error if object is not \code{eyeris} class
 }
 \description{
-Validates that an object is of class eyeris.
+Validates that an object is of class \code{eyeris}.
 }
 \keyword{internal}

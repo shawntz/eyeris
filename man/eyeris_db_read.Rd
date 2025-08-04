@@ -39,5 +39,5 @@ eyeris_db_read(
 Data frame with requested data
 }
 \description{
-Reads eyeris data from the project database with dplyr-style interface.
+Reads \code{eyeris} data from the project database with dplyr-style interface.
 }

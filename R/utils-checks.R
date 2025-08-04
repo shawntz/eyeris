@@ -131,11 +131,11 @@ check_baseline_inputs <- function(events, limits) {
   }
 }
 
-#' Check if column exists in dataframe
+#' Check if column exists in data frame
 #'
-#' Validates that a specified column exists in a dataframe.
+#' Validates that a specified column exists in a data frame.
 #'
-#' @param df The dataframe to check
+#' @param df The data frame to check
 #' @param col_name The column name to look for
 #'
 #' @return No return value; throws error if column doesn't exist
@@ -151,12 +151,12 @@ check_column <- function(df, col_name) {
 
 #' Check if object is of class eyeris
 #'
-#' Validates that an object is of class eyeris.
+#' Validates that an object is of class `eyeris`.
 #'
 #' @param eyeris The `eyeris` object to check
 #' @param fun The function name for error message
 #'
-#' @return No return value; throws error if object is not eyeris class
+#' @return No return value; throws error if object is not `eyeris` class
 #'
 #' @keywords internal
 check_data <- function(eyeris, fun) {
@@ -177,7 +177,7 @@ check_data <- function(eyeris, fun) {
 
 #' Check if pupil_raw column exists
 #'
-#' Validates that the pupil_raw column exists in the eyeris object.
+#' Validates that the pupil_raw column exists in the `eyeris` object.
 #'
 #' @param eyeris The `eyeris` object to check
 #' @param fun The function name for error message
@@ -195,7 +195,7 @@ check_pupil_cols <- function(eyeris, fun) {
   )
   err_c <- "missing_pupil_raw_error"
 
-  # check if timeseries is a list of blocks
+  # check if time series is a list of blocks
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     # now check each block for compliance
     for (block_num in seq_along(eyeris$timeseries)) {
@@ -243,15 +243,15 @@ check_epoch_input <- function(epochs) {
 
 #' Check epoch manual input data structure
 #'
-#' Validates that the events argument is a list of two dataframes.
+#' Validates that the events argument is a list of two data frames.
 #'
-#' @param ts_list A list containing both start _and_ end timestamp dataframes
+#' @param ts_list A list containing both start _and_ end timestamp data frames
 #'
 #' @return No return value; throws error if structure is invalid
 #'
 #' @keywords internal
 check_epoch_manual_input_data <- function(ts_list) {
-  err_m <- "The `events` argument must be a list of two dataframes.\t"
+  err_m <- "The `events` argument must be a list of two data frames.\t"
   err_c <- "timestamps_list_config_error"
 
   list_check_a <- (!is.list(ts_list) || length(ts_list) != 2)
@@ -263,11 +263,11 @@ check_epoch_manual_input_data <- function(ts_list) {
   }
 }
 
-#' Check epoch manual input dataframe format
+#' Check epoch manual input data frame format
 #'
-#' Validates that start and end timestamp dataframes have required columns.
+#' Validates that start and end timestamp data frames have required columns.
 #'
-#' @param ts_list A list containing start and end timestamp dataframes
+#' @param ts_list A list containing start and end timestamp data frames
 #'
 #' @return No return value; throws error if format is invalid
 #'
@@ -288,16 +288,16 @@ check_epoch_manual_input_dfs <- function(ts_list) {
     stop(structure(list(message = err_m, call = match.call()), class = err_c))
   }
 
-  # lastly, assert that start and end timestamp dataframes are balanced
+  # lastly, assert that start and end timestamp data frames are balanced
   check_start_end_timestamps(start_times, end_times)
 }
 
 #' Check epoch message values against available events
 #'
-#' Validates that specified event messages exist in the eyeris object.
+#' Validates that specified event messages exist in the `eyeris` object.
 #'
 #' @param eyeris The `eyeris` object containing events
-#' @param events A dataframe containing event messages to validate
+#' @param events A data frame containing event messages to validate
 #'
 #' @return No return value; throws error if invalid messages are found
 #'
@@ -340,11 +340,11 @@ check_limits <- function(limits) {
 
 #' Check start and end timestamps are balanced
 #'
-#' Validates that start and end timestamp dataframes have the same number
+#' Validates that start and end timestamp data frames have the same number
 #' of rows.
 #'
-#' @param start The start timestamp dataframe
-#' @param end The end timestamp dataframe
+#' @param start The start timestamp data frame
+#' @param end The end timestamp data frame
 #'
 #' @return No return value; throws error if timestamps are unbalanced
 #'
@@ -430,12 +430,12 @@ check_time_monotonic <- function(time_vector, time_col_name = "time_secs") {
 
 #' Check if object is a binocular eyeris object
 #'
-#' Detects whether an object is a binocular eyeris object created with
+#' Detects whether an object is a binocular `eyeris` object created with
 #' `binocular_mode = "both"`.
 #'
 #' @param x The `eyeris` object to check
 #'
-#' @return Logical indicating whether the object is a binocular eyeris object
+#' @return Logical indicating whether the object is a binocular `eyeris` object
 #'
 #' @keywords internal
 is_binocular_object <- function(x) {

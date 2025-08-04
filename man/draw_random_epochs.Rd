@@ -7,7 +7,7 @@
 draw_random_epochs(x, n, d, hz)
 }
 \arguments{
-\item{x}{A dataframe containing timeseries data}
+\item{x}{A data frame containing time series data}
 
 \item{n}{Number of random epochs to draw}
 
@@ -16,9 +16,9 @@ draw_random_epochs(x, n, d, hz)
 \item{hz}{Sampling rate in Hz}
 }
 \value{
-A list of dataframes, each containing a random epoch segment
+A list of data frames, each containing a random epoch segment
 }
 \description{
-Generates random time segments from the timeseries data for preview plotting.
+Generates random time segments from the time series data for preview plotting.
 }
 \keyword{internal}

@@ -67,6 +67,6 @@ demo_data |>
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
-part of the full eyeris glassbox preprocessing pipeline.
+part of the full \code{eyeris} glassbox preprocessing pipeline.
 \code{\link[=bin]{bin()}} for binning functionality.
 }

@@ -35,7 +35,7 @@ response. Defaults to \code{FALSE}}
 it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
-An \code{eyeris} object with a new column in \code{timeseries}:
+An \code{eyeris} object with a new column in \verb{time series}:
 \verb{pupil_raw_\{...\}_lpfilt}
 }
 \description{

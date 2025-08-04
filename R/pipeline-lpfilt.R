@@ -33,7 +33,7 @@
 #' @param call_info A list of call information and parameters. If not provided,
 #' it will be generated from the function call. Defaults to `NULL`
 #'
-#' @return An `eyeris` object with a new column in `timeseries`:
+#' @return An `eyeris` object with a new column in `time series`:
 #' `pupil_raw_{...}_lpfilt`
 #'
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step as

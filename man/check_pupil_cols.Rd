@@ -15,6 +15,6 @@ check_pupil_cols(eyeris, fun)
 No return value; throws error if pupil_raw column is missing
 }
 \description{
-Validates that the pupil_raw column exists in the eyeris object.
+Validates that the pupil_raw column exists in the \code{eyeris} object.
 }
 \keyword{internal}

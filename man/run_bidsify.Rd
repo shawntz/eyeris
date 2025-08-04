@@ -27,7 +27,7 @@ run_bidsify(
 )
 }
 \arguments{
-\item{eyeris}{An eyeris object}
+\item{eyeris}{An \code{eyeris} object}
 
 \item{save_all}{Whether to save all data}
 
@@ -66,7 +66,7 @@ run_bidsify(
 \item{skip_db_cleanup}{Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands}
 }
 \value{
-A eyeris object
+An \code{eyeris} object
 }
 \description{
 Internal function to run bidsify on a single eye

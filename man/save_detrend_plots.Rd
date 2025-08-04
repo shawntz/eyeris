@@ -30,7 +30,7 @@ save_detrend_plots(
 No return value; saves detrend plots to the specified directory
 }
 \description{
-Generates and saves detrend diagnostic plots for each block in the eyeris
+Generates and saves detrend diagnostic plots for each block in the \code{eyeris}
 object.
 }
 \keyword{internal}

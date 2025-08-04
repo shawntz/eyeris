@@ -12,19 +12,19 @@ make_baseline_label <- function(baselined_data, epoch_id) {
   paste0("baseline_", baselined_data$baseline_cor_col_name, "_", epoch_id)
 }
 
-#' Extract baseline epochs from timeseries data
+#' Extract baseline epochs from time series data
 #'
-#' Extracts baseline periods from timeseries data based on event messages
+#' Extracts baseline periods from time series data based on event messages
 #' and time ranges or start/end messages.
 #'
 #' @param x An `eyeris` object containing the latest pupil column pointer
-#' @param df The timeseries dataframe
+#' @param df The time series data frame
 #' @param evs Event messages for baseline extraction
 #' @param time_range Time range for baseline extraction
 #' @param matched_epochs Matched epoch start/end times
 #' @param hz Sampling rate in Hz
 #'
-#' @return A list of baseline epoch dataframes
+#' @return A list of baseline epoch data frames
 #'
 #' @keywords internal
 extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) {
@@ -69,8 +69,8 @@ extract_baseline_epochs <- function(x, df, evs, time_range, matched_epochs, hz) 
 #' divisive methods.
 #'
 #' @param x An `eyeris` object containing the latest pupil column pointer
-#' @param epochs A list of epoch dataframes
-#' @param baseline_epochs A list of baseline epoch dataframes
+#' @param epochs A list of epoch data frames
+#' @param baseline_epochs A list of baseline epoch data frames
 #' @param mode The baseline correction mode ("sub" for subtractive,
 #' "div" for divisive)
 #' @param epoch_events Event messages for epochs (optional)

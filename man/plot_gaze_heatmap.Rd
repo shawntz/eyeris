@@ -23,9 +23,9 @@ plot_gaze_heatmap(
 
 \item{block}{Block number to plot (default: 1)}
 
-\item{screen_width}{Screen width in pixels from eyeris$info$screen.x}
+\item{screen_width}{Screen width in pixels from \code{eyeris$info$screen.x}}
 
-\item{screen_height}{Screen height in pixels from eyeris$info$screen.y}
+\item{screen_height}{Screen height in pixels from \code{eyeris$info$screen.y}}
 
 \item{n_bins}{Number of bins for the heatmap grid (default: 50)}
 
