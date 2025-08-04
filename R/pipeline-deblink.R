@@ -63,10 +63,20 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
   if (is_binocular_object(eyeris)) {
     # process left and right eyes independently
     left_result <- eyeris$left |>
-      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
 
     right_result <- eyeris$right |>
-      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
 
     # return combined structure
     list_out <- list(
@@ -82,7 +92,12 @@ deblink <- function(eyeris, extend = 50, call_info = NULL) {
   } else {
     # regular eyeris object, process normally
     eyeris |>
-      pipeline_handler(deblink_pupil, "deblink", extend = extend, call_info = call_info)
+      pipeline_handler(
+        deblink_pupil,
+        "deblink",
+        extend = extend,
+        call_info = call_info
+      )
   }
 }
 
@@ -155,12 +170,16 @@ deblink_pupil <- function(x, prev_op, extend) {
       ),
       blink.end = zoo::na.locf(blink.end, na.rm = FALSE),
       blink = ifelse(
-        !is.na(blink.start) & time >= blink.start - extend_backward & time <= blink.start,
+        !is.na(blink.start) &
+          time >= blink.start - extend_backward &
+          time <= blink.start,
         1,
         blink
       ),
       blink = ifelse(
-        !is.na(blink.end) & time <= blink.end + extend_forward & time >= blink.end,
+        !is.na(blink.end) &
+          time <= blink.end + extend_forward &
+          time >= blink.end,
         1,
         blink
       ),

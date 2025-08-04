@@ -10,11 +10,18 @@
 #' @return DBI database connection object
 #'
 #' @keywords internal
-connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = FALSE) {
+connect_eyeris_database <- function(
+  bids_dir,
+  db_path = "my-project",
+  verbose = FALSE
+) {
   derivatives_dir <- file.path(bids_dir, "derivatives")
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
-    log_info("Created derivatives directory: {derivatives_dir}", verbose = verbose)
+    log_info(
+      "Created derivatives directory: {derivatives_dir}",
+      verbose = verbose
+    )
   }
 
   # auto-append .eyerisdb extension if not present
@@ -38,7 +45,10 @@ connect_eyeris_database <- function(bids_dir, db_path = "my-project", verbose = 
           verbose = verbose
         )
       } else {
-        log_success("Created new eyeris database: {full_db_path}", verbose = verbose)
+        log_success(
+          "Created new eyeris database: {full_db_path}",
+          verbose = verbose
+        )
       }
 
       return(con)
@@ -72,7 +82,10 @@ disconnect_eyeris_database <- function(con, verbose = FALSE) {
       return(TRUE)
     },
     error = function(e) {
-      log_warn("Error disconnecting from database: {e$message}", verbose = verbose)
+      log_warn(
+        "Error disconnecting from database: {e$message}",
+        verbose = verbose
+      )
       return(FALSE)
     }
   )
@@ -185,7 +198,15 @@ write_eyeris_data_to_db <- function(
     return(FALSE)
   }
 
-  table_name <- create_table_name(data_type, sub, ses, task, run, eye_suffix, epoch_label)
+  table_name <- create_table_name(
+    data_type,
+    sub,
+    ses,
+    task,
+    run,
+    eye_suffix,
+    epoch_label
+  )
 
   tryCatch(
     {
@@ -371,7 +392,10 @@ eyeris_db_read <- function(
 
       union_queries <- c()
       for (table in valid_tables) {
-        union_queries <- c(union_queries, paste0("SELECT * FROM \"", table, "\""))
+        union_queries <- c(
+          union_queries,
+          paste0("SELECT * FROM \"", table, "\"")
+        )
       }
 
       query <- paste(union_queries, collapse = " UNION ALL ")
@@ -471,7 +495,10 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
   tryCatch(
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = full_db_path)
-      log_success("Connected to eyeris database: {full_db_path}", verbose = TRUE)
+      log_success(
+        "Connected to eyeris database: {full_db_path}",
+        verbose = TRUE
+      )
       return(con)
     },
     error = function(e) {
@@ -732,10 +759,15 @@ eyeris_db_collect <- function(
     tryCatch(
       {
         # handle epoch-specific data types
-        if (data_type %in% c("epochs", "confounds_events", "confounds_summary")) {
+        if (
+          data_type %in% c("epochs", "confounds_events", "confounds_summary")
+        ) {
           if (is.null(epoch_labels)) {
             # get all available epoch labels for this data type
-            type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+            type_tables <- all_tables[grepl(
+              paste0("^", data_type, "_"),
+              all_tables
+            )]
             if (length(type_tables) > 0) {
               # extract unique epoch labels from table names
               # handles both eye-L/eye-R and eyeL/eyeR formats
@@ -743,7 +775,11 @@ eyeris_db_collect <- function(
                 data_type,
                 "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$"
               )
-              extracted_labels <- unique(gsub(epoch_pattern, "\\1", type_tables))
+              extracted_labels <- unique(gsub(
+                epoch_pattern,
+                "\\1",
+                type_tables
+              ))
               # remove failed matches (when pattern doesn't match, return original string)
               extracted_labels <- extracted_labels[
                 extracted_labels != type_tables &
@@ -787,9 +823,15 @@ eyeris_db_collect <- function(
             result_list[[data_type]] <- combined_data
           }
           # check if there are any tables for this data type at all
-          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+          type_tables <- all_tables[grepl(
+            paste0("^", data_type, "_"),
+            all_tables
+          )]
           if (length(type_tables) == 0) {
-            log_warn("No tables found for data type: {data_type}", verbose = verbose)
+            log_warn(
+              "No tables found for data type: {data_type}",
+              verbose = verbose
+            )
           }
         } else {
           # handle non-epoch data types
@@ -806,14 +848,23 @@ eyeris_db_collect <- function(
             result_list[[data_type]] <- data
           }
           # check if there are any tables for this data type at all
-          type_tables <- all_tables[grepl(paste0("^", data_type, "_"), all_tables)]
+          type_tables <- all_tables[grepl(
+            paste0("^", data_type, "_"),
+            all_tables
+          )]
           if (length(type_tables) == 0) {
-            log_warn("No tables found for data type: {data_type}", verbose = verbose)
+            log_warn(
+              "No tables found for data type: {data_type}",
+              verbose = verbose
+            )
           }
         }
       },
       error = function(e) {
-        log_warn("Failed to extract {data_type}: {e$message}", verbose = verbose)
+        log_warn(
+          "Failed to extract {data_type}: {e$message}",
+          verbose = verbose
+        )
       }
     )
   }
@@ -828,7 +879,10 @@ eyeris_db_collect <- function(
   for (dtype in names(result_list)) {
     n_rows <- nrow(result_list[[dtype]])
     n_subjects <- length(unique(result_list[[dtype]]$subject_id))
-    log_info("  {dtype}: {n_rows} rows across {n_subjects} subjects", verbose = verbose)
+    log_info(
+      "  {dtype}: {n_rows} rows across {n_subjects} subjects",
+      verbose = verbose
+    )
   }
 
   return(result_list)
@@ -886,7 +940,11 @@ eyeris_db_collect <- function(
 #' }
 #'
 #' @export
-eyeris_db_summary <- function(bids_dir, db_path = "my-project", verbose = TRUE) {
+eyeris_db_summary <- function(
+  bids_dir,
+  db_path = "my-project",
+  verbose = TRUE
+) {
   # connect to database
   log_info("Connecting to eyeris database...", verbose = verbose)
 

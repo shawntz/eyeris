@@ -211,7 +211,11 @@ get_timestamps <- function(
 #' @return A data frame with matched events and extracted metadata
 #'
 #' @keywords internal
-merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE) {
+merge_events_with_timeseries <- function(
+  events,
+  metadata_template,
+  merge = TRUE
+) {
   special_chars <- c(
     "\\",
     ".",
@@ -262,7 +266,11 @@ merge_events_with_timeseries <- function(events, metadata_template, merge = TRUE
     prefix <- substr(metadata_template, 1, nchar(metadata_template) - 1)
 
     for (char in special_chars) {
-      prefix <- stringr::str_replace_all(prefix, stringr::fixed(char), paste0("\\", char))
+      prefix <- stringr::str_replace_all(
+        prefix,
+        stringr::fixed(char),
+        paste0("\\", char)
+      )
     }
 
     regex_pattern <- paste0("^", prefix, ".*$")

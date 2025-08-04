@@ -103,7 +103,12 @@ load_asc <- function(
     log_error("Error: The file '{file}' is not a .asc file.")
   }
 
-  x <- eyelinker::read.asc(fname = file, samples = TRUE, events = TRUE, parse_all = FALSE)
+  x <- eyelinker::read.asc(
+    fname = file,
+    samples = TRUE,
+    events = TRUE,
+    parse_all = FALSE
+  )
 
   # parse metadata
   is_mono <- x$info$mono
@@ -219,7 +224,10 @@ load_asc <- function(
       x$raw$ypl <- NULL
       x$raw$ypr <- NULL
     } else if (binocular_mode == "both") {
-      list_out$raw_binocular_object <- list(left = left_eyeris, right = right_eyeris)
+      list_out$raw_binocular_object <- list(
+        left = left_eyeris,
+        right = right_eyeris
+      )
       return(list_out)
     }
 
@@ -269,7 +277,16 @@ load_asc <- function(
 #' @return An `eyeris` object
 #'
 #' @keywords internal
-process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, binoc_mode) {
+process_eyeris_data <- function(
+  x,
+  block,
+  eye,
+  hz,
+  pupil_type,
+  file,
+  binoc,
+  binoc_mode
+) {
   # raw data processing
   if (eye == "left") {
     eye_meta <- "L"
@@ -280,7 +297,13 @@ process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, bino
   }
 
   raw_df <- x$raw |>
-    dplyr::select(block, time_orig = time, pupil_raw = ps, eye_x = xp, eye_y = yp) |>
+    dplyr::select(
+      block,
+      time_orig = time,
+      pupil_raw = ps,
+      eye_x = xp,
+      eye_y = yp
+    ) |>
     dplyr::mutate(eye = eye_meta, hz = hz, type = pupil_type) |>
     dplyr::relocate(pupil_raw, .after = type)
 
@@ -336,7 +359,8 @@ process_eyeris_data <- function(x, block, eye, hz, pupil_type, file, binoc, bino
     list_out$timeseries <- list("block_1" = raw_df)
 
     # omit the block column from the time series, events, and blinks
-    list_out$timeseries$block_1 <- list_out$timeseries$block_1 |> dplyr::select(-block)
+    list_out$timeseries$block_1 <- list_out$timeseries$block_1 |>
+      dplyr::select(-block)
     list_out$events <- x$msg |> dplyr::select(-block)
     list_out$blinks <- x$blinks |> dplyr::select(-block)
   }

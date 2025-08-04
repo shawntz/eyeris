@@ -41,7 +41,10 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(utils::packageVersion("eyeris"))
-  css <- system.file(file.path("rmarkdown", "css", "report.css"), package = "eyeris")
+  css <- system.file(
+    file.path("rmarkdown", "css", "report.css"),
+    package = "eyeris"
+  )
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
@@ -50,7 +53,11 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     recursive = FALSE,
     full.names = FALSE
   )
-  run_ids <- sort(as.integer(gsub("run-", "", grep("^run-\\d+$", run_ids, value = TRUE))))
+  run_ids <- sort(as.integer(gsub(
+    "run-",
+    "",
+    grep("^run-\\d+$", run_ids, value = TRUE)
+  )))
 
   run_info <- paste(
     " - Runs: ",
@@ -134,10 +141,18 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       call_stack = sanitize_call_stack(eyeris$params)
     )
 
-    meta_path <- file.path(metadata_dir, sprintf("run-%02d_metadata.json", run_id))
+    meta_path <- file.path(
+      metadata_dir,
+      sprintf("run-%02d_metadata.json", run_id)
+    )
 
     if (!file.exists(meta_path)) {
-      jsonlite::write_json(run_metadata, meta_path, pretty = TRUE, auto_unbox = TRUE)
+      jsonlite::write_json(
+        run_metadata,
+        meta_path,
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
     } else {
       log_warn("Metadata file already exists for {run_id}: {meta_path}")
     }
@@ -290,10 +305,20 @@ make_md_table <- function(df) {
 #' @keywords internal
 make_md_table_multiline <- function(df) {
   md_table <- paste0("| ", paste(colnames(df), collapse = " | "), " |\n")
-  md_table <- paste0(md_table, "|", paste(rep("---", ncol(df)), collapse = "|"), "|\n")
+  md_table <- paste0(
+    md_table,
+    "|",
+    paste(rep("---", ncol(df)), collapse = "|"),
+    "|\n"
+  )
   for (i in seq_len(nrow(df))) {
     row <- df[i, ]
-    md_table <- paste0(md_table, "| ", paste(as.character(row), collapse = " | "), " |\n")
+    md_table <- paste0(
+      md_table,
+      "| ",
+      paste(as.character(row), collapse = " | "),
+      " |\n"
+    )
   }
   md_table
 }
@@ -360,7 +385,13 @@ print_plots <- function(plots, eye_suffix = NULL) {
         }
 
         placeholder_detected <- FALSE
-        placeholder_patterns <- c("no_data", "placeholder", "error", "No_data", "NoData")
+        placeholder_patterns <- c(
+          "no_data",
+          "placeholder",
+          "error",
+          "No_data",
+          "NoData"
+        )
         if (
           length(sorted_plot_paths) == 1 ||
             all(sapply(sorted_plot_paths, function(x) {
@@ -375,7 +406,10 @@ print_plots <- function(plots, eye_suffix = NULL) {
         }
 
         if (placeholder_detected) {
-          md_plots <- paste0(md_plots, "> **No data available for this run.**\n\n")
+          md_plots <- paste0(
+            md_plots,
+            "> **No data available for this run.**\n\n"
+          )
         }
 
         for (fig_path in sorted_plot_paths) {
@@ -384,7 +418,10 @@ print_plots <- function(plots, eye_suffix = NULL) {
         }
 
         # detrend diagnostics - check for eye_suffix version first
-        detrend_plot_path <- file.path(run_dir, paste0("run-", run_num, "_detrend.png"))
+        detrend_plot_path <- file.path(
+          run_dir,
+          paste0("run-", run_num, "_detrend.png")
+        )
 
         # if eye_suffix is provided, look for the suffixed version
         if (!is.null(eye_suffix)) {
@@ -459,7 +496,12 @@ save_detrend_plots <- function(
     ) {
       pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
-      grDevices::jpeg(filename = detrend_path, width = 1850, height = 1500, res = 300)
+      grDevices::jpeg(
+        filename = detrend_path,
+        width = 1850,
+        height = 1500,
+        res = 300
+      )
 
       plot_detrend_overlay(
         pupil_data = pupil_data,
@@ -688,7 +730,12 @@ save_progressive_summary_plots <- function(
 
     # if the progressive plot already exists, just include it
     if (file.exists(progressive_path)) {
-      relative_path <- gsub("^.*?(?=source/)", "", progressive_path, perl = TRUE)
+      relative_path <- gsub(
+        "^.*?(?=source/)",
+        "",
+        progressive_path,
+        perl = TRUE
+      )
       md_content <- paste0(
         md_content,
         "### ",
@@ -720,7 +767,12 @@ save_progressive_summary_plots <- function(
       next
     }
 
-    grDevices::png(filename = progressive_path, width = 7000, height = 6000, res = 300)
+    grDevices::png(
+      filename = progressive_path,
+      width = 7000,
+      height = 6000,
+      res = 300
+    )
 
     make_prog_summary_plot(
       pupil_data = pupil_data,

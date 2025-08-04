@@ -19,7 +19,10 @@ zip_and_cleanup_source_figures <- function(
   figures_dir <- file.path(report_path, "source", "figures")
 
   if (!dir.exists(figures_dir)) {
-    log_warn("Source figures directory not found: {figures_dir}", verbose = verbose)
+    log_warn(
+      "Source figures directory not found: {figures_dir}",
+      verbose = verbose
+    )
     return(NULL)
   }
 
@@ -121,7 +124,10 @@ zip_and_cleanup_source_figures <- function(
             )
           }
         )
-        log_warn("Failed to create zip for {run_name}: {e$message}", verbose = verbose)
+        log_warn(
+          "Failed to create zip for {run_name}: {e$message}",
+          verbose = verbose
+        )
       }
     )
   }
@@ -146,23 +152,35 @@ cleanup_source_figures_post_render <- function(
   eye_suffix = NULL,
   verbose = FALSE
 ) {
-  log_info("Starting post-render cleanup of source figure files...", verbose = verbose)
+  log_info(
+    "Starting post-render cleanup of source figure files...",
+    verbose = verbose
+  )
 
   figures_dir <- file.path(report_path, "source", "figures")
 
   if (!dir.exists(figures_dir)) {
-    log_info("Source figures directory not found: {figures_dir}", verbose = verbose)
+    log_info(
+      "Source figures directory not found: {figures_dir}",
+      verbose = verbose
+    )
     return(invisible(FALSE))
   }
 
   tryCatch(
     {
       unlink(figures_dir, recursive = TRUE)
-      log_success("Removed entire source/figures directory (images embedded in HTML)", verbose = verbose)
+      log_success(
+        "Removed entire source/figures directory (images embedded in HTML)",
+        verbose = verbose
+      )
       return(invisible(TRUE))
     },
     error = function(e) {
-      log_warn("Failed to remove source/figures directory: {e$message}", verbose = verbose)
+      log_warn(
+        "Failed to remove source/figures directory: {e$message}",
+        verbose = verbose
+      )
       return(invisible(FALSE))
     }
   )

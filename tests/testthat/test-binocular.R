@@ -44,5 +44,8 @@ test_that("is_binocular_object correctly identifies binocular and non-binocular 
     regular_result,
     info = "Regular object should not be identified as binocular"
   )
-  expect_true(binocular_result, info = "Binocular object should be correctly identified")
+  expect_true(
+    binocular_result,
+    info = "Binocular object should be correctly identified"
+  )
 })

@@ -27,7 +27,11 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   rmd_f <- file.path(out, report_filename)
 
   report_dir <- file.path(dirname(rmd_f), "source")
-  file.copy(system.file("www", package = "eyeris"), report_dir, recursive = TRUE)
+  file.copy(
+    system.file("www", package = "eyeris"),
+    report_dir,
+    recursive = TRUE
+  )
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(utils::packageVersion("eyeris"))
@@ -50,7 +54,10 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     "});</script>\n"
   )
 
-  css <- system.file(file.path("rmarkdown", "css", "report.css"), package = "eyeris")
+  css <- system.file(
+    file.path("rmarkdown", "css", "report.css"),
+    package = "eyeris"
+  )
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
@@ -92,7 +99,11 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     " - Run: ",
     params$run,
     "\n",
-    if (!is.null(params$eye_suffix)) paste0(" - Eye: ", params$eye_suffix, "\n") else "",
+    if (!is.null(params$eye_suffix)) {
+      paste0(" - Eye: ", params$eye_suffix, "\n")
+    } else {
+      ""
+    },
     " - BIDS Directory: ",
     out,
     "\n",
@@ -134,7 +145,11 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 #' @return A character string containing HTML code for the lightbox gallery
 #'
 #' @keywords internal
-print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = TRUE) {
+print_lightbox_img_html <- function(
+  zip_path,
+  image_filenames = NULL,
+  verbose = TRUE
+) {
   # use legacy mode if zip_path is actually a vector of individual image paths
   if (length(zip_path) > 1 || !grepl("\\.zip$", zip_path)) {
     return(print_lightbox_img_html_legacy(zip_path))
@@ -201,7 +216,10 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
           zip_bytes <- readBin(full_zip_path, "raw", file_size)
           zip_b64 <- base64enc::base64encode(zip_bytes)
           zip_data_url <- paste0("data:application/zip;base64,", zip_b64)
-          log_success("Embedded zip file as data URL ({file_size} bytes)", verbose = TRUE)
+          log_success(
+            "Embedded zip file as data URL ({file_size} bytes)",
+            verbose = TRUE
+          )
         } else {
           log_warn(
             "Zip file too large for data URL embedding ({file_size} bytes, limit: 1GB)",
@@ -210,7 +228,10 @@ print_lightbox_img_html <- function(zip_path, image_filenames = NULL, verbose = 
         }
       },
       error = function(e) {
-        log_warn("Could not embed zip file as data URL: {e$message}", verbose = TRUE)
+        log_warn(
+          "Could not embed zip file as data URL: {e$message}",
+          verbose = TRUE
+        )
       }
     )
   }

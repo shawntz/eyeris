@@ -342,7 +342,11 @@ run_bidsify <- function(
     log_info("Only 1 block detected...", verbose = verbose)
 
     original_block_name <- names(eyeris$timeseries)[1]
-    original_block_number <- substr(original_block_name, 7, nchar(original_block_name))
+    original_block_number <- substr(
+      original_block_name,
+      7,
+      nchar(original_block_name)
+    )
     if (is.null(run_num)) {
       run_num_stripped <- as.character(as.integer(original_block_number))
       run_num <- as.character(as.integer(original_block_number))
@@ -352,7 +356,10 @@ run_bidsify <- function(
     new_block_name <- paste0("block_", run_num_stripped)
 
     if (!is.null(run_num)) {
-      log_info("Using run_num = {run_num} for single block data", verbose = verbose)
+      log_info(
+        "Using run_num = {run_num} for single block data",
+        verbose = verbose
+      )
 
       names(eyeris$timeseries)[1] <- new_block_name
 
@@ -386,7 +393,9 @@ run_bidsify <- function(
           ] <- new_block_name
 
           if (!is.null(epoch_info)) {
-            names(epoch_info)[names(epoch_info) == original_block_name] <- new_block_name
+            names(epoch_info)[
+              names(epoch_info) == original_block_name
+            ] <- new_block_name
             eyeris[[epoch_name]]$info <- epoch_info # <-- ensure changes are saved back
           }
 
@@ -505,7 +514,10 @@ run_bidsify <- function(
   any_epochs <- n_epochs > 0
 
   if (verbose && any_epochs) {
-    log_info("Filtered epochs: {paste(epochs, collapse = ', ')}", verbose = verbose)
+    log_info(
+      "Filtered epochs: {paste(epochs, collapse = ', ')}",
+      verbose = verbose
+    )
   }
 
   if (save_all && any_epochs) {
@@ -569,7 +581,10 @@ run_bidsify <- function(
               {
                 DBI::dbExecute(db_con, drop_query)
                 tables_cleaned <- tables_cleaned + 1
-                log_info("Dropped table: {table_name} for sub-{sub}", verbose = verbose)
+                log_info(
+                  "Dropped table: {table_name} for sub-{sub}",
+                  verbose = verbose
+                )
               },
               error = function(e) {
                 log_warn(
@@ -587,7 +602,10 @@ run_bidsify <- function(
         }
       },
       error = function(e) {
-        log_warn("Error during database cleanup: {e$message}", verbose = verbose)
+        log_warn(
+          "Error during database cleanup: {e$message}",
+          verbose = verbose
+        )
       }
     )
   }
@@ -769,7 +787,10 @@ run_bidsify <- function(
           log_info("Processing run {i} for epoch {epoch_id}", verbose = verbose)
 
           if (is.null(run_epochs)) {
-            log_warn("Skipping run {i} for epoch {epoch_id} - no data", verbose = verbose)
+            log_warn(
+              "Skipping run {i} for epoch {epoch_id} - no data",
+              verbose = verbose
+            )
             next
           }
 
@@ -831,7 +852,9 @@ run_bidsify <- function(
         for (block_name in block_names) {
           block_data <- epoch_entry[[block_name]]
           if (
-            is.null(block_data) || !is.data.frame(block_data) || nrow(block_data) == 0
+            is.null(block_data) ||
+              !is.data.frame(block_data) ||
+              nrow(block_data) == 0
           ) {
             log_warn(
               "Skipping block {block_name} for epoch {epoch_id} - empty or invalid data",
@@ -847,7 +870,12 @@ run_bidsify <- function(
 
           evs <- get_epoch_events(eyeris, epoch_id, verbose)
           c_bline <- has_baseline(eyeris, current_label, verbose)
-          bline_evs <- get_baseline_events(eyeris, epoch_id, block_name, verbose)
+          bline_evs <- get_baseline_events(
+            eyeris,
+            epoch_id,
+            block_name,
+            verbose
+          )
           bline_type <- get_baseline_type(eyeris, epoch_id, block_name, verbose)
 
           # extract run number from block name
@@ -893,7 +921,10 @@ run_bidsify <- function(
           any_written <- TRUE
         }
         if (!any_written && verbose) {
-          log_warn("No valid blocks found for epoch {epoch_id}", verbose = verbose)
+          log_warn(
+            "No valid blocks found for epoch {epoch_id}",
+            verbose = verbose
+          )
         }
       }
     }
@@ -948,7 +979,10 @@ run_bidsify <- function(
         if (!is.na(run_num_numeric)) {
           sprintf("%02d", run_num_numeric)
         } else {
-          log_warn("Invalid run_num provided. Defaulting to '01'.", verbose = verbose)
+          log_warn(
+            "Invalid run_num provided. Defaulting to '01'.",
+            verbose = verbose
+          )
           "01"
         }
       } else {
@@ -1080,9 +1114,9 @@ run_bidsify <- function(
         block_name <- paste0("block_", block)
         if (block_name %in% names(eyeris$confounds$unepoched_timeseries)) {
           single_block_confounds <- list()
-          single_block_confounds[[block_name]] <- eyeris$confounds$unepoched_timeseries[[
+          single_block_confounds[[
             block_name
-          ]]
+          ]] <- eyeris$confounds$unepoched_timeseries[[block_name]]
 
           export_confounds_to_csv(
             confounds_list = single_block_confounds,
@@ -1200,7 +1234,9 @@ run_bidsify <- function(
         baseline_events_info <- get_baseline_events(eyeris, epoch_name, verbose)
         baseline_type_info <- get_baseline_type(eyeris, epoch_name, verbose)
 
-        for (block_name in names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])) {
+        for (block_name in names(eyeris$confounds$epoched_epoch_wide[[
+          epoch_name
+        ]])) {
           block_confounds <- eyeris$confounds$epoched_epoch_wide[[epoch_name]][[
             block_name
           ]]
@@ -1212,7 +1248,9 @@ run_bidsify <- function(
           matched_events <- unique(block_confounds$matched_event)
 
           for (event in matched_events) {
-            event_confounds <- block_confounds[block_confounds$matched_event == event, ]
+            event_confounds <- block_confounds[
+              block_confounds$matched_event == event,
+            ]
 
             if (nrow(event_confounds) == 0) {
               next
@@ -1267,10 +1305,16 @@ run_bidsify <- function(
         }
 
         epoch_events_info <- if (
-          !is.null(find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name) &&
+          !is.null(
+            find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+          ) &&
             !is.null(
               eyeris[[
-                find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+                find_baseline_structure(
+                  eyeris,
+                  epoch_label,
+                  verbose
+                )$baseline_name
               ]]$block_1$info$epoch_events
             )
         ) {
@@ -1312,10 +1356,16 @@ run_bidsify <- function(
           NULL
         }
         baseline_events_info <- if (
-          !is.null(find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name) &&
+          !is.null(
+            find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+          ) &&
             !is.null(
               eyeris[[
-                find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+                find_baseline_structure(
+                  eyeris,
+                  epoch_label,
+                  verbose
+                )$baseline_name
               ]]$block_1$info$baseline_events
             )
         ) {
@@ -1335,10 +1385,16 @@ run_bidsify <- function(
           NULL
         }
         baseline_type_info <- if (
-          !is.null(find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name) &&
+          !is.null(
+            find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+          ) &&
             !is.null(
               eyeris[[
-                find_baseline_structure(eyeris, epoch_label, verbose)$baseline_name
+                find_baseline_structure(
+                  eyeris,
+                  epoch_label,
+                  verbose
+                )$baseline_name
               ]]$block_1$info$baseline_type
             )
         ) {
@@ -1358,7 +1414,9 @@ run_bidsify <- function(
           NULL
         }
 
-        for (block_name in names(eyeris$confounds$epoched_timeseries[[epoch_name]])) {
+        for (block_name in names(eyeris$confounds$epoched_timeseries[[
+          epoch_name
+        ]])) {
           block_confounds <- eyeris$confounds$epoched_timeseries[[epoch_name]][[
             block_name
           ]]
@@ -1370,7 +1428,9 @@ run_bidsify <- function(
           matched_events <- unique(block_confounds$matched_event)
 
           for (event in matched_events) {
-            event_confounds <- block_confounds[block_confounds$matched_event == event, ]
+            event_confounds <- block_confounds[
+              block_confounds$matched_event == event,
+            ]
 
             if (nrow(event_confounds) == 0) {
               next
@@ -1459,7 +1519,12 @@ run_bidsify <- function(
 
       for (i in seq_along(pupil_steps)) {
         for (p in seq_along(plot_types)) {
-          fig_name <- sprintf("run-%02d_fig-%d_desc-%s", run_dir_num, i, plot_types[p])
+          fig_name <- sprintf(
+            "run-%02d_fig-%d_desc-%s",
+            run_dir_num,
+            i,
+            plot_types[p]
+          )
           if (!is.null(eye_suffix)) {
             fig_name <- paste0(fig_name, "_", eye_suffix)
           }
@@ -1520,7 +1585,12 @@ run_bidsify <- function(
 
           fig_filename <- file.path(
             run_dir,
-            sprintf("run-%02d_fig-full-%d_desc-%s", run_dir_num, i_step, plot_types[p])
+            sprintf(
+              "run-%02d_fig-full-%d_desc-%s",
+              run_dir_num,
+              i_step,
+              plot_types[p]
+            )
           )
           if (!is.null(eye_suffix)) {
             fig_filename <- paste0(fig_filename, "_", eye_suffix)
@@ -1599,7 +1669,10 @@ run_bidsify <- function(
         run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
         check_and_create_dir(run_dir, verbose = verbose)
 
-        heatmap_filename <- file.path(run_dir, sprintf("run-%02d_gaze_heatmap", i_run))
+        heatmap_filename <- file.path(
+          run_dir,
+          sprintf("run-%02d_gaze_heatmap", i_run)
+        )
 
         if (!is.null(eye_suffix)) {
           heatmap_filename <- paste0(heatmap_filename, "_", eye_suffix)
@@ -1695,7 +1768,10 @@ run_bidsify <- function(
               type = "n",
               xlab = "",
               ylab = "",
-              main = sprintf("Error creating binocular correlation for run-%02d", i_run)
+              main = sprintf(
+                "Error creating binocular correlation for run-%02d",
+                i_run
+              )
             )
             text(0.5, 0.5, paste("Error:", e$message), cex = 0.8, col = "red")
           }
@@ -1738,7 +1814,10 @@ run_bidsify <- function(
 
           tryCatch(
             {
-              check_column(epochs_to_save[[i]][[bn]], report_epoch_grouping_var_col)
+              check_column(
+                epochs_to_save[[i]][[bn]],
+                report_epoch_grouping_var_col
+              )
             },
             error = function(e) {
               error_handler(e, "column_doesnt_exist_in_df_error")
@@ -1877,7 +1956,9 @@ make_bids_fname <- function(
     )
   } else if (!is.null(epoch_events)) {
     # fallback: use epoch_events pattern if no epoch_name provided
-    epoch_event_name <- if (is.character(epoch_events) && length(epoch_events) == 1) {
+    epoch_event_name <- if (
+      is.character(epoch_events) && length(epoch_events) == 1
+    ) {
       gsub("[*{}]", "", epoch_events)
     } else {
       "multi_events"
@@ -1901,7 +1982,11 @@ make_bids_fname <- function(
     if (!is.null(baseline_type)) {
       bline_string <- paste0(bline_string, "-", baseline_type)
     }
-    bline_string <- paste0(bline_string, "-", sanitize_event_tag(baseline_event_name, ""))
+    bline_string <- paste0(
+      bline_string,
+      "-",
+      sanitize_event_tag(baseline_event_name, "")
+    )
     desc_parts <- c(desc_parts, bline_string)
   }
 
@@ -1953,7 +2038,10 @@ find_baseline_structure <- function(eyeris, epoch_label, verbose = TRUE) {
 
   for (baseline_name in baseline_names) {
     if (grepl(paste0("_epoch_", epoch_label, "$"), baseline_name)) {
-      log_info("Found matching baseline structure: {baseline_name}", verbose = verbose)
+      log_info(
+        "Found matching baseline structure: {baseline_name}",
+        verbose = verbose
+      )
       return(list(
         baseline_name = baseline_name,
         baseline_blocks = names(eyeris[[baseline_name]])
@@ -1968,9 +2056,18 @@ find_baseline_structure <- function(eyeris, epoch_label, verbose = TRUE) {
   NULL
 }
 
-get_epoch_info <- function(eyeris, epoch_id, block_name = "block_1", verbose = TRUE) {
+get_epoch_info <- function(
+  eyeris,
+  epoch_id,
+  block_name = "block_1",
+  verbose = TRUE
+) {
   epoch_label <- substr(epoch_id, 7, nchar(epoch_id))
-  baseline_structure_list <- find_baseline_structure(eyeris, epoch_label, verbose)
+  baseline_structure_list <- find_baseline_structure(
+    eyeris,
+    epoch_label,
+    verbose
+  )
 
   if (is.null(block_name)) {
     block_name <- baseline_structure_list$baseline_blocks[1]
@@ -1978,7 +2075,9 @@ get_epoch_info <- function(eyeris, epoch_id, block_name = "block_1", verbose = T
 
   if (
     !is.null(baseline_structure_list) &&
-      !is.null(eyeris[[baseline_structure_list$baseline_name]][[block_name]]$info)
+      !is.null(
+        eyeris[[baseline_structure_list$baseline_name]][[block_name]]$info
+      )
   ) {
     return(list(
       calc_baseline = eyeris[[baseline_structure_list$baseline_name]][[
@@ -2009,13 +2108,13 @@ get_epoch_info <- function(eyeris, epoch_id, block_name = "block_1", verbose = T
       ]]$info$epoch_events,
       epoch_limits = paste0(
         "(",
-        eyeris[[baseline_structure_list$baseline_name]][[block_name]]$info$epoch_limits[
-          1
-        ],
+        eyeris[[baseline_structure_list$baseline_name]][[
+          block_name
+        ]]$info$epoch_limits[1],
         ", ",
-        eyeris[[baseline_structure_list$baseline_name]][[block_name]]$info$epoch_limits[
-          2
-        ],
+        eyeris[[baseline_structure_list$baseline_name]][[
+          block_name
+        ]]$info$epoch_limits[2],
         ")"
       ),
       n_epochs = eyeris[[baseline_structure_list$baseline_name]][[
@@ -2066,13 +2165,21 @@ format_event_string <- function(events) {
   }
 }
 
-get_epoch_events <- function(eyeris, epoch_id, block_name = "block_1", verbose = TRUE) {
+get_epoch_events <- function(
+  eyeris,
+  epoch_id,
+  block_name = "block_1",
+  verbose = TRUE
+) {
   info <- get_epoch_info(eyeris, epoch_id, block_name, verbose)
   if (!is.null(info) && !is.null(info$epoch_events)) {
     result <- format_event_string(info$epoch_events)
     if (!is.null(result)) {
       escaped_result <- gsub("\\{", "{{", gsub("\\}", "}}", result))
-      log_info("Found epoch events in structure: {escaped_result}", verbose = verbose)
+      log_info(
+        "Found epoch events in structure: {escaped_result}",
+        verbose = verbose
+      )
       return(result)
     }
   }
@@ -2096,7 +2203,12 @@ get_baseline_events <- function(
   return(NULL)
 }
 
-get_baseline_type <- function(eyeris, epoch_id, block_name = "block_1", verbose = TRUE) {
+get_baseline_type <- function(
+  eyeris,
+  epoch_id,
+  block_name = "block_1",
+  verbose = TRUE
+) {
   info <- get_epoch_info(eyeris, epoch_id, block_name, verbose)
   if (!is.null(info) && !is.na(info$baseline_type)) {
     result <- format_event_string(info$baseline_type)

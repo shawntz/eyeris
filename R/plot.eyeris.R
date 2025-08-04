@@ -277,7 +277,12 @@ plot.eyeris <- function(
 
   if (is.null(preview_window)) {
     withr::with_seed(seed, {
-      random_epochs <- draw_random_epochs(pupil_data, preview_n, preview_duration, hz)
+      random_epochs <- draw_random_epochs(
+        pupil_data,
+        preview_n,
+        preview_duration,
+        hz
+      )
     })
 
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
@@ -345,7 +350,9 @@ plot.eyeris <- function(
         }
 
         if (!is.null(params$next_step)) {
-          plot_data <- random_epochs[[n]][[params$next_step[length(params$next_step)]]]
+          plot_data <- random_epochs[[n]][[params$next_step[length(
+            params$next_step
+          )]]]
         } else {
           plot_data <- random_epochs[[n]][[pupil_steps[i]]]
         }
@@ -419,13 +426,16 @@ plot.eyeris <- function(
         end_index > nrow(pupil_data) ||
         start_index >= end_index
     ) {
-      log_error("Invalid preview_window: start/end index out of range or invalid.")
+      log_error(
+        "Invalid preview_window: start/end index out of range or invalid."
+      )
     }
 
     sliced_pupil_data <- pupil_data[start_index:end_index, ]
 
     # time axis in ms for proper scaling
-    time_ms <- (sliced_pupil_data$time_scaled - min(sliced_pupil_data$time_scaled))
+    time_ms <- (sliced_pupil_data$time_scaled -
+      min(sliced_pupil_data$time_scaled))
 
     for (i in seq_along(pupil_steps)) {
       st <- pupil_data$time_orig[start_index]
@@ -501,7 +511,10 @@ plot.eyeris <- function(
 
   # add progressive summary plot at the end (if requested)
   if (add_progressive_summary) {
-    log_info("Creating progressive summary plot for block_{block}", verbose = verbose)
+    log_info(
+      "Creating progressive summary plot for block_{block}",
+      verbose = verbose
+    )
 
     tryCatch(
       {
@@ -518,7 +531,10 @@ plot.eyeris <- function(
           cex = 1.15
         )
 
-        log_success("Progressive summary plot created successfully!", verbose = verbose)
+        log_success(
+          "Progressive summary plot created successfully!",
+          verbose = verbose
+        )
       },
       error = function(e) {
         log_warn(
@@ -576,7 +592,10 @@ draw_random_epochs <- function(x, n, d, hz) {
     valid_epoch_found <- FALSE
 
     while (attempts < max_attempts && !valid_epoch_found) {
-      rand_start_secs <- sample(seq(min_time_secs, max_time_secs - d, by = step_size), 1)
+      rand_start_secs <- sample(
+        seq(min_time_secs, max_time_secs - d, by = step_size),
+        1
+      )
       rand_end_secs <- rand_start_secs + d
 
       epoch_data <- x |>
@@ -665,7 +684,11 @@ robust_plot <- function(y, x = NULL, ...) {
       # add vertical lines where there are NAs (using x values if available)
       na_idx <- which(is.na(y_orig))
       if (length(na_idx) > 0) {
-        abline(v = if (!is.null(x)) x_seq[na_idx] else na_idx, col = "black", lty = 2)
+        abline(
+          v = if (!is.null(x)) x_seq[na_idx] else na_idx,
+          col = "black",
+          lty = 2
+        )
       }
 
       # replace NA with -1 after drawing NA lines for continuity
@@ -792,7 +815,9 @@ plot_detrend_overlay <- function(
 
   # ensure prev col is a pupil col
   if (!grepl("^pupil_", prev_col)) {
-    log_warn("Previous column is not a pupil column. Cannot plot detrend overlay.")
+    log_warn(
+      "Previous column is not a pupil column. Cannot plot detrend overlay."
+    )
     # restore main plotting func layout
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
@@ -810,7 +835,10 @@ plot_detrend_overlay <- function(
         type = "l",
         col = "black",
         lwd = 2,
-        main = paste0("detrend:\n", gsub("_", " > ", gsub("pupil_", "", detrend_step))),
+        main = paste0(
+          "detrend:\n",
+          gsub("_", " > ", gsub("pupil_", "", detrend_step))
+        ),
         xlab = "tracker time (s)",
         ylab = "pupil size (a.u.)"
       )
@@ -898,7 +926,9 @@ plot_gaze_heatmap <- function(
   } else {
     df <- eyeris
     if (is.null(screen_width) || is.null(screen_height)) {
-      log_error("Screen width and height must be provided with data frame inputs.")
+      log_error(
+        "Screen width and height must be provided with data frame inputs."
+      )
     }
   }
 
@@ -957,7 +987,13 @@ plot_gaze_heatmap <- function(
         zlim = c(0, 1)
       )
       rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
-      points(screen_width / 2, screen_height / 2, pch = 3, col = "red", cex = 1.5)
+      points(
+        screen_width / 2,
+        screen_height / 2,
+        pch = 3,
+        col = "red",
+        cex = 1.5
+      )
     },
     error = function(e) {
       plot(
@@ -973,7 +1009,13 @@ plot_gaze_heatmap <- function(
         ylim = c(screen_height, 0)
       )
       rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
-      points(screen_width / 2, screen_height / 2, pch = 3, col = "red", cex = 1.5)
+      points(
+        screen_width / 2,
+        screen_height / 2,
+        pch = 3,
+        col = "red",
+        cex = 1.5
+      )
     }
   )
 }
@@ -1184,5 +1226,8 @@ plot_binocular_correlation <- function(
   # reset plotting parameters
   par(mfrow = c(1, 1))
 
-  log_success("Created binocular correlation plots for block {block}", verbose = verbose)
+  log_success(
+    "Created binocular correlation plots for block {block}",
+    verbose = verbose
+  )
 }
