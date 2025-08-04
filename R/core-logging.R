@@ -50,9 +50,10 @@ log_message <- function(
         message_text <- glue::glue(message_text, .envir = .envir)
       },
       error = function(e) {
-        # if glue fails, just use the original message without interpolation
-        # i.e., this handles cases where {} contains JSON, structured data, etc.
-        message_text <<- message_text
+        # if glue fails, escape the braces to prevent CLI from trying to parse them
+        # this handles cases where {} contains JSON, structured data, etc.
+        message_text <<- gsub("\\{", "{{", message_text)
+        message_text <<- gsub("\\}", "}}", message_text)
       }
     )
   }
