@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess">v2.1.1.9003 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess">v2.1.1.9002 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess">v2.1.1.9001 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119000-lumpy-space-princess-lumpy-space-princess">v2.1.1.9000 (devel)</a></li>
@@ -76,16 +77,57 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9002/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.1.9003" id="eyeris-2119003-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9003 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119003-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<div class="section level3">
+<h3 id="id_-development-version--unreleased-2-1-1-9003">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9003"></a></h3>
+<p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.2.0</code>). Items will continue to be added here until that version is finalized.</em></p>
+<ul><li><p><strong>ENH</strong>: Added post-render cleanup of figures directories in <code>pipeline-bidsify.R</code>. Enhanced <code>zip_and_cleanup_source_figures</code> to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p></li>
+<li>
+<p><strong>ENH</strong>: Added post-render cleanup of figures directories in <code>pipeline-bidsify.R</code>. Enhanced <code>zip_and_cleanup_source_figures</code> to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p>
+<blockquote>
+<p>Further cleans up number of derived files in <code>eyeris</code> BIDS directories (which is especially useful for cloud compute deployments).</p>
+<p>The new behavior will be:</p>
+<ol style="list-style-type: decimal"><li>Create zip files in the <code>figures/</code> directory (i.e., one level up from the run directories)</li>
+<li>Remove existing zip files when reprocessing</li>
+<li>Remove the entire <code>run-XX/</code> directories after successful zip creation</li>
+</ol><p>As such, the final file structure will be:</p>
+</blockquote>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>  <span class="ex">sub-01/</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="ex">└──</span> ses-enc/</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>      <span class="ex">├──</span> sub-01.html</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>      <span class="ex">└──</span> source/</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>          <span class="ex">├──</span> figures/</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>          <span class="ex">│</span>   ├── run-01.zip  <span class="co"># now contains all images from run-01/</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>          <span class="ex">│</span>   ├── run-02.zip  <span class="co"># now contains all images from run-02/</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>          <span class="ex">│</span>   └── run-03.zip  <span class="co"># now contains all images from run-03/</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>          <span class="ex">└──</span> logs/</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>              <span class="ex">├──</span> run-01_metadata.json</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>              <span class="ex">├──</span> run-02_metadata.json</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>              <span class="ex">└──</span> run-03_metadata.json</span></code></pre></div>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_-minor-improvements-and-fixes-2-1-1-9003">🔧 Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#id_-minor-improvements-and-fixes-2-1-1-9003"></a></h3>
+<ul><li><p><strong>RF - post-render cleanup to remove figures directory</strong>: The <code><a href="../reference/cleanup_source_figures_post_render.html">cleanup_source_figures_post_render()</a></code> function now removes the entire <code>source/figures</code> directory after report generation, as images are embedded in the <code>HTML</code>. Documentation and comments updated to reflect this change, and unused parameters are noted for compatibility, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p></li>
+<li><p><strong>RF - increase zip file embed size limit to 1GB</strong>: Raised the maximum allowed zip file size for data <code>URL</code> embedding from <code>10MB</code> to <code>1GB</code> in <code><a href="../reference/print_lightbox_img_html.html">print_lightbox_img_html()</a></code>. Updated warning message to reflect the new limit, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p></li>
+<li><p><strong>RF - update report title in <code>make_report</code> function</strong>: Changed the report title from ‘preprocessing summary report’ to ‘preprocessing report’ for consistency and clarity, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p></li>
+<li><p><strong>CHORE - update logo image URL</strong>: Changed the <code>logo</code> image source in <code>README</code> files to use a <code>GitHub raw URL</code> for better compatibility, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/261" class="external-link">#261</a>.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.1.9002" id="eyeris-2119002-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9002 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119002-lumpy-space-princess-lumpy-space-princess"></a></h2>
 <div class="section level3">
 <h3 id="id_-development-version--unreleased-2-1-1-9002">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9002"></a></h3>
 <p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.2.0</code>). Items will continue to be added here until that version is finalized.</em></p>
-<ul><li>
-<strong>NF - DuckDB database integration</strong>: Added optional <code>DuckDB</code> database functionality to <code><a href="../reference/bidsify.html">bidsify()</a></code> as an alternative to CSV files for large-scale analyses. When <code>db_enabled = TRUE</code>, all <code>eyeris</code> data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (<code><a href="../reference/eyeris_db_collect.html">eyeris_db_collect()</a></code>, <code><a href="../reference/eyeris_db_connect.html">eyeris_db_connect()</a></code>, <code><a href="../reference/eyeris_db_read.html">eyeris_db_read()</a></code>, <code><a href="../reference/eyeris_db_list_tables.html">eyeris_db_list_tables()</a></code>), and <code>dplyr</code>-style data access. CSV file generation can be optionally disabled with <code>csv_enabled = FALSE</code> for cloud compute environments, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/256" class="external-link">#256</a>.</li>
+<ul><li><p><strong>NF - DuckDB database integration</strong>: Added optional <code>DuckDB</code> database functionality to <code><a href="../reference/bidsify.html">bidsify()</a></code> as an alternative to CSV files for large-scale analyses. When <code>db_enabled = TRUE</code>, all <code>eyeris</code> data (timeseries, epochs, events, blinks, confounds) are written to a centralized database for efficient querying and analysis. Features include seamless out-of-the-box configuration, user-friendly database functions (<code><a href="../reference/eyeris_db_collect.html">eyeris_db_collect()</a></code>, <code><a href="../reference/eyeris_db_connect.html">eyeris_db_connect()</a></code>, <code><a href="../reference/eyeris_db_read.html">eyeris_db_read()</a></code>, <code><a href="../reference/eyeris_db_list_tables.html">eyeris_db_list_tables()</a></code>), and <code>dplyr</code>-style data access. CSV file generation can be optionally disabled with <code>csv_enabled = FALSE</code> for cloud compute environments, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/256" class="external-link">#256</a>.</p></li>
+<li><p><strong>DOC</strong>: Added a comprehensive ‘Internal API Reference’ vignette documenting all internal functions for advanced users and developers and updated the README to link to the new vignette/included it in the pkgdown docs site configuration, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/257" class="external-link">#257</a>.</p></li>
+<li><p><strong>RF</strong>: Updated documentation and comments across multiple files to improve clarity and align terminology throughout the codebase, especially in function descriptions, parameter names, and return value documentation, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/257" class="external-link">#257</a>.</p></li>
+<li><p><strong>FF</strong>: Updated the <code><a href="../reference/log_message.html">log_message()</a></code> function to use <code>tryCatch</code> when applying <code>glue</code> interpolation, ensuring that errors (e.g., from malformed braces or embedded <code>JSON</code>) do not interrupt logging; now, the original message is used if interpolation fails, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/258" class="external-link">#258</a>.</p></li>
+<li><p><strong>CHORE</strong>: Add a GitHub Actions workflow to auto-render vignettes and publish them to the <code>eyeris</code> GitHub repo wiki, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/259" class="external-link">#259</a>.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="id_-breaking-changes--deprecations-2-1-1-9002">🚨 <strong>Breaking changes &amp; deprecations</strong>
@@ -235,7 +277,7 @@
 <h4 id="eyelogger-usage-example">
 <code>eyelogger()</code> usage example</h4>
 <p>Logging your <code>eyeris</code> commands with <code><a href="../reference/eyelogger.html">eyelogger()</a></code> is as simple as wrapping your command like this:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/eyelogger.html">eyelogger</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span>, interactive_preview <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span>, log_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"~/Documents"</span>, <span class="st">"eyeris_logs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

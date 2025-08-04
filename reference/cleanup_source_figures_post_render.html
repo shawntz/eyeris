@@ -5,9 +5,9 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Clean up source figures after report generation — cleanup_source_figures_post_render"><meta name="description" content="Wrapper function to zip and cleanup source figure files after the main
-HTML report has been generated and the R Markdown source has been cleaned up."><meta property="og:description" content="Wrapper function to zip and cleanup source figure files after the main
-HTML report has been generated and the R Markdown source has been cleaned up."><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Clean up source figures after report generation — cleanup_source_figures_post_render"><meta name="description" content="Removes the entire source/figures directory after the main HTML report has
+been generated since all images are now embedded in the HTML as data URLs."><meta property="og:description" content="Removes the entire source/figures directory after the main HTML report has
+been generated since all images are now embedded in the HTML as data URLs."><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +15,7 @@ HTML report has been generated and the R Markdown source has been cleaned up."><
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@ HTML report has been generated and the R Markdown source has been cleaned up."><
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess">v2.1.1.9003 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess">v2.1.1.9002 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess">v2.1.1.9001 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119000-lumpy-space-princess-lumpy-space-princess">v2.1.1.9000 (devel)</a></li>
@@ -78,13 +79,13 @@ HTML report has been generated and the R Markdown source has been cleaned up."><
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Clean up source figures after report generation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9002/R/utils-zip-cleanup.R" class="external-link"><code>R/utils-zip-cleanup.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/R/utils-zip-cleanup.R" class="external-link"><code>R/utils-zip-cleanup.R</code></a></small>
       <div class="d-none name"><code>cleanup_source_figures_post_render.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Wrapper function to zip and cleanup source figure files after the main
-HTML report has been generated and the R Markdown source has been cleaned up.</p>
+    <p>Removes the entire source/figures directory after the main HTML report has
+been generated since all images are now embedded in the HTML as data URLs.</p>
     </div>
 
     <div class="section level2">
@@ -105,7 +106,7 @@ HTML report has been generated and the R Markdown source has been cleaned up.</p
 
 
 <dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
-<dd><p>Optional eye suffix for binocular data</p></dd>
+<dd><p>Optional eye suffix for binocular data (unused but kept for compatibility)</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -114,7 +115,7 @@ HTML report has been generated and the R Markdown source has been cleaned up.</p
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Invisibly returns list of created zip files</p>
+    <p>Invisibly returns TRUE if cleanup was successful, FALSE otherwise</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
