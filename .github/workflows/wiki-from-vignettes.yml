@@ -1,4 +1,4 @@
-name: Update GitHub Wiki from Vignettes/README
+name: update gh wiki from vignettes/README
 
 on:
   push:
@@ -27,6 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages("rmarkdown")
+          install.packages("eyeris")
         shell: Rscript {0}
         
       - name: Check pandoc version
