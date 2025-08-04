@@ -8,6 +8,10 @@ on:
       - 'README.md'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+
 jobs:
   update-wiki:
     runs-on: ubuntu-latest
@@ -73,7 +77,7 @@ jobs:
 
       - name: Clone GitHub wiki
         run: |
-          git clone https://github.com/${{ github.repository }}.wiki.git wiki_out
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git wiki_out
 
       - name: Copy rendered markdown and README → Home.md
         run: |
