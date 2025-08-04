@@ -27,11 +27,37 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
   rmd_f <- file.path(out, report_filename)
 
   report_dir <- file.path(dirname(rmd_f), "source")
-  file.copy(
-    system.file("www", package = "eyeris"),
-    report_dir,
-    recursive = TRUE
-  )
+  www_source <- system.file("www", package = "eyeris")
+  
+  if (!dir.exists(report_dir)) {
+    dir.create(report_dir, recursive = TRUE)
+  }
+  
+  file.copy(www_source, report_dir, recursive = TRUE)
+  
+  # copy zip file to report structure if it's a zip file path
+  if (length(epochs) == 1 && grepl("\\.zip$", epochs) && file.exists(epochs)) {
+    # extract run and epoch info from zip filename and create proper directory structure
+    zip_basename <- basename(epochs)
+    
+    # create figures directory structure in report
+    figures_dir <- file.path(report_dir, "figures")
+    
+    # extract run number from zip filename (e.g., "run-01_epoch_images.zip")
+    run_match <- regmatches(zip_basename, regexpr("run-[0-9]+", zip_basename))
+    if (length(run_match) > 0) {
+      run_dir <- file.path(figures_dir, run_match)
+      epoch_dir <- file.path(run_dir, epoch_name)
+      
+      if (!dir.exists(epoch_dir)) {
+        dir.create(epoch_dir, recursive = TRUE)
+      }
+      
+      # copy the zip file to the expected location
+      zip_dest <- file.path(epoch_dir, zip_basename)
+      file.copy(epochs, zip_dest, overwrite = TRUE)
+    }
+  }
 
   report_date <- format(Sys.time(), "%B %d, %Y | %H:%M:%OS3")
   package_version <- as.character(utils::packageVersion("eyeris"))
