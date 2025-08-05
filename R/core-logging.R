@@ -45,15 +45,22 @@ log_message <- function(
 
   # apply glue interpolation if there are braces, but handle errors gracefully
   glue_failed <- FALSE
-  if (grepl("\\{.*\\}", message_text)) {
+  has_braces <- grepl("\\{", message_text)
+  
+  if (has_braces) {
     tryCatch(
       {
         message_text <- glue::glue(message_text, .envir = .envir)
       },
       error = function(e) {
-        # if glue fails, completely remove braces to prevent CLI parsing issues
+        # if glue fails, completely remove all braces to prevent CLI parsing issues
         # this handles cases where {} contains JSON, structured data, etc.
+        # also handles empty braces {} that might be followed by JSON content
         message_text <<- gsub("\\{[^}]*\\}", "[CONTENT]", message_text)
+        message_text <<- gsub("\\{\\}", "[EMPTY]", message_text)
+        # remove any remaining single braces that might cause issues
+        message_text <<- gsub("\\{", "[", message_text)
+        message_text <<- gsub("\\}", "]", message_text)
         glue_failed <<- TRUE
       }
     )
