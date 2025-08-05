@@ -1894,11 +1894,12 @@ run_bidsify <- function(
 
     render_report(report_output)
     # cleanup run directory images and figures directories after report generation
-    cleanup_source_figures_post_render(
-      report_path = report_path,
-      eye_suffix = eye_suffix,
-      verbose = verbose
-    )
+    # DISABLED: cleanup removes all run figures needed for overall summary report
+    # cleanup_source_figures_post_render(
+    #   report_path = report_path,
+    #   eye_suffix = eye_suffix,
+    #   verbose = verbose
+    # )
   }
 
   # disconnect from DB
