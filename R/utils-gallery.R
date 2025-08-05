@@ -54,7 +54,11 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
       # copy the zip file to the expected location with the simplified name
       zip_dest <- file.path(epoch_dir, zip_basename)
-      file.copy(epochs, zip_dest, overwrite = TRUE)
+      
+      # only copy if source and destination are different
+      if (normalizePath(epochs, mustWork = FALSE) != normalizePath(zip_dest, mustWork = FALSE)) {
+        file.copy(epochs, zip_dest, overwrite = TRUE)
+      }
     }
   }
 
