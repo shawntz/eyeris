@@ -156,7 +156,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     "\n\n---\n\n## Session Information\n\n",
     "```{r session-info, echo=FALSE, comment=NA}\n",
     "sessionInfo()\n",
-    "```\n\n"
+    "```\n\n\n\n\n\n"
   )
 
   writeLines(content, con = rmd_f)
