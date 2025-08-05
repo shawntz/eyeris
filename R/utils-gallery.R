@@ -148,6 +148,10 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     "\n\n---\n\n### Citation\n\n",
     "```{r citation, echo=FALSE, comment=NA}\n",
     "citation('eyeris')\n",
+    "```\n\n",
+    "\n\n---\n\n## Session Information\n\n",
+    "```{r session-info, echo=FALSE, comment=NA}\n",
+    "sessionInfo()\n",
     "```\n\n"
   )
 
