@@ -385,16 +385,3 @@ Thanks for checking out `eyeris`! 🧠
 # eyeris 0.0.0.9000 "Finn the Human" ![Finn the Human](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/finn.png){width="35"}
 
 -   Initial beta release
-
----
-
-# Commit message tags reference:
-
--   **BF:** bug fix (in the *release* branch)
--   **FF:** feature fix (bug fixes in the *dev* branch)
--   **RF:** refactoring
--   **NF:** new feature
--   **ENH:** enhancement
--   **DOC:** for documentation-related updates and changes
--   **TEST:** for commits that add or change unit tests
--   **CHORE:** like **RF** but usually less important changes
