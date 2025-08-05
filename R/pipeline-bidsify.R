@@ -565,23 +565,44 @@ run_bidsify <- function(
       {
         # get all tables in the database
         all_tables <- DBI::dbListTables(db_con)
-        
+
         # create pattern to match only tables for this specific subject+session+task+run combination
         if (has_multiple_runs) {
           # for multiple runs in same file, clean tables for all runs that will be processed
           # (since we're replacing all runs from this file)
           run_numbers <- sapply(names(eyeris$timeseries), get_block_numbers)
           run_patterns <- sapply(run_numbers, function(r) sprintf("%02d", r))
-          table_patterns <- paste0("_", sub, "_", ses, "_", task, "_run", run_patterns)
+          table_patterns <- paste0(
+            "_",
+            sub,
+            "_",
+            ses,
+            "_",
+            task,
+            "_run",
+            run_patterns
+          )
           target_tables <- c()
           for (pattern in table_patterns) {
-            target_tables <- c(target_tables, all_tables[grepl(pattern, all_tables)])
+            target_tables <- c(
+              target_tables,
+              all_tables[grepl(pattern, all_tables)]
+            )
           }
           target_tables <- unique(target_tables)
         } else {
           # for single run, match only the specific run number
           run_formatted <- sprintf("%02d", as.numeric(run_num))
-          table_pattern <- paste0("_", sub, "_", ses, "_", task, "_run", run_formatted)
+          table_pattern <- paste0(
+            "_",
+            sub,
+            "_",
+            ses,
+            "_",
+            task,
+            "_run",
+            run_formatted
+          )
           target_tables <- all_tables[grepl(table_pattern, all_tables)]
         }
 
@@ -1898,8 +1919,8 @@ run_bidsify <- function(
         }
       }
     }
-    
-    # cleanup: remove plain epoch directories (without run suffix) since 
+
+    # cleanup: remove plain epoch directories (without run suffix) since
     # only the epoch_name_run-XX directories are used for report generation
     if (any_epochs && !is.null(report_epoch_grouping_var_col)) {
       for (i in seq_along(epochs_to_save)) {
@@ -1909,10 +1930,10 @@ run_bidsify <- function(
           } else {
             get_block_numbers(bn)
           }
-          
+
           run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
           plain_epoch_dir <- file.path(run_dir, names(epochs_to_save)[i])
-          
+
           if (dir.exists(plain_epoch_dir)) {
             log_info(
               "Removing duplicate plain epoch directory: {plain_epoch_dir}",
@@ -1923,7 +1944,7 @@ run_bidsify <- function(
         }
       }
     }
-    
+
     # generate report
     report_output <- make_report(
       eyeris,
