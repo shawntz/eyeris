@@ -1893,13 +1893,12 @@ run_bidsify <- function(
     )
 
     render_report(report_output)
-    # zip and cleanup figures directories after report generation
-    # temporarily disabled for troubleshooting
-    # cleanup_source_figures_post_render(
-    #   report_path = report_path,
-    #   eye_suffix = eye_suffix,
-    #   verbose = verbose
-    # )
+    # cleanup run directory images and figures directories after report generation
+    cleanup_source_figures_post_render(
+      report_path = report_path,
+      eye_suffix = eye_suffix,
+      verbose = verbose
+    )
   }
 
   # disconnect from DB

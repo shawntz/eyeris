@@ -167,6 +167,9 @@ cleanup_source_figures_post_render <- function(
     return(invisible(FALSE))
   }
 
+  # first clean up individual JPG/PNG files in run directories
+  cleanup_run_dir_images(report_path, eye_suffix, verbose)
+
   tryCatch(
     {
       unlink(figures_dir, recursive = TRUE)
@@ -184,4 +187,97 @@ cleanup_source_figures_post_render <- function(
       return(invisible(FALSE))
     }
   )
+}
+
+#' Clean up individual image files in run directories after HTML generation
+#'
+#' Removes PNG and JPG files from the root of source/figures/run-xx directories
+#' after all HTML reports have been generated. This cleans up loose image files
+#' that may have been created during report generation.
+#'
+#' @param report_path Path to the report directory containing source/figures/
+#' @param eye_suffix Optional eye suffix for binocular data
+#' @param verbose Whether to print verbose output
+#'
+#' @return Invisibly returns TRUE if cleanup was successful, FALSE otherwise
+#'
+#' @keywords internal
+cleanup_run_dir_images <- function(
+  report_path,
+  eye_suffix = NULL,
+  verbose = FALSE
+) {
+  log_info(
+    "Cleaning up individual image files in run directories...",
+    verbose = verbose
+  )
+
+  figures_dir <- file.path(report_path, "source", "figures")
+
+  if (!dir.exists(figures_dir)) {
+    log_info(
+      "Source figures directory not found: {figures_dir}",
+      verbose = verbose
+    )
+    return(invisible(FALSE))
+  }
+
+  # find all run dirs (run-01, run-02, etc.)
+  run_dirs <- list.dirs(figures_dir, full.names = TRUE, recursive = FALSE)
+  run_dirs <- run_dirs[grepl("run-\\d+$", basename(run_dirs))]
+
+  if (length(run_dirs) == 0) {
+    log_info("No run directories found in: {figures_dir}", verbose = verbose)
+    return(invisible(TRUE))
+  }
+
+  total_files_removed <- 0
+
+  for (run_dir in run_dirs) {
+    run_name <- basename(run_dir)
+
+    # find image files in the root of the run directory (not in subdirectories)
+    image_files <- list.files(
+      run_dir,
+      pattern = "\\.(png|jpg|jpeg)$",
+      ignore.case = TRUE,
+      full.names = TRUE,
+      recursive = FALSE
+    )
+
+    # optionally filter by eye_suffix
+    if (!is.null(eye_suffix)) {
+      image_files <- image_files[grepl(eye_suffix, image_files)]
+    }
+
+    if (length(image_files) > 0) {
+      tryCatch(
+        {
+          unlink(image_files)
+          total_files_removed <- total_files_removed + length(image_files)
+          log_success(
+            "Removed {length(image_files)} image files from {run_name}",
+            verbose = verbose
+          )
+        },
+        error = function(e) {
+          log_warn(
+            "Failed to remove image files from {run_name}: {e$message}",
+            verbose = verbose
+          )
+        }
+      )
+    } else {
+      log_info("No image files found in root of: {run_name}", verbose = verbose)
+    }
+  }
+
+  if (total_files_removed > 0) {
+    log_success(
+      "Total image files removed: {total_files_removed}",
+      verbose = verbose
+    )
+  }
+
+  return(invisible(TRUE))
 }

@@ -30,7 +30,7 @@ create_epoch_images_zip <- function(
   report_epoch_grouping_var_col = "matched_event",
   verbose = FALSE
 ) {
-  zip_filename <- sprintf("run-%02d_epoch_images", run_dir_num)
+  zip_filename <- sprintf("run-%02d", run_dir_num)
   if (!is.null(eye_suffix)) {
     zip_filename <- paste0(zip_filename, "_", eye_suffix)
   }
