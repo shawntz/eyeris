@@ -559,17 +559,35 @@ run_bidsify <- function(
     csv_enabled <- TRUE
   }
 
-  # comprehensive subject cleanup: remove all existing data for this subject
+  # comprehensive subject+run cleanup: remove existing data for this specific subject+session+task+run combination
   if (!is.null(db_con) && !skip_db_cleanup) {
     tryCatch(
       {
         # get all tables in the database
         all_tables <- DBI::dbListTables(db_con)
-        target_tables <- all_tables[grepl(paste0("_", sub, "_"), all_tables)]
+        
+        # create pattern to match only tables for this specific subject+session+task+run combination
+        if (has_multiple_runs) {
+          # for multiple runs in same file, clean tables for all runs that will be processed
+          # (since we're replacing all runs from this file)
+          run_numbers <- sapply(names(eyeris$timeseries), get_block_numbers)
+          run_patterns <- sapply(run_numbers, function(r) sprintf("%02d", r))
+          table_patterns <- paste0("_", sub, "_", ses, "_", task, "_run", run_patterns)
+          target_tables <- c()
+          for (pattern in table_patterns) {
+            target_tables <- c(target_tables, all_tables[grepl(pattern, all_tables)])
+          }
+          target_tables <- unique(target_tables)
+        } else {
+          # for single run, match only the specific run number
+          run_formatted <- sprintf("%02d", as.numeric(run_num))
+          table_pattern <- paste0("_", sub, "_", ses, "_", task, "_run", run_formatted)
+          target_tables <- all_tables[grepl(table_pattern, all_tables)]
+        }
 
         if (length(target_tables) > 0) {
           log_info(
-            "Cleaning up existing data for sub-{sub} in database...",
+            "Cleaning up existing data for sub-{sub} ses-{ses} task-{task} run-{if (has_multiple_runs) 'all' else run_num} in database...",
             verbose = verbose
           )
 
@@ -1880,6 +1898,32 @@ run_bidsify <- function(
         }
       }
     }
+    
+    # cleanup: remove plain epoch directories (without run suffix) since 
+    # only the epoch_name_run-XX directories are used for report generation
+    if (any_epochs && !is.null(report_epoch_grouping_var_col)) {
+      for (i in seq_along(epochs_to_save)) {
+        for (bn in names(epochs_to_save[[i]])) {
+          run_dir_num <- if (!has_multiple_runs && !is.null(run_num)) {
+            as.numeric(run_num)
+          } else {
+            get_block_numbers(bn)
+          }
+          
+          run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+          plain_epoch_dir <- file.path(run_dir, names(epochs_to_save)[i])
+          
+          if (dir.exists(plain_epoch_dir)) {
+            log_info(
+              "Removing duplicate plain epoch directory: {plain_epoch_dir}",
+              verbose = verbose
+            )
+            unlink(plain_epoch_dir, recursive = TRUE)
+          }
+        }
+      }
+    }
+    
     # generate report
     report_output <- make_report(
       eyeris,
