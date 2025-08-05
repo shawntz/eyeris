@@ -44,16 +44,17 @@ log_message <- function(
   message_text <- paste(message_parts, collapse = " ")
 
   # apply glue interpolation if there are braces, but handle errors gracefully
+  glue_failed <- FALSE
   if (grepl("\\{.*\\}", message_text)) {
     tryCatch(
       {
         message_text <- glue::glue(message_text, .envir = .envir)
       },
       error = function(e) {
-        # if glue fails, escape the braces to prevent CLI from trying to parse them
+        # if glue fails, completely remove braces to prevent CLI parsing issues
         # this handles cases where {} contains JSON, structured data, etc.
-        message_text <<- gsub("\\{", "{{", message_text)
-        message_text <<- gsub("\\}", "}}", message_text)
+        message_text <<- gsub("\\{[^}]*\\}", "[CONTENT]", message_text)
+        glue_failed <<- TRUE
       }
     )
   }
@@ -64,14 +65,26 @@ log_message <- function(
     message_text
   )
 
-  switch(
-    level,
-    "INFO" = cli::cli_alert_info(full_message, wrap = wrap),
-    "OKAY" = cli::cli_alert_success(full_message, wrap = wrap),
-    "WARN" = cli::cli_alert_warning(full_message, wrap = wrap),
-    "EXIT" = cli::cli_abort(full_message, wrap = wrap),
-    cli::cli_alert_info(full_message, wrap = wrap) # fallback
-  )
+  # if glue failed, use plain text output to avoid CLI expression parsing
+  if (glue_failed) {
+    switch(
+      level,
+      "INFO" = message(paste0("ℹ ", full_message)),
+      "OKAY" = message(paste0("✔ ", full_message)),
+      "WARN" = message(paste0("⚠ ", full_message)),
+      "EXIT" = stop(full_message, call. = FALSE),
+      message(paste0("ℹ ", full_message)) # fallback
+    )
+  } else {
+    switch(
+      level,
+      "INFO" = cli::cli_alert_info(full_message, wrap = wrap),
+      "OKAY" = cli::cli_alert_success(full_message, wrap = wrap),
+      "WARN" = cli::cli_alert_warning(full_message, wrap = wrap),
+      "EXIT" = cli::cli_abort(full_message, wrap = wrap),
+      cli::cli_alert_info(full_message, wrap = wrap) # fallback
+    )
+  }
 }
 
 #' Log an informational message
