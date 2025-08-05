@@ -46,7 +46,7 @@ log_message <- function(
   # apply glue interpolation if there are braces, but handle errors gracefully
   glue_failed <- FALSE
   has_braces <- grepl("\\{", message_text)
-  
+
   if (has_braces) {
     tryCatch(
       {
@@ -76,11 +76,11 @@ log_message <- function(
   if (glue_failed) {
     switch(
       level,
-      "INFO" = message(paste0("ℹ ", full_message)),
-      "OKAY" = message(paste0("✔ ", full_message)),
-      "WARN" = message(paste0("⚠ ", full_message)),
-      "EXIT" = stop(full_message, call. = FALSE),
-      message(paste0("ℹ ", full_message)) # fallback
+      "INFO" = message(paste0("[INFO] ", full_message)),
+      "OKAY" = message(paste0("[OKAY] ", full_message)),
+      "WARN" = message(paste0("[WARN] ", full_message)),
+      "EXIT" = stop(paste0("[EXIT] ", full_message), call. = FALSE),
+      message(paste0("[INFO] ", full_message)) # fallback
     )
   } else {
     switch(
