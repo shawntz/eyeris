@@ -21,7 +21,7 @@ parameters on the raw pupillary signal."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9003.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9003.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@ parameters on the raw pupillary signal."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot pre-processed pupil data from <code>eyeris</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9003/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/R/plot.eyeris.R" class="external-link"><code>R/plot.eyeris.R</code></a></small>
       <div class="d-none name"><code>plot.eyeris.Rd</code></div>
     </div>
 
@@ -240,7 +240,7 @@ from each preprocessing step run</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 1: using the default 10000 to 20000 ms time subset</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, seed <span class="op">=</span> <span class="fl">0</span>, add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="plot.eyeris-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-3.png" alt="" width="700" height="433"></span>
@@ -248,9 +248,9 @@ from each preprocessing step run</p>
 <span class="r-plt img"><img src="plot.eyeris-5.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-6.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-7.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Creating progressive summary plot for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Creating progressive summary plot for block_1</span>
 <span class="r-plt img"><img src="plot.eyeris-8.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-05 09:22:44] [OKAY] Progressive summary plot created successfully!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-06 04:12:40] [OKAY] Progressive summary plot created successfully!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 2: using a custom time subset (i.e., 1 to 500 ms)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span></span>
@@ -259,7 +259,7 @@ from each preprocessing step run</p>
 <span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  add_progressive_summary <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="plot.eyeris-9.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-10.png" alt="" width="700" height="433"></span>
@@ -267,15 +267,15 @@ from each preprocessing step run</p>
 <span class="r-plt img"><img src="plot.eyeris-12.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-13.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-14.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Creating progressive summary plot for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Creating progressive summary plot for block_1</span>
 <span class="r-plt img"><img src="plot.eyeris-15.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-05 09:22:44] [OKAY] Progressive summary plot created successfully!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-06 04:12:40] [OKAY] Progressive summary plot created successfully!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># controlling which block of data you would like to plot:</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 1: plots first block (default)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="plot.eyeris-16.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-17.png" alt="" width="700" height="433"></span>
@@ -286,7 +286,7 @@ from each preprocessing step run</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example 2: plots a specific block</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_eyeris_data</span>, block <span class="op">=</span> <span class="fl">1</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="plot.eyeris-22.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-23.png" alt="" width="700" height="433"></span>
@@ -303,7 +303,7 @@ from each preprocessing step run</p>
 <span class="r-in"><span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-05 09:22:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-06 04:12:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="plot.eyeris-28.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.eyeris-29.png" alt="" width="700" height="433"></span>
