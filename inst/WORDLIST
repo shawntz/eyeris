@@ -179,5 +179,11 @@ scalable
 Scalable
 timestamping
 vectorized
+HPC
+JOBID
+LSF
+PID
+SGE
+SLURM
 users'
 eyeris'
