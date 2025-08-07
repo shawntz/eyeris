@@ -1119,17 +1119,25 @@ create_temp_eyeris_database <- function(
   }
 
   # create unique temp database name using process ID and timestamp
-  temp_suffix <- paste0("_temp_", Sys.getpid(), "_", 
-                       format(Sys.time(), "%Y%m%d_%H%M%S_%OS3"))
-  
+  temp_suffix <- paste0(
+    "_temp_",
+    Sys.getpid(),
+    "_",
+    format(Sys.time(), "%Y%m%d_%H%M%S_%OS3")
+  )
+
   # auto-append .eyerisdb extension if not present
   if (!grepl("\\.eyerisdb$", base_db_path)) {
     base_db_path <- paste0(base_db_path, ".eyerisdb")
   }
-  
+
   # create temp database name
-  temp_db_name <- gsub("\\.eyerisdb$", paste0(temp_suffix, ".eyerisdb"), base_db_path)
-  
+  temp_db_name <- gsub(
+    "\\.eyerisdb$",
+    paste0(temp_suffix, ".eyerisdb"),
+    base_db_path
+  )
+
   if (dirname(temp_db_name) == ".") {
     temp_db_path <- file.path(derivatives_dir, temp_db_name)
   } else {
@@ -1139,20 +1147,27 @@ create_temp_eyeris_database <- function(
   tryCatch(
     {
       con <- DBI::dbConnect(duckdb::duckdb(), dbdir = temp_db_path)
-      
+
       log_success(
         "Created temporary database: {temp_db_path}",
         verbose = verbose
       )
-      
+
       return(list(
         connection = con,
         temp_path = temp_db_path,
-        base_path = gsub(paste0(temp_suffix, "\\.eyerisdb"), ".eyerisdb", temp_db_path)
+        base_path = gsub(
+          paste0(temp_suffix, "\\.eyerisdb"),
+          ".eyerisdb",
+          temp_db_path
+        )
       ))
     },
     error = function(e) {
-      log_warn("Failed to create temporary database: {e$message}", verbose = TRUE)
+      log_warn(
+        "Failed to create temporary database: {e$message}",
+        verbose = TRUE
+      )
       return(NULL)
     }
   )
@@ -1182,14 +1197,14 @@ merge_temp_database <- function(
     log_warn("Invalid temporary database info provided", verbose = verbose)
     return(FALSE)
   }
-  
+
   temp_con <- temp_db_info$connection
   temp_path <- temp_db_info$temp_path
   main_path <- temp_db_info$base_path
-  
+
   # get all tables from temp database
   temp_tables <- DBI::dbListTables(temp_con)
-  
+
   if (length(temp_tables) == 0) {
     log_info("No tables to merge from temporary database", verbose = verbose)
     # still consider this successful - just cleanup temp db
@@ -1199,120 +1214,148 @@ merge_temp_database <- function(
     }
     return(TRUE)
   }
-  
+
   log_info(
     "Merging {length(temp_tables)} tables from temporary database to main database",
     verbose = verbose
   )
-  
+
   # file-based locking mechanism for safe concurrent access
   lock_file <- paste0(main_path, ".lock")
-  
+
   # attempt to acquire lock with retries
   lock_acquired <- FALSE
   for (attempt in 1:max_retries) {
-    tryCatch({
-      # try to create lock file (fails if already exists)
-      if (!file.exists(lock_file)) {
-        # write process info to lock file
-        writeLines(paste("PID:", Sys.getpid(), "Time:", Sys.time()), lock_file)
-        lock_acquired <- TRUE
-        break
-      } else {
-        # check if lock is stale (older than 5 minutes)
-        lock_age <- difftime(Sys.time(), file.info(lock_file)$mtime, units = "mins")
-        if (lock_age > 5) {
-          log_warn("Removing stale lock file (age: {round(lock_age, 1)} minutes)", 
-                   verbose = verbose)
-          unlink(lock_file)
-          next  # try again on next iteration
+    tryCatch(
+      {
+        # try to create lock file (fails if already exists)
+        if (!file.exists(lock_file)) {
+          # write process info to lock file
+          writeLines(
+            paste("PID:", Sys.getpid(), "Time:", Sys.time()),
+            lock_file
+          )
+          lock_acquired <- TRUE
+          break
+        } else {
+          # check if lock is stale (older than 5 minutes)
+          lock_age <- difftime(
+            Sys.time(),
+            file.info(lock_file)$mtime,
+            units = "mins"
+          )
+          if (lock_age > 5) {
+            log_warn(
+              "Removing stale lock file (age: {round(lock_age, 1)} minutes)",
+              verbose = verbose
+            )
+            unlink(lock_file)
+            next # try again on next iteration
+          }
         }
+      },
+      error = function(e) {
+        # lock creation failed, continue to retry
       }
-    }, error = function(e) {
-      # lock creation failed, continue to retry
-    })
-    
+    )
+
     if (attempt < max_retries) {
-      log_info("Database locked, retrying in {retry_delay}s (attempt {attempt}/{max_retries})", 
-               verbose = verbose)
+      log_info(
+        "Database locked, retrying in {retry_delay}s (attempt {attempt}/{max_retries})",
+        verbose = verbose
+      )
       Sys.sleep(retry_delay)
     }
   }
-  
+
   if (!lock_acquired) {
-    log_warn("Could not acquire database lock after {max_retries} attempts", 
-             verbose = verbose)
+    log_warn(
+      "Could not acquire database lock after {max_retries} attempts",
+      verbose = verbose
+    )
     return(FALSE)
   }
-  
+
   # ensure lock is removed on exit
   on.exit({
     if (file.exists(lock_file)) {
       unlink(lock_file)
     }
   })
-  
-  tryCatch({
-    # connect to main database
-    main_con <- DBI::dbConnect(duckdb::duckdb(), dbdir = main_path)
-    on.exit(DBI::dbDisconnect(main_con), add = TRUE)
-    
-    # merge each table
-    success_count <- 0
-    for (table_name in temp_tables) {
-      tryCatch({
-        # read data from temp database
-        temp_data <- DBI::dbReadTable(temp_con, table_name)
-        
-        if (nrow(temp_data) == 0) {
-          log_info("Skipping empty table: {table_name}", verbose = verbose)
-          next
-        }
-        
-        # check if table exists in main database
-        main_tables <- DBI::dbListTables(main_con)
-        
-        if (table_name %in% main_tables) {
-          # append to existing table
-          DBI::dbWriteTable(
-            conn = main_con,
-            name = table_name,
-            value = temp_data,
-            append = TRUE,
-            overwrite = FALSE
-          )
-          log_info("Merged {nrow(temp_data)} rows into existing table '{table_name}'", 
-                   verbose = verbose)
-        } else {
-          # create new table
-          DBI::dbWriteTable(
-            conn = main_con,
-            name = table_name,
-            value = temp_data,
-            append = FALSE,
-            overwrite = FALSE
-          )
-          log_info("Created new table '{table_name}' with {nrow(temp_data)} rows", 
-                   verbose = verbose)
-        }
-        
-        success_count <- success_count + 1
-      }, error = function(e) {
-        log_warn("Failed to merge table '{table_name}': {e$message}", verbose = verbose)
-      })
+
+  tryCatch(
+    {
+      # connect to main database
+      main_con <- DBI::dbConnect(duckdb::duckdb(), dbdir = main_path)
+      on.exit(DBI::dbDisconnect(main_con), add = TRUE)
+
+      # merge each table
+      success_count <- 0
+      for (table_name in temp_tables) {
+        tryCatch(
+          {
+            # read data from temp database
+            temp_data <- DBI::dbReadTable(temp_con, table_name)
+
+            if (nrow(temp_data) == 0) {
+              log_info("Skipping empty table: {table_name}", verbose = verbose)
+              next
+            }
+
+            # check if table exists in main database
+            main_tables <- DBI::dbListTables(main_con)
+
+            if (table_name %in% main_tables) {
+              # append to existing table
+              DBI::dbWriteTable(
+                conn = main_con,
+                name = table_name,
+                value = temp_data,
+                append = TRUE,
+                overwrite = FALSE
+              )
+              log_info(
+                "Merged {nrow(temp_data)} rows into existing table '{table_name}'",
+                verbose = verbose
+              )
+            } else {
+              # create new table
+              DBI::dbWriteTable(
+                conn = main_con,
+                name = table_name,
+                value = temp_data,
+                append = FALSE,
+                overwrite = FALSE
+              )
+              log_info(
+                "Created new table '{table_name}' with {nrow(temp_data)} rows",
+                verbose = verbose
+              )
+            }
+
+            success_count <- success_count + 1
+          },
+          error = function(e) {
+            log_warn(
+              "Failed to merge table '{table_name}': {e$message}",
+              verbose = verbose
+            )
+          }
+        )
+      }
+
+      log_success(
+        "Successfully merged {success_count}/{length(temp_tables)} tables",
+        verbose = verbose
+      )
+
+      return(success_count == length(temp_tables))
+    },
+    error = function(e) {
+      log_warn("Error during database merge: {e$message}", verbose = verbose)
+      return(FALSE)
     }
-    
-    log_success(
-      "Successfully merged {success_count}/{length(temp_tables)} tables",
-      verbose = verbose
-    )
-    
-    return(success_count == length(temp_tables))
-    
-  }, error = function(e) {
-    log_warn("Error during database merge: {e$message}", verbose = verbose)
-    return(FALSE)
-  })
+  )
 }
 
 #' Cleanup temporary database
@@ -1329,30 +1372,42 @@ cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
   if (is.null(temp_db_info)) {
     return(TRUE)
   }
-  
+
   success <- TRUE
-  
+
   # disconnect from temp database
   if (!is.null(temp_db_info$connection)) {
-    tryCatch({
-      DBI::dbDisconnect(temp_db_info$connection)
-      log_info("Disconnected from temporary database", verbose = verbose)
-    }, error = function(e) {
-      log_warn("Error disconnecting from temp database: {e$message}", verbose = verbose)
-      success <- FALSE
-    })
+    tryCatch(
+      {
+        DBI::dbDisconnect(temp_db_info$connection)
+        log_info("Disconnected from temporary database", verbose = verbose)
+      },
+      error = function(e) {
+        log_warn(
+          "Error disconnecting from temp database: {e$message}",
+          verbose = verbose
+        )
+        success <- FALSE
+      }
+    )
   }
-  
+
   # remove temp database file
   if (!is.null(temp_db_info$temp_path) && file.exists(temp_db_info$temp_path)) {
-    tryCatch({
-      unlink(temp_db_info$temp_path)
-      log_success("Cleaned up temporary database file", verbose = verbose)
-    }, error = function(e) {
-      log_warn("Error removing temp database file: {e$message}", verbose = verbose)
-      success <- FALSE
-    })
+    tryCatch(
+      {
+        unlink(temp_db_info$temp_path)
+        log_success("Cleaned up temporary database file", verbose = verbose)
+      },
+      error = function(e) {
+        log_warn(
+          "Error removing temp database file: {e$message}",
+          verbose = verbose
+        )
+        success <- FALSE
+      }
+    )
   }
-  
+
   return(success)
 }
