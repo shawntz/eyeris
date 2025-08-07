@@ -185,5 +185,6 @@ LSF
 PID
 SGE
 SLURM
+transactional
 users'
 eyeris'
