@@ -4,7 +4,12 @@
 \alias{connect_eyeris_database}
 \title{Create or connect to eyeris project database}
 \usage{
-connect_eyeris_database(bids_dir, db_path = "my-project", verbose = FALSE)
+connect_eyeris_database(
+  bids_dir,
+  db_path = "my-project",
+  verbose = FALSE,
+  parallel = FALSE
+)
 }
 \arguments{
 \item{bids_dir}{Path to the BIDS directory containing derivatives}
@@ -12,12 +17,15 @@ connect_eyeris_database(bids_dir, db_path = "my-project", verbose = FALSE)
 \item{db_path}{Database name (defaults to "my-project", becomes "my-project.eyerisdb")}
 
 \item{verbose}{Whether to print verbose output}
+
+\item{parallel}{Whether to enable parallel processing with temporary databases}
 }
 \value{
-DBI database connection object
+DBI database connection object or temp database info list (when parallel=TRUE)
 }
 \description{
 Creates a new \code{DuckDB} database for the \code{eyeris} project or connects to an existing one.
-The database will be created in the BIDS derivatives directory.
+The database will be created in the BIDS derivatives directory. When parallel processing
+is enabled, creates temporary databases to avoid concurrency issues.
 }
 \keyword{internal}

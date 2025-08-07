@@ -21,6 +21,7 @@ bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  parallel_processing = FALSE,
   merge_epochs = deprecated(),
   merge_runs = deprecated(),
   pdf_report = deprecated()
@@ -84,6 +85,10 @@ for centralized data storage and querying}
 \item{db_path}{Database filename or path. Defaults to \code{"eyeris-proj.eyerisdb"}.
 If just a filename, the database will be created in the \verb{derivatives/}
 directory. If a full path is provided, it will be used as specified}
+
+\item{parallel_processing}{Logical flag to manually enable parallel database
+processing. When \code{TRUE}, uses temporary databases to avoid concurrency issues.
+Defaults to \code{FALSE} (auto-detect based on environment variables)}
 
 \item{merge_epochs}{\strong{(Deprecated)} This parameter is deprecated and will be
 ignored. All epochs are now saved as separate files following BIDS conventions.
