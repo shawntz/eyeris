@@ -548,7 +548,7 @@ run_bidsify <- function(
   db_con <- NULL
   temp_db_info <- NULL
   use_parallel_db <- FALSE
-  
+
   if (db_enabled) {
     # detect if we're likely in a parallel processing scenario
     # check for common parallel processing environment variables
@@ -559,25 +559,31 @@ run_bidsify <- function(
       !is.null(Sys.getenv("LSB_JOBID", unset = NA)),
       !is.null(Sys.getenv("PARALLEL_PROCESSING", unset = NA))
     )
-    
+
     use_parallel_db <- any(parallel_indicators) || parallel_processing
-    
+
     if (use_parallel_db) {
       # extract job info for logging
-      job_id <- Sys.getenv("SLURM_JOB_ID", 
-                          Sys.getenv("PBS_JOBID", 
-                                    Sys.getenv("SGE_JOB_ID", 
-                                              Sys.getenv("LSB_JOBID", "unknown"))))
+      job_id <- Sys.getenv(
+        "SLURM_JOB_ID",
+        Sys.getenv(
+          "PBS_JOBID",
+          Sys.getenv("SGE_JOB_ID", Sys.getenv("LSB_JOBID", "unknown"))
+        )
+      )
       process_id <- Sys.getpid()
-      
-      log_info("Parallel processing detected for job {job_id} (PID: {process_id}), using temporary database", verbose = verbose)
+
+      log_info(
+        "Parallel processing detected for job {job_id} (PID: {process_id}), using temporary database",
+        verbose = verbose
+      )
       temp_db_info <- connect_eyeris_database(
         bids_dir = dir,
         db_path = db_path,
         verbose = verbose,
         parallel = TRUE
       )
-      
+
       if (!is.null(temp_db_info)) {
         db_con <- temp_db_info$connection
       }
@@ -2017,31 +2023,46 @@ run_bidsify <- function(
   if (!is.null(db_con)) {
     if (use_parallel_db && !is.null(temp_db_info)) {
       # extract job info for logging
-      job_id <- Sys.getenv("SLURM_JOB_ID", 
-                          Sys.getenv("PBS_JOBID", 
-                                    Sys.getenv("SGE_JOB_ID", 
-                                              Sys.getenv("LSB_JOBID", "unknown"))))
+      job_id <- Sys.getenv(
+        "SLURM_JOB_ID",
+        Sys.getenv(
+          "PBS_JOBID",
+          Sys.getenv("SGE_JOB_ID", Sys.getenv("LSB_JOBID", "unknown"))
+        )
+      )
       process_id <- Sys.getpid()
-      
+
       # merge temporary database into main database
-      log_info("Merging temporary database from job {job_id} (PID: {process_id}) into main database", verbose = verbose)
-      
+      log_info(
+        "Merging temporary database from job {job_id} (PID: {process_id}) into main database",
+        verbose = verbose
+      )
+
       merge_success <- merge_temp_database(
         temp_db_info = temp_db_info,
         verbose = verbose
       )
-      
+
       if (merge_success) {
-        log_success("Successfully merged job {job_id} (PID: {process_id}) data into main database", verbose = verbose)
+        log_success(
+          "Successfully merged job {job_id} (PID: {process_id}) data into main database",
+          verbose = verbose
+        )
       } else {
-        log_warn("Failed to merge temporary database for job {job_id} (PID: {process_id}) - data may be lost", verbose = verbose)
+        log_warn(
+          "Failed to merge temporary database for job {job_id} (PID: {process_id}) - data may be lost",
+          verbose = verbose
+        )
       }
-      
+
       # cleanup temporary database
       cleanup_success <- cleanup_temp_database(temp_db_info, verbose = verbose)
-      
+
       if (!cleanup_success) {
-        log_warn("Failed to cleanup temporary database files for job {job_id} (PID: {process_id})", verbose = verbose)
+        log_warn(
+          "Failed to cleanup temporary database files for job {job_id} (PID: {process_id})",
+          verbose = verbose
+        )
       }
     } else {
       # standard database disconnect
