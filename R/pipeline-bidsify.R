@@ -1280,6 +1280,23 @@ run_bidsify <- function(
 
       # combine all epoch summaries into one data frame
       if (length(epoch_summaries) > 0) {
+        # standardize column structure before rbind
+        all_cols <- unique(unlist(lapply(epoch_summaries, names)))
+
+        # ensure all data frames have the same columns
+        epoch_summaries <- lapply(epoch_summaries, function(df) {
+          missing_cols <- setdiff(all_cols, names(df))
+          if (length(missing_cols) > 0) {
+            # add missing columns with NA values
+            for (col in missing_cols) {
+              df[[col]] <- NA
+            }
+          }
+          # reorder columns to match all_cols
+          df <- df[, all_cols, drop = FALSE]
+          return(df)
+        })
+
         epoch_summary <- do.call(rbind, epoch_summaries)
         rownames(epoch_summary) <- NULL
       } else {

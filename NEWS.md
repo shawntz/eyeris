@@ -27,6 +27,10 @@ _Note: This is the working changelog for features and fixes being developed for 
   > Sys.setenv(PARALLEL_PROCESSING = "1")
   > data |> bidsify(db_enabled = TRUE)
   > ```
+
+- **FF**: Handle non-finite values in plotting xlim ranges to prevent `plot.window()` crashes. Added `finite=TRUE` parameter to `range()` calls and fallback logic when no finite values exist in timebin or x_seq data. Resolves "need finite 'xlim' values" error during epoch visualization, by @shawntz in #263.
+
+- **FF**: Standardize column structure before rbind in epoch summaries to prevent column mismatch errors. Different epochs can have varying metadata structures (9 vs 10 fields), causing `rbind()` to fail. Added logic to collect all unique column names, standardize structure with NA values for missing columns, and ensure consistent column ordering before combining data frames, by @shawntz in #264.
   
 # eyeris 2.1.1.9003 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
