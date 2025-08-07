@@ -1293,7 +1293,8 @@ run_bidsify <- function(
             }
           }
           # reorder columns to match all_cols
-          df[, all_cols, drop = FALSE]
+          df <- df[, all_cols, drop = FALSE]
+          return(df)
         })
 
         epoch_summary <- do.call(rbind, epoch_summaries)
