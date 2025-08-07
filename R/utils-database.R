@@ -1119,11 +1119,15 @@ create_temp_eyeris_database <- function(
   }
 
   # create unique temp database name using process ID and timestamp
+  # Use a portable timestamp: YYYYMMDD_HHMMSS_mmm (mmm = milliseconds)
+  now <- Sys.time()
+  timestamp <- format(now, "%Y%m%d_%H%M%S")
+  millis <- sprintf("%03d", as.integer((as.numeric(now) %% 1) * 1000))
   temp_suffix <- paste0(
     "_temp_",
     Sys.getpid(),
     "_",
-    format(Sys.time(), "%Y%m%d_%H%M%S_%OS3")
+    timestamp, "_", millis
   )
 
   # auto-append .eyerisdb extension if not present
