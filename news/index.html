@@ -113,6 +113,8 @@ Key features:
 <span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span>db_enabled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </blockquote>
 </li>
+<li><p><strong>FF</strong>: Handle non-finite values in plotting xlim ranges to prevent <code><a href="https://rdrr.io/r/graphics/plot.window.html" class="external-link">plot.window()</a></code> crashes. Added <code>finite=TRUE</code> parameter to <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code> calls and fallback logic when no finite values exist in timebin or x_seq data. Resolves “need finite ‘xlim’ values” error during epoch visualization, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/263" class="external-link">#263</a>.</p></li>
+<li><p><strong>FF</strong>: Standardize column structure before rbind in epoch summaries to prevent column mismatch errors. Different epochs can have varying metadata structures (9 vs 10 fields), causing <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> to fail. Added logic to collect all unique column names, standardize structure with NA values for missing columns, and ensure consistent column ordering before combining data frames, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/264" class="external-link">#264</a>.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
