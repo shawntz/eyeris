@@ -100,9 +100,20 @@ create_epoch_images_zip <- function(
               )
             )
           } else {
+            # handle case where timebin has no finite values
+            timebin_range <- range(
+              group_df$timebin,
+              na.rm = TRUE,
+              finite = TRUE
+            )
+            if (any(!is.finite(timebin_range))) {
+              # fallback to default range if no finite values
+              timebin_range <- c(0, 1)
+            }
+
             plot(
               NA,
-              xlim = range(group_df$timebin, na.rm = TRUE),
+              xlim = timebin_range,
               ylim = c(0, 1),
               type = "n",
               xlab = "time (s)",
