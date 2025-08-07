@@ -1,7 +1,33 @@
-# eyeris 2.1.1.9003 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 2.1.1.9004 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+## eyeris 2.1.1.9004
+
+- **ENH**: Added parallel processing support for DuckDB database operations to prevent concurrency issues during batch processing. Implemented temporary database creation with automatic merging and cleanup mechanisms. Added environment variable detection for common HPC schedulers (SLURM, PBS, SGE, LSF) and manual `parallel_processing` parameter override. Includes comprehensive file locking, process/job ID logging, and full test coverage, by @shawntz.
+
+  > This enhancement enables seamless parallel compute and batch processing when using `db_enabled = TRUE`. Each parallel job now writes to a unique temporary database, preventing the crashes that occurred when multiple processes attempted concurrent writes to the same DuckDB file.
+  >
+  > Key features:
+  > - **Automatic Detection**: Detects HPC environments (SLURM_JOB_ID, PBS_JOBID, etc.)
+  > - **Temporary Databases**: Each job uses PID + timestamp for unique temp database names
+  > - **Safe Merging**: File-based locking prevents concurrent access during merge operations
+  > - **Rich Logging**: Job ID and process ID included in all parallel processing messages
+  > - **Zero Breaking Changes**: All existing functionality preserved
+  >
+  > Usage examples:
+  > ```r
+  > # Automatic detection in HPC environments
+  > data |> bidsify(db_enabled = TRUE)
+  > 
+  > # Manual enable for testing/development
+  > data |> bidsify(db_enabled = TRUE, parallel_processing = TRUE)
+  > 
+  > # Environment variable override
+  > Sys.setenv(PARALLEL_PROCESSING = "1")
+  > data |> bidsify(db_enabled = TRUE)
+  > ```
 
 - **ENH**: Added post-render cleanup of figures directories in `pipeline-bidsify.R`. Enhanced `zip_and_cleanup_source_figures` to remove existing zip files before reprocessing, move new zip files to the parent figures directory, and delete run directories after successful zipping. This streamlines figures management and prevents leftover files from previous runs, by @shawntz in #261.
 

@@ -53,6 +53,9 @@
 #' @param db_path Database filename or path. Defaults to `"eyeris-proj.eyerisdb"`.
 #' If just a filename, the database will be created in the `derivatives/`
 #' directory. If a full path is provided, it will be used as specified
+#' @param parallel_processing Logical flag to manually enable parallel database
+#' processing. When `TRUE`, uses temporary databases to avoid concurrency issues.
+#' Defaults to `FALSE` (auto-detect based on environment variables)
 #' @param merge_epochs **(Deprecated)** This parameter is deprecated and will be
 #' ignored. All epochs are now saved as separate files following BIDS conventions.
 #' This parameter will be removed in a future version
@@ -167,6 +170,7 @@ bidsify <- function(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  parallel_processing = FALSE,
   merge_epochs = deprecated(),
   merge_runs = deprecated(),
   pdf_report = deprecated()
@@ -216,6 +220,7 @@ bidsify <- function(
       csv_enabled = csv_enabled,
       db_enabled = db_enabled,
       db_path = db_path,
+      parallel_processing = parallel_processing,
       raw_binocular_object = eyeris$raw_binocular_object,
       skip_db_cleanup = FALSE
     )
@@ -238,6 +243,7 @@ bidsify <- function(
       csv_enabled = csv_enabled,
       db_enabled = db_enabled,
       db_path = db_path,
+      parallel_processing = parallel_processing,
       raw_binocular_object = eyeris$raw_binocular_object,
       skip_db_cleanup = TRUE
     )
@@ -259,6 +265,7 @@ bidsify <- function(
       csv_enabled = csv_enabled,
       db_enabled = db_enabled,
       db_path = db_path,
+      parallel_processing = parallel_processing,
       raw_binocular_object = eyeris$raw_binocular_object
     )
   }
@@ -282,6 +289,7 @@ bidsify <- function(
 #' @param csv_enabled Whether to save csv files
 #' @param db_enabled Whether to save data to the database
 #' @param db_path The path to the database
+#' @param parallel_processing Whether to enable parallel database processing
 #' @param raw_binocular_object The raw binocular object
 #' @param skip_db_cleanup Whether to skip database cleanup, used internally to avoid unintended overwriting when calling complementary binocular bidsify processing commands
 #'
@@ -306,6 +314,7 @@ run_bidsify <- function(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  parallel_processing = FALSE,
   raw_binocular_object = NULL,
   skip_db_cleanup = FALSE
 ) {
@@ -537,12 +546,49 @@ run_bidsify <- function(
 
   # database connection setup with csv fallback
   db_con <- NULL
+  temp_db_info <- NULL
+  use_parallel_db <- FALSE
+  
   if (db_enabled) {
-    db_con <- connect_eyeris_database(
-      bids_dir = dir,
-      db_path = db_path,
-      verbose = verbose
+    # detect if we're likely in a parallel processing scenario
+    # check for common parallel processing environment variables
+    parallel_indicators <- c(
+      !is.null(Sys.getenv("SLURM_JOB_ID", unset = NA)),
+      !is.null(Sys.getenv("PBS_JOBID", unset = NA)),
+      !is.null(Sys.getenv("SGE_JOB_ID", unset = NA)),
+      !is.null(Sys.getenv("LSB_JOBID", unset = NA)),
+      !is.null(Sys.getenv("PARALLEL_PROCESSING", unset = NA))
     )
+    
+    use_parallel_db <- any(parallel_indicators) || parallel_processing
+    
+    if (use_parallel_db) {
+      # extract job info for logging
+      job_id <- Sys.getenv("SLURM_JOB_ID", 
+                          Sys.getenv("PBS_JOBID", 
+                                    Sys.getenv("SGE_JOB_ID", 
+                                              Sys.getenv("LSB_JOBID", "unknown"))))
+      process_id <- Sys.getpid()
+      
+      log_info("Parallel processing detected for job {job_id} (PID: {process_id}), using temporary database", verbose = verbose)
+      temp_db_info <- connect_eyeris_database(
+        bids_dir = dir,
+        db_path = db_path,
+        verbose = verbose,
+        parallel = TRUE
+      )
+      
+      if (!is.null(temp_db_info)) {
+        db_con <- temp_db_info$connection
+      }
+    } else {
+      db_con <- connect_eyeris_database(
+        bids_dir = dir,
+        db_path = db_path,
+        verbose = verbose,
+        parallel = FALSE
+      )
+    }
 
     if (is.null(db_con)) {
       log_warn("Database connection failed", verbose = verbose)
@@ -1967,9 +2013,40 @@ run_bidsify <- function(
     # )
   }
 
-  # disconnect from DB
+  # disconnect from DB and handle parallel database merging
   if (!is.null(db_con)) {
-    status <- disconnect_eyeris_database(db_con, verbose = verbose)
+    if (use_parallel_db && !is.null(temp_db_info)) {
+      # extract job info for logging
+      job_id <- Sys.getenv("SLURM_JOB_ID", 
+                          Sys.getenv("PBS_JOBID", 
+                                    Sys.getenv("SGE_JOB_ID", 
+                                              Sys.getenv("LSB_JOBID", "unknown"))))
+      process_id <- Sys.getpid()
+      
+      # merge temporary database into main database
+      log_info("Merging temporary database from job {job_id} (PID: {process_id}) into main database", verbose = verbose)
+      
+      merge_success <- merge_temp_database(
+        temp_db_info = temp_db_info,
+        verbose = verbose
+      )
+      
+      if (merge_success) {
+        log_success("Successfully merged job {job_id} (PID: {process_id}) data into main database", verbose = verbose)
+      } else {
+        log_warn("Failed to merge temporary database for job {job_id} (PID: {process_id}) - data may be lost", verbose = verbose)
+      }
+      
+      # cleanup temporary database
+      cleanup_success <- cleanup_temp_database(temp_db_info, verbose = verbose)
+      
+      if (!cleanup_success) {
+        log_warn("Failed to cleanup temporary database files for job {job_id} (PID: {process_id})", verbose = verbose)
+      }
+    } else {
+      # standard database disconnect
+      status <- disconnect_eyeris_database(db_con, verbose = verbose)
+    }
   }
 
   end_time <- Sys.time()
