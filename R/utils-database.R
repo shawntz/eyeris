@@ -1123,12 +1123,7 @@ create_temp_eyeris_database <- function(
   now <- Sys.time()
   timestamp <- format(now, "%Y%m%d_%H%M%S")
   millis <- sprintf("%03d", as.integer((as.numeric(now) %% 1) * 1000))
-  temp_suffix <- paste0(
-    "_temp_",
-    Sys.getpid(),
-    "_",
-    timestamp, "_", millis
-  )
+  temp_suffix <- paste0("_temp_", Sys.getpid(), "_", timestamp, "_", millis)
 
   # auto-append .eyerisdb extension if not present
   if (!grepl("\\.eyerisdb$", base_db_path)) {
