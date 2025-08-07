@@ -40,6 +40,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/clean_string.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/cleanup_run_dir_images.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/cleanup_source_figures_post_render.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/cleanup_temp_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/compute_baseline.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/connect_eyeris_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/convert_nested_dt.html</loc></url>
@@ -47,6 +48,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/counter_bar.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/create_epoch_images_zip.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/create_table_name.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/create_temp_eyeris_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/deblink.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/deblink_pupil.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/detransient.html</loc></url>
@@ -112,6 +114,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/make_prog_summary_plot.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/make_report.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/merge_events_with_timeseries.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/merge_temp_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/normalize_gaze_coords.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/parse_call_stack.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/parse_eyelink_info.html</loc></url>
