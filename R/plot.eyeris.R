@@ -674,12 +674,14 @@ robust_plot <- function(y, x = NULL, ...) {
       }
 
       # init placeholder line
-      plot(
-        x_seq,
-        ifelse(is.na(y_orig), NA, y_orig),
-        xlim = range(x_seq, na.rm = TRUE),
-        ...
-      )
+      # handle case where x_seq has no finite values
+      x_range <- range(x_seq, na.rm = TRUE, finite = TRUE)
+      if (any(!is.finite(x_range))) {
+        # fallback to default range if no finite values
+        x_range <- c(0, length(x_seq))
+      }
+
+      plot(x_seq, ifelse(is.na(y_orig), NA, y_orig), xlim = x_range, ...)
 
       # add vertical lines where there are NAs (using x values if available)
       na_idx <- which(is.na(y_orig))
