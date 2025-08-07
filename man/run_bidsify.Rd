@@ -22,6 +22,7 @@ run_bidsify(
   csv_enabled = TRUE,
   db_enabled = FALSE,
   db_path = "my-project",
+  parallel_processing = FALSE,
   raw_binocular_object = NULL,
   skip_db_cleanup = FALSE
 )
@@ -60,6 +61,8 @@ run_bidsify(
 \item{db_enabled}{Whether to save data to the database}
 
 \item{db_path}{The path to the database}
+
+\item{parallel_processing}{Whether to enable parallel database processing}
 
 \item{raw_binocular_object}{The raw binocular object}
 

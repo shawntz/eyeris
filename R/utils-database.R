@@ -1,20 +1,31 @@
 #' Create or connect to eyeris project database
 #'
 #' Creates a new `DuckDB` database for the `eyeris` project or connects to an existing one.
-#' The database will be created in the BIDS derivatives directory.
+#' The database will be created in the BIDS derivatives directory. When parallel processing
+#' is enabled, creates temporary databases to avoid concurrency issues.
 #'
 #' @param bids_dir Path to the BIDS directory containing derivatives
 #' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
 #' @param verbose Whether to print verbose output
+#' @param parallel Whether to enable parallel processing with temporary databases
 #'
-#' @return DBI database connection object
+#' @return DBI database connection object or temp database info list (when parallel=TRUE)
 #'
 #' @keywords internal
 connect_eyeris_database <- function(
   bids_dir,
   db_path = "my-project",
-  verbose = FALSE
+  verbose = FALSE,
+  parallel = FALSE
 ) {
+  # use temporary database for parallel processing
+  if (parallel) {
+    return(create_temp_eyeris_database(
+      bids_dir = bids_dir,
+      base_db_path = db_path,
+      verbose = verbose
+    ))
+  }
   derivatives_dir <- file.path(bids_dir, "derivatives")
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
@@ -1082,4 +1093,320 @@ eyeris_db_summary <- function(
   log_info("  Total rows: {total_rows}", verbose = verbose)
 
   return(result)
+}
+
+#' Create temporary database for parallel processing
+#'
+#' Creates a unique temporary database for use in parallel jobs to avoid
+#' concurrency issues. The temporary database is named using process ID
+#' and timestamp to ensure uniqueness.
+#'
+#' @param bids_dir Path to the BIDS directory containing derivatives
+#' @param base_db_path Base database name (e.g., "my-project")
+#' @param verbose Whether to print verbose output
+#'
+#' @return List containing database connection and temp database path
+#'
+#' @keywords internal
+create_temp_eyeris_database <- function(
+  bids_dir,
+  base_db_path = "my-project",
+  verbose = FALSE
+) {
+  derivatives_dir <- file.path(bids_dir, "derivatives")
+  if (!dir.exists(derivatives_dir)) {
+    dir.create(derivatives_dir, recursive = TRUE)
+  }
+
+  # create unique temp database name using process ID and timestamp
+  # Use a portable timestamp: YYYYMMDD_HHMMSS_mmm (mmm = milliseconds)
+  now <- Sys.time()
+  timestamp <- format(now, "%Y%m%d_%H%M%S")
+  millis <- sprintf("%03d", as.integer((as.numeric(now) %% 1) * 1000))
+  temp_suffix <- paste0("_temp_", Sys.getpid(), "_", timestamp, "_", millis)
+
+  # auto-append .eyerisdb extension if not present
+  if (!grepl("\\.eyerisdb$", base_db_path)) {
+    base_db_path <- paste0(base_db_path, ".eyerisdb")
+  }
+
+  # create temp database name
+  temp_db_name <- gsub(
+    "\\.eyerisdb$",
+    paste0(temp_suffix, ".eyerisdb"),
+    base_db_path
+  )
+
+  if (dirname(temp_db_name) == ".") {
+    temp_db_path <- file.path(derivatives_dir, temp_db_name)
+  } else {
+    temp_db_path <- temp_db_name
+  }
+
+  tryCatch(
+    {
+      con <- DBI::dbConnect(duckdb::duckdb(), dbdir = temp_db_path)
+
+      log_success(
+        "Created temporary database: {temp_db_path}",
+        verbose = verbose
+      )
+
+      return(list(
+        connection = con,
+        temp_path = temp_db_path,
+        base_path = gsub(
+          paste0(temp_suffix, "\\.eyerisdb"),
+          ".eyerisdb",
+          temp_db_path
+        )
+      ))
+    },
+    error = function(e) {
+      log_warn(
+        "Failed to create temporary database: {e$message}",
+        verbose = TRUE
+      )
+      return(NULL)
+    }
+  )
+}
+
+#' Merge temporary database into main database
+#'
+#' Safely merges data from a temporary database into the main project database
+#' using file locking to prevent concurrent access issues. This function handles
+#' the transactional copying of all tables from the temporary database.
+#'
+#' @param temp_db_info List containing temp database connection and paths
+#' @param verbose Whether to print verbose output
+#' @param max_retries Maximum number of retry attempts for file locking
+#' @param retry_delay Delay between retry attempts in seconds
+#'
+#' @return Logical indicating success
+#'
+#' @keywords internal
+merge_temp_database <- function(
+  temp_db_info,
+  verbose = FALSE,
+  max_retries = 10,
+  retry_delay = 1
+) {
+  if (is.null(temp_db_info) || is.null(temp_db_info$connection)) {
+    log_warn("Invalid temporary database info provided", verbose = verbose)
+    return(FALSE)
+  }
+
+  temp_con <- temp_db_info$connection
+  temp_path <- temp_db_info$temp_path
+  main_path <- temp_db_info$base_path
+
+  # get all tables from temp database
+  temp_tables <- DBI::dbListTables(temp_con)
+
+  if (length(temp_tables) == 0) {
+    log_info("No tables to merge from temporary database", verbose = verbose)
+    # still consider this successful - just cleanup temp db
+    disconnect_eyeris_database(temp_con, verbose = FALSE)
+    if (file.exists(temp_path)) {
+      unlink(temp_path)
+    }
+    return(TRUE)
+  }
+
+  log_info(
+    "Merging {length(temp_tables)} tables from temporary database to main database",
+    verbose = verbose
+  )
+
+  # file-based locking mechanism for safe concurrent access
+  lock_file <- paste0(main_path, ".lock")
+
+  # attempt to acquire lock with retries
+  lock_acquired <- FALSE
+  for (attempt in 1:max_retries) {
+    tryCatch(
+      {
+        # try to create lock file (fails if already exists)
+        if (!file.exists(lock_file)) {
+          # write process info to lock file
+          writeLines(
+            paste("PID:", Sys.getpid(), "Time:", Sys.time()),
+            lock_file
+          )
+          lock_acquired <- TRUE
+          break
+        } else {
+          # check if lock is stale (older than 5 minutes)
+          lock_age <- difftime(
+            Sys.time(),
+            file.info(lock_file)$mtime,
+            units = "mins"
+          )
+          if (lock_age > 5) {
+            log_warn(
+              "Removing stale lock file (age: {round(lock_age, 1)} minutes)",
+              verbose = verbose
+            )
+            unlink(lock_file)
+            next # try again on next iteration
+          }
+        }
+      },
+      error = function(e) {
+        # lock creation failed, continue to retry
+      }
+    )
+
+    if (attempt < max_retries) {
+      log_info(
+        "Database locked, retrying in {retry_delay}s (attempt {attempt}/{max_retries})",
+        verbose = verbose
+      )
+      Sys.sleep(retry_delay)
+    }
+  }
+
+  if (!lock_acquired) {
+    log_warn(
+      "Could not acquire database lock after {max_retries} attempts",
+      verbose = verbose
+    )
+    return(FALSE)
+  }
+
+  # ensure lock is removed on exit
+  on.exit({
+    if (file.exists(lock_file)) {
+      unlink(lock_file)
+    }
+  })
+
+  tryCatch(
+    {
+      # connect to main database
+      main_con <- DBI::dbConnect(duckdb::duckdb(), dbdir = main_path)
+      on.exit(DBI::dbDisconnect(main_con), add = TRUE)
+
+      # merge each table
+      success_count <- 0
+      for (table_name in temp_tables) {
+        tryCatch(
+          {
+            # read data from temp database
+            temp_data <- DBI::dbReadTable(temp_con, table_name)
+
+            if (nrow(temp_data) == 0) {
+              log_info("Skipping empty table: {table_name}", verbose = verbose)
+              next
+            }
+
+            # check if table exists in main database
+            main_tables <- DBI::dbListTables(main_con)
+
+            if (table_name %in% main_tables) {
+              # append to existing table
+              DBI::dbWriteTable(
+                conn = main_con,
+                name = table_name,
+                value = temp_data,
+                append = TRUE,
+                overwrite = FALSE
+              )
+              log_info(
+                "Merged {nrow(temp_data)} rows into existing table '{table_name}'",
+                verbose = verbose
+              )
+            } else {
+              # create new table
+              DBI::dbWriteTable(
+                conn = main_con,
+                name = table_name,
+                value = temp_data,
+                append = FALSE,
+                overwrite = FALSE
+              )
+              log_info(
+                "Created new table '{table_name}' with {nrow(temp_data)} rows",
+                verbose = verbose
+              )
+            }
+
+            success_count <- success_count + 1
+          },
+          error = function(e) {
+            log_warn(
+              "Failed to merge table '{table_name}': {e$message}",
+              verbose = verbose
+            )
+          }
+        )
+      }
+
+      log_success(
+        "Successfully merged {success_count}/{length(temp_tables)} tables",
+        verbose = verbose
+      )
+
+      return(success_count == length(temp_tables))
+    },
+    error = function(e) {
+      log_warn("Error during database merge: {e$message}", verbose = verbose)
+      return(FALSE)
+    }
+  )
+}
+
+#' Cleanup temporary database
+#'
+#' Safely disconnects and removes temporary database files after successful merge.
+#'
+#' @param temp_db_info List containing temp database connection and paths
+#' @param verbose Whether to print verbose output
+#'
+#' @return Logical indicating success
+#'
+#' @keywords internal
+cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
+  if (is.null(temp_db_info)) {
+    return(TRUE)
+  }
+
+  success <- TRUE
+
+  # disconnect from temp database
+  if (!is.null(temp_db_info$connection)) {
+    tryCatch(
+      {
+        DBI::dbDisconnect(temp_db_info$connection)
+        log_info("Disconnected from temporary database", verbose = verbose)
+      },
+      error = function(e) {
+        log_warn(
+          "Error disconnecting from temp database: {e$message}",
+          verbose = verbose
+        )
+        success <- FALSE
+      }
+    )
+  }
+
+  # remove temp database file
+  if (!is.null(temp_db_info$temp_path) && file.exists(temp_db_info$temp_path)) {
+    tryCatch(
+      {
+        unlink(temp_db_info$temp_path)
+        log_success("Cleaned up temporary database file", verbose = verbose)
+      },
+      error = function(e) {
+        log_warn(
+          "Error removing temp database file: {e$message}",
+          verbose = verbose
+        )
+        success <- FALSE
+      }
+    )
+  }
+
+  return(success)
 }
