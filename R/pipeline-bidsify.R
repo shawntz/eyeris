@@ -1920,17 +1920,35 @@ run_bidsify <- function(
             next
           }
 
-          tryCatch(
-            {
-              check_column(
-                epochs_to_save[[i]][[bn]],
-                report_epoch_grouping_var_col
-              )
-            },
-            error = function(e) {
-              error_handler(e, "column_doesnt_exist_in_df_error")
-            }
-          )
+          # determine the appropriate grouping column for epoch diagnostics
+          epoch_df <- epochs_to_save[[i]][[bn]]
+          actual_grouping_col <- NULL
+
+          # check for the requested grouping column first
+          if (report_epoch_grouping_var_col %in% colnames(epoch_df)) {
+            actual_grouping_col <- report_epoch_grouping_var_col
+          } else if ("start_matched_event" %in% colnames(epoch_df)) {
+            # for start/end epochs, use start_matched_event
+            actual_grouping_col <- "start_matched_event"
+            log_info(
+              "Using 'start_matched_event' for epoch diagnostic plots (start/end epoch detected)",
+              verbose = verbose
+            )
+          } else if ("end_matched_event" %in% colnames(epoch_df)) {
+            # fallback to end_matched_event if start not available
+            actual_grouping_col <- "end_matched_event"
+            log_info(
+              "Using 'end_matched_event' for epoch diagnostic plots (start/end epoch detected)",
+              verbose = verbose
+            )
+          } else {
+            # no suitable grouping column found
+            log_warn(
+              "No suitable grouping column found for epoch '{names(epochs_to_save)[i]}' block '{bn}'. Skipping epoch diagnostic plots for this epoch.",
+              verbose = verbose
+            )
+            next # skip epoch diagnostic plots for this epoch
+          }
 
           # use run_num override for single block
           run_dir_num <- if (!has_multiple_runs && !is.null(run_num)) {
@@ -1954,7 +1972,7 @@ run_bidsify <- function(
             pupil_steps = pupil_steps,
             eyeris_object = eyeris,
             eye_suffix = eye_suffix,
-            report_epoch_grouping_var_col = report_epoch_grouping_var_col,
+            report_epoch_grouping_var_col = actual_grouping_col,
             verbose = verbose
           )
 
