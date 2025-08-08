@@ -1,8 +1,10 @@
-# eyeris 2.1.1.9004 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 2.1.1.9005 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
 
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+- **FF**: Intelligently detect grouping column for epoch diagnostic plots. For start/end epochs (e.g., `"PROBE_S {STIM}"` to `"PROBE_E {STIM}"`), the epoched data contains `start_matched_event` instead of `matched_event`. Added automatic detection logic with priority: requested column → `start_matched_event` → `end_matched_event`. Includes informative logging and graceful fallback when no suitable column found, by @shawntz.
 
 - **ENH**: Added parallel processing support for DuckDB database operations to prevent concurrency issues during batch processing. Implemented temporary database creation with automatic merging and cleanup mechanisms. Added environment variable detection for common HPC schedulers (SLURM, PBS, SGE, LSF) and manual `parallel_processing` parameter override. Includes comprehensive file locking, process/job ID logging, and full test coverage, by @shawntz in #262.
 
