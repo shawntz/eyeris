@@ -1923,7 +1923,7 @@ run_bidsify <- function(
           # determine the appropriate grouping column for epoch diagnostics
           epoch_df <- epochs_to_save[[i]][[bn]]
           actual_grouping_col <- NULL
-          
+
           # check for the requested grouping column first
           if (report_epoch_grouping_var_col %in% colnames(epoch_df)) {
             actual_grouping_col <- report_epoch_grouping_var_col
@@ -1947,7 +1947,7 @@ run_bidsify <- function(
               "No suitable grouping column found for epoch '{names(epochs_to_save)[i]}' block '{bn}'. Skipping epoch diagnostic plots for this epoch.",
               verbose = verbose
             )
-            next  # skip epoch diagnostic plots for this epoch
+            next # skip epoch diagnostic plots for this epoch
           }
 
           # use run_num override for single block
