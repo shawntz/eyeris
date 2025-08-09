@@ -192,7 +192,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v2.1.1.9003 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v2.1.1.9006 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 
 demo_data <- eyelink_asc_demo_dataset()
@@ -201,20 +201,20 @@ eyeris_preproc <- glassbox(
   demo_data,
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2025-08-03 22:52:59] [OKAY] Running eyeris::load_asc()
-#> ℹ [2025-08-03 22:53:00] [INFO] Processing block: block_1
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2025-08-03 22:53:00] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2025-08-03 22:53:00] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2025-08-03 22:53:00] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2025-08-03 22:53:00] [INFO] Block processing summary:
-#> ℹ [2025-08-03 22:53:00] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2025-08-09 01:48:15] [OKAY] Running eyeris::load_asc()
+#> ℹ [2025-08-09 01:48:16] [INFO] Processing block: block_1
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2025-08-09 01:48:16] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2025-08-09 01:48:16] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2025-08-09 01:48:16] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2025-08-09 01:48:16] [INFO] Block processing summary:
+#> ℹ [2025-08-09 01:48:16] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2025-08-03 22:53:00] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2025-08-09 01:48:16] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ### Step-wise correction of pupillary signal
@@ -240,17 +240,17 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
-#> ℹ [2025-08-03 22:53:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2025-08-09 01:48:16] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" width="100%" />
 
-    #> ℹ [2025-08-03 22:53:00] [INFO] Creating progressive summary plot for block_1
+    #> ℹ [2025-08-09 01:48:16] [INFO] Creating progressive summary plot for block_1
 
 <img src="man/figures/README-timeseries-plot-7.png" width="100%" />
 
-    #> ✔ [2025-08-03 22:53:01] [OKAY] Progressive summary plot created successfully!
+    #> ✔ [2025-08-09 01:48:17] [OKAY] Progressive summary plot created successfully!
 
     plot_gaze_heatmap(
       eyeris = eyeris_preproc,
