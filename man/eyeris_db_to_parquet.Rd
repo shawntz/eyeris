@@ -53,6 +53,14 @@ events, etc.) since each has different columnar structures, then each group
 is split into the specified number of files. Files are organized in folders
 matching the database name for easy identification.
 }
+\section{Database Safety}{
+
+This function creates temporary tables during parquet export when the arrow
+package is not available. All temporary tables are automatically cleaned up,
+but if the process crashes, leftover tables may remain. The function checks
+for and warns about existing temporary tables before starting.
+}
+
 \examples{
 \donttest{
 # create demo database
