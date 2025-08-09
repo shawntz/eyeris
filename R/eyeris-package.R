@@ -31,6 +31,7 @@
 #' @importFrom stats var
 #' @importFrom utils head
 #' @importFrom utils modifyList
+#' @importFrom utils object.size
 #' @importFrom utils write.csv
 #' @importFrom withr with_seed
 ## usethis namespace: end
