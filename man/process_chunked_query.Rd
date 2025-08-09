@@ -42,7 +42,7 @@ con <- eyeris_db_connect("path/to/bids")
 
 # Process large query and write to CSV
 process_chunked_query(
-  con, 
+  con,
   "SELECT * FROM large_table WHERE condition = 'something'",
   chunk_size = 50000,
   output_file = "large_export.csv"
