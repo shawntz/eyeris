@@ -7,6 +7,12 @@
 #' is split into the specified number of files. Files are organized in folders
 #' matching the database name for easy identification.
 #'
+#' @section Database Safety:
+#' This function creates temporary tables during parquet export when the arrow
+#' package is not available. All temporary tables are automatically cleaned up,
+#' but if the process crashes, leftover tables may remain. The function checks
+#' for and warns about existing temporary tables before starting.
+#'
 #' @param bids_dir Path to the BIDS directory containing the database
 #' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
 #' @param n_files_per_type Number of parquet files to create per data type (default: 1)
@@ -119,11 +125,50 @@ eyeris_db_to_parquet <- function(
   # ensure disconnection on exit
   on.exit(eyeris_db_disconnect(con))
 
-  # get all tables and their sizes
+  # helper function for safe temporary table operations
+  safe_temp_table_export <- function(chunk_data, filepath, data_type, file_id) {
+    temp_table <- paste0("temp_export_", data_type, "_", file_id, "_", sample(10000:99999, 1))
+    
+    # ensure cleanup even if export fails
+    on.exit({
+      tryCatch({
+        if (DBI::dbExistsTable(con, temp_table)) {
+          DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+        }
+      }, error = function(e) {
+        log_warn("Failed to cleanup temp table {temp_table}: {e$message}", verbose = verbose)
+      })
+    })
+    
+    # create temp table and export
+    DBI::dbWriteTable(con, temp_table, chunk_data, overwrite = TRUE)
+    DBI::dbExecute(con, glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)"))
+    
+    # manual cleanup (on.exit still provides backup)
+    DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+  }
+
+  # get all tables and filter out temporary tables
   all_tables <- eyeris_db_list_tables(con)
+  
+  # check for and warn about existing temp tables
+  temp_tables <- all_tables[grepl("^temp_", all_tables)]
+  if (length(temp_tables) > 0) {
+    log_warn(
+      "Found {length(temp_tables)} temporary tables in database: {paste(head(temp_tables, 3), collapse = ', ')}{if (length(temp_tables) > 3) '...' else ''}",
+      verbose = TRUE
+    )
+    log_warn(
+      "Temporary tables will be EXCLUDED from export to prevent contamination.",
+      verbose = TRUE
+    )
+  }
+  
+  # filter out temporary tables from export
+  all_tables <- all_tables[!grepl("^temp_", all_tables)]
 
   if (length(all_tables) == 0) {
-    log_warn("No tables found in database", verbose = TRUE)
+    log_warn("No valid tables found in database (after excluding temp tables)", verbose = TRUE)
     return(list(
       files = character(0),
       total_rows = 0,
@@ -132,7 +177,7 @@ eyeris_db_to_parquet <- function(
     ))
   }
 
-  log_info("Found {length(all_tables)} tables in database", verbose = verbose)
+  log_info("Found {length(all_tables)} valid tables in database (excluded {length(temp_tables)} temp tables)", verbose = verbose)
 
   # group tables by data type (extract from table name)
   log_info("Grouping tables by data type...", verbose = verbose)
@@ -267,10 +312,7 @@ eyeris_db_to_parquet <- function(
             if (requireNamespace("arrow", quietly = TRUE)) {
               arrow::write_parquet(chunk, filepath)
             } else {
-              temp_table <- paste0("temp_export_", data_type, "_", part_idx)
-              DBI::dbWriteTable(con, temp_table, chunk, overwrite = TRUE)
-              DBI::dbExecute(con, glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)"))
-              DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+              safe_temp_table_export(chunk, filepath, data_type, part_idx)
             }
             all_created_files <<- c(all_created_files, filepath)
             actual_size_mb <- file.size(filepath) / (1024^2)
@@ -424,14 +466,8 @@ eyeris_db_to_parquet <- function(
           if (requireNamespace("arrow", quietly = TRUE)) {
             arrow::write_parquet(chunk_data, filepath)
           } else {
-            # fallback: use DuckDB to write parquet
-            temp_table <- paste0("temp_export_", data_type, "_", i)
-            DBI::dbWriteTable(con, temp_table, chunk_data, overwrite = TRUE)
-            DBI::dbExecute(
-              con,
-              glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)")
-            )
-            DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+            # fallback: use DuckDB to write parquet with safe temp table handling
+            safe_temp_table_export(chunk_data, filepath, data_type, i)
           }
 
           all_created_files <- c(all_created_files, filepath)
