@@ -230,68 +230,103 @@ eyeris_db_to_parquet <- function(
       # process each label subgroup individually
       for (label_key in names(label_to_tables)) {
         tables_subset <- label_to_tables[[label_key]]
-        # collect data for this subgroup
-        type_data_list <- list()
+        # first pass: count rows per table to determine chunk sizes without loading all data
         type_total_rows <- 0
-        type_total_size_mb <- 0
         for (table in tables_subset) {
-          tryCatch({
-            data <- DBI::dbReadTable(con, table)
-            if (nrow(data) > 0) {
-              type_data_list[[table]] <- data
-              type_total_rows <- type_total_rows + nrow(data)
-              type_total_size_mb <- type_total_size_mb + as.numeric(object.size(data) / (1024^2))
-            }
-          }, error = function(e) {
-            log_warn("Failed to read table '{table}': {e$message}", verbose = verbose)
-          })
+          cnt <- tryCatch({
+            DBI::dbGetQuery(con, paste0('SELECT COUNT(*) as n FROM "', table, '"'))$n
+          }, error = function(e) NA_integer_)
+          if (!is.na(cnt)) type_total_rows <- type_total_rows + as.integer(cnt)
         }
-        if (length(type_data_list) == 0 || type_total_rows == 0) {
-          next
-        }
-        log_info("  {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}]: {type_total_rows} rows (~{round(type_total_size_mb, 1)} MB)", verbose = verbose)
-        combined_type_data <- as.data.frame(data.table::rbindlist(type_data_list, use.names = TRUE, fill = TRUE))
-        # optionally strip metadata
-        if (!include_metadata) {
-          metadata_cols <- c("subject_id","session_id","task_name","data_type","run_number","eye_suffix","epoch_label","created_timestamp")
-          cols_to_remove <- intersect(metadata_cols, colnames(combined_type_data))
-          if (length(cols_to_remove) > 0) combined_type_data <- combined_type_data[, !colnames(combined_type_data) %in% cols_to_remove, drop = FALSE]
-        }
-        # determine file count with size cap
+        if (type_total_rows == 0) next
+        # determine rows per file from target n_files_per_type
         n_files_for_type <- n_files_per_type
-        target_size_per_file <- type_total_size_mb / n_files_for_type
-        if (target_size_per_file > max_file_size) {
-          n_files_for_type <- ceiling(type_total_size_mb / max_file_size)
-          log_info("  Adjusting files for {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}] to {n_files_for_type} due to size", verbose = verbose)
-        }
-        rows_per_file <- ceiling(nrow(combined_type_data) / n_files_for_type)
+        rows_per_file <- ceiling(type_total_rows / n_files_for_type)
+        log_info("  {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}]: {type_total_rows} rows (~size est deferred)", verbose = verbose)
         log_info("  Splitting {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}] into {n_files_for_type} files (~{rows_per_file} rows per file)", verbose = verbose)
-        for (i in 1:n_files_for_type) {
-          start_row <- (i - 1) * rows_per_file + 1
-          end_row <- min(i * rows_per_file, nrow(combined_type_data))
-          if (start_row > nrow(combined_type_data)) break
-          chunk_data <- combined_type_data[start_row:end_row, , drop = FALSE]
+
+        # streaming buffer to avoid holding all tables in memory
+        buffer <- NULL
+        current_cols <- character(0)
+        part_idx <- 1
+        emitted_rows <- 0
+
+        align_cols <- function(df, cols) {
+          missing <- setdiff(cols, colnames(df))
+          for (m in missing) df[[m]] <- NA
+          # also ensure order matches desired cols
+          df <- df[, cols, drop = FALSE]
+          df
+        }
+
+        write_part <- function(chunk) {
           label_component <- if (label_key == "_nolabel") NULL else paste0("_", label_key)
-          filename <- sprintf("%s_%s%s_part-%02d-of-%02d.parquet", db_name, data_type, if (is.null(label_component)) "" else label_component, i, n_files_for_type)
+          filename <- sprintf("%s_%s%s_part-%02d-of-%02d.parquet", db_name, data_type, if (is.null(label_component)) "" else label_component, part_idx, n_files_for_type)
           filepath <- file.path(output_dir, filename)
           tryCatch({
             if (requireNamespace("arrow", quietly = TRUE)) {
-              arrow::write_parquet(chunk_data, filepath)
+              arrow::write_parquet(chunk, filepath)
             } else {
-              temp_table <- paste0("temp_export_", data_type, "_", i)
-              DBI::dbWriteTable(con, temp_table, chunk_data, overwrite = TRUE)
+              temp_table <- paste0("temp_export_", data_type, "_", part_idx)
+              DBI::dbWriteTable(con, temp_table, chunk, overwrite = TRUE)
               DBI::dbExecute(con, glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)"))
               DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
             }
-            all_created_files <- c(all_created_files, filepath)
+            all_created_files <<- c(all_created_files, filepath)
             actual_size_mb <- file.size(filepath) / (1024^2)
-            total_output_size <- total_output_size + actual_size_mb
-            all_file_info[[filename]] <- list(path = filepath, data_type = data_type, epoch_label = if (label_key == "_nolabel") NA_character_ else label_key, rows = nrow(chunk_data), size_mb = actual_size_mb, row_range = c(start_row, end_row), part = i, total_parts = n_files_for_type)
-            log_success("  Created {filename}: {nrow(chunk_data)} rows ({round(actual_size_mb, 1)} MB)", verbose = verbose)
+            total_output_size <<- total_output_size + actual_size_mb
+            all_file_info[[filename]] <<- list(path = filepath, data_type = data_type, epoch_label = if (label_key == "_nolabel") NA_character_ else label_key, rows = nrow(chunk), size_mb = actual_size_mb, part = part_idx, total_parts = n_files_for_type)
+            log_success("  Created {filename}: {nrow(chunk)} rows ({round(actual_size_mb, 1)} MB)", verbose = verbose)
           }, error = function(e) {
             log_warn("Failed to create parquet file {filename}: {e$message}", verbose = verbose)
           })
+          part_idx <<- part_idx + 1
         }
+
+        for (table in tables_subset) {
+          dat <- tryCatch(DBI::dbReadTable(con, table), error = function(e) NULL)
+          if (is.null(dat) || nrow(dat) == 0) next
+          # optionally strip metadata as we go
+          if (!include_metadata) {
+            metadata_cols <- c("subject_id","session_id","task_name","data_type","run_number","eye_suffix","epoch_label","created_timestamp")
+            drop_cols <- intersect(metadata_cols, colnames(dat))
+            if (length(drop_cols) > 0) dat <- dat[, !colnames(dat) %in% drop_cols, drop = FALSE]
+          }
+          # maintain union of columns across tables
+          if (is.null(buffer)) {
+            current_cols <- colnames(dat)
+            buffer <- dat
+          } else {
+            # update union columns
+            new_union <- union(current_cols, colnames(dat))
+            if (!identical(new_union, current_cols)) {
+              # expand buffer and dat to new union
+              if (!identical(colnames(buffer), new_union)) buffer <- align_cols(buffer, union(colnames(buffer), new_union))
+              if (!identical(colnames(dat), new_union)) dat <- align_cols(dat, union(colnames(dat), new_union))
+              current_cols <- new_union
+            }
+            # bind
+            buffer <- rbind(buffer, dat)
+          }
+          # flush full parts
+          while (nrow(buffer) >= rows_per_file) {
+            chunk <- buffer[seq_len(rows_per_file), , drop = FALSE]
+            write_part(chunk)
+            emitted_rows <- emitted_rows + nrow(chunk)
+            # keep remainder in buffer
+            if (nrow(buffer) > rows_per_file) {
+              buffer <- buffer[(rows_per_file + 1):nrow(buffer), , drop = FALSE]
+            } else {
+              buffer <- buffer[0, , drop = FALSE]
+            }
+          }
+        }
+        # write remainder
+        if (!is.null(buffer) && nrow(buffer) > 0) {
+          write_part(buffer)
+          emitted_rows <- emitted_rows + nrow(buffer)
+        }
+
         total_rows <- total_rows + type_total_rows
       }
       next # done with this data type via label grouping
