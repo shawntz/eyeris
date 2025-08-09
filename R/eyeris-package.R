@@ -33,6 +33,7 @@
 #' @importFrom utils modifyList
 #' @importFrom utils object.size
 #' @importFrom utils write.csv
+#' @importFrom utils write.table
 #' @importFrom withr with_seed
 ## usethis namespace: end
 NULL
