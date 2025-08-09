@@ -127,30 +127,46 @@ eyeris_db_to_parquet <- function(
 
   # helper function for safe temporary table operations
   safe_temp_table_export <- function(chunk_data, filepath, data_type, file_id) {
-    temp_table <- paste0("temp_export_", data_type, "_", file_id, "_", sample(10000:99999, 1))
-    
+    temp_table <- paste0(
+      "temp_export_",
+      data_type,
+      "_",
+      file_id,
+      "_",
+      sample(10000:99999, 1)
+    )
+
     # ensure cleanup even if export fails
     on.exit({
-      tryCatch({
-        if (DBI::dbExistsTable(con, temp_table)) {
-          DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+      tryCatch(
+        {
+          if (DBI::dbExistsTable(con, temp_table)) {
+            DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
+          }
+        },
+        error = function(e) {
+          log_warn(
+            "Failed to cleanup temp table {temp_table}: {e$message}",
+            verbose = verbose
+          )
         }
-      }, error = function(e) {
-        log_warn("Failed to cleanup temp table {temp_table}: {e$message}", verbose = verbose)
-      })
+      )
     })
-    
+
     # create temp table and export
     DBI::dbWriteTable(con, temp_table, chunk_data, overwrite = TRUE)
-    DBI::dbExecute(con, glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)"))
-    
+    DBI::dbExecute(
+      con,
+      glue::glue("COPY {temp_table} TO '{filepath}' (FORMAT PARQUET)")
+    )
+
     # manual cleanup (on.exit still provides backup)
     DBI::dbExecute(con, glue::glue("DROP TABLE {temp_table}"))
   }
 
   # get all tables and filter out temporary tables
   all_tables <- eyeris_db_list_tables(con)
-  
+
   # check for and warn about existing temp tables
   temp_tables <- all_tables[grepl("^temp_", all_tables)]
   if (length(temp_tables) > 0) {
@@ -163,12 +179,15 @@ eyeris_db_to_parquet <- function(
       verbose = TRUE
     )
   }
-  
+
   # filter out temporary tables from export
   all_tables <- all_tables[!grepl("^temp_", all_tables)]
 
   if (length(all_tables) == 0) {
-    log_warn("No valid tables found in database (after excluding temp tables)", verbose = TRUE)
+    log_warn(
+      "No valid tables found in database (after excluding temp tables)",
+      verbose = TRUE
+    )
     return(list(
       files = character(0),
       total_rows = 0,
@@ -177,7 +196,10 @@ eyeris_db_to_parquet <- function(
     ))
   }
 
-  log_info("Found {length(all_tables)} valid tables in database (excluded {length(temp_tables)} temp tables)", verbose = verbose)
+  log_info(
+    "Found {length(all_tables)} valid tables in database (excluded {length(temp_tables)} temp tables)",
+    verbose = verbose
+  )
 
   # group tables by data type (extract from table name)
   log_info("Grouping tables by data type...", verbose = verbose)
@@ -228,10 +250,21 @@ eyeris_db_to_parquet <- function(
     extract_epoch_label <- function(table_name) {
       # try reading metadata column quickly
       label <- NA_character_
-      got <- try({
-        DBI::dbGetQuery(con, paste0('SELECT epoch_label FROM "', table_name, '" LIMIT 1'))
-      }, silent = TRUE)
-      if (!inherits(got, "try-error") && is.data.frame(got) && nrow(got) > 0 && "epoch_label" %in% names(got)) {
+      got <- try(
+        {
+          DBI::dbGetQuery(
+            con,
+            paste0('SELECT epoch_label FROM "', table_name, '" LIMIT 1')
+          )
+        },
+        silent = TRUE
+      )
+      if (
+        !inherits(got, "try-error") &&
+          is.data.frame(got) &&
+          nrow(got) > 0 &&
+          "epoch_label" %in% names(got)
+      ) {
         label <- got$epoch_label[[1]]
       }
       if (!is.na(label) && !is.null(label) && nzchar(label)) {
@@ -240,11 +273,23 @@ eyeris_db_to_parquet <- function(
       # fallback to pattern-based extraction
       lbl <- NA_character_
       if (grepl('^epochs_', table_name)) {
-        lbl <- sub('^epochs_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+        lbl <- sub(
+          '^epochs_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+          '\\1',
+          table_name
+        )
       } else if (grepl('^confounds_(events|summary)_', table_name)) {
-        lbl <- sub('^confounds_(?:events|summary)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+        lbl <- sub(
+          '^confounds_(?:events|summary)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+          '\\1',
+          table_name
+        )
       } else if (grepl('^epoch_(summary|timeseries)_', table_name)) {
-        lbl <- sub('^epoch_(?:summary|timeseries)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+        lbl <- sub(
+          '^epoch_(?:summary|timeseries)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+          '\\1',
+          table_name
+        )
       }
       if (!is.na(lbl) && !identical(lbl, table_name)) {
         return(tolower(lbl))
@@ -265,11 +310,16 @@ eyeris_db_to_parquet <- function(
           next
         }
         key <- if (is.na(lbl) || !nzchar(lbl)) "_nolabel" else lbl
-        if (is.null(label_to_tables[[key]])) label_to_tables[[key]] <- character(0)
+        if (is.null(label_to_tables[[key]])) {
+          label_to_tables[[key]] <- character(0)
+        }
         label_to_tables[[key]] <- c(label_to_tables[[key]], table)
       }
       if (length(label_to_tables) == 0) {
-        log_warn("No data found for data type: {data_type} after epoch label filtering", verbose = verbose)
+        log_warn(
+          "No data found for data type: {data_type} after epoch label filtering",
+          verbose = verbose
+        )
         next
       }
       # process each label subgroup individually
@@ -278,17 +328,31 @@ eyeris_db_to_parquet <- function(
         # first pass: count rows per table to determine chunk sizes without loading all data
         type_total_rows <- 0
         for (table in tables_subset) {
-          cnt <- tryCatch({
-            DBI::dbGetQuery(con, paste0('SELECT COUNT(*) as n FROM "', table, '"'))$n
-          }, error = function(e) NA_integer_)
+          cnt <- tryCatch(
+            {
+              DBI::dbGetQuery(
+                con,
+                paste0('SELECT COUNT(*) as n FROM "', table, '"')
+              )$n
+            },
+            error = function(e) NA_integer_
+          )
           if (!is.na(cnt)) type_total_rows <- type_total_rows + as.integer(cnt)
         }
-        if (type_total_rows == 0) next
+        if (type_total_rows == 0) {
+          next
+        }
         # determine rows per file from target n_files_per_type
         n_files_for_type <- n_files_per_type
         rows_per_file <- ceiling(type_total_rows / n_files_for_type)
-        log_info("  {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}]: {type_total_rows} rows (~size est deferred)", verbose = verbose)
-        log_info("  Splitting {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}] into {n_files_for_type} files (~{rows_per_file} rows per file)", verbose = verbose)
+        log_info(
+          "  {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}]: {type_total_rows} rows (~size est deferred)",
+          verbose = verbose
+        )
+        log_info(
+          "  Splitting {data_type}[{if (label_key == '_nolabel') 'nolabel' else label_key}] into {n_files_for_type} files (~{rows_per_file} rows per file)",
+          verbose = verbose
+        )
 
         # streaming buffer to avoid holding all tables in memory
         buffer <- NULL
@@ -298,41 +362,90 @@ eyeris_db_to_parquet <- function(
 
         align_cols <- function(df, cols) {
           missing <- setdiff(cols, colnames(df))
-          for (m in missing) df[[m]] <- NA
+          for (m in missing) {
+            df[[m]] <- NA
+          }
           # also ensure order matches desired cols
           df <- df[, cols, drop = FALSE]
           df
         }
 
         write_part <- function(chunk) {
-          label_component <- if (label_key == "_nolabel") NULL else paste0("_", label_key)
-          filename <- sprintf("%s_%s%s_part-%02d-of-%02d.parquet", db_name, data_type, if (is.null(label_component)) "" else label_component, part_idx, n_files_for_type)
+          label_component <- if (label_key == "_nolabel") {
+            NULL
+          } else {
+            paste0("_", label_key)
+          }
+          filename <- sprintf(
+            "%s_%s%s_part-%02d-of-%02d.parquet",
+            db_name,
+            data_type,
+            if (is.null(label_component)) "" else label_component,
+            part_idx,
+            n_files_for_type
+          )
           filepath <- file.path(output_dir, filename)
-          tryCatch({
-            if (requireNamespace("arrow", quietly = TRUE)) {
-              arrow::write_parquet(chunk, filepath)
-            } else {
-              safe_temp_table_export(chunk, filepath, data_type, part_idx)
+          tryCatch(
+            {
+              if (requireNamespace("arrow", quietly = TRUE)) {
+                arrow::write_parquet(chunk, filepath)
+              } else {
+                safe_temp_table_export(chunk, filepath, data_type, part_idx)
+              }
+              all_created_files <<- c(all_created_files, filepath)
+              actual_size_mb <- file.size(filepath) / (1024^2)
+              total_output_size <<- total_output_size + actual_size_mb
+              all_file_info[[filename]] <<- list(
+                path = filepath,
+                data_type = data_type,
+                epoch_label = if (label_key == "_nolabel") {
+                  NA_character_
+                } else {
+                  label_key
+                },
+                rows = nrow(chunk),
+                size_mb = actual_size_mb,
+                part = part_idx,
+                total_parts = n_files_for_type
+              )
+              log_success(
+                "  Created {filename}: {nrow(chunk)} rows ({round(actual_size_mb, 1)} MB)",
+                verbose = verbose
+              )
+            },
+            error = function(e) {
+              log_warn(
+                "Failed to create parquet file {filename}: {e$message}",
+                verbose = verbose
+              )
             }
-            all_created_files <<- c(all_created_files, filepath)
-            actual_size_mb <- file.size(filepath) / (1024^2)
-            total_output_size <<- total_output_size + actual_size_mb
-            all_file_info[[filename]] <<- list(path = filepath, data_type = data_type, epoch_label = if (label_key == "_nolabel") NA_character_ else label_key, rows = nrow(chunk), size_mb = actual_size_mb, part = part_idx, total_parts = n_files_for_type)
-            log_success("  Created {filename}: {nrow(chunk)} rows ({round(actual_size_mb, 1)} MB)", verbose = verbose)
-          }, error = function(e) {
-            log_warn("Failed to create parquet file {filename}: {e$message}", verbose = verbose)
-          })
+          )
           part_idx <<- part_idx + 1
         }
 
         for (table in tables_subset) {
-          dat <- tryCatch(DBI::dbReadTable(con, table), error = function(e) NULL)
-          if (is.null(dat) || nrow(dat) == 0) next
+          dat <- tryCatch(DBI::dbReadTable(con, table), error = function(e) {
+            NULL
+          })
+          if (is.null(dat) || nrow(dat) == 0) {
+            next
+          }
           # optionally strip metadata as we go
           if (!include_metadata) {
-            metadata_cols <- c("subject_id","session_id","task_name","data_type","run_number","eye_suffix","epoch_label","created_timestamp")
+            metadata_cols <- c(
+              "subject_id",
+              "session_id",
+              "task_name",
+              "data_type",
+              "run_number",
+              "eye_suffix",
+              "epoch_label",
+              "created_timestamp"
+            )
             drop_cols <- intersect(metadata_cols, colnames(dat))
-            if (length(drop_cols) > 0) dat <- dat[, !colnames(dat) %in% drop_cols, drop = FALSE]
+            if (length(drop_cols) > 0) {
+              dat <- dat[, !colnames(dat) %in% drop_cols, drop = FALSE]
+            }
           }
           # maintain union of columns across tables
           if (is.null(buffer)) {
@@ -343,8 +456,12 @@ eyeris_db_to_parquet <- function(
             new_union <- union(current_cols, colnames(dat))
             if (!identical(new_union, current_cols)) {
               # expand buffer and dat to new union
-              if (!identical(colnames(buffer), new_union)) buffer <- align_cols(buffer, union(colnames(buffer), new_union))
-              if (!identical(colnames(dat), new_union)) dat <- align_cols(dat, union(colnames(dat), new_union))
+              if (!identical(colnames(buffer), new_union)) {
+                buffer <- align_cols(buffer, union(colnames(buffer), new_union))
+              }
+              if (!identical(colnames(dat), new_union)) {
+                dat <- align_cols(dat, union(colnames(dat), new_union))
+              }
               current_cols <- new_union
             }
             # bind
@@ -379,23 +496,37 @@ eyeris_db_to_parquet <- function(
     type_total_rows <- 0
     type_total_size_mb <- 0
     for (table in tables_for_type) {
-      tryCatch({
-        data <- DBI::dbReadTable(con, table)
-        if (nrow(data) > 0) {
-          type_data_list[[table]] <- data
-          type_total_rows <- type_total_rows + nrow(data)
-          type_total_size_mb <- type_total_size_mb + as.numeric(object.size(data) / (1024^2))
+      tryCatch(
+        {
+          data <- DBI::dbReadTable(con, table)
+          if (nrow(data) > 0) {
+            type_data_list[[table]] <- data
+            type_total_rows <- type_total_rows + nrow(data)
+            type_total_size_mb <- type_total_size_mb +
+              as.numeric(object.size(data) / (1024^2))
+          }
+        },
+        error = function(e) {
+          log_warn(
+            "Failed to read table '{table}': {e$message}",
+            verbose = verbose
+          )
         }
-      }, error = function(e) {
-        log_warn("Failed to read table '{table}': {e$message}", verbose = verbose)
-      })
+      )
     }
     if (length(type_data_list) == 0 || type_total_rows == 0) {
       log_warn("No data found for data type: {data_type}", verbose = verbose)
       next
     }
-    log_info("  {data_type}: {type_total_rows} rows (~{round(type_total_size_mb, 1)} MB)", verbose = verbose)
-    combined_type_data <- as.data.frame(data.table::rbindlist(type_data_list, use.names = TRUE, fill = TRUE))
+    log_info(
+      "  {data_type}: {type_total_rows} rows (~{round(type_total_size_mb, 1)} MB)",
+      verbose = verbose
+    )
+    combined_type_data <- as.data.frame(data.table::rbindlist(
+      type_data_list,
+      use.names = TRUE,
+      fill = TRUE
+    ))
 
     # optionally remove eyeris metadata columns for cleaner output
     if (!include_metadata) {
