@@ -12,7 +12,9 @@ eyeris_db_to_parquet(
   max_file_size = 512,
   data_types = NULL,
   verbose = TRUE,
-  include_metadata = TRUE
+  include_metadata = TRUE,
+  epoch_labels = NULL,
+  group_by_epoch_label = TRUE
 )
 }
 \arguments{
@@ -33,6 +35,12 @@ Valid types: "timeseries", "epochs", "epoch_summary", "events", "blinks", "confo
 \item{verbose}{Whether to print progress messages (default: TRUE)}
 
 \item{include_metadata}{Whether to include eyeris metadata columns in output (default: TRUE)}
+
+\item{epoch_labels}{Optional character vector of epoch labels to include (e.g., "prepostprobe").
+Only applies to epoch-related data types. If NULL, includes all labels.}
+
+\item{group_by_epoch_label}{If TRUE, processes epoch-related data types separately by epoch label
+to reduce memory footprint and produce label-specific parquet files (default: TRUE).}
 }
 \value{
 List containing information about created parquet files
