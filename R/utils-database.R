@@ -1648,8 +1648,19 @@ eyeris_db_to_chunked_files <- function(
 
   # get available data types
   all_tables <- eyeris_db_list_tables(con)
+  
+  # filter out temporary tables to prevent contamination  
+  temp_tables <- all_tables[grepl("^temp_", all_tables)]
+  if (length(temp_tables) > 0) {
+    log_warn(
+      "Found {length(temp_tables)} temporary tables in database - these will be EXCLUDED from export",
+      verbose = verbose
+    )
+  }
+  all_tables <- all_tables[!grepl("^temp_", all_tables)]
+  
   if (length(all_tables) == 0) {
-    log_warn("No tables found in database", verbose = verbose)
+    log_warn("No valid tables found in database (after excluding temp tables)", verbose = verbose)
     return(list(files = character(0), total_rows = 0))
   }
 
