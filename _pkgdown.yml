@@ -121,6 +121,8 @@ reference:
       - eyeris_db_disconnect
       - eyeris_db_read
       - eyeris_db_list_tables
+      - eyeris_db_to_parquet
+      - read_eyeris_parquet
 
   - title: "🔧 Preprocessing Steps"
     desc: >
