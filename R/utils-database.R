@@ -1432,8 +1432,10 @@ merge_temp_database <- function(
 #' @return List containing summary information about the chunked processing
 #'
 #' @examples
-#' \donttest{
-#' con <- eyeris_db_connect("path/to/bids")
+#' \dontrun{
+#' # These examples require an existing eyeris database
+#'
+#' con <- eyeris_db_connect("/path/to/bids", "my-project")
 #'
 #' # Process large query and write to CSV
 #' process_chunked_query(
@@ -1681,7 +1683,7 @@ process_chunked_query <- function(
 #'
 #' @param bids_dir Path to the BIDS directory containing the database
 #' @param db_path Database name (defaults to "my-project", becomes "my-project.eyerisdb")
-#' @param output_dir Directory to save output files (defaults to bids_dir/derivatives/chunked_export)
+#' @param output_dir Directory to save output files (defaults to bids_dir/derivatives/eyerisdb_export)
 #' @param chunk_size Number of rows to process per chunk (default: 1000000)
 #' @param file_format Output format: "csv" or "parquet" (default: "csv")
 #' @param data_types Vector of data types to export. If NULL (default), exports all available
@@ -1693,23 +1695,29 @@ process_chunked_query <- function(
 #' @return List containing information about exported files
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' # These examples require an existing eyeris database
+#'
 #' # Export entire database to CSV files
-#' export_info <- eyeris_db_to_chunked_files(
-#'   bids_dir = "/path/to/bids",
-#'   db_path = "large-project",
-#'   chunk_size = 50000,
-#'   file_format = "csv"
-#' )
+#' if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+#'   export_info <- eyeris_db_to_chunked_files(
+#'     bids_dir = tempdir(),
+#'     db_path = "large-project",
+#'     chunk_size = 50000,
+#'     file_format = "csv"
+#'   )
+#' }
 #'
 #' # Export specific data types to Parquet
-#' export_info <- eyeris_db_to_chunked_files(
-#'   bids_dir = "/path/to/bids",
-#'   db_path = "large-project",
-#'   data_types = c("timeseries", "events"),
-#'   file_format = "parquet",
-#'   chunk_size = 75000
-#' )
+#' if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+#'   export_info <- eyeris_db_to_chunked_files(
+#'     bids_dir = tempdir(),
+#'     db_path = "large-project",
+#'     data_types = c("timeseries", "events"),
+#'     file_format = "parquet",
+#'     chunk_size = 75000
+#'   )
+#' }
 #' }
 #'
 #' @export
@@ -1740,7 +1748,7 @@ eyeris_db_to_chunked_files <- function(
   # setup output directory
   db_name <- gsub("\\.eyerisdb$", "", basename(db_path))
   if (is.null(output_dir)) {
-    output_dir <- file.path(bids_dir, "derivatives", "chunked_export", db_name)
+    output_dir <- file.path(bids_dir, "derivatives", "eyerisdb_export", db_name)
   }
 
   if (!dir.exists(output_dir)) {
