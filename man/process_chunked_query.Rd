@@ -37,8 +37,10 @@ Handles really large databases by processing queries in reasonably sized chunks
 to avoid memory issues. Data can be written to CSV or Parquet files as it's processed.
 }
 \examples{
-\donttest{
-con <- eyeris_db_connect("path/to/bids")
+\dontrun{
+# These examples require an existing eyeris database
+
+con <- eyeris_db_connect("/path/to/bids", "my-project")
 
 # Process large query and write to CSV
 process_chunked_query(
