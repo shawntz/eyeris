@@ -58,14 +58,14 @@ Using the `eyeris_db_to_chunked_files()` function defaults, this will:
 - Process `1 million rows` at a time (i.e., the default chunk size)
 - Create files up to `500MB` each (i.e., the default max file size)
 - Export all data types found in your database
-- Save files to `bids_dir/derivatives/chunked_export/my-proj/`
+- Save files to `bids_dir/derivatives/eyerisdb_export/my-proj/`
 
 ### Understanding the Output Structure
 
 The function creates organized output files:
 
 ```
-derivatives/chunked_export/my-proj/
+derivatives/eyerisdb_export/my-proj/
 ├── my-proj_timeseries_chunked_01.csv        # Single file (< 500MB)
 ├── my-proj_events_chunked_01-of-02.csv      # Multiple files due to size
 ├── my-proj_events_chunked_02-of-02.csv
@@ -158,7 +158,7 @@ When files are split due to size limits, you can recombine them:
 ```{r combine-files}
 # Find all parts of a split dataset
 files <- list.files(
-  "path/to/chunked_export/my-project/", 
+  "path/to/eyerisdb_export/my-project/", 
   pattern = "timeseries_chunked_.*\\.csv$", 
   full.names = TRUE
 )
@@ -168,7 +168,7 @@ combined_data <- do.call(rbind, lapply(files, read.csv))
 
 # Or use the built-in helper function
 combined_data <- read_eyeris_parquet(
-  parquet_dir = "path/to/chunked_export/my-project/",
+  parquet_dir = "path/to/eyerisdb_export/my-project/",
   data_type = "timeseries"
 )
 ```
