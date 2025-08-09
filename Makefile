@@ -123,3 +123,33 @@ clean:
 	@echo "[INFO] Cleaning up eyeris package build directory..."
 	rm -rf build 2>/dev/null || true
 	@echo "[OKAY] eyeris build directory cleaned!\n"
+
+# parquet conversion target -------------------------------------------------
+.PHONY: parquet
+parquet:
+	@echo "Usage: make parquet bids=/path/to/BIDS [db=<name>|session=enc|ret] [n=1] [max=512]"
+	@echo "       - Pass db directly, or use session to map to a db name"
+	@echo ""
+	@if [ -z "$(bids)" ]; then \
+		echo "❌ Error: Missing required argument: bids=/path/to/BIDS"; \
+		echo "Usage: make parquet bids=/path/to/BIDS [db=<name>|session=enc|ret] [n=1] [max=512]"; \
+		exit 1; \
+	fi; \
+	# Resolve DB name: prefer explicit db=..., else map session→db; require one
+	if [ -n "$(db)" ]; then \
+		db_resolved="$(db)"; \
+	elif [ -n "$(session)" ]; then \
+		case "$(session)" in \
+			enc) db_resolved=clamp-enc ;; \
+			ret) db_resolved=clamp-ret ;; \
+			*) echo "❌ Error: Invalid session '$(session)'. Use enc|ret"; exit 1 ;; \
+		esac; \
+	else \
+		echo "❌ Error: Provide either db=<name> or session=enc|ret"; exit 1; \
+	fi; \
+	n_val=$${n:-1}; \
+	max_val=$${max:-512}; \
+	echo "Running eyerisdb → parquet (db: $$db_resolved, files: $$n_val, maxMB: $$max_val, types: $(types))" && \
+	N_FILES="$$n_val" MAX_MB="$$max_val" DB="$$db_resolved" BIDS="$(bids)" TYPES="$(types)" \
+	Rscript -e "types <- Sys.getenv('TYPES'); types <- if (nzchar(types)) strsplit(types, ',')[[1]] else NULL; res <- eyeris::eyeris_db_to_parquet(bids_dir=Sys.getenv('BIDS'), db_path=Sys.getenv('DB'), n_files_per_type=as.integer(Sys.getenv('N_FILES')), max_file_size=as.numeric(Sys.getenv('MAX_MB')), data_types=types); cat('✔ Created', length(res$files), 'files in', res$output_dir, '\n')" && \
+	echo "Done!"
