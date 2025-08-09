@@ -1043,7 +1043,7 @@ eyeris_db_summary <- function(
       task_part <- parts[4]
 
       # standardize subject format
-      if (grepl("^\\d+$", subject_num)) {
+      if (grepl(SUBJECT_NUM_PATTERN, subject_num)) {
         subject_id <- paste0("sub-", sprintf("%02d", as.numeric(subject_num)))
         subjects <- c(subjects, subject_id)
       }
