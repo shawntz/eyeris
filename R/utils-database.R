@@ -990,46 +990,95 @@ eyeris_db_summary <- function(
   # parse table names to extract metadata
   # table name format: datatype_subject_session_task_run[_epochlabel][_eyesuffix]
 
-  # extract data types
-  data_types <- unique(gsub("^([^_]+)_.*", "\\1", all_tables))
+  # extract data types properly - handle compound types like "confounds_events"
+  # filter out temp tables first
+  all_tables <- all_tables[!grepl("^temp_", all_tables)]
 
-  # get unique subjects, sessions, tasks by querying a sample of tables
+  data_types <- character(0)
+  known_compound_types <- c(
+    "confounds_events",
+    "confounds_summary",
+    "epoch_summary",
+    "epoch_timeseries"
+  )
+
+  for (table in all_tables) {
+    # check for compound types first
+    matched_type <- NULL
+    for (compound_type in known_compound_types) {
+      if (grepl(paste0("^", compound_type, "_\\d+"), table)) {
+        matched_type <- compound_type
+        break
+      }
+    }
+
+    # if no compound type matched, use first part before number
+    if (is.null(matched_type)) {
+      # match pattern: datatype_NUMBER or datatype_more_parts_NUMBER
+      matched_type <- gsub("^(.+?)_\\d+.*", "\\1", table)
+    }
+
+    if (!is.null(matched_type) && matched_type != table) {
+      data_types <- c(data_types, matched_type)
+    }
+  }
+  data_types <- unique(data_types)
+
+  # extract subjects, sessions, tasks from TIMESERIES tables only for consistency
+  timeseries_tables <- all_tables[grepl("^timeseries_", all_tables)]
   subjects <- character(0)
   sessions <- character(0)
   tasks <- character(0)
   eye_suffixes <- character(0)
   table_counts <- integer(0)
 
-  # sample a few tables to get metadata (i.e., avoid querying every table for performance)
-  sample_tables <- head(all_tables, min(10, length(all_tables)))
+  for (table in timeseries_tables) {
+    # parse: timeseries_SUBJECT_SESSION_TASK_runXX
+    parts <- strsplit(table, "_")[[1]]
 
-  for (table in sample_tables) {
-    tryCatch(
-      {
-        # query just one row to get metadata
-        sample_data <- DBI::dbGetQuery(
-          con,
-          paste0("SELECT * FROM \"", table, "\" LIMIT 1")
-        )
-        if (nrow(sample_data) > 0) {
-          if ("subject_id" %in% colnames(sample_data)) {
-            subjects <- c(subjects, sample_data$subject_id)
-          }
-          if ("session_id" %in% colnames(sample_data)) {
-            sessions <- c(sessions, sample_data$session_id)
-          }
-          if ("task_name" %in% colnames(sample_data)) {
-            tasks <- c(tasks, sample_data$task_name)
-          }
-          if ("eye_suffix" %in% colnames(sample_data)) {
-            eye_suffixes <- c(eye_suffixes, sample_data$eye_suffix)
-          }
-        }
-      },
-      error = function(e) {
-        # skip tables that can't be queried
+    if (length(parts) >= 5) {
+      # timeseries_subject_session_task_runXX
+      subject_num <- parts[2]
+      session_part <- parts[3]
+      task_part <- parts[4]
+
+      # standardize subject format
+      if (grepl("^\\d+$", subject_num)) {
+        subject_id <- paste0("sub-", sprintf("%02d", as.numeric(subject_num)))
+        subjects <- c(subjects, subject_id)
       }
-    )
+
+      # standardize session format
+      session_id <- paste0("ses-", session_part)
+      sessions <- c(sessions, session_id)
+
+      # task name
+      tasks <- c(tasks, task_part)
+    }
+  }
+
+  # extract epoch labels from epochs tables
+  epoch_tables <- all_tables[grepl("^epochs_", all_tables)]
+  epoch_labels <- character(0)
+
+  for (table in epoch_tables) {
+    # parse: epochs_SUBJECT_SESSION_TASK_runXX_EPOCHLABEL
+    parts <- strsplit(table, "_")[[1]]
+
+    if (length(parts) >= 6) {
+      # epochs_subject_session_task_runXX_epochlabel
+      epoch_label <- parts[6]
+      # check for additional parts (might have eye suffix)
+      if (length(parts) > 6) {
+        # check if last part is eye suffix
+        last_part <- parts[length(parts)]
+        if (!grepl("^eye[LR]$|^eye-[LR]$", last_part)) {
+          # include additional parts in epoch label
+          epoch_label <- paste(parts[6:length(parts)], collapse = "_")
+        }
+      }
+      epoch_labels <- c(epoch_labels, epoch_label)
+    }
   }
 
   # get row counts for each table
@@ -1049,17 +1098,19 @@ eyeris_db_summary <- function(
   }
 
   # remove duplicates and NAs
-  subjects <- unique(subjects[!is.na(subjects)])
-  sessions <- unique(sessions[!is.na(sessions)])
-  tasks <- unique(tasks[!is.na(tasks)])
-  eye_suffixes <- unique(eye_suffixes[!is.na(eye_suffixes)])
+  subjects <- sort(unique(subjects[!is.na(subjects)]))
+  sessions <- sort(unique(sessions[!is.na(sessions)]))
+  tasks <- sort(unique(tasks[!is.na(tasks)]))
+  eye_suffixes <- sort(unique(eye_suffixes[!is.na(eye_suffixes)]))
+  epoch_labels <- sort(unique(epoch_labels[!is.na(epoch_labels)]))
 
   result <- list(
-    subjects = sort(subjects),
-    sessions = sort(sessions),
-    tasks = sort(tasks),
+    subjects = subjects,
+    sessions = sessions,
+    tasks = tasks,
     data_types = sort(data_types),
-    eye_suffixes = sort(eye_suffixes),
+    eye_suffixes = eye_suffixes,
+    epoch_labels = epoch_labels,
     table_counts = table_counts,
     total_tables = length(all_tables)
   )
@@ -1085,6 +1136,12 @@ eyeris_db_summary <- function(
   if (length(result$eye_suffixes) > 0) {
     log_info(
       "  Eye suffixes: {length(result$eye_suffixes)} ({paste(result$eye_suffixes, collapse = ', ')})",
+      verbose = verbose
+    )
+  }
+  if (length(result$epoch_labels) > 0) {
+    log_info(
+      "  Epoch labels: {length(result$epoch_labels)} ({paste(result$epoch_labels, collapse = ', ')})",
       verbose = verbose
     )
   }
