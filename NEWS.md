@@ -4,6 +4,19 @@
 
 _Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
 
+- **NF**: **Large-scale database export functionality**. Added `eyeris_db_to_chunked_files()` and `process_chunked_query()` functions to handle really large `eyerisdb` databases by processing data in configurable chunks (default `1M rows`) with automatic file size limits (default `500MB`) and numbered file splitting (`_01-of-N` pattern). Supports both `CSV` and `Parquet` output formats with memory-efficient streaming processing, by @shawntz in #266.
+
+  > **Key Features:**
+  > - **Chunked Processing**: Handles databases of any size without memory issues using configurable chunk sizes
+  > - **Automatic File Splitting**: Creates numbered files when size limits exceeded (e.g., `data_01-of-03.csv`)
+  > - **Smart Schema Grouping**: Dynamically groups tables by column structure to prevent SQL UNION errors
+  > - **Database Safety**: Comprehensive temp table cleanup and contamination prevention
+  > - **Comprehensive Documentation**: Detailed vignette with real-world examples and troubleshooting
+  
+- **ENH**: **Improved database summary performance**. `eyeris_db_summary()` now extracts subject/session/task information directly from table names instead of sampling database contents, providing complete coverage of all subjects and much faster execution, by @shawntz in #266.
+
+- **ENH**: **Enhanced temp table safety**. All database export functions now automatically detect, warn about, and exclude temporary tables from processing. Added safe temporary table operations with guaranteed cleanup even on process crashes, by @shawntz in #266.
+
 - **NF**: Robust parquet export/read for `eyerisdb` mixed schemas. `eyeris_db_to_parquet()` and `read_eyeris_parquet()` now combine tables/files using schema-aligned binding (by column name; fill missing) via `data.table::rbindlist(use.names = TRUE, fill = TRUE)`. Fixes "numbers of columns of arguments do not match" when different `epochs_*` tables have slightly different columns, by @shawntz in #266.
 
 # eyeris 2.1.1.9005 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
