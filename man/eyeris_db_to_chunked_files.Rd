@@ -21,7 +21,7 @@ eyeris_db_to_chunked_files(
 
 \item{db_path}{Database name (defaults to "my-project", becomes "my-project.eyerisdb")}
 
-\item{output_dir}{Directory to save output files (defaults to bids_dir/derivatives/chunked_export)}
+\item{output_dir}{Directory to save output files (defaults to bids_dir/derivatives/eyerisdb_export)}
 
 \item{chunk_size}{Number of rows to process per chunk (default: 1000000)}
 
@@ -44,23 +44,29 @@ High-level wrapper function to export large eyeris databases to chunked CSV or P
 by data type. Uses chunked processing to handle very large datasets without memory issues.
 }
 \examples{
-\donttest{
+\dontrun{
+# These examples require an existing eyeris database
+
 # Export entire database to CSV files
-export_info <- eyeris_db_to_chunked_files(
-  bids_dir = "/path/to/bids",
-  db_path = "large-project",
-  chunk_size = 50000,
-  file_format = "csv"
-)
+if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+  export_info <- eyeris_db_to_chunked_files(
+    bids_dir = tempdir(),
+    db_path = "large-project",
+    chunk_size = 50000,
+    file_format = "csv"
+  )
+}
 
 # Export specific data types to Parquet
-export_info <- eyeris_db_to_chunked_files(
-  bids_dir = "/path/to/bids",
-  db_path = "large-project",
-  data_types = c("timeseries", "events"),
-  file_format = "parquet",
-  chunk_size = 75000
-)
+if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+  export_info <- eyeris_db_to_chunked_files(
+    bids_dir = tempdir(),
+    db_path = "large-project",
+    data_types = c("timeseries", "events"),
+    file_format = "parquet",
+    chunk_size = 75000
+  )
+}
 }
 
 }
