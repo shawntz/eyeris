@@ -12,7 +12,7 @@ eyeris_db_to_chunked_files(
   file_format = "csv",
   data_types = NULL,
   subjects = NULL,
-  max_file_size_mb = 500,
+  max_file_size_mb = 50,
   verbose = TRUE
 )
 }
@@ -31,7 +31,7 @@ eyeris_db_to_chunked_files(
 
 \item{subjects}{Vector of subject IDs to include. If NULL (default), includes all subjects}
 
-\item{max_file_size_mb}{Maximum file size in MB per output file (default: 500). When exceeded,
+\item{max_file_size_mb}{Maximum file size in MB per output file (default: 50). When exceeded,
 automatically creates numbered files (e.g., data_01-of-03.csv, data_02-of-03.csv)}
 
 \item{verbose}{Whether to print progress messages (default: TRUE)}
