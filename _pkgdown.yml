@@ -4,6 +4,12 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST DEV RELEASES"
+    - text: "v2.1.1.9006 (devel)"
+      href: news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess
+    - text: "v2.1.1.9005 (devel)"
+      href: news/index.html#eyeris-2119005-lumpy-space-princess-lumpy-space-princess
+    - text: "v2.1.1.9004 (devel)"
+      href: news/index.html#eyeris-2119004-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9003 (devel)"
       href: news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9002 (devel)"
@@ -121,6 +127,10 @@ reference:
       - eyeris_db_disconnect
       - eyeris_db_read
       - eyeris_db_list_tables
+      - eyeris_db_to_chunked_files
+      - eyeris_db_to_parquet
+      - read_eyeris_parquet
+      - process_chunked_query
 
   - title: "🔧 Preprocessing Steps"
     desc: >
@@ -165,4 +175,5 @@ articles:
     - anatomy
     - custom-extensions
     - database-guide
+    - chunked-database-export
     - internal-api

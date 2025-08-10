@@ -1,0 +1,316 @@
+---
+title: "Chunked eyerisdb Database Export for Large Datasets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chunked eyerisdb Database Export for Large Datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+```{r setup, include=FALSE}
+library(eyeris)
+```
+
+## Introduction
+
+When working with large `eyeris` databases containing millions of eye-tracking data points, traditional export methods can run into memory limitations or create unwieldy files. The chunked database export functionality in `eyeris` provides an out-of-the-box solution for handling really large `eyerisdb` databases by:
+
+- **Processing data in chunks** to avoid memory issues
+- **Automatically splitting large files** based on size limits
+- **Grouping tables by column structure** to prevent SQL errors
+- **Supporting both `CSV` and `Parquet` formats** for optimal performance
+
+This vignette walks through how to use these features after you've created an `eyerisdb` database using `bidsify(db_enabled = TRUE)`.
+
+## Prerequisites
+
+Before using the chunked export functions, you need:
+
+1. An `eyerisdb` database created with `bidsify(db_enabled = TRUE)`
+2. The `arrow` package installed (for Parquet support): `install.packages("arrow")` (`arrow` is included when installing `eyeris` from CRAN)
+3. Sufficient disk space for the exported files
+
+## Basic Usage
+
+### Simple Export with Default Settings
+
+The easiest way to export your entire database is with `eyeris_db_to_chunked_files()`:
+
+```{r basic-export}
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/your/bids/directory",
+  db_path = "my-project"  # your database name
+)
+
+# view what was exported
+print(result)
+```
+
+Using the `eyeris_db_to_chunked_files()` function defaults, this will:
+- Process `1 million rows` at a time (i.e., the default chunk size)
+- Create files up to `500MB` each (i.e., the default max file size)
+- Export all data types found in your database
+- Save files to `bids_dir/derivatives/eyerisdb_export/my-proj/`
+
+### Understanding the Output Structure
+
+The function creates organized output files:
+
+```
+derivatives/eyerisdb_export/my-proj/
+├── my-proj_timeseries_chunked_01.csv        # Single file (< 500MB)
+├── my-proj_events_chunked_01-of-02.csv      # Multiple files due to size
+├── my-proj_events_chunked_02-of-02.csv
+├── my-proj_confounds_summary_goal_chunked_01.csv   # Grouped by schema
+├── my-proj_confounds_summary_stim_chunked_01.csv   # Different column structure
+├── my-proj_confounds_events_chunked_01.csv
+├── my-proj_epoch_summary_chunked_01.csv
+└── my-proj_epochs_pregoal_chunked_01-of-03.csv     # Epoch-specific data
+```
+
+## Advanced Configuration
+
+### Controlling File Sizes
+
+You can customize the maximum file size to create smaller, more manageable files:
+
+```{r file-size-control}
+# Create smaller files for easy distribution
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/bids",
+  db_path = "large-project",
+  max_file_size_mb = 100,    # 100MB files instead of 500MB
+  chunk_size = 500000        # Process 500k rows at a time
+)
+```
+
+This is particularly useful when:
+- Uploading to cloud storage with size/transfer bandwidth limits
+- Sharing data via email or file transfer services
+- Working with limited storage space
+
+### Exporting Specific Data Types
+
+For large databases, you may only need certain types of data:
+
+```{r selective-export}
+# Export only pupil timeseries and events
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/bids", 
+  db_path = "large-project",
+  data_types = c("timeseries", "events"),
+  subjects = c("sub-001", "sub-002", "sub-003")  # Specific subjects only
+)
+```
+
+Available data types typically include:
+- `timeseries` - Preprocessed eye-tracking pupil data
+- `events` - Experimental events
+- `epochs` - Epoched data around events  
+- `confounds_summary` - Confound variables by epoch
+- `blinks` - Detected blinks
+
+### Using Parquet Format
+
+For better performance and compression, use Parquet format:
+
+```{r parquet-export}
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/bids",
+  db_path = "large-project",
+  file_format = "parquet",
+  max_file_size_mb = 200
+)
+```
+
+Parquet advantages:
+- **Smaller file sizes** (often 50-80% smaller than CSV)
+- **Faster reading** with `arrow::read_parquet()`
+- **Better data types** (preserves numeric precision)
+- **Column-oriented** storage for analytics
+
+## Working with the Exported Files
+
+### Reading Single Files Back into R
+
+```{r read-files}
+# Read a single CSV file
+data <- read.csv("path/to/timeseries_chunked.csv")
+
+# Read a single Parquet file (requires arrow package)
+if (requireNamespace("arrow", quietly = TRUE)) {
+  data <- arrow::read_parquet("path/to/timeseries_chunked.parquet")
+}
+```
+
+### Combining Multiple Split Files
+
+When files are split due to size limits, you can recombine them:
+
+```{r combine-files}
+# Find all parts of a split dataset
+files <- list.files(
+  "path/to/eyerisdb_export/my-project/", 
+  pattern = "timeseries_chunked_.*\\.csv$", 
+  full.names = TRUE
+)
+
+# Read and combine all parts
+combined_data <- do.call(rbind, lapply(files, read.csv))
+
+# Or use the built-in helper function
+combined_data <- read_eyeris_parquet(
+  parquet_dir = "path/to/eyerisdb_export/my-project/",
+  data_type = "timeseries"
+)
+```
+
+## Advanced Use Cases
+
+### Custom Chunk Processing
+
+For specialized analysis, you can process chunks with custom functions:
+
+```{r custom-processing}
+# Connect to database directly
+con <- eyeris_db_connect("/path/to/bids", "large-project")
+
+# Define custom analysis function for pupil data
+analyze_chunk <- function(chunk) {
+  # Calculate summary statistics for this chunk
+  stats <- data.frame(
+    n_rows = nrow(chunk),
+    subjects = length(unique(chunk$subject_id)),
+    mean_eye_x = mean(chunk$eye_x, na.rm = TRUE),
+    mean_eye_y = mean(chunk$eye_y, na.rm = TRUE), 
+    mean_pupil_raw = mean(chunk$pupil_raw, na.rm = TRUE),
+    mean_pupil_processed = mean(chunk$pupil_raw_deblink_detransient_interpolate_lpfilt_z, na.rm = TRUE),
+    missing_pupil_pct = sum(is.na(chunk$pupil_raw)) / nrow(chunk) * 100,
+    hz_modes = paste(unique(chunk$hz), collapse = ",")
+  )
+  
+  # Save chunk summary (append to growing file)
+  write.csv(stats, "chunk_summaries.csv", append = file.exists("chunk_summaries.csv"))
+  
+  return(TRUE)  # Indicate success
+}
+
+# Hypothetical example: process large timeseries dataset in chunks
+result <- process_chunked_query(
+  con = con,
+  query = "
+    SELECT subject_id, session_id, time_secs, eye_x, eye_y, 
+           pupil_raw, pupil_raw_deblink_detransient_interpolate_lpfilt_z, hz
+    FROM timeseries_01_enc_clamp_run01 
+    WHERE pupil_raw > 0 AND eye_x IS NOT NULL 
+    ORDER BY time_secs
+  ",
+  chunk_size = 100000,
+  process_chunk = analyze_chunk
+)
+
+eyeris_db_disconnect(con)
+```
+
+### Handling Very Large Databases
+
+For databases with hundreds of millions of rows:
+
+```{r very-large}
+# Optimize for very large datasets
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/bids",
+  db_path = "massive-project", 
+  chunk_size = 2000000,        # 2M rows per chunk for efficiency
+  max_file_size_mb = 1000,     # 1GB files (larger but fewer files)
+  file_format = "parquet",     # Better compression
+  data_types = "timeseries"    # Focus on primary data type for analysis
+)
+```
+
+## Performance Tips
+
+### Optimizing Chunk Size
+
+- **Smaller chunks** (100k-500k rows): Use when memory is limited
+- **Medium chunks** (1M rows): Good default for most systems  
+- **Larger chunks** (2M+ rows): Use for very large datasets with ample memory
+
+### Choosing Output Format
+
+- **CSV**: Human-readable, universal compatibility
+- **Parquet**: Better performance, smaller files, preserves data types
+
+### File Size Considerations
+
+- **Smaller files** (50-100MB): Easier to transfer, upload, email
+- **Medium files** (200-500MB): Good balance of convenience and efficiency
+- **Larger files** (1GB+): Fewer files to manage, better for local processing
+
+## Troubleshooting
+
+### Memory Issues
+
+If you encounter out-of-memory errors:
+
+```{r memory-fix}
+# Reduce chunk size
+result <- eyeris_db_to_chunked_files(
+  bids_dir = "/path/to/bids",
+  db_path = "project",
+  chunk_size = 250000,  # Smaller chunks
+  verbose = TRUE        # Monitor progress
+)
+```
+
+### SQL Query Length Errors
+
+The function automatically handles this by processing tables in batches, but if you encounter issues:
+
+- The function processes a maximum of 50 tables per SQL query
+- Tables are automatically grouped by compatible column structures
+- Complex epoch data is separated into schema-compatible groups
+
+### Column Structure Mismatches
+
+When you see "Set operations can only apply to expressions with the same number of result columns":
+
+- The function automatically detects and groups tables by column structure
+- Tables with different schemas (e.g., different epoch types) are exported separately
+- No manual intervention required - this is handled automatically
+
+### File Access Issues
+
+If files are locked or in use:
+
+- Ensure no other processes are accessing the database
+- Check that you have write permissions to the output directory
+- Close any conflicting programs that might be reading the `eyerisdb` database file
+
+## Getting Help
+
+For additional help:
+
+- Check function documentation: `?eyeris_db_to_chunked_files`
+- View database contents: `eyeris_db_summary(bids_dir, db_path)`
+- List available tables: `eyeris_db_list_tables(con)`
+- Monitor progress with `verbose = TRUE`
+
+## Summary
+
+The built-in chunked `eyerisdb` database export functionality provides a robust solution for working with large `eyerisdb` databases. Key benefits include:
+
+- **Scalability**: Handle databases of any size without memory issues
+- **Flexibility**: Choose file formats, sizes, and data types to export
+- **Reliability**: Automatic error handling for common database issues  
+- **Efficiency**: Optimized chunk processing with progress tracking
+
+This makes it possible to work with even the largest eye-tracking/pupillometry datasets while maintaining performance/reliability without sacrificing the ability to share high-quality, reproducible datasets that support collaborative and open research.

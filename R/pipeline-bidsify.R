@@ -2075,7 +2075,9 @@ run_bidsify <- function(
 
       merge_success <- merge_temp_database(
         temp_db_info = temp_db_info,
-        verbose = verbose
+        verbose = verbose,
+        max_retries = 120,
+        retry_delay = 5
       )
 
       if (merge_success) {
