@@ -1604,11 +1604,7 @@ process_chunked_query <- function(
                   {
                     existing_data <- arrow::read_parquet(output_file)
                     # ensure compatible column types for windows compatibility
-                    combined_data <- data.table::rbindlist(
-                      list(existing_data, chunk),
-                      use.names = TRUE,
-                      fill = TRUE
-                    )
+                    combined_data <- rbind(existing_data, chunk)
                     arrow::write_parquet(combined_data, output_file)
                   },
                   error = function(e) {
@@ -2163,11 +2159,7 @@ eyeris_db_to_chunked_files <- function(
                           current_output_file
                         )
                         # ensure compatible column types for windows compatibility
-                        combined_data <- data.table::rbindlist(
-                          list(existing_data, chunk),
-                          use.names = TRUE,
-                          fill = TRUE
-                        )
+                        combined_data <- rbind(existing_data, chunk)
                         arrow::write_parquet(combined_data, current_output_file)
                       },
                       error = function(e) {
