@@ -753,9 +753,17 @@ process_epoch_and_baselines <- function(
       length(epochs) > 0 &&
       length(epochs) != n_timestamps
   ) {
-    log_error(
-      "Expected {n_timestamps} samples but got {length(epochs)} samples. Check data for a possible matching error."
-    )
+    # check if this is a start/end message pair scenario with filtered events
+    if (is.character(evs) && length(evs) == 2) {
+      log_info(
+        "Event count adjusted from {n_timestamps} to {length(epochs)} due to event filtering",
+        verbose = verbose
+      )
+    } else {
+      log_error(
+        "Expected {n_timestamps} samples but got {length(epochs)} samples. Check data for a possible matching error."
+      )
+    }
   }
 
   log_success("Done!", verbose = verbose)
@@ -944,7 +952,40 @@ epoch_start_msg_and_limits <- function(eyeris, start, lims, hz, verbose) {
 #' @keywords internal
 epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
   if (nrow(start) != nrow(end)) {
-    log_error("Start and end timestamps must have the same number of rows")
+    log_warn(
+      "Start and end timestamps have different counts: {nrow(start)} start, {nrow(end)} end events",
+      verbose = verbose
+    )
+
+    # try to match events by extracting identifiers from messages
+    start_ids <- extract_event_ids(start)
+    end_ids <- extract_event_ids(end)
+
+    # find common identifiers
+    common_ids <- intersect(start_ids, end_ids)
+
+    if (length(common_ids) == 0) {
+      log_error("No matching event pairs found between start and end events")
+    }
+
+    log_info(
+      "Found {length(common_ids)} matching event pairs, proceeding with matched events only",
+      verbose = verbose
+    )
+
+    # filter to only matched events
+    start <- start[start_ids %in% common_ids, ]
+    end <- end[end_ids %in% common_ids, ]
+
+    # reorder end events to match start event order
+    start_order <- match(start_ids[start_ids %in% common_ids], common_ids)
+    end_order <- match(end_ids[end_ids %in% common_ids], common_ids)
+    end <- end[
+      order(match(
+        end_ids[end_ids %in% common_ids],
+        start_ids[start_ids %in% common_ids]
+      )),
+    ]
   }
 
   epochs <- vector("list", nrow(start))
