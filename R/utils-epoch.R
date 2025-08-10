@@ -229,7 +229,7 @@ extract_event_ids <- function(events) {
 
   # extract identifiers using common patterns
   # pattern 1: filename.ext (e.g., "PROBE_S 392.jpg" -> "392.jpg")
-  ids <- stringr::str_extract(messages, "[0-9]+\\.[a-zA-Z]+$")
+  ids <- stringr::str_extract(messages, "[a-zA-Z0-9_-]+\\.[a-zA-Z0-9]+$")
 
   # pattern 2: trial numbers (e.g., "TRIAL_01" -> "01")
   if (all(is.na(ids))) {
