@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119007-lumpy-space-princess-lumpy-space-princess">v2.1.1.9007 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess">v2.1.1.9006 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119005-lumpy-space-princess-lumpy-space-princess">v2.1.1.9005 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119004-lumpy-space-princess-lumpy-space-princess">v2.1.1.9004 (devel)</a></li>
@@ -81,9 +82,18 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9006/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.1.9007" id="eyeris-2119007-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9007 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119007-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<div class="section level3">
+<h3 id="id_-development-version--unreleased-2-1-1-9007">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9007"></a></h3>
+<p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.2.0</code>). Items will continue to be added here until that version is finalized.</em></p>
+<ul><li>
+<strong>FF</strong>: Improved handling of mismatched start/end events in <code><a href="../reference/epoch.html">epoch()</a></code>. When using start/end event pairs (e.g., <code>c("PROBE_S {STIM}", "PROBE_E {STIM}")</code>), the function now automatically matches events by extracting identifiers from event messages instead of failing with “Start and end timestamps must have the same number of rows”. Unmatched events are filtered out and the process continues with matched pairs only, with informative logging about the filtering process, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/267" class="external-link">#267</a>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.1.9006" id="eyeris-2119006-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9006 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119006-lumpy-space-princess-lumpy-space-princess"></a></h2>
 <div class="section level3">
