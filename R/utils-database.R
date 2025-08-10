@@ -1604,9 +1604,21 @@ process_chunked_query <- function(
                   {
                     existing_data <- arrow::read_parquet(output_file)
                     # ensure compatible column types for windows compatibility
-                    # convert both to base R data.frames to ensure compatibility
+                    # convert both to base R data.frames and ensure column types match
                     existing_df <- as.data.frame(existing_data)
                     chunk_df <- as.data.frame(chunk)
+                    
+                    # ensure column types match exactly before rbind
+                    for (col in names(existing_df)) {
+                      if (col %in% names(chunk_df)) {
+                        # convert both columns to the same type (prefer character for safety)
+                        if (class(existing_df[[col]]) != class(chunk_df[[col]])) {
+                          existing_df[[col]] <- as.character(existing_df[[col]])
+                          chunk_df[[col]] <- as.character(chunk_df[[col]])
+                        }
+                      }
+                    }
+                    
                     combined_data <- rbind(existing_df, chunk_df)
                     arrow::write_parquet(combined_data, output_file)
                   },
@@ -2162,9 +2174,21 @@ eyeris_db_to_chunked_files <- function(
                           current_output_file
                         )
                         # ensure compatible column types for windows compatibility
-                        # convert both to base R data.frames to ensure compatibility
+                        # convert both to base R data.frames and ensure column types match
                         existing_df <- as.data.frame(existing_data)
                         chunk_df <- as.data.frame(chunk)
+                        
+                        # ensure column types match exactly before rbind
+                        for (col in names(existing_df)) {
+                          if (col %in% names(chunk_df)) {
+                            # convert both columns to the same type (prefer character for safety)
+                            if (class(existing_df[[col]]) != class(chunk_df[[col]])) {
+                              existing_df[[col]] <- as.character(existing_df[[col]])
+                              chunk_df[[col]] <- as.character(chunk_df[[col]])
+                            }
+                          }
+                        }
+                        
                         combined_data <- rbind(existing_df, chunk_df)
                         arrow::write_parquet(combined_data, current_output_file)
                       },
