@@ -4,6 +4,8 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST DEV RELEASES"
+    - text: "v2.1.1.9007 (devel)"
+      href: news/index.html#eyeris-2119007-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9006 (devel)"
       href: news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess
     - text: "v2.1.1.9005 (devel)"

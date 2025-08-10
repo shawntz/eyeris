@@ -1,3 +1,11 @@
+# eyeris 2.1.1.9007 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+## ⚠ **development version** — unreleased
+
+_Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+- **FF**: Improved handling of mismatched start/end events in `epoch()`. When using start/end event pairs (e.g., `c("PROBE_S {STIM}", "PROBE_E {STIM}")`), the function now automatically matches events by extracting identifiers from event messages instead of failing with "Start and end timestamps must have the same number of rows". Unmatched events are filtered out and the process continues with matched pairs only, with informative logging about the filtering process, by @shawntz in #267.
+
 # eyeris 2.1.1.9006 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
@@ -18,8 +26,6 @@ _Note: This is the working changelog for features and fixes being developed for 
 - **ENH**: **Enhanced temp table safety**. All database export functions now automatically detect, warn about, and exclude temporary tables from processing. Added safe temporary table operations with guaranteed cleanup even on process crashes, by @shawntz in #266.
 
 - **NF**: Robust parquet export/read for `eyerisdb` mixed schemas. `eyeris_db_to_parquet()` and `read_eyeris_parquet()` now combine tables/files using schema-aligned binding (by column name; fill missing) via `data.table::rbindlist(use.names = TRUE, fill = TRUE)`. Fixes "numbers of columns of arguments do not match" when different `epochs_*` tables have slightly different columns, by @shawntz in #266.
-
-- **FF**: Improved handling of mismatched start/end events in `epoch()`. When using start/end event pairs (e.g., `c("PROBE_S {STIM}", "PROBE_E {STIM}")`), the function now automatically matches events by extracting identifiers from event messages instead of failing with "Start and end timestamps must have the same number of rows". Unmatched events are filtered out and the process continues with matched pairs only, with informative logging about the filtering process, by @shawntz in #267.
 
 # eyeris 2.1.1.9005 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
