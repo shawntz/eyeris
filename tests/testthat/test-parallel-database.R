@@ -1,6 +1,5 @@
-test_that("parallel database functionality works correctly", {
-  # Test 1: Manual parallel processing flag
-  test_that("manual parallel processing flag enables temporary databases", {
+# Test 1: Manual parallel processing flag
+test_that("manual parallel processing flag enables temporary databases", {
     # Set environment variable to simulate parallel processing
     withr::with_envvar(c(PARALLEL_PROCESSING = "1"), {
       # Load demo data
@@ -21,10 +20,10 @@ test_that("parallel database functionality works correctly", {
           )
       })
     })
-  })
+})
 
-  # Test 2: Environment variable detection
-  test_that("SLURM environment variables are detected for parallel processing", {
+# Test 2: Environment variable detection
+test_that("SLURM environment variables are detected for parallel processing", {
     # Simulate SLURM environment
     withr::with_envvar(c(SLURM_JOB_ID = "12345"), {
       demo_data <- eyelink_asc_demo_dataset()
@@ -42,10 +41,10 @@ test_that("parallel database functionality works correctly", {
           )
       })
     })
-  })
+})
 
-  # Test 3: PBS environment variables are detected
-  test_that("PBS environment variables are detected for parallel processing", {
+# Test 3: PBS environment variables are detected
+test_that("PBS environment variables are detected for parallel processing", {
     withr::with_envvar(c(PBS_JOBID = "67890"), {
       demo_data <- eyelink_asc_demo_dataset()
 
@@ -62,10 +61,10 @@ test_that("parallel database functionality works correctly", {
           )
       })
     })
-  })
+})
 
-  # Test 4: Normal database operation (no parallel)
-  test_that("normal database operation works without parallel processing", {
+# Test 4: Normal database operation (no parallel)
+test_that("normal database operation works without parallel processing", {
     demo_data <- eyelink_asc_demo_dataset()
 
     expect_no_error({
@@ -81,10 +80,10 @@ test_that("parallel database functionality works correctly", {
           verbose = FALSE
         )
     })
-  })
+})
 
-  # Test 5: Temporary database creation
-  test_that("temporary database creation works", {
+# Test 5: Temporary database creation
+test_that("temporary database creation works", {
     temp_db_info <- create_temp_eyeris_database(
       bids_dir = tempdir(),
       base_db_path = "test-project",
@@ -100,10 +99,10 @@ test_that("parallel database functionality works correctly", {
     # Cleanup
     cleanup_temp_database(temp_db_info, verbose = FALSE)
     expect_false(file.exists(temp_db_info$temp_path))
-  })
+})
 
-  # Test 6: Database merging functionality
-  test_that("temporary database merging works", {
+# Test 6: Database merging functionality
+test_that("temporary database merging works", {
     # Create temporary database
     temp_db_info <- create_temp_eyeris_database(
       bids_dir = tempdir(),
@@ -156,5 +155,4 @@ test_that("parallel database functionality works correctly", {
     if (file.exists(temp_db_info$base_path)) {
       unlink(temp_db_info$base_path)
     }
-  })
 })

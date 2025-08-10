@@ -1,18 +1,17 @@
-test_that("database integration works correctly", {
-  skip_if_not_installed("duckdb")
-  skip_if_not_installed("DBI")
+skip_if_not_installed("duckdb")
+skip_if_not_installed("DBI")
 
-  temp_dir <- tempdir()
-  temp_bids_dir <- file.path(temp_dir, "test_bids")
+temp_dir <- tempdir()
+temp_bids_dir <- file.path(temp_dir, "test_bids")
 
-  # clean up any existing test files
-  if (dir.exists(temp_bids_dir)) {
-    unlink(temp_bids_dir, recursive = TRUE)
-  }
-  dir.create(temp_bids_dir, recursive = TRUE)
+# clean up any existing test files
+if (dir.exists(temp_bids_dir)) {
+  unlink(temp_bids_dir, recursive = TRUE)
+}
+dir.create(temp_bids_dir, recursive = TRUE)
 
-  # test 1: database connection and creation
-  test_that("database connection works", {
+# test 1: database connection and creation
+test_that("database connection works", {
     # test database creation
     con <- connect_eyeris_database(temp_bids_dir, "test-db", verbose = FALSE)
     expect_s4_class(con, "duckdb_connection")
@@ -22,10 +21,10 @@ test_that("database integration works correctly", {
     expect_true(file.exists(db_path))
 
     disconnect_eyeris_database(con, verbose = FALSE)
-  })
+})
 
-  # test 2: table creation and data writing
-  test_that("data writing to database works", {
+# test 2: table creation and data writing
+test_that("data writing to database works", {
     con <- connect_eyeris_database(temp_bids_dir, "test-db", verbose = FALSE)
 
     # create test data
@@ -78,10 +77,10 @@ test_that("database integration works correctly", {
     expect_true("trial" %in% colnames(written_data))
 
     disconnect_eyeris_database(con, verbose = FALSE)
-  })
+})
 
-  # test 3: user-facing database functions
-  test_that("user-facing database functions work", {
+# test 3: user-facing database functions
+test_that("user-facing database functions work", {
     # create a database with some data first
     con <- connect_eyeris_database(temp_bids_dir, "user-test", verbose = FALSE)
 
@@ -130,10 +129,10 @@ test_that("database integration works correctly", {
     expect_equal(nrow(filtered_data), 2)
 
     eyeris_db_disconnect(user_con)
-  })
+})
 
-  # test 4: csv and database helper function
-  test_that("write_csv_and_db helper function works", {
+# test 4: csv and database helper function
+test_that("write_csv_and_db helper function works", {
     con <- connect_eyeris_database(
       temp_bids_dir,
       "helper-test",
@@ -207,10 +206,10 @@ test_that("database integration works correctly", {
     expect_true("events_004_01_dbonly" %in% tables_final)
 
     disconnect_eyeris_database(con, verbose = FALSE)
-  })
+})
 
-  # test 5: database path handling and extensions
-  test_that("database path handling works correctly", {
+# test 5: database path handling and extensions
+test_that("database path handling works correctly", {
     # test default path
     con1 <- connect_eyeris_database(temp_bids_dir, verbose = FALSE)
     expect_s4_class(con1, "duckdb_connection")
@@ -253,10 +252,10 @@ test_that("database integration works correctly", {
       "already-has.eyerisdb.eyerisdb"
     )))
     disconnect_eyeris_database(con3, verbose = FALSE)
-  })
+})
 
-  # test 6: error handling
-  test_that("database error handling works", {
+# test 6: error handling
+test_that("database error handling works", {
     # test connection to non-existent database
     expect_error(
       eyeris_db_connect(temp_bids_dir, "non-existent-db"),
@@ -289,10 +288,10 @@ test_that("database integration works correctly", {
     expect_false(result2)
 
     disconnect_eyeris_database(con, verbose = FALSE)
-  })
+})
 
-  # test 7: epoch label in table names
-  test_that("epoch labels are included in table names", {
+# test 7: epoch label in table names
+test_that("epoch labels are included in table names", {
     con <- connect_eyeris_database(temp_bids_dir, "epoch-test", verbose = FALSE)
 
     test_data <- data.frame(
@@ -342,10 +341,9 @@ test_that("database integration works correctly", {
     expect_equal(unique(filtered_data$subject_id), "005")
 
     disconnect_eyeris_database(con, verbose = FALSE)
-  })
-
-  # clean up test files
-  if (dir.exists(temp_bids_dir)) {
-    unlink(temp_bids_dir, recursive = TRUE)
-  }
 })
+
+# clean up test files
+if (dir.exists(temp_bids_dir)) {
+  unlink(temp_bids_dir, recursive = TRUE)
+}
