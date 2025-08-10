@@ -15,7 +15,7 @@ This function provides easy access for users to query their eyeris data."><meta 
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,16 @@ This function provides easy access for users to query their eyeris data."><meta 
     <li><a class="dropdown-item" href="../articles/anatomy.html">Anatomy of an eyeris Object</a></li>
     <li><a class="dropdown-item" href="../articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
     <li><a class="dropdown-item" href="../articles/database-guide.html">Working with eyeris Databases: A Complete Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/chunked-database-export.html">Chunked eyerisdb Database Export for Large Datasets</a></li>
     <li><a class="dropdown-item" href="../articles/internal-api.html">Internal API Reference</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess">v2.1.1.9006 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119005-lumpy-space-princess-lumpy-space-princess">v2.1.1.9005 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119004-lumpy-space-princess-lumpy-space-princess">v2.1.1.9004 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess">v2.1.1.9003 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess">v2.1.1.9002 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess">v2.1.1.9001 (devel)</a></li>
@@ -79,7 +83,7 @@ This function provides easy access for users to query their eyeris data."><meta 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Connect to eyeris project database (user-facing)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9004-5/R/utils-database.R" class="external-link"><code>R/utils-database.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/R/utils-database.R" class="external-link"><code>R/utils-database.R</code></a></small>
       <div class="d-none name"><code>eyeris_db_connect.Rd</code></div>
     </div>
 
@@ -135,13 +139,13 @@ If includes path, will use as provided.</p></dd>
 <span class="r-in"><span><span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"No eyeris DB found - create one first with bidsify(db_enabled = TRUE)"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-09 23:09:16] [OKAY] Connected to eyeris database:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpntCaGD/derivatives/my-project.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-09 23:09:16] [INFO] Executing query: SELECT * FROM (SELECT * FROM</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-08-10 07:09:44] [OKAY] Connected to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmp3c0VPK/derivatives/my-project.eyerisdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-10 07:09:44] [INFO] Executing query: SELECT * FROM (SELECT * FROM</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> "timeseries_001_01_assocret_run01" UNION ALL SELECT * FROM</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> '001'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-09 23:09:16] [INFO] Disconnected from eyeris database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-08-10 07:09:44] [INFO] Disconnected from eyeris database</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

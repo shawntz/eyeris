@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,12 +36,16 @@
     <li><a class="dropdown-item" href="../articles/anatomy.html">Anatomy of an eyeris Object</a></li>
     <li><a class="dropdown-item" href="../articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
     <li><a class="dropdown-item" href="../articles/database-guide.html">Working with eyeris Databases: A Complete Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/chunked-database-export.html">Chunked eyerisdb Database Export for Large Datasets</a></li>
     <li><a class="dropdown-item" href="../articles/internal-api.html">Internal API Reference</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess">v2.1.1.9006 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119005-lumpy-space-princess-lumpy-space-princess">v2.1.1.9005 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119004-lumpy-space-princess-lumpy-space-princess">v2.1.1.9004 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess">v2.1.1.9003 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess">v2.1.1.9002 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess">v2.1.1.9001 (devel)</a></li>
@@ -77,16 +81,42 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/v2.1.1.9004-5/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.1.9006" id="eyeris-2119006-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9006 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119006-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<div class="section level3">
+<h3 id="id_-development-version--unreleased-2-1-1-9006">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9006"></a></h3>
+<p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.2.0</code>). Items will continue to be added here until that version is finalized.</em></p>
+<ul><li>
+<p><strong>NF</strong>: <strong>Large-scale database export functionality</strong>. Added <code><a href="../reference/eyeris_db_to_chunked_files.html">eyeris_db_to_chunked_files()</a></code> and <code><a href="../reference/process_chunked_query.html">process_chunked_query()</a></code> functions to handle really large <code>eyerisdb</code> databases by processing data in configurable chunks (default <code>1M rows</code>) with automatic file size limits (default <code>500MB</code>) and numbered file splitting (<code>_01-of-N</code> pattern). Supports both <code>CSV</code> and <code>Parquet</code> output formats with memory-efficient streaming processing, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/266" class="external-link">#266</a>.</p>
+<blockquote>
+<strong>Key Features:</strong>
+<ul><li>
+<strong>Chunked Processing</strong>: Handles databases of any size without memory issues using configurable chunk sizes</li>
+<li>
+<strong>Automatic File Splitting</strong>: Creates numbered files when size limits exceeded (e.g., <code>data_01-of-03.csv</code>)</li>
+<li>
+<strong>Smart Schema Grouping</strong>: Dynamically groups tables by column structure to prevent SQL UNION errors</li>
+<li>
+<strong>Database Safety</strong>: Comprehensive temp table cleanup and contamination prevention</li>
+<li>
+<strong>Comprehensive Documentation</strong>: Detailed vignette with real-world examples and troubleshooting</li>
+</ul></blockquote>
+</li>
+<li><p><strong>ENH</strong>: <strong>Improved database summary performance</strong>. <code><a href="../reference/eyeris_db_summary.html">eyeris_db_summary()</a></code> now extracts subject/session/task information directly from table names instead of sampling database contents, providing complete coverage of all subjects and much faster execution, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/266" class="external-link">#266</a>.</p></li>
+<li><p><strong>ENH</strong>: <strong>Enhanced temp table safety</strong>. All database export functions now automatically detect, warn about, and exclude temporary tables from processing. Added safe temporary table operations with guaranteed cleanup even on process crashes, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/266" class="external-link">#266</a>.</p></li>
+<li><p><strong>NF</strong>: Robust parquet export/read for <code>eyerisdb</code> mixed schemas. <code><a href="../reference/eyeris_db_to_parquet.html">eyeris_db_to_parquet()</a></code> and <code><a href="../reference/read_eyeris_parquet.html">read_eyeris_parquet()</a></code> now combine tables/files using schema-aligned binding (by column name; fill missing) via <code>data.table::rbindlist(use.names = TRUE, fill = TRUE)</code>. Fixes “numbers of columns of arguments do not match” when different <code>epochs_*</code> tables have slightly different columns, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/266" class="external-link">#266</a>.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.1.9005" id="eyeris-2119005-lumpy-space-princess-lumpy-space-princess">eyeris 2.1.1.9005 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-2119005-lumpy-space-princess-lumpy-space-princess"></a></h2>
 <div class="section level3">
 <h3 id="id_-development-version--unreleased-2-1-1-9005">⚠ <strong>development version</strong> — unreleased<a class="anchor" aria-label="anchor" href="#id_-development-version--unreleased-2-1-1-9005"></a></h3>
 <p><em>Note: This is the working changelog for features and fixes being developed for the next CRAN release (<code>v2.2.0</code>). Items will continue to be added here until that version is finalized.</em></p>
 <ul><li>
-<strong>FF</strong>: Intelligently detect grouping column for epoch diagnostic plots. For start/end epochs (e.g., <code>"PROBE_S {STIM}"</code> to <code>"PROBE_E {STIM}"</code>), the epoched data contains <code>start_matched_event</code> instead of <code>matched_event</code>. Added automatic detection logic with priority: requested column → <code>start_matched_event</code> → <code>end_matched_event</code>. Includes informative logging and graceful fallback when no suitable column found, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/265" class="external-link">#265</a>.</li>
+<strong>FF</strong>: Detect grouping column for epoch diagnostic plots. For start/end epochs (e.g., <code>"PROBE_S {STIM}"</code> to <code>"PROBE_E {STIM}"</code>), the epoched data contains <code>start_matched_event</code> instead of <code>matched_event</code>. Added automatic detection logic with priority: requested column → <code>start_matched_event</code> → <code>end_matched_event</code>. Includes informative logging and graceful fallback when no suitable column found, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/265" class="external-link">#265</a>.</li>
 </ul></div>
 </div>
     <div class="section level2">

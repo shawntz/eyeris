@@ -5,6 +5,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/LICENSE-text.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/LICENSE.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/articles/anatomy.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/articles/chunked-database-export.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/articles/complete-pipeline.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/articles/custom-extensions.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/articles/database-guide.html</loc></url>
@@ -82,6 +83,8 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_list_tables.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_read.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/filter_epochs.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/find_baseline_structure.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/format_call_stack.html</loc></url>
@@ -128,10 +131,12 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_lightbox_img_html.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_lightbox_img_html_legacy.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_plots.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/process_chunked_query.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/process_epoch_and_baselines.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/process_eyeris_data.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/progress_bar.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/prompt_user.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/read_eyeris_parquet.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/render_report.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/robust_plot.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/run_bidsify.html</loc></url>

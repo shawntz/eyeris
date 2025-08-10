@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,12 +36,16 @@
     <li><a class="dropdown-item" href="../articles/anatomy.html">Anatomy of an eyeris Object</a></li>
     <li><a class="dropdown-item" href="../articles/custom-extensions.html">Building Your Own Custom Pipeline Extensions</a></li>
     <li><a class="dropdown-item" href="../articles/database-guide.html">Working with eyeris Databases: A Complete Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/chunked-database-export.html">Chunked eyerisdb Database Export for Large Datasets</a></li>
     <li><a class="dropdown-item" href="../articles/internal-api.html">Internal API Reference</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST DEV RELEASES</h6></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119006-lumpy-space-princess-lumpy-space-princess">v2.1.1.9006 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119005-lumpy-space-princess-lumpy-space-princess">v2.1.1.9005 (devel)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-2119004-lumpy-space-princess-lumpy-space-princess">v2.1.1.9004 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119003-lumpy-space-princess-lumpy-space-princess">v2.1.1.9003 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119002-lumpy-space-princess-lumpy-space-princess">v2.1.1.9002 (devel)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-2119001-lumpy-space-princess-lumpy-space-princess">v2.1.1.9001 (devel)</a></li>
@@ -213,6 +217,30 @@
 
         </dt>
         <dd>List available tables in eyeris database</dd>
+      </dl><dl><dt>
+
+          <code><a href="eyeris_db_to_chunked_files.html">eyeris_db_to_chunked_files()</a></code>
+
+        </dt>
+        <dd>Export eyeris database to chunked files</dd>
+      </dl><dl><dt>
+
+          <code><a href="eyeris_db_to_parquet.html">eyeris_db_to_parquet()</a></code>
+
+        </dt>
+        <dd>Split eyeris database into N parquet files by data type</dd>
+      </dl><dl><dt>
+
+          <code><a href="read_eyeris_parquet.html">read_eyeris_parquet()</a></code>
+
+        </dt>
+        <dd>Read parquet files back into R</dd>
+      </dl><dl><dt>
+
+          <code><a href="process_chunked_query.html">process_chunked_query()</a></code>
+
+        </dt>
+        <dd>Process large database query in chunks</dd>
       </dl></div><div class="section level2">
       <h2 id="-preprocessing-steps">🔧 Preprocessing Steps<a class="anchor" aria-label="anchor" href="#-preprocessing-steps"></a></h2>
 

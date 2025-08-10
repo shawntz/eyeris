@@ -3,13 +3,14 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   anatomy: anatomy.html
+  chunked-database-export: chunked-database-export.html
   complete-pipeline: complete-pipeline.html
   custom-extensions: custom-extensions.html
   database-guide: database-guide.html
   epoching-bids-reports: epoching-bids-reports.html
   internal-api: internal-api.html
   reports: reports.html
-last_built: 2025-08-09T23:07Z
+last_built: 2025-08-10T07:07Z
 urls:
   reference: https://shawnschwartz.com/eyeris/reference
   article: https://shawnschwartz.com/eyeris/articles
