@@ -199,6 +199,56 @@ get_timestamps <- function(
   return(list(start = start_ts, end = end_ts))
 }
 
+#' Extract event identifiers from event messages
+#'
+#' Extracts identifiers (like image names or trial numbers) from event messages
+#' to enable matching between start and end events.
+#'
+#' @param events Data frame containing event messages
+#'
+#' @return A vector of extracted identifiers
+#'
+#' @keywords internal
+extract_event_ids <- function(events) {
+  # get the appropriate message column
+  if ("matched_event" %in% names(events)) {
+    messages <- events$matched_event
+  } else if ("event_message" %in% names(events)) {
+    messages <- events$event_message
+  } else if ("text" %in% names(events)) {
+    messages <- events$text
+  } else {
+    # fallback: look for any text-like column
+    text_cols <- names(events)[sapply(events, is.character)]
+    if (length(text_cols) > 0) {
+      messages <- events[[text_cols[1]]]
+    } else {
+      stop("No text column found in events data frame")
+    }
+  }
+
+  # extract identifiers using common patterns
+  # pattern 1: filename.ext (e.g., "PROBE_S 392.jpg" -> "392.jpg")
+  ids <- stringr::str_extract(messages, "[a-zA-Z0-9_-]+\\.[a-zA-Z0-9]+$")
+
+  # pattern 2: trial numbers (e.g., "TRIAL_01" -> "01")
+  if (all(is.na(ids))) {
+    ids <- stringr::str_extract(messages, "[0-9]+$")
+  }
+
+  # pattern 3: general identifier after last space
+  if (all(is.na(ids))) {
+    ids <- stringr::str_extract(messages, "[^ ]+$")
+  }
+
+  # fallback: use the full message if no pattern matches
+  if (all(is.na(ids))) {
+    ids <- messages
+  }
+
+  return(ids)
+}
+
 #' Process event messages and merge with time series
 #'
 #' Matches event messages against templates and extracts metadata,
