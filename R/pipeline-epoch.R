@@ -978,7 +978,6 @@ epoch_start_end_msg <- function(eyeris, start, end, hz, verbose) {
     end <- end[end_ids %in% common_ids, ]
 
     # reorder end events to match start event order
-    end_order <- match(end_ids[end_ids %in% common_ids], common_ids)
     end <- end[
       order(match(
         end_ids[end_ids %in% common_ids],
