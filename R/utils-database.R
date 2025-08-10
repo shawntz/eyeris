@@ -1600,28 +1600,35 @@ process_chunked_query <- function(
             } else {
               # append to existing parquet file
               if (requireNamespace("arrow", quietly = TRUE)) {
-                tryCatch({
-                  existing_data <- arrow::read_parquet(output_file)
-                  # ensure compatible column types for windows compatibility
-                  combined_data <- data.table::rbindlist(
-                    list(existing_data, chunk), 
-                    use.names = TRUE, 
-                    fill = TRUE
-                  )
-                  arrow::write_parquet(combined_data, output_file)
-                }, error = function(e) {
-                  # create separate file for this chunk to preserve data integrity
-                  chunk_file <- gsub("\\.parquet$", paste0("_chunk_", chunk_count, ".parquet"), output_file)
-                  arrow::write_parquet(chunk, chunk_file)
-                  log_warn(
-                    "failed to append to main parquet file, saved chunk to separate file: {basename(chunk_file)}",
-                    verbose = verbose
-                  )
-                  log_warn(
-                    "you may need to manually combine: {basename(output_file)} and {basename(chunk_file)}",
-                    verbose = verbose
-                  )
-                })
+                tryCatch(
+                  {
+                    existing_data <- arrow::read_parquet(output_file)
+                    # ensure compatible column types for windows compatibility
+                    combined_data <- data.table::rbindlist(
+                      list(existing_data, chunk),
+                      use.names = TRUE,
+                      fill = TRUE
+                    )
+                    arrow::write_parquet(combined_data, output_file)
+                  },
+                  error = function(e) {
+                    # create separate file for this chunk to preserve data integrity
+                    chunk_file <- gsub(
+                      "\\.parquet$",
+                      paste0("_chunk_", chunk_count, ".parquet"),
+                      output_file
+                    )
+                    arrow::write_parquet(chunk, chunk_file)
+                    log_warn(
+                      "failed to append to main parquet file, saved chunk to separate file: {basename(chunk_file)}",
+                      verbose = verbose
+                    )
+                    log_warn(
+                      "you may need to manually combine: {basename(output_file)} and {basename(chunk_file)}",
+                      verbose = verbose
+                    )
+                  }
+                )
               } else {
                 log_error(
                   "arrow package required for parquet output but not available"
@@ -2150,28 +2157,37 @@ eyeris_db_to_chunked_files <- function(
                 } else {
                   # append to existing parquet file
                   if (requireNamespace("arrow", quietly = TRUE)) {
-                    tryCatch({
-                      existing_data <- arrow::read_parquet(current_output_file)
-                      # ensure compatible column types for windows compatibility
-                      combined_data <- data.table::rbindlist(
-                        list(existing_data, chunk), 
-                        use.names = TRUE, 
-                        fill = TRUE
-                      )
-                      arrow::write_parquet(combined_data, current_output_file)
-                    }, error = function(e) {
-                      # create separate file for this chunk to preserve data integrity
-                      chunk_file <- gsub("\\.parquet$", paste0("_chunk_", total_group_chunks + 1, ".parquet"), current_output_file)
-                      arrow::write_parquet(chunk, chunk_file)
-                      log_warn(
-                        "failed to append to main parquet file, saved chunk to separate file: {basename(chunk_file)}",
-                        verbose = verbose
-                      )
-                      log_warn(
-                        "you may need to manually combine: {basename(current_output_file)} and {basename(chunk_file)}",
-                        verbose = verbose
-                      )
-                    })
+                    tryCatch(
+                      {
+                        existing_data <- arrow::read_parquet(
+                          current_output_file
+                        )
+                        # ensure compatible column types for windows compatibility
+                        combined_data <- data.table::rbindlist(
+                          list(existing_data, chunk),
+                          use.names = TRUE,
+                          fill = TRUE
+                        )
+                        arrow::write_parquet(combined_data, current_output_file)
+                      },
+                      error = function(e) {
+                        # create separate file for this chunk to preserve data integrity
+                        chunk_file <- gsub(
+                          "\\.parquet$",
+                          paste0("_chunk_", total_group_chunks + 1, ".parquet"),
+                          current_output_file
+                        )
+                        arrow::write_parquet(chunk, chunk_file)
+                        log_warn(
+                          "failed to append to main parquet file, saved chunk to separate file: {basename(chunk_file)}",
+                          verbose = verbose
+                        )
+                        log_warn(
+                          "you may need to manually combine: {basename(current_output_file)} and {basename(chunk_file)}",
+                          verbose = verbose
+                        )
+                      }
+                    )
                   } else {
                     log_error(
                       "Arrow package required for Parquet output but not available"
