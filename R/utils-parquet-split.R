@@ -795,13 +795,13 @@ read_eyeris_parquet <- function(
             if (requireNamespace("arrow", quietly = TRUE)) {
               data <- arrow::read_parquet(file)
             } else {
-              # fallback: read via DuckDB
+              # fallback: read via DuckDB (disconnect immediately after read)
               temp_con <- DBI::dbConnect(duckdb::duckdb())
-              on.exit(DBI::dbDisconnect(temp_con), add = TRUE)
               data <- DBI::dbGetQuery(
                 temp_con,
                 glue::glue("SELECT * FROM read_parquet('{file}')")
               )
+              DBI::dbDisconnect(temp_con)
             }
 
             type_data_list[[filename]] <- data
@@ -845,13 +845,13 @@ read_eyeris_parquet <- function(
           if (requireNamespace("arrow", quietly = TRUE)) {
             data <- arrow::read_parquet(file)
           } else {
-            # fallback: read via DuckDB
+            # fallback: read via DuckDB (disconnect immediately after read)
             temp_con <- DBI::dbConnect(duckdb::duckdb())
-            on.exit(DBI::dbDisconnect(temp_con), add = TRUE)
             data <- DBI::dbGetQuery(
               temp_con,
               glue::glue("SELECT * FROM read_parquet('{file}')")
             )
+            DBI::dbDisconnect(temp_con)
           }
 
           data_list[[i]] <- data
