@@ -1602,10 +1602,12 @@ process_chunked_query <- function(
               if (requireNamespace("arrow", quietly = TRUE)) {
                 tryCatch(
                   {
-                    existing_data <- arrow::read_parquet(output_file)
-                    # ensure compatible column types for windows compatibility
-                    # convert both to base R data.frames and ensure column types match
-                    existing_df <- as.data.frame(existing_data)
+                    # read existing (ensure pure R df and release file ASAP)
+                    existing_df <- as.data.frame(arrow::read_parquet(
+                      output_file
+                    ))
+                    # be extra safe on Windows: force GC to release file handle
+                    gc()
                     chunk_df <- as.data.frame(chunk)
 
                     # ensure column types match exactly before rbind
@@ -1622,7 +1624,16 @@ process_chunked_query <- function(
                     }
 
                     combined_data <- rbind(existing_df, chunk_df)
-                    arrow::write_parquet(combined_data, output_file)
+
+                    # write to temp file, then atomically replace to avoid file locking
+                    tmp_file <- paste0(output_file, ".tmp")
+                    arrow::write_parquet(combined_data, tmp_file)
+
+                    # on Windows, ensure old file is gone before rename
+                    if (file.exists(output_file)) {
+                      file.remove(output_file)
+                    }
+                    file.rename(tmp_file, output_file)
                   },
                   error = function(e) {
                     # create separate file for this chunk to preserve data integrity
@@ -2172,12 +2183,12 @@ eyeris_db_to_chunked_files <- function(
                   if (requireNamespace("arrow", quietly = TRUE)) {
                     tryCatch(
                       {
-                        existing_data <- arrow::read_parquet(
+                        # read existing (ensure pure R df and release file ASAP)
+                        existing_df <- as.data.frame(arrow::read_parquet(
                           current_output_file
-                        )
-                        # ensure compatible column types for windows compatibility
-                        # convert both to base R data.frames and ensure column types match
-                        existing_df <- as.data.frame(existing_data)
+                        ))
+                        # be extra safe on Windows: force GC to release file handle
+                        gc()
                         chunk_df <- as.data.frame(chunk)
 
                         # ensure column types match exactly before rbind
@@ -2197,7 +2208,16 @@ eyeris_db_to_chunked_files <- function(
                         }
 
                         combined_data <- rbind(existing_df, chunk_df)
-                        arrow::write_parquet(combined_data, current_output_file)
+
+                        # write to temp file, then atomically replace to avoid file locking
+                        tmp_file <- paste0(current_output_file, ".tmp")
+                        arrow::write_parquet(combined_data, tmp_file)
+
+                        # on Windows, ensure old file is gone before rename
+                        if (file.exists(current_output_file)) {
+                          file.remove(current_output_file)
+                        }
+                        file.rename(tmp_file, current_output_file)
                       },
                       error = function(e) {
                         # create separate file for this chunk to preserve data integrity
