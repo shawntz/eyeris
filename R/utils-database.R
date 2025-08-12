@@ -2083,196 +2083,315 @@ eyeris_db_to_chunked_files <- function(
 
       current_output_file <- get_current_output_file(current_file_number)
 
-      for (batch_idx in seq_along(table_batches)) {
-        batch_tables <- table_batches[[batch_idx]]
+      # determine if we should use database-level export or chunked processing
+      # database export is most efficient but doesn't support file size splitting
+      # use chunked processing for smaller file size limits (better for git-lfs)
+      use_db_export <- max_file_size_mb >= 500 # threshold for large file tolerance
 
-        if (length(table_batches) > 1) {
-          log_info(
-            "    Processing batch {batch_idx}/{length(table_batches)} ({length(batch_tables)} tables)",
-            verbose = verbose
-          )
-        }
+      db_export_success <- FALSE
+      start_time <- Sys.time()
 
-        # build UNION ALL query for this batch
-        union_queries <- sapply(batch_tables, function(table) {
-          paste0("SELECT * FROM \"", table, "\"")
-        })
+      if (use_db_export) {
+        log_info(
+          "  Using database-level export (file size limit >= 500MB)",
+          verbose = verbose
+        )
 
-        batch_union_sql <- paste(union_queries, collapse = " UNION ALL ")
+        tryCatch(
+          {
+            # build single UNION ALL query for all batches
+            all_union_queries <- c()
+            for (batch_idx in seq_along(table_batches)) {
+              batch_tables <- table_batches[[batch_idx]]
+              batch_union_queries <- sapply(batch_tables, function(table) {
+                paste0("SELECT * FROM \"", table, "\"")
+              })
+              all_union_queries <- c(all_union_queries, batch_union_queries)
+            }
 
-        # add subject filter if specified
-        if (!is.null(subjects)) {
-          subjects_str <- paste0("'", subjects, "'", collapse = ", ")
-          batch_union_sql <- paste0(
-            "SELECT * FROM (",
-            batch_union_sql,
-            ") WHERE subject_id IN (",
-            subjects_str,
-            ")"
-          )
-        }
+            final_union_sql <- paste(
+              all_union_queries,
+              collapse = " UNION ALL "
+            )
 
-        # custom chunk processor with file size limits
-        chunk_processor <- function(chunk) {
-          if (nrow(chunk) == 0) {
-            return(TRUE)
-          }
+            # add subject filter if specified
+            if (!is.null(subjects)) {
+              subjects_str <- paste0("'", subjects, "'", collapse = ", ")
+              final_union_sql <- paste0(
+                "SELECT * FROM (",
+                final_union_sql,
+                ") WHERE subject_id IN (",
+                subjects_str,
+                ")"
+              )
+            }
 
-          tryCatch(
-            {
-              # calculate approximate size of this chunk
-              chunk_size_bytes <- as.numeric(object.size(chunk))
+            # use DuckDB's COPY command for direct export
+            if (file_format == "parquet") {
+              copy_query <- sprintf(
+                "COPY (%s) TO '%s' (FORMAT PARQUET)",
+                final_union_sql,
+                normalizePath(current_output_file, mustWork = FALSE)
+              )
+            } else {
+              copy_query <- sprintf(
+                "COPY (%s) TO '%s' (FORMAT CSV, HEADER)",
+                final_union_sql,
+                normalizePath(current_output_file, mustWork = FALSE)
+              )
+            }
 
-              # check if adding this chunk would exceed file size limit
-              if (
-                !is_first_write &&
-                  (current_file_size_mb * 1024 * 1024 + chunk_size_bytes) >
-                    max_file_size_bytes
-              ) {
-                # start a new file
-                current_file_number <<- current_file_number + 1
-                current_output_file <<- get_current_output_file(
-                  current_file_number
-                )
-                current_file_size_mb <<- 0
-                is_first_write <<- TRUE
+            log_info(
+              "  Using database-level export for {data_type} group '{group_name}'",
+              verbose = verbose
+            )
 
-                log_info(
-                  "    Starting new file due to size limit: {basename(current_output_file)}",
+            # execute the copy command
+            DBI::dbExecute(con, copy_query)
+
+            # get row count for reporting
+            count_query <- sprintf(
+              "SELECT COUNT(*) as n FROM (%s)",
+              final_union_sql
+            )
+            total_group_rows <- DBI::dbGetQuery(con, count_query)$n
+
+            # get file size
+            if (file.exists(current_output_file)) {
+              current_file_size_mb <- file.size(current_output_file) /
+                (1024 * 1024)
+
+              # check if file exceeds size limit and needs splitting
+              if (current_file_size_mb > max_file_size_mb) {
+                log_warn(
+                  paste0(
+                    "  File size (",
+                    round(current_file_size_mb, 1),
+                    "MB) exceeds limit (",
+                    max_file_size_mb,
+                    "MB). Consider reducing chunk_size or increasing max_file_size_mb."
+                  ),
                   verbose = verbose
                 )
               }
+            }
 
-              if (file_format == "csv") {
-                if (is_first_write) {
-                  # create first chunk of this file with headers
-                  write.csv(chunk, current_output_file, row.names = FALSE)
+            total_group_time <- as.numeric(difftime(
+              Sys.time(),
+              start_time,
+              units = "secs"
+            ))
+            total_group_chunks <- 1 # single export operation
+
+            log_success(
+              paste0(
+                "  Database export completed: ",
+                total_group_rows,
+                " rows in ",
+                round(total_group_time, 1),
+                "s"
+              ),
+              verbose = verbose
+            )
+
+            db_export_success <- TRUE
+          },
+          error = function(e) {
+            log_warn(
+              paste0(
+                "  Database-level export failed: ",
+                e$message,
+                ". Falling back to chunked processing."
+              ),
+              verbose = verbose
+            )
+            db_export_success <<- FALSE
+          }
+        )
+      } else {
+        log_info(
+          paste0(
+            "  Using chunked processing (file size limit = ",
+            max_file_size_mb,
+            "MB < 500MB threshold)"
+          ),
+          verbose = verbose
+        )
+      }
+
+      # fallback to original chunked processing if database export fails or not used
+      if (!db_export_success) {
+        log_info(
+          "  Processing with file size chunking enabled",
+          verbose = verbose
+        )
+
+        for (batch_idx in seq_along(table_batches)) {
+          batch_tables <- table_batches[[batch_idx]]
+
+          if (length(table_batches) > 1) {
+            log_info(
+              "    Processing batch {batch_idx}/{length(table_batches)} ({length(batch_tables)} tables)",
+              verbose = verbose
+            )
+          }
+
+          # build UNION ALL query for this batch
+          union_queries <- sapply(batch_tables, function(table) {
+            paste0("SELECT * FROM \"", table, "\"")
+          })
+
+          batch_union_sql <- paste(union_queries, collapse = " UNION ALL ")
+
+          # add subject filter if specified
+          if (!is.null(subjects)) {
+            subjects_str <- paste0("'", subjects, "'", collapse = ", ")
+            batch_union_sql <- paste0(
+              "SELECT * FROM (",
+              batch_union_sql,
+              ") WHERE subject_id IN (",
+              subjects_str,
+              ")"
+            )
+          }
+
+          # custom chunk processor with file size limits
+          chunk_processor <- function(chunk) {
+            if (nrow(chunk) == 0) {
+              return(TRUE)
+            }
+
+            tryCatch(
+              {
+                # calculate approximate size of this chunk
+                chunk_size_bytes <- as.numeric(object.size(chunk))
+
+                # check if adding this chunk would exceed file size limit
+                # for parquet, be more aggressive about file splitting to avoid appending issues
+                size_threshold <- if (file_format == "parquet") {
+                  max_file_size_bytes * 0.8 # use 80% of limit for parquet
+                } else {
+                  max_file_size_bytes
+                }
+
+                if (
+                  !is_first_write &&
+                    (current_file_size_mb * 1024 * 1024 + chunk_size_bytes) >
+                      size_threshold
+                ) {
+                  # start a new file
+                  current_file_number <<- current_file_number + 1
+                  current_output_file <<- get_current_output_file(
+                    current_file_number
+                  )
+                  current_file_size_mb <<- 0
+                  is_first_write <<- TRUE
+
                   log_info(
-                    "    Created output file: {basename(current_output_file)}",
+                    "    Starting new file due to size limit: {basename(current_output_file)}",
                     verbose = verbose
                   )
-                  is_first_write <<- FALSE
-                } else {
-                  # append subsequent chunks without headers
-                  write.table(
-                    chunk,
-                    current_output_file,
-                    sep = ",",
-                    row.names = FALSE,
-                    col.names = FALSE,
-                    append = TRUE
-                  )
                 }
-              } else if (file_format == "parquet") {
-                if (is_first_write) {
-                  # first chunk - create new parquet file
-                  if (requireNamespace("arrow", quietly = TRUE)) {
-                    arrow::write_parquet(chunk, current_output_file)
+
+                if (file_format == "csv") {
+                  if (is_first_write) {
+                    # create first chunk of this file with headers
+                    write.csv(chunk, current_output_file, row.names = FALSE)
                     log_info(
                       "    Created output file: {basename(current_output_file)}",
                       verbose = verbose
                     )
                     is_first_write <<- FALSE
                   } else {
-                    log_error(
-                      "Arrow package required for Parquet output but not available"
+                    # append subsequent chunks without headers
+                    write.table(
+                      chunk,
+                      current_output_file,
+                      sep = ",",
+                      row.names = FALSE,
+                      col.names = FALSE,
+                      append = TRUE
                     )
                   }
-                } else {
-                  # append to existing parquet file
-                  if (requireNamespace("arrow", quietly = TRUE)) {
-                    tryCatch(
-                      {
-                        # read existing (ensure pure R df and release file ASAP)
-                        existing_df <- as.data.frame(arrow::read_parquet(
-                          current_output_file
-                        ))
-                        # be extra safe on Windows: force GC to release file handle
-                        gc()
-                        chunk_df <- as.data.frame(chunk)
-
-                        # ensure column types match exactly before rbind
-                        for (col in names(existing_df)) {
-                          if (col %in% names(chunk_df)) {
-                            # convert both columns to the same type (prefer character for safety)
-                            if (
-                              class(existing_df[[col]]) !=
-                                class(chunk_df[[col]])
-                            ) {
-                              existing_df[[col]] <- as.character(existing_df[[
-                                col
-                              ]])
-                              chunk_df[[col]] <- as.character(chunk_df[[col]])
-                            }
-                          }
-                        }
-
-                        combined_data <- rbind(existing_df, chunk_df)
-
-                        # write to temp file, then atomically replace to avoid file locking
-                        tmp_file <- paste0(current_output_file, ".tmp")
-                        arrow::write_parquet(combined_data, tmp_file)
-
-                        # on Windows, ensure old file is gone before rename
-                        if (file.exists(current_output_file)) {
-                          file.remove(current_output_file)
-                        }
-                        file.rename(tmp_file, current_output_file)
-                      },
-                      error = function(e) {
-                        # create separate file for this chunk to preserve data integrity
-                        chunk_file <- gsub(
-                          "\\.parquet$",
-                          paste0("_chunk_", total_group_chunks + 1, ".parquet"),
-                          current_output_file
-                        )
-                        arrow::write_parquet(chunk, chunk_file)
-                        log_warn(
-                          "failed to append to main parquet file, saved chunk to separate file: {basename(chunk_file)}",
-                          verbose = verbose
-                        )
-                        log_warn(
-                          "you may need to manually combine: {basename(current_output_file)} and {basename(chunk_file)}",
-                          verbose = verbose
-                        )
-                      }
-                    )
+                } else if (file_format == "parquet") {
+                  if (is_first_write) {
+                    # first chunk - create new parquet file
+                    if (requireNamespace("arrow", quietly = TRUE)) {
+                      arrow::write_parquet(chunk, current_output_file)
+                      log_info(
+                        "    Created output file: {basename(current_output_file)}",
+                        verbose = verbose
+                      )
+                      is_first_write <<- FALSE
+                    } else {
+                      log_error(
+                        "Arrow package required for Parquet output but not available"
+                      )
+                    }
                   } else {
-                    log_error(
-                      "Arrow package required for Parquet output but not available"
+                    # simplified parquet appending - use CSV approach instead
+                    # parquet doesn't support native appending, so we'll use file size limits
+                    # to minimize the number of chunks that need appending
+                    log_warn(
+                      "Parquet format doesn't support reliable appending. Starting new file to avoid corruption.",
+                      verbose = verbose
                     )
+
+                    # start a new numbered file instead of trying to append
+                    current_file_number <<- current_file_number + 1
+                    current_output_file <<- get_current_output_file(
+                      current_file_number
+                    )
+                    current_file_size_mb <<- 0
+
+                    # write chunk to new file
+                    if (requireNamespace("arrow", quietly = TRUE)) {
+                      arrow::write_parquet(chunk, current_output_file)
+                      log_info(
+                        "    Created new parquet file: {basename(current_output_file)}",
+                        verbose = verbose
+                      )
+                    } else {
+                      log_error(
+                        "Arrow package required for Parquet output but not available"
+                      )
+                    }
                   }
                 }
-              }
 
-              # update file size tracking
-              if (file.exists(current_output_file)) {
-                current_file_size_mb <<- file.size(current_output_file) /
-                  (1024 * 1024)
-              }
+                # update file size tracking
+                if (file.exists(current_output_file)) {
+                  current_file_size_mb <<- file.size(current_output_file) /
+                    (1024 * 1024)
+                }
 
-              return(TRUE)
-            },
-            error = function(e) {
-              log_warn("Failed to write chunk: {e$message}", verbose = verbose)
-              return(FALSE)
-            }
+                return(TRUE)
+              },
+              error = function(e) {
+                log_warn(
+                  "Failed to write chunk: {e$message}",
+                  verbose = verbose
+                )
+                return(FALSE)
+              }
+            )
+          }
+
+          # process this batch with chunking
+          batch_result <- process_chunked_query(
+            con = con,
+            query = batch_union_sql,
+            chunk_size = chunk_size,
+            process_chunk = chunk_processor,
+            verbose = verbose
           )
+
+          total_group_rows <- total_group_rows + batch_result$total_rows
+          total_group_chunks <- total_group_chunks +
+            batch_result$chunks_processed
+          total_group_time <- total_group_time +
+            batch_result$processing_time_seconds
         }
-
-        # process this batch with chunking
-        batch_result <- process_chunked_query(
-          con = con,
-          query = batch_union_sql,
-          chunk_size = chunk_size,
-          process_chunk = chunk_processor,
-          verbose = verbose
-        )
-
-        total_group_rows <- total_group_rows + batch_result$total_rows
-        total_group_chunks <- total_group_chunks + batch_result$chunks_processed
-        total_group_time <- total_group_time +
-          batch_result$processing_time_seconds
       }
 
       # rename files to include final total count if multiple files were created
