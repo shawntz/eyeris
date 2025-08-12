@@ -1,3 +1,15 @@
+# eyeris 2.1.1.9009 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+## ⚠ **development version** — unreleased
+
+_Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+- **NF**: **Database sharing and distribution functionality**. Added `eyeris_db_split_for_sharing()` and `eyeris_db_reconstruct_from_chunks()` functions to facilitate sharing of large eyeris databases via platforms with file size limits (GitHub, OSF, data repositories). Supports chunking strategies by data type, count, or size limits with epoch label grouping for efficient organization. Includes comprehensive metadata for reliable database reconstruction, by @shawntz.
+
+- **ENH**: **Enhanced chunked database export with epoch label grouping**. `eyeris_db_to_chunked_files()` now supports `group_by_epoch_label` parameter (default: TRUE) that processes epoch-related data types separately by epoch label, reducing memory footprint and creating label-specific output files. Added helper functions for epoch label extraction and improved table grouping logic for better organization of exported data, by @shawntz.
+
+- **DOC**: Updated package documentation to include newly exported database functions in `_pkgdown.yml`, core function reference table in `README.Rmd`, and internal API vignette. Enhanced documentation coverage for database export and management functionality, by @shawntz.
+
 # eyeris 2.1.1.9008 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
