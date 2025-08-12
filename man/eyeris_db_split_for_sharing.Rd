@@ -60,7 +60,7 @@ chunk_info <- eyeris_db_split_for_sharing(
 
 # Chunk into 6 files by count
 chunk_info <- eyeris_db_split_for_sharing(
-  bids_dir = "/path/to/bids", 
+  bids_dir = "/path/to/bids",
   db_path = "large-project",
   chunk_strategy = "by_count",
   n_chunks = 6
@@ -69,7 +69,7 @@ chunk_info <- eyeris_db_split_for_sharing(
 # Chunk by size (max 50MB per file)
 chunk_info <- eyeris_db_split_for_sharing(
   bids_dir = "/path/to/bids",
-  db_path = "large-project", 
+  db_path = "large-project",
   chunk_strategy = "by_size",
   max_chunk_size_mb = 50
 )
