@@ -2000,11 +2000,8 @@ eyeris_db_to_chunked_files <- function(
 
       # group tables by epoch label
       table_groups <- list()
-      
-      log_info(
-        "  Grouping tables by epoch label...",
-        verbose = verbose
-      )
+
+      log_info("  Grouping tables by epoch label...", verbose = verbose)
 
       for (table in type_tables) {
         epoch_label <- extract_epoch_label(table)
@@ -2013,7 +2010,7 @@ eyeris_db_to_chunked_files <- function(
         } else {
           epoch_label
         }
-        
+
         if (is.null(table_groups[[group_key]])) {
           table_groups[[group_key]] <- character(0)
         }
@@ -2652,7 +2649,7 @@ cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
 #'
 #' # Chunk into 6 files by count
 #' chunk_info <- eyeris_db_split_for_sharing(
-#'   bids_dir = "/path/to/bids", 
+#'   bids_dir = "/path/to/bids",
 #'   db_path = "large-project",
 #'   chunk_strategy = "by_count",
 #'   n_chunks = 6
@@ -2661,7 +2658,7 @@ cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
 #' # Chunk by size (max 50MB per file)
 #' chunk_info <- eyeris_db_split_for_sharing(
 #'   bids_dir = "/path/to/bids",
-#'   db_path = "large-project", 
+#'   db_path = "large-project",
 #'   chunk_strategy = "by_size",
 #'   max_chunk_size_mb = 50
 #' )
@@ -2684,89 +2681,127 @@ eyeris_db_split_for_sharing <- function(
   if (!dir.exists(bids_dir)) {
     log_error("BIDS directory does not exist: {bids_dir}")
   }
-  
+
   if (!chunk_strategy %in% c("by_data_type", "by_count", "by_size")) {
-    log_error("chunk_strategy must be one of: 'by_data_type', 'by_count', 'by_size'")
+    log_error(
+      "chunk_strategy must be one of: 'by_data_type', 'by_count', 'by_size'"
+    )
   }
-  
+
   if (n_chunks < 1) {
     log_error("n_chunks must be at least 1")
   }
-  
+
   if (max_chunk_size_mb < 1) {
     log_error("max_chunk_size_mb must be at least 1 MB")
   }
 
   # extract database name (remove .eyerisdb extension if present)
   db_name <- gsub("\\.eyerisdb$", "", basename(db_path))
-  
+
   # setup output directory
   if (is.null(output_dir)) {
     output_dir <- file.path(bids_dir, "derivatives", "chunked_db", db_name)
   }
-  
+
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
     log_info("Created output directory: {output_dir}", verbose = verbose)
   }
 
   # connect to source database
-  log_info("Connecting to source database: {db_name}.eyerisdb", verbose = verbose)
-  con <- tryCatch({
-    eyeris_db_connect(bids_dir, db_path)
-  }, error = function(e) {
-    log_error("Failed to connect to source database: {e$message}")
-  })
-  
+  log_info(
+    "Connecting to source database: {db_name}.eyerisdb",
+    verbose = verbose
+  )
+  con <- tryCatch(
+    {
+      eyeris_db_connect(bids_dir, db_path)
+    },
+    error = function(e) {
+      log_error("Failed to connect to source database: {e$message}")
+    }
+  )
+
   on.exit(eyeris_db_disconnect(con))
-  
+
   # helper function for epoch label extraction
   extract_epoch_label_from_table <- function(con, table_name) {
     # try reading metadata column quickly
     label <- NA_character_
-    got <- try({
-      DBI::dbGetQuery(con, paste0('SELECT epoch_label FROM "', table_name, '" LIMIT 1'))
-    }, silent = TRUE)
-    
-    if (!inherits(got, "try-error") && is.data.frame(got) && nrow(got) > 0 && "epoch_label" %in% names(got)) {
+    got <- try(
+      {
+        DBI::dbGetQuery(
+          con,
+          paste0('SELECT epoch_label FROM "', table_name, '" LIMIT 1')
+        )
+      },
+      silent = TRUE
+    )
+
+    if (
+      !inherits(got, "try-error") &&
+        is.data.frame(got) &&
+        nrow(got) > 0 &&
+        "epoch_label" %in% names(got)
+    ) {
       label <- got$epoch_label[[1]]
     }
-    
+
     if (!is.na(label) && !is.null(label) && nzchar(label)) {
       return(tolower(as.character(label)))
     }
-    
+
     # fallback to pattern-based extraction
     lbl <- NA_character_
     if (grepl('^epochs_', table_name)) {
-      lbl <- sub('^epochs_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+      lbl <- sub(
+        '^epochs_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+        '\\1',
+        table_name
+      )
     } else if (grepl('^confounds_(events|summary)_', table_name)) {
-      lbl <- sub('^confounds_(?:events|summary)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+      lbl <- sub(
+        '^confounds_(?:events|summary)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+        '\\1',
+        table_name
+      )
     } else if (grepl('^epoch_(summary|timeseries)_', table_name)) {
-      lbl <- sub('^epoch_(?:summary|timeseries)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$', '\\1', table_name)
+      lbl <- sub(
+        '^epoch_(?:summary|timeseries)_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_(?:eye[LR]|eye-[LR]))?$',
+        '\\1',
+        table_name
+      )
     }
-    
+
     if (!is.na(lbl) && !identical(lbl, table_name)) {
       return(tolower(lbl))
     }
     return(NA_character_)
   }
-  
+
   # get database summary
   all_tables <- eyeris_db_list_tables(con)
   temp_tables <- all_tables[grepl("^temp_", all_tables)]
   if (length(temp_tables) > 0) {
-    log_warn("Found {length(temp_tables)} temporary tables - these will be excluded from chunking", verbose = verbose)
+    log_warn(
+      "Found {length(temp_tables)} temporary tables - these will be excluded from chunking",
+      verbose = verbose
+    )
   }
   all_tables <- all_tables[!grepl("^temp_", all_tables)]
-  
+
   if (length(all_tables) == 0) {
     log_warn("No valid tables found in database", verbose = verbose)
-    return(list(chunks = character(0), strategy = chunk_strategy, total_chunks = 0))
+    return(list(
+      chunks = character(0),
+      strategy = chunk_strategy,
+      total_chunks = 0
+    ))
   }
-  
+
   log_info("Found {length(all_tables)} tables to process", verbose = verbose)
-  
+
   # group tables by data type
   data_type_groups <- list()
   for (table in all_tables) {
@@ -2778,29 +2813,42 @@ eyeris_db_split_for_sharing <- function(
       data_type_groups[[data_type]] <- c(data_type_groups[[data_type]], table)
     }
   }
-  
+
   if (length(data_type_groups) == 0) {
     log_warn("No tables found matching specified data types", verbose = verbose)
-    return(list(chunks = character(0), strategy = chunk_strategy, total_chunks = 0))
+    return(list(
+      chunks = character(0),
+      strategy = chunk_strategy,
+      total_chunks = 0
+    ))
   }
-  
-  log_info("Found {length(data_type_groups)} data types: {paste(names(data_type_groups), collapse = ', ')}", verbose = verbose)
-  
+
+  log_info(
+    "Found {length(data_type_groups)} data types: {paste(names(data_type_groups), collapse = ', ')}",
+    verbose = verbose
+  )
+
   # implement chunking strategies
   chunk_plan <- list()
   created_chunks <- list()
-  
+
   if (chunk_strategy == "by_data_type") {
     # each data type gets its own chunk (with epoch label grouping if enabled)
-    epoch_related_types <- c("epochs", "epoch_summary", "epoch_timeseries", "confounds_events", "confounds_summary")
-    
+    epoch_related_types <- c(
+      "epochs",
+      "epoch_summary",
+      "epoch_timeseries",
+      "confounds_events",
+      "confounds_summary"
+    )
+
     for (data_type in names(data_type_groups)) {
       tables_for_type <- data_type_groups[[data_type]]
-      
+
       if (data_type %in% epoch_related_types && group_by_epoch_label) {
         # group by epoch label within this data type
         epoch_groups <- list()
-        
+
         for (table in tables_for_type) {
           epoch_label <- extract_epoch_label_from_table(con, table)
           group_key <- if (is.na(epoch_label) || !nzchar(epoch_label)) {
@@ -2808,13 +2856,13 @@ eyeris_db_split_for_sharing <- function(
           } else {
             epoch_label
           }
-          
+
           if (is.null(epoch_groups[[group_key]])) {
             epoch_groups[[group_key]] <- character(0)
           }
           epoch_groups[[group_key]] <- c(epoch_groups[[group_key]], table)
         }
-        
+
         # create chunk for each epoch group
         for (epoch_key in names(epoch_groups)) {
           chunk_name <- if (epoch_key == "_nolabel") {
@@ -2834,13 +2882,18 @@ eyeris_db_split_for_sharing <- function(
     # distribute tables across n_chunks files
     all_tables_flat <- unlist(data_type_groups, use.names = FALSE)
     tables_per_chunk <- ceiling(length(all_tables_flat) / n_chunks)
-    
+
     for (i in 1:n_chunks) {
       start_idx <- (i - 1) * tables_per_chunk + 1
       end_idx <- min(i * tables_per_chunk, length(all_tables_flat))
-      
+
       if (start_idx <= length(all_tables_flat)) {
-        chunk_name <- sprintf("%s_chunk_%02d-of-%02d.eyerisdb", db_name, i, n_chunks)
+        chunk_name <- sprintf(
+          "%s_chunk_%02d-of-%02d.eyerisdb",
+          db_name,
+          i,
+          n_chunks
+        )
         chunk_plan[[chunk_name]] <- all_tables_flat[start_idx:end_idx]
       }
     }
@@ -2849,27 +2902,43 @@ eyeris_db_split_for_sharing <- function(
     current_chunk_tables <- character(0)
     current_chunk_size <- 0
     chunk_counter <- 1
-    
+
     for (data_type in names(data_type_groups)) {
       for (table in data_type_groups[[data_type]]) {
         # estimate table size
-        table_size <- tryCatch({
-          row_count <- DBI::dbGetQuery(con, paste0('SELECT COUNT(*) as n FROM "', table, '"'))$n
-          col_count <- length(DBI::dbListFields(con, table))
-          # rough estimate: 50 bytes per cell on average
-          estimated_mb <- (row_count * col_count * 50) / (1024 * 1024)
-          estimated_mb
-        }, error = function(e) {
-          log_warn("Could not estimate size for table {table}: {e$message}", verbose = verbose)
-          1 # default to 1MB if estimation fails
-        })
-        
+        table_size <- tryCatch(
+          {
+            row_count <- DBI::dbGetQuery(
+              con,
+              paste0('SELECT COUNT(*) as n FROM "', table, '"')
+            )$n
+            col_count <- length(DBI::dbListFields(con, table))
+            # rough estimate: 50 bytes per cell on average
+            estimated_mb <- (row_count * col_count * 50) / (1024 * 1024)
+            estimated_mb
+          },
+          error = function(e) {
+            log_warn(
+              "Could not estimate size for table {table}: {e$message}",
+              verbose = verbose
+            )
+            1 # default to 1MB if estimation fails
+          }
+        )
+
         # check if adding this table would exceed size limit
-        if (current_chunk_size + table_size > max_chunk_size_mb && length(current_chunk_tables) > 0) {
+        if (
+          current_chunk_size + table_size > max_chunk_size_mb &&
+            length(current_chunk_tables) > 0
+        ) {
           # finalize current chunk
-          chunk_name <- sprintf("%s_chunk_%02d.eyerisdb", db_name, chunk_counter)
+          chunk_name <- sprintf(
+            "%s_chunk_%02d.eyerisdb",
+            db_name,
+            chunk_counter
+          )
           chunk_plan[[chunk_name]] <- current_chunk_tables
-          
+
           # start new chunk
           current_chunk_tables <- c(table)
           current_chunk_size <- table_size
@@ -2881,107 +2950,154 @@ eyeris_db_split_for_sharing <- function(
         }
       }
     }
-    
+
     # finalize last chunk
     if (length(current_chunk_tables) > 0) {
       chunk_name <- sprintf("%s_chunk_%02d.eyerisdb", db_name, chunk_counter)
       chunk_plan[[chunk_name]] <- current_chunk_tables
     }
   }
-  
-  log_info("Creating {length(chunk_plan)} database chunks...", verbose = verbose)
-  
+
+  log_info(
+    "Creating {length(chunk_plan)} database chunks...",
+    verbose = verbose
+  )
+
   # create each chunk database
   for (chunk_name in names(chunk_plan)) {
     chunk_tables <- chunk_plan[[chunk_name]]
     chunk_path <- file.path(output_dir, chunk_name)
-    
-    log_info("Creating chunk: {chunk_name} ({length(chunk_tables)} tables)", verbose = verbose)
-    
+
+    log_info(
+      "Creating chunk: {chunk_name} ({length(chunk_tables)} tables)",
+      verbose = verbose
+    )
+
     # create chunk database
-    chunk_con <- tryCatch({
-      DBI::dbConnect(duckdb::duckdb(), dbdir = chunk_path)
-    }, error = function(e) {
-      log_error("Failed to create chunk database {chunk_name}: {e$message}")
-    })
-    
-    tryCatch({
-      total_rows_copied <- 0
-      
-      # copy each table to the chunk database
-      for (table in chunk_tables) {
-        table_data <- DBI::dbReadTable(con, table)
-        
-        # optionally remove metadata
-        if (!include_metadata) {
-          metadata_cols <- c(
-            "subject_id", "session_id", "task_name", "data_type", 
-            "run_number", "eye_suffix", "epoch_label", "created_timestamp"
-          )
-          cols_to_remove <- intersect(metadata_cols, colnames(table_data))
-          if (length(cols_to_remove) > 0) {
-            table_data <- table_data[, !colnames(table_data) %in% cols_to_remove, drop = FALSE]
-          }
-        }
-        
-        DBI::dbWriteTable(chunk_con, table, table_data, overwrite = TRUE)
-        total_rows_copied <- total_rows_copied + nrow(table_data)
+    chunk_con <- tryCatch(
+      {
+        DBI::dbConnect(duckdb::duckdb(), dbdir = chunk_path)
+      },
+      error = function(e) {
+        log_error("Failed to create chunk database {chunk_name}: {e$message}")
       }
-      
-      # get final file size
-      DBI::dbDisconnect(chunk_con)
-      file_size_mb <- file.size(chunk_path) / (1024 * 1024)
-      
-      created_chunks[[chunk_name]] <- list(
-        path = chunk_path,
-        tables = chunk_tables,
-        rows = total_rows_copied,
-        size_mb = file_size_mb
-      )
-      
-      log_success("Created {chunk_name}: {total_rows_copied} rows ({round(file_size_mb, 1)} MB)", verbose = verbose)
-      
-    }, error = function(e) {
-      log_warn("Failed to populate chunk {chunk_name}: {e$message}", verbose = verbose)
-      DBI::dbDisconnect(chunk_con)
-    })
+    )
+
+    tryCatch(
+      {
+        total_rows_copied <- 0
+
+        # copy each table to the chunk database
+        for (table in chunk_tables) {
+          table_data <- DBI::dbReadTable(con, table)
+
+          # optionally remove metadata
+          if (!include_metadata) {
+            metadata_cols <- c(
+              "subject_id",
+              "session_id",
+              "task_name",
+              "data_type",
+              "run_number",
+              "eye_suffix",
+              "epoch_label",
+              "created_timestamp"
+            )
+            cols_to_remove <- intersect(metadata_cols, colnames(table_data))
+            if (length(cols_to_remove) > 0) {
+              table_data <- table_data[,
+                !colnames(table_data) %in% cols_to_remove,
+                drop = FALSE
+              ]
+            }
+          }
+
+          DBI::dbWriteTable(chunk_con, table, table_data, overwrite = TRUE)
+          total_rows_copied <- total_rows_copied + nrow(table_data)
+        }
+
+        # get final file size
+        DBI::dbDisconnect(chunk_con)
+        file_size_mb <- file.size(chunk_path) / (1024 * 1024)
+
+        created_chunks[[chunk_name]] <- list(
+          path = chunk_path,
+          tables = chunk_tables,
+          rows = total_rows_copied,
+          size_mb = file_size_mb
+        )
+
+        log_success(
+          "Created {chunk_name}: {total_rows_copied} rows ({round(file_size_mb, 1)} MB)",
+          verbose = verbose
+        )
+      },
+      error = function(e) {
+        log_warn(
+          "Failed to populate chunk {chunk_name}: {e$message}",
+          verbose = verbose
+        )
+        DBI::dbDisconnect(chunk_con)
+      }
+    )
   }
-  
+
   # create reconstruction metadata file
   reconstruction_info <- list(
     source_database = paste0(db_name, ".eyerisdb"),
     chunk_strategy = chunk_strategy,
     chunk_parameters = list(
       n_chunks = if (chunk_strategy == "by_count") n_chunks else NULL,
-      max_chunk_size_mb = if (chunk_strategy == "by_size") max_chunk_size_mb else NULL,
+      max_chunk_size_mb = if (chunk_strategy == "by_size") {
+        max_chunk_size_mb
+      } else {
+        NULL
+      },
       group_by_epoch_label = group_by_epoch_label
     ),
     chunks = created_chunks,
     creation_date = Sys.time(),
     eyeris_version = utils::packageVersion("eyeris")
   )
-  
+
   # save reconstruction info as JSON
-  reconstruction_file <- file.path(output_dir, paste0(db_name, "_reconstruction_info.json"))
-  tryCatch({
-    jsonlite::write_json(reconstruction_info, reconstruction_file, pretty = TRUE, auto_unbox = TRUE)
-    log_info("Created reconstruction metadata: {basename(reconstruction_file)}", verbose = verbose)
-  }, error = function(e) {
-    log_warn("Could not create reconstruction metadata file: {e$message}", verbose = verbose)
-  })
-  
+  reconstruction_file <- file.path(
+    output_dir,
+    paste0(db_name, "_reconstruction_info.json")
+  )
+  tryCatch(
+    {
+      jsonlite::write_json(
+        reconstruction_info,
+        reconstruction_file,
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
+      log_info(
+        "Created reconstruction metadata: {basename(reconstruction_file)}",
+        verbose = verbose
+      )
+    },
+    error = function(e) {
+      log_warn(
+        "Could not create reconstruction metadata file: {e$message}",
+        verbose = verbose
+      )
+    }
+  )
+
   # summary
   total_chunks <- length(created_chunks)
   total_size_mb <- sum(sapply(created_chunks, function(x) x$size_mb))
   total_rows <- sum(sapply(created_chunks, function(x) x$rows))
-  
+
   log_success("Database chunking complete:", verbose = verbose)
   log_info("  Strategy: {chunk_strategy}", verbose = verbose)
   log_info("  Total chunks: {total_chunks}", verbose = verbose)
   log_info("  Total size: {round(total_size_mb, 1)} MB", verbose = verbose)
   log_info("  Total rows: {total_rows}", verbose = verbose)
   log_info("  Output directory: {output_dir}", verbose = verbose)
-  
+
   return(list(
     chunks = created_chunks,
     strategy = chunk_strategy,
@@ -2989,14 +3105,18 @@ eyeris_db_split_for_sharing <- function(
     total_size_mb = total_size_mb,
     total_rows = total_rows,
     output_dir = output_dir,
-    reconstruction_file = if (file.exists(reconstruction_file)) reconstruction_file else NULL
+    reconstruction_file = if (file.exists(reconstruction_file)) {
+      reconstruction_file
+    } else {
+      NULL
+    }
   ))
 }
 
 #' Reconstruct eyerisdb from chunked files
 #'
 #' Merges multiple chunked eyerisdb files back into a single database file.
-#' Uses the reconstruction metadata file created by `eyeris_db_split_for_sharing()` 
+#' Uses the reconstruction metadata file created by `eyeris_db_split_for_sharing()`
 #' to ensure proper reconstruction.
 #'
 #' @param chunked_dir Directory containing the chunked database files and reconstruction metadata
@@ -3014,7 +3134,7 @@ eyeris_db_split_for_sharing <- function(
 #'   chunked_dir = "/path/to/chunked_db/project-name",
 #'   output_path = "/path/to/reconstructed-project.eyerisdb"
 #' )
-#' 
+#'
 #' # Specify custom reconstruction file location
 #' reconstruction_info <- eyeris_db_reconstruct_from_chunks(
 #'   chunked_dir = "/path/to/chunked_db/project-name",
@@ -3034,41 +3154,56 @@ eyeris_db_reconstruct_from_chunks <- function(
   if (!dir.exists(chunked_dir)) {
     log_error("Chunked database directory does not exist: {chunked_dir}")
   }
-  
+
   # find reconstruction metadata file
   if (is.null(reconstruction_file)) {
     reconstruction_files <- list.files(
-      chunked_dir, 
-      pattern = "*_reconstruction_info.json$", 
+      chunked_dir,
+      pattern = "*_reconstruction_info.json$",
       full.names = TRUE
     )
-    
+
     if (length(reconstruction_files) == 0) {
       log_error("No reconstruction metadata file found in {chunked_dir}")
     } else if (length(reconstruction_files) > 1) {
-      log_warn("Multiple reconstruction files found, using: {basename(reconstruction_files[1])}", verbose = verbose)
+      log_warn(
+        "Multiple reconstruction files found, using: {basename(reconstruction_files[1])}",
+        verbose = verbose
+      )
       reconstruction_file <- reconstruction_files[1]
     } else {
       reconstruction_file <- reconstruction_files[1]
     }
   }
-  
+
   if (!file.exists(reconstruction_file)) {
-    log_error("Reconstruction metadata file does not exist: {reconstruction_file}")
+    log_error(
+      "Reconstruction metadata file does not exist: {reconstruction_file}"
+    )
   }
-  
+
   # read reconstruction metadata
-  log_info("Reading reconstruction metadata from: {basename(reconstruction_file)}", verbose = verbose)
-  reconstruction_info <- tryCatch({
-    jsonlite::fromJSON(reconstruction_file)
-  }, error = function(e) {
-    log_error("Failed to read reconstruction metadata: {e$message}")
-  })
-  
+  log_info(
+    "Reading reconstruction metadata from: {basename(reconstruction_file)}",
+    verbose = verbose
+  )
+  reconstruction_info <- tryCatch(
+    {
+      jsonlite::fromJSON(reconstruction_file)
+    },
+    error = function(e) {
+      log_error("Failed to read reconstruction metadata: {e$message}")
+    }
+  )
+
   # validate chunk files exist
-  chunk_files <- list.files(chunked_dir, pattern = "\\.eyerisdb$", full.names = TRUE)
+  chunk_files <- list.files(
+    chunked_dir,
+    pattern = "\\.eyerisdb$",
+    full.names = TRUE
+  )
   expected_chunks <- names(reconstruction_info$chunks)
-  
+
   missing_chunks <- character(0)
   for (chunk_name in expected_chunks) {
     chunk_path <- file.path(chunked_dir, chunk_name)
@@ -3076,97 +3211,126 @@ eyeris_db_reconstruct_from_chunks <- function(
       missing_chunks <- c(missing_chunks, chunk_name)
     }
   }
-  
+
   if (length(missing_chunks) > 0) {
     log_error("Missing chunk files: {paste(missing_chunks, collapse = ', ')}")
   }
-  
-  log_info("Found all {length(expected_chunks)} expected chunk files", verbose = verbose)
-  
+
+  log_info(
+    "Found all {length(expected_chunks)} expected chunk files",
+    verbose = verbose
+  )
+
   # create output database
-  log_info("Creating reconstructed database: {basename(output_path)}", verbose = verbose)
-  output_con <- tryCatch({
-    DBI::dbConnect(duckdb::duckdb(), dbdir = output_path)
-  }, error = function(e) {
-    log_error("Failed to create output database: {e$message}")
-  })
-  
+  log_info(
+    "Creating reconstructed database: {basename(output_path)}",
+    verbose = verbose
+  )
+  output_con <- tryCatch(
+    {
+      DBI::dbConnect(duckdb::duckdb(), dbdir = output_path)
+    },
+    error = function(e) {
+      log_error("Failed to create output database: {e$message}")
+    }
+  )
+
   on.exit(DBI::dbDisconnect(output_con))
-  
+
   # merge each chunk
   total_tables_merged <- 0
   total_rows_merged <- 0
-  
+
   for (chunk_name in expected_chunks) {
     chunk_path <- file.path(chunked_dir, chunk_name)
     chunk_info <- reconstruction_info$chunks[[chunk_name]]
-    
+
     log_info("Processing chunk: {chunk_name}", verbose = verbose)
-    
+
     # connect to chunk database
-    chunk_con <- tryCatch({
-      DBI::dbConnect(duckdb::duckdb(), dbdir = chunk_path)
-    }, error = function(e) {
-      log_error("Failed to connect to chunk {chunk_name}: {e$message}")
-    })
-    
-    tryCatch({
-      # get all tables from chunk
-      chunk_tables <- DBI::dbListTables(chunk_con)
-      
-      for (table_name in chunk_tables) {
-        # read table data
-        table_data <- DBI::dbReadTable(chunk_con, table_name)
-        
-        # check if table already exists in output database
-        if (DBI::dbExistsTable(output_con, table_name)) {
-          # append to existing table
-          DBI::dbWriteTable(
-            output_con, 
-            table_name, 
-            table_data, 
-            append = TRUE, 
-            overwrite = FALSE
-          )
-          log_info("  Appended {nrow(table_data)} rows to existing table: {table_name}", verbose = verbose)
-        } else {
-          # create new table
-          DBI::dbWriteTable(
-            output_con, 
-            table_name, 
-            table_data, 
-            append = FALSE, 
-            overwrite = FALSE
-          )
-          log_info("  Created new table: {table_name} ({nrow(table_data)} rows)", verbose = verbose)
+    chunk_con <- tryCatch(
+      {
+        DBI::dbConnect(duckdb::duckdb(), dbdir = chunk_path)
+      },
+      error = function(e) {
+        log_error("Failed to connect to chunk {chunk_name}: {e$message}")
+      }
+    )
+
+    tryCatch(
+      {
+        # get all tables from chunk
+        chunk_tables <- DBI::dbListTables(chunk_con)
+
+        for (table_name in chunk_tables) {
+          # read table data
+          table_data <- DBI::dbReadTable(chunk_con, table_name)
+
+          # check if table already exists in output database
+          if (DBI::dbExistsTable(output_con, table_name)) {
+            # append to existing table
+            DBI::dbWriteTable(
+              output_con,
+              table_name,
+              table_data,
+              append = TRUE,
+              overwrite = FALSE
+            )
+            log_info(
+              "  Appended {nrow(table_data)} rows to existing table: {table_name}",
+              verbose = verbose
+            )
+          } else {
+            # create new table
+            DBI::dbWriteTable(
+              output_con,
+              table_name,
+              table_data,
+              append = FALSE,
+              overwrite = FALSE
+            )
+            log_info(
+              "  Created new table: {table_name} ({nrow(table_data)} rows)",
+              verbose = verbose
+            )
+          }
+
+          total_rows_merged <- total_rows_merged + nrow(table_data)
+          total_tables_merged <- total_tables_merged + 1
         }
-        
-        total_rows_merged <- total_rows_merged + nrow(table_data)
-        total_tables_merged <- total_tables_merged + 1
-      }
-      
-      DBI::dbDisconnect(chunk_con)
-      
-    }, error = function(e) {
-      log_warn("Error processing chunk {chunk_name}: {e$message}", verbose = verbose)
-      if (DBI::dbIsValid(chunk_con)) {
+
         DBI::dbDisconnect(chunk_con)
+      },
+      error = function(e) {
+        log_warn(
+          "Error processing chunk {chunk_name}: {e$message}",
+          verbose = verbose
+        )
+        if (DBI::dbIsValid(chunk_con)) {
+          DBI::dbDisconnect(chunk_con)
+        }
       }
-    })
+    )
   }
-  
+
   # verify reconstruction
   output_tables <- DBI::dbListTables(output_con)
   output_size_mb <- file.size(output_path) / (1024 * 1024)
-  
+
   log_success("Database reconstruction complete:", verbose = verbose)
-  log_info("  Original strategy: {reconstruction_info$chunk_strategy}", verbose = verbose)  
+  log_info(
+    "  Original strategy: {reconstruction_info$chunk_strategy}",
+    verbose = verbose
+  )
   log_info("  Chunks processed: {length(expected_chunks)}", verbose = verbose)
   log_info("  Tables merged: {total_tables_merged}", verbose = verbose)
   log_info("  Total rows: {total_rows_merged}", verbose = verbose)
-  log_info("  Final database size: {round(output_size_mb, 1)} MB", verbose = verbose)
+  log_info(
+    "  Final database size: {round(output_size_mb, 1)} MB",
+    verbose = verbose
+  )
   log_info("  Output database: {output_path}", verbose = verbose)
-  
+
   return(list(
     output_database = output_path,
     chunks_processed = length(expected_chunks),
