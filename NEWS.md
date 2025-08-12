@@ -1,3 +1,11 @@
+# eyeris 2.1.1.9008 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+## ⚠ **development version** — unreleased
+
+_Note: This is the working changelog for features and fixes being developed for the next CRAN release (`v2.2.0`). Items will continue to be added here until that version is finalized._
+
+- **ENH**: **Optimized database export performance and reliability**. `eyeris_db_to_chunked_files()` now uses a hybrid approach: database-level export via DuckDB's `COPY` command for large file size limits (≥500MB) for maximum performance, and chunked processing for smaller limits (<500MB) to ensure proper file size splitting for git-lfs workflows. Additionally, parquet file handling has been improved to eliminate unreliable appending that caused `_chunk_` files, now using a cleaner numbered file approach with 80% size thresholds to prevent append failures, by @shawntz in #268.
+
 # eyeris 2.1.1.9007 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## ⚠ **development version** — unreleased
