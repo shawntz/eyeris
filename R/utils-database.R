@@ -2021,6 +2021,95 @@ eyeris_db_to_chunked_files <- function(
         "Found {length(table_groups)} epoch label groups for {data_type}: {paste(names(table_groups), collapse = ', ')}",
         verbose = verbose
       )
+
+      # further group by column structure within each epoch label group
+      final_table_groups <- list()
+      for (epoch_group_name in names(table_groups)) {
+        epoch_tables <- table_groups[[epoch_group_name]]
+
+        if (length(epoch_tables) > 1) {
+          # check if tables have different column structures
+          column_signatures <- list()
+          structure_groups <- list()
+
+          log_info(
+            "  Analyzing column structures within epoch group '{epoch_group_name}'...",
+            verbose = verbose
+          )
+
+          for (table in epoch_tables) {
+            tryCatch(
+              {
+                # get column names and types for this table
+                cols <- DBI::dbListFields(con, table)
+                col_signature <- paste(sort(cols), collapse = "|")
+
+                # find existing group with same signature or create new one
+                group_found <- FALSE
+                for (existing_sig in names(column_signatures)) {
+                  if (column_signatures[[existing_sig]] == col_signature) {
+                    structure_groups[[existing_sig]] <- c(
+                      structure_groups[[existing_sig]],
+                      table
+                    )
+                    group_found <- TRUE
+                    break
+                  }
+                }
+
+                if (!group_found) {
+                  # extract potential suffix from table name for grouping
+                  suffix <- gsub(".*_([^_]+)$", "\\1", table)
+                  group_key <- if (epoch_group_name == "_nolabel") {
+                    suffix
+                  } else {
+                    paste0(epoch_group_name, "_", suffix)
+                  }
+
+                  # ensure uniqueness
+                  counter <- 1
+                  original_group_key <- group_key
+                  while (group_key %in% names(column_signatures)) {
+                    group_key <- paste0(original_group_key, "_", counter)
+                    counter <- counter + 1
+                  }
+
+                  column_signatures[[group_key]] <- col_signature
+                  structure_groups[[group_key]] <- c(table)
+                }
+              },
+              error = function(e) {
+                log_warn(
+                  "Could not analyze table structure for '{table}': {e$message}",
+                  verbose = verbose
+                )
+                # put in a separate group
+                error_group_key <- paste0("error_", table)
+                structure_groups[[error_group_key]] <- c(table)
+              }
+            )
+          }
+
+          # add structure groups to final groups
+          for (struct_group_name in names(structure_groups)) {
+            final_table_groups[[struct_group_name]] <- structure_groups[[
+              struct_group_name
+            ]]
+          }
+
+          if (length(structure_groups) > 1) {
+            log_info(
+              "Found {length(structure_groups)} column-compatible groups within '{epoch_group_name}': {paste(names(structure_groups), collapse = ', ')}",
+              verbose = verbose
+            )
+          }
+        } else {
+          # only one table in this epoch group
+          final_table_groups[[epoch_group_name]] <- epoch_tables
+        }
+      }
+
+      table_groups <- final_table_groups
     } else if (data_type %in% epoch_related_types) {
       # group tables by their column structure to avoid UNION errors
       table_groups <- list()
@@ -2802,10 +2891,31 @@ eyeris_db_split_for_sharing <- function(
 
   log_info("Found {length(all_tables)} tables to process", verbose = verbose)
 
-  # group tables by data type
+  # group tables by data type (handle compound data types properly)
   data_type_groups <- list()
+  known_compound_types <- c(
+    "run_confounds",
+    "confounds_events",
+    "confounds_summary",
+    "epoch_summary",
+    "epoch_timeseries"
+  )
+
   for (table in all_tables) {
-    data_type <- gsub("^([^_]+)_.*", "\\1", table)
+    # first try to match compound data types
+    data_type <- NULL
+    for (compound_type in known_compound_types) {
+      if (grepl(paste0("^", compound_type, "_"), table)) {
+        data_type <- compound_type
+        break
+      }
+    }
+
+    # if no compound type matched, use simple extraction
+    if (is.null(data_type)) {
+      data_type <- gsub("^([^_]+)_.*", "\\1", table)
+    }
+
     if (is.null(data_types) || data_type %in% data_types) {
       if (is.null(data_type_groups[[data_type]])) {
         data_type_groups[[data_type]] <- character(0)
@@ -3057,7 +3167,7 @@ eyeris_db_split_for_sharing <- function(
     ),
     chunks = created_chunks,
     creation_date = Sys.time(),
-    eyeris_version = utils::packageVersion("eyeris")
+    eyeris_version = as.character(utils::packageVersion("eyeris"))
   )
 
   # save reconstruction info as JSON
@@ -3065,7 +3175,13 @@ eyeris_db_split_for_sharing <- function(
     output_dir,
     paste0(db_name, "_reconstruction_info.json")
   )
-  tryCatch(
+
+  # ensure output directory exists
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  reconstruction_file_created <- tryCatch(
     {
       jsonlite::write_json(
         reconstruction_info,
@@ -3073,16 +3189,26 @@ eyeris_db_split_for_sharing <- function(
         pretty = TRUE,
         auto_unbox = TRUE
       )
-      log_info(
-        "Created reconstruction metadata: {basename(reconstruction_file)}",
-        verbose = verbose
-      )
+      if (file.exists(reconstruction_file)) {
+        log_info(
+          "Created reconstruction metadata: {basename(reconstruction_file)}",
+          verbose = verbose
+        )
+        TRUE
+      } else {
+        log_warn(
+          "Reconstruction metadata file was not created successfully",
+          verbose = verbose
+        )
+        FALSE
+      }
     },
     error = function(e) {
       log_warn(
         "Could not create reconstruction metadata file: {e$message}",
         verbose = verbose
       )
+      FALSE
     }
   )
 
@@ -3105,7 +3231,9 @@ eyeris_db_split_for_sharing <- function(
     total_size_mb = total_size_mb,
     total_rows = total_rows,
     output_dir = output_dir,
-    reconstruction_file = if (file.exists(reconstruction_file)) {
+    reconstruction_file = if (
+      reconstruction_file_created && file.exists(reconstruction_file)
+    ) {
       reconstruction_file
     } else {
       NULL
