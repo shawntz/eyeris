@@ -13,6 +13,7 @@ eyeris_db_to_chunked_files(
   data_types = NULL,
   subjects = NULL,
   max_file_size_mb = 50,
+  group_by_epoch_label = TRUE,
   verbose = TRUE
 )
 }
@@ -33,6 +34,10 @@ eyeris_db_to_chunked_files(
 
 \item{max_file_size_mb}{Maximum file size in MB per output file (default: 50). When exceeded,
 automatically creates numbered files (e.g., data_01-of-03.csv, data_02-of-03.csv)}
+
+\item{group_by_epoch_label}{If TRUE (default), processes epoch-related data types separately by epoch label
+to reduce memory footprint and produce label-specific files. When FALSE, epochs with different
+labels are merged into single large files (not recommended).}
 
 \item{verbose}{Whether to print progress messages (default: TRUE)}
 }
