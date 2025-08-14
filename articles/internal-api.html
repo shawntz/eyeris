@@ -786,6 +786,42 @@ with fallback handling.</p>
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/write_csv_and_db.html">write_csv_and_db</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">csv_path</span>, <span class="va">csv_enabled</span>, <span class="va">db_con</span>, <span class="va">data_type</span>, <span class="va">sub</span>, <span class="va">ses</span>, <span class="va">task</span>, <span class="va">run</span>, <span class="va">eye_suffix</span>, <span class="va">epoch_label</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: <code>TRUE</code> if at least one write
 operation succeeded</p>
+</div>
+</div>
+<div class="section level4">
+<h4 id="database-export-management">Database Export &amp; Management<a class="anchor" aria-label="anchor" href="#database-export-management"></a>
+</h4>
+<div class="section level5">
+<h5 id="create_temp_eyeris_database">
+<code>create_temp_eyeris_database()</code><a class="anchor" aria-label="anchor" href="#create_temp_eyeris_database"></a>
+</h5>
+<p><strong>File</strong>: <code>R/utils-database.R</code><br><strong>Description</strong>: Create temporary database for parallel
+processing with unique naming.</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/create_temp_eyeris_database.html">create_temp_eyeris_database</a></span><span class="op">(</span><span class="va">base_db_path</span>, <span class="va">parallel_id</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Returns</strong>: List with temporary database path and
+connection info</p>
+</div>
+<div class="section level5">
+<h5 id="merge_temp_database">
+<code>merge_temp_database()</code><a class="anchor" aria-label="anchor" href="#merge_temp_database"></a>
+</h5>
+<p><strong>File</strong>: <code>R/utils-database.R</code><br><strong>Description</strong>: Merge temporary database into main
+database with file locking.</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/merge_temp_database.html">merge_temp_database</a></span><span class="op">(</span><span class="va">temp_db_path</span>, <span class="va">main_db_path</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Returns</strong>: <code>TRUE</code> if merge successful,
+<code>FALSE</code> otherwise</p>
+</div>
+<div class="section level5">
+<h5 id="cleanup_temp_database">
+<code>cleanup_temp_database()</code><a class="anchor" aria-label="anchor" href="#cleanup_temp_database"></a>
+</h5>
+<p><strong>File</strong>: <code>R/utils-database.R</code><br><strong>Description</strong>: Clean up temporary database files with
+comprehensive error handling.</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/cleanup_temp_database.html">cleanup_temp_database</a></span><span class="op">(</span><span class="va">temp_db_info</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Returns</strong>: <code>TRUE</code> if cleanup successful</p>
 <hr>
 </div>
 </div>
@@ -802,7 +838,7 @@ operation succeeded</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-parsers.R</code><br><strong>Description</strong>: Clean and sanitize strings for use in
 filenames or labels.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/clean_string.html">clean_string</a></span><span class="op">(</span><span class="va">str</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: Cleaned string with special characters
 removed/replaced</p>
@@ -813,7 +849,7 @@ removed/replaced</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-epoch.R</code><br><strong>Description</strong>: Sanitize event tags for safe use in
 filenames and labels.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/sanitize_event_tag.html">sanitize_event_tag</a></span><span class="op">(</span><span class="va">string</span>, <span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: Sanitized string suitable for file system
 use</p>
@@ -828,7 +864,7 @@ use</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-parsers.R</code><br><strong>Description</strong>: Extract block numbers from
 <code>eyeris</code> object or block names.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/get_block_numbers.html">get_block_numbers</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: Numeric vector of block numbers</p>
 </div>
@@ -842,7 +878,7 @@ use</p>
 </h5>
 <p><strong>File</strong>: <code>R/pipeline-bidsify.R</code><br><strong>Description</strong>: Generate BIDS-compatible filenames for
 data export.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/make_bids_fname.html">make_bids_fname</a></span><span class="op">(</span><span class="va">sub_id</span>, <span class="va">task_name</span>, <span class="va">run_num</span>, <span class="va">desc</span>, <span class="va">ses_id</span>, <span class="va">epoch_name</span>, <span class="va">epoch_events</span>, <span class="va">baseline_events</span>, <span class="va">baseline_type</span>, <span class="va">eye_suffix</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: A BIDS-compatible filename string</p>
 </div>
@@ -852,7 +888,7 @@ data export.</p>
 </h5>
 <p><strong>File</strong>: <code>R/pipeline-bidsify.R</code><br><strong>Description</strong>: Internal function to run bidsify operation
 on a single eye’s data.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/run_bidsify.html">run_bidsify</a></span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">save_all</span>, <span class="va">epochs_list</span>, <span class="va">bids_dir</span>, <span class="va">participant_id</span>, <span class="va">session_num</span>, <span class="va">task_name</span>, <span class="va">run_num</span>, <span class="va">save_raw</span>, <span class="va">html_report</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: An <code>eyeris</code> object (typically
 for chaining)</p>
@@ -872,7 +908,7 @@ for chaining)</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-progress_bar.R</code><br><strong>Description</strong>: Create a customizable progress bar for
 long-running operations.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/progress_bar.html">progress_bar</a></span><span class="op">(</span><span class="va">total</span>, <span class="va">msg</span>, <span class="va">width</span>, <span class="va">show_eta</span>, <span class="va">clear</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: A progress bar object from the progress
 package</p>
@@ -883,7 +919,7 @@ package</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-progress_bar.R</code><br><strong>Description</strong>: Create a simple counter-style progress
 bar.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/counter_bar.html">counter_bar</a></span><span class="op">(</span><span class="va">total</span>, <span class="va">msg</span>, <span class="va">width</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level5">
@@ -892,7 +928,7 @@ bar.</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-progress_bar.R</code><br><strong>Description</strong>: Advance a progress bar by specified number
 of steps.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/tick.html">tick</a></span><span class="op">(</span><span class="va">pb</span>, <span class="va">by</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -905,7 +941,7 @@ of steps.</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-error_handler.R</code><br><strong>Description</strong>: Generic error handler for
 <code>eyeris</code> functions with standardized error reporting.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/error_handler.html">error_handler</a></span><span class="op">(</span><span class="va">e</span>, <span class="va">e_class</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
@@ -923,7 +959,7 @@ of steps.</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-render_report.R</code><br><strong>Description</strong>: Render an <code>R Markdown</code> report
 to <code>HTML</code> with proper error handling.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/render_report.html">render_report</a></span><span class="op">(</span><span class="va">rmd_f</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level5">
@@ -932,7 +968,7 @@ to <code>HTML</code> with proper error handling.</p>
 </h5>
 <p><strong>File</strong>: <code>R/utils-render_report.R</code><br><strong>Description</strong>: Generate comprehensive <code>eyeris</code>
 preprocessing report in <code>R Markdown</code> format.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/make_report.html">make_report</a></span><span class="op">(</span><span class="va">eyeris</span>, <span class="va">out</span>, <span class="va">plots</span>, <span class="va">eye_suffix</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Returns</strong>: Path to the generated
 <code>R Markdown</code> file</p>
@@ -948,7 +984,7 @@ preprocessing report in <code>R Markdown</code> format.</p>
 </h4>
 <p>Many internal functions are designed to work within the pipeline
 architecture:</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example of internal function chaining</span></span>
 <span><span class="va">eyeris_obj</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/deblink_pupil.html">deblink_pupil</a></span><span class="op">(</span>prev_op <span class="op">=</span> <span class="st">"pupil_raw"</span>, extend <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -959,7 +995,7 @@ architecture:</p>
 <h4 id="error-handling-1">Error Handling<a class="anchor" aria-label="anchor" href="#error-handling-1"></a>
 </h4>
 <p>All internal functions include comprehensive error handling:</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Internal functions validate inputs and provide informative errors</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/check_data.html">check_data</a></span><span class="op">(</span><span class="va">invalid_object</span>, <span class="st">"function_name"</span><span class="op">)</span></span>

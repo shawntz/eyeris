@@ -83,6 +83,8 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_disconnect.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_list_tables.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_read.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_reconstruct_from_chunks.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html</loc></url>
