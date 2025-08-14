@@ -133,6 +133,8 @@ reference:
       - eyeris_db_to_parquet
       - read_eyeris_parquet
       - process_chunked_query
+      - eyeris_db_split_for_sharing
+      - eyeris_db_reconstruct_from_chunks
 
   - title: "🔧 Preprocessing Steps"
     desc: >

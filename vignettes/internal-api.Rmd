@@ -534,6 +534,38 @@ eyeris:::write_csv_and_db(data, csv_path, csv_enabled, db_con, data_type, sub, s
 
 **Returns**: `TRUE` if at least one write operation succeeded
 
+### Database Export & Management
+
+#### `create_temp_eyeris_database()`
+**File**: `R/utils-database.R`  
+**Description**: Create temporary database for parallel processing with unique naming.
+
+```r
+eyeris:::create_temp_eyeris_database(base_db_path, parallel_id, verbose)
+```
+
+**Returns**: List with temporary database path and connection info
+
+#### `merge_temp_database()`
+**File**: `R/utils-database.R`  
+**Description**: Merge temporary database into main database with file locking.
+
+```r
+eyeris:::merge_temp_database(temp_db_path, main_db_path, verbose)
+```
+
+**Returns**: `TRUE` if merge successful, `FALSE` otherwise
+
+#### `cleanup_temp_database()`
+**File**: `R/utils-database.R`  
+**Description**: Clean up temporary database files with comprehensive error handling.
+
+```r
+eyeris:::cleanup_temp_database(temp_db_info, verbose)
+```
+
+**Returns**: `TRUE` if cleanup successful
+
 ---
 
 ## Utility Functions
