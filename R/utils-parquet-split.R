@@ -725,7 +725,7 @@ read_eyeris_parquet <- function(
     if (!check_duckdb()) {
       log_error(
         "DuckDB is required for this feature. See installation instructions above.",
-        verbose = TRUE  
+        verbose = TRUE
       )
     }
     parquet_dir <- file.path(parquet_dir, db_name)
