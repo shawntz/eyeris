@@ -1904,7 +1904,7 @@ eyeris_db_to_chunked_files <- function(
   if (!check_duckdb()) {
     log_error(
       "DuckDB is required for this feature. See installation instructions above.",
-      verbose = TRUE  
+      verbose = TRUE
     )
   }
 
