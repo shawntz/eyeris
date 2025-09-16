@@ -1,4 +1,6 @@
-# eyeris 2.5.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 3.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This major release delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.
 
 ## 🚨 **Breaking changes & deprecations**
 

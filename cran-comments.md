@@ -1,6 +1,6 @@
 ## CRAN Submission
 
-This update delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.
+This major release delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.
 
 ## Notes
 
@@ -8,9 +8,9 @@ All checks (`R CMD check`, `devtools::check(remote = TRUE)`, GitHub Actions CI) 
 
 Thank you for your time and consideration.
 
-## R CMD check results (eyeris v2.5.0)
+## R CMD check results (eyeris v3.0.0)
 
-── R CMD check results ──────────────────────────────────────────────────────────────────────────────────── eyeris 2.5.0 ────
+── R CMD check results ──────────────────────────────────────────────────────────────────────────────────── eyeris 3.0.0 ────
 Duration: 2m 58.6s
 
 ❯ checking CRAN incoming feasibility ... [5s/36s] NOTE
