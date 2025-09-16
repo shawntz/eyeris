@@ -2786,7 +2786,7 @@ cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
   if (!check_duckdb()) {
     log_error(
       "DuckDB is required for this feature. See installation instructions above.",
-      verbose = TRUE  
+      verbose = TRUE
     )
   }
 
