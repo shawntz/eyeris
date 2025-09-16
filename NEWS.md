@@ -14,7 +14,7 @@
 
 - **NF**: **Added parallel processing support for DuckDB database operations** to prevent concurrency issues during batch processing. Implemented temporary database creation with automatic merging and cleanup mechanisms. Added environment variable detection for common HPC schedulers (SLURM, PBS, SGE, LSF) and manual `parallel_processing` parameter override. Includes comprehensive file locking, process/job ID logging, and full test coverage, by @shawntz in #262.
 
-> This enhancement enables seamless parallel compute and batch processing when using `db_enabled = TRUE`. Each parallel job now writes to a unique temporary database, preventing the crashes that occurred when multiple processes attempted concurrent writes to the same DuckDB file.
+ > This enhancement enables seamless parallel compute and batch processing when using `db_enabled = TRUE`. Each parallel job now writes to a unique temporary database, preventing the crashes that occurred when multiple processes attempted concurrent writes to the same DuckDB file.
   >
   > Key features:
   > - **Automatic Detection**: Detects HPC environments (SLURM_JOB_ID, PBS_JOBID, etc.)
