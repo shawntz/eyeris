@@ -146,7 +146,7 @@ create_table_name <- function(
   if (!check_duckdb()) {
     log_error(
       "DuckDB is required for this feature. See installation instructions above.",
-      verbose = TRUE  
+      verbose = TRUE
     )
   }
 
