@@ -12,12 +12,12 @@
 check_duckdb <- function() {
   if (!requireNamespace("duckdb", quietly = TRUE)) {
     packageStartupMessage(
-      "\n🔎 DuckDB not found. Database features are disabled.\n\n",
-      "➡ To install DuckDB:\n",
-      "  • macOS: install.packages('duckdb', type = 'binary')\n",
-      "  • Linux: use system packages (e.g., `sudo apt-get install r-cran-duckdb`)\n",
+      "\nDuckDB not found. Database features are disabled.\n\n",
+      "=> To install DuckDB:\n",
+      "  - macOS: install.packages('duckdb', type = 'binary')\n",
+      "  - Linux: use system packages (e.g., `sudo apt-get install r-cran-duckdb`)\n",
       "           or install.packages('duckdb') if binaries are available\n",
-      "  • Windows: install.packages('duckdb')\n\n",
+      "  - Windows: install.packages('duckdb')\n\n",
       "Once installed, rerun your function to enable database features.\n"
     )
     return(FALSE)
