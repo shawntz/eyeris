@@ -728,7 +728,6 @@ read_eyeris_parquet <- function(
         verbose = TRUE  
       )
     }
-    
     parquet_dir <- file.path(parquet_dir, db_name)
   }
 
