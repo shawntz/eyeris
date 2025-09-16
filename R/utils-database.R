@@ -538,7 +538,7 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
   if (!check_duckdb()) {
     log_error(
       "DuckDB is required for this feature. See installation instructions above.",
-      verbose = TRUE  
+      verbose = TRUE
     )
   }
 
