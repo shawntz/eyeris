@@ -3421,7 +3421,6 @@ eyeris_db_reconstruct_from_chunks <- function(
       verbose = TRUE  
     )
   }
-  
   # validate inputs
   if (!dir.exists(chunked_dir)) {
     log_error("Chunked database directory does not exist: {chunked_dir}")
