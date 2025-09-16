@@ -80,6 +80,14 @@ eyeris_db_to_parquet <- function(
   epoch_labels = NULL,
   group_by_epoch_label = TRUE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE  
+    )
+  }
+
   # validate inputs
   if (!dir.exists(bids_dir)) {
     log_error("BIDS directory does not exist: {bids_dir}")
@@ -713,6 +721,14 @@ read_eyeris_parquet <- function(
 ) {
   # if db_name is provided, look in that subfolder
   if (!is.null(db_name)) {
+    # first check if duckdb is installed
+    if (!check_duckdb()) {
+      log_error(
+        "DuckDB is required for this feature. See installation instructions above.",
+        verbose = TRUE  
+      )
+    }
+    
     parquet_dir <- file.path(parquet_dir, db_name)
   }
 
