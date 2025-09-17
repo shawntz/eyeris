@@ -1,3 +1,30 @@
+#' Check for DuckDB availability
+#'
+#' This internal helper checks whether the \pkg{duckdb} package is installed.
+#' If it is not available, a status message is displayed with platform-specific
+#' installation instructions (macOS, Linux, Windows). Functions that depend on
+#' DuckDB call this check before proceeding.
+#'
+#' @return `TRUE` if \pkg{duckdb} is installed, otherwise `FALSE` (with an
+#'   informative status message).
+#'
+#' @keywords internal
+check_duckdb <- function() {
+  if (!requireNamespace("duckdb", quietly = TRUE)) {
+    packageStartupMessage(
+      "\nDuckDB not found. Database features are disabled.\n\n",
+      "=> To install DuckDB:\n",
+      "  - macOS: install.packages('duckdb', type = 'binary')\n",
+      "  - Linux: use system packages (e.g., `sudo apt-get install r-cran-duckdb`)\n",
+      "           or install.packages('duckdb') if binaries are available\n",
+      "  - Windows: install.packages('duckdb')\n\n",
+      "Once installed, rerun your function to enable database features.\n"
+    )
+    return(FALSE)
+  }
+  TRUE
+}
+
 #' Check and create directory if it doesn't exist
 #'
 #' Checks if a directory exists and creates it if it doesn't. Provides

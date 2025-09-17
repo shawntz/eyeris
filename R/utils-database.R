@@ -18,6 +18,14 @@ connect_eyeris_database <- function(
   verbose = FALSE,
   parallel = FALSE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   # use temporary database for parallel processing
   if (parallel) {
     return(create_temp_eyeris_database(
@@ -82,6 +90,14 @@ connect_eyeris_database <- function(
 #'
 #' @keywords internal
 disconnect_eyeris_database <- function(con, verbose = FALSE) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(con)) {
     return(TRUE)
   }
@@ -126,6 +142,14 @@ create_table_name <- function(
   eye_suffix = NULL,
   epoch_label = NULL
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   # base table name
   table_name <- paste0(data_type, "_", sub, "_", ses, "_", task)
 
@@ -199,6 +223,14 @@ write_eyeris_data_to_db <- function(
   append = TRUE,
   verbose = FALSE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(con)) {
     log_warn("No database connection provided", verbose = verbose)
     return(FALSE)
@@ -292,6 +324,14 @@ write_eyeris_data_to_db <- function(
 #'
 #' @export
 eyeris_db_list_tables <- function(con, data_type = NULL, subject = NULL) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(con)) {
     log_warn("No database connection provided", verbose = TRUE)
     return(character(0))
@@ -350,6 +390,14 @@ eyeris_db_read <- function(
   epoch_label = NULL,
   table_name = NULL
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(con)) {
     log_error("No database connection provided")
   }
@@ -486,6 +534,14 @@ eyeris_db_read <- function(
 #'
 #' @export
 eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   # auto-append .eyerisdb extension if not present
   if (!grepl("\\.eyerisdb$", db_path)) {
     db_path <- paste0(db_path, ".eyerisdb")
@@ -528,6 +584,14 @@ eyeris_db_connect <- function(bids_dir, db_path = "my-project") {
 #'
 #' @export
 eyeris_db_disconnect <- function(con) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   status <- disconnect_eyeris_database(con, verbose = TRUE)
 }
 
@@ -592,6 +656,14 @@ write_csv_and_db <- function(
       !is.null(ses) &&
       !is.null(task)
   ) {
+    # first check if duckdb is installed
+    if (!check_duckdb()) {
+      log_error(
+        "DuckDB is required for this feature. See installation instructions above.",
+        verbose = TRUE
+      )
+    }
+
     db_success <- write_eyeris_data_to_db(
       data = data,
       con = db_con,
@@ -706,6 +778,14 @@ eyeris_db_collect <- function(
 ) {
   # connect to database
   log_info("Connecting to eyeris database...", verbose = verbose)
+
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
 
   con <- tryCatch(
     {
@@ -959,6 +1039,14 @@ eyeris_db_summary <- function(
   # connect to database
   log_info("Connecting to eyeris database...", verbose = verbose)
 
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   con <- tryCatch(
     {
       eyeris_db_connect(bids_dir, db_path)
@@ -1172,6 +1260,14 @@ create_temp_eyeris_database <- function(
   base_db_path = "my-project",
   verbose = FALSE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   derivatives_dir <- file.path(bids_dir, "derivatives")
   if (!dir.exists(derivatives_dir)) {
     dir.create(derivatives_dir, recursive = TRUE)
@@ -1251,6 +1347,14 @@ merge_temp_database <- function(
   max_retries = 10,
   retry_delay = 1
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(temp_db_info) || is.null(temp_db_info$connection)) {
     log_warn("Invalid temporary database info provided", verbose = verbose)
     return(FALSE)
@@ -1471,6 +1575,14 @@ process_chunked_query <- function(
   process_chunk = NULL,
   verbose = TRUE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(con)) {
     log_error("Database connection is required")
   }
@@ -1788,6 +1900,14 @@ eyeris_db_to_chunked_files <- function(
   group_by_epoch_label = TRUE,
   verbose = TRUE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   # validate inputs
   if (!dir.exists(bids_dir)) {
     log_error("BIDS directory does not exist: {bids_dir}")
@@ -2662,6 +2782,14 @@ eyeris_db_to_chunked_files <- function(
 #'
 #' @keywords internal
 cleanup_temp_database <- function(temp_db_info, verbose = FALSE) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   if (is.null(temp_db_info)) {
     return(TRUE)
   }
@@ -2766,6 +2894,14 @@ eyeris_db_split_for_sharing <- function(
   include_metadata = TRUE,
   verbose = TRUE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
   # validate inputs
   if (!dir.exists(bids_dir)) {
     log_error("BIDS directory does not exist: {bids_dir}")
@@ -3278,6 +3414,13 @@ eyeris_db_reconstruct_from_chunks <- function(
   reconstruction_file = NULL,
   verbose = TRUE
 ) {
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
   # validate inputs
   if (!dir.exists(chunked_dir)) {
     log_error("Chunked database directory does not exist: {chunked_dir}")

@@ -46,4 +46,11 @@ utils::globalVariables(c(
     cli::col_yellow("?`", pkgname, "`"),
     " to get started.\n"
   ))
+
+  if (!requireNamespace("duckdb", quietly = TRUE)) {
+    packageStartupMessage(
+      "Note: DuckDB is not installed. Database features are disabled.\n",
+      "Run install.packages('duckdb') or see ?check_duckdb for details."
+    )
+  }
 }
