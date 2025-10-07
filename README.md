@@ -177,6 +177,90 @@ GitHub](https://github.com/shawntz/eyeris) with:
 devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
+### Optional: Database and Parquet Support
+
+`eyeris` offers optional high-performance database storage (via
+`DuckDB`) and parquet file I/O (via `Arrow`) as alternatives to CSV
+files. These packages are **not required** for core functionality but
+provide significant performance benefits for large-scale analyses.
+
+#### Installing DuckDB (for database features)
+
+The `duckdb` package enables efficient storage and querying of large
+datasets. Required for `bidsify(..., db_enabled = TRUE)` and all
+`eyeris_db_*` functions:
+
+``` r
+install.packages("duckdb")
+```
+
+**Platform-specific notes:**
+
+- **macOS**: `install.packages("duckdb", type = "binary")`
+- **Linux**: Use system packages (e.g.,
+  `sudo apt-get install r-cran-duckdb`) or install from CRAN
+- **Windows**: `install.packages("duckdb")`
+
+#### Installing Arrow (for faster parquet operations)
+
+The `arrow` package provides high-performance parquet file I/O for
+functions like `eyeris_db_to_parquet()`, `read_eyeris_parquet()`, and
+related export/import operations. When not available, `eyeris`
+automatically falls back to DuckDB for parquet operations (slower but
+functional).
+
+**macOS users:** Arrow requires system dependencies via Homebrew:
+
+``` bash
+# Install system dependencies first
+brew update
+brew install pkg-config cmake apache-arrow
+
+# Then install the R package
+```
+
+``` r
+install.packages("arrow", type = "binary")
+```
+
+**Linux users (Ubuntu/Debian):**
+
+``` bash
+# Install system dependencies
+sudo apt-get update
+sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+```
+
+``` r
+install.packages("arrow")
+```
+
+**Linux users (Fedora/RHEL):**
+
+``` bash
+# Install system dependencies
+sudo dnf install libcurl-devel openssl-devel
+```
+
+``` r
+install.packages("arrow")
+```
+
+**Windows users:**
+
+``` r
+install.packages("arrow")
+```
+
+For more details, see the [Arrow R
+documentation](https://arrow.apache.org/docs/r/).
+
+> **Note:** When you load `eyeris`, startup messages will inform you if
+> DuckDB or Arrow are not installed and provide detailed
+> platform-specific installation instructions. You can also access these
+> instructions anytime via `?check_duckdb` and `?check_arrow`. Once
+> installed, restart R and reload `eyeris` to enable these features.
+
 ## ✏ Example
 
 ### The `glassbox()` “prescription” function
@@ -197,8 +281,49 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v3.0.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v3.0.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
+#> ** DuckDB not found. Database features are disabled.
+#> 
+#> => To install DuckDB:
+#>   - macOS: install.packages('duckdb', type = 'binary')
+#>   - Linux: use system packages (e.g., `sudo apt-get install r-cran-duckdb`)
+#>            or install.packages('duckdb') if binaries are available
+#>   - Windows: install.packages('duckdb')
+#> 
+#> Once installed, restart R and reload eyeris to enable database storage
+#> (bidsify(..., db_enabled = TRUE) and eyeris_db_* functions).
+#> ** Arrow not found. Parquet operations will use DuckDB fallback (slower).
+#> 
+#> => To install Arrow:
+#> 
+#>   - macOS:
+#>     1. First install system dependencies with Homebrew:
+#>        brew update
+#>        brew install pkg-config cmake apache-arrow
+#>     2. Then install the R package:
+#>        install.packages('arrow', type = 'binary')
+#> 
+#>   - Linux (Ubuntu/Debian):
+#>     1. Install system dependencies:
+#>        sudo apt-get update
+#>        sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+#>     2. Then install the R package:
+#>        install.packages('arrow')
+#> 
+#>   - Linux (Fedora/RHEL):
+#>     1. Install system dependencies:
+#>        sudo dnf install libcurl-devel openssl-devel
+#>     2. Then install the R package:
+#>        install.packages('arrow')
+#> 
+#>   - Windows:
+#>     install.packages('arrow')
+#> 
+#> For more details, see: https://arrow.apache.org/docs/r/
+#> 
+#> Once installed, restart R and reload eyeris to enable faster parquet export/import
+#> (eyeris_db_to_parquet(), read_eyeris_parquet(), and related functions).
 
 demo_data <- eyelink_asc_demo_dataset()
 
@@ -206,20 +331,20 @@ eyeris_preproc <- glassbox(
   demo_data,
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::load_asc()
-#> ℹ [2025-09-16 15:54:02] [INFO] Processing block: block_1
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2025-09-16 15:54:02] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2025-09-16 15:54:02] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2025-09-16 15:54:02] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2025-09-16 15:54:02] [INFO] Block processing summary:
-#> ℹ [2025-09-16 15:54:02] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::load_asc()
+#> ℹ [2025-10-06 19:54:25] [INFO] Processing block: block_1
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2025-10-06 19:54:25] [INFO] Block processing summary:
+#> ℹ [2025-10-06 19:54:25] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2025-09-16 15:54:02] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ### Step-wise correction of pupillary signal
@@ -245,17 +370,17 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
-#> ℹ [2025-09-16 15:54:02] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2025-10-06 19:54:25] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" width="100%" />
 
-    #> ℹ [2025-09-16 15:54:02] [INFO] Creating progressive summary plot for block_1
+    #> ℹ [2025-10-06 19:54:26] [INFO] Creating progressive summary plot for block_1
 
 <img src="man/figures/README-timeseries-plot-7.png" width="100%" />
 
-    #> ✔ [2025-09-16 15:54:03] [OKAY] Progressive summary plot created successfully!
+    #> ✔ [2025-10-06 19:54:27] [OKAY] Progressive summary plot created successfully!
 
     plot_gaze_heatmap(
       eyeris = eyeris_preproc,
