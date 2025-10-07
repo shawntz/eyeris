@@ -1,6 +1,6 @@
 ## CRAN Submission
 
-This major release delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.
+This patch release improves dependency management for Arrow and DuckDB to prevent installation issues on macOS and other platforms.
 
 ## Notes
 
@@ -8,12 +8,12 @@ All checks (`R CMD check`, `devtools::check(remote = TRUE)`, GitHub Actions CI) 
 
 Thank you for your time and consideration.
 
-## R CMD check results (eyeris v3.0.0)
+## R CMD check results (eyeris v3.0.1)
 
-── R CMD check results ──────────────────────────────────────────────────────────────────────────────────── eyeris 3.0.0 ────
-Duration: 2m 58.6s
+── R CMD check results ──────────────────────────────────────────────────────────────────────────────────────── eyeris 3.0.1 ────
+Duration: 2m 56.9s
 
-❯ checking CRAN incoming feasibility ... [5s/36s] NOTE
+❯ checking CRAN incoming feasibility ... [4s/33s] NOTE
   Maintainer: ‘Shawn Schwartz <shawn.t.schwartz@gmail.com>’
   
   Number of updates in past 6 months: 7

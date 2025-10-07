@@ -1,8 +1,8 @@
 Package: eyeris
 Type: Package
 Title: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
-Version: 3.0.0
-Date: 2025-09-16
+Version: 3.0.1
+Date: 2025-10-06
 Language: en-US
 Authors@R: 
   c(
@@ -43,11 +43,11 @@ Imports:
   rmarkdown,
   DBI,
   glue,
-  base64enc,
-  arrow
+  base64enc
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests:
+  arrow,
   duckdb,
   knitr,
   testthat (>= 3.0.0),
