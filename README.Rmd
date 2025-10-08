@@ -150,6 +150,75 @@ You can install the development version of [`eyeris` from GitHub](https://github
 devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
 
+### Optional: Database and Parquet Support
+
+`eyeris` offers optional high-performance database storage (via `DuckDB`) and parquet file I/O (via `Arrow`) as alternatives to CSV files. These packages are **not required** for core functionality but provide significant performance benefits for large-scale analyses.
+
+#### Installing DuckDB (for database features)
+
+The `duckdb` package enables efficient storage and querying of large datasets. Required for `bidsify(..., db_enabled = TRUE)` and all `eyeris_db_*` functions:
+
+```r
+install.packages("duckdb")
+```
+
+**Platform-specific notes:**
+
+- **macOS**: `install.packages("duckdb", type = "binary")`
+- **Linux**: Use system packages (e.g., `sudo apt-get install r-cran-duckdb`) or install from CRAN
+- **Windows**: `install.packages("duckdb")`
+
+#### Installing Arrow (for faster parquet operations)
+
+The `arrow` package provides high-performance parquet file I/O for functions like `eyeris_db_to_parquet()`, `read_eyeris_parquet()`, and related export/import operations. When not available, `eyeris` automatically falls back to DuckDB for parquet operations (slower but functional).
+
+**macOS users:** Arrow requires system dependencies via Homebrew:
+
+```bash
+# Install system dependencies first
+brew update
+brew install pkg-config cmake apache-arrow
+
+# Then install the R package
+```
+
+```r
+install.packages("arrow", type = "binary")
+```
+
+**Linux users (Ubuntu/Debian):**
+
+```bash
+# Install system dependencies
+sudo apt-get update
+sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+```
+
+```r
+install.packages("arrow")
+```
+
+**Linux users (Fedora/RHEL):**
+
+```bash
+# Install system dependencies
+sudo dnf install libcurl-devel openssl-devel
+```
+
+```r
+install.packages("arrow")
+```
+
+**Windows users:**
+
+```r
+install.packages("arrow")
+```
+
+For more details, see the [Arrow R documentation](https://arrow.apache.org/docs/r/).
+
+> **Note:** When you load `eyeris`, startup messages will inform you if DuckDB or Arrow are not installed and provide detailed platform-specific installation instructions. You can also access these instructions anytime via `?check_duckdb` and `?check_arrow`. Once installed, restart R and reload `eyeris` to enable these features.
+
 ## ✏ Example
 
 ### The `glassbox()` "prescription" function

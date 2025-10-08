@@ -1,3 +1,17 @@
+# eyeris 3.0.1 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This patch release improves dependency management for Arrow and DuckDB to prevent installation issues on macOS and other platforms.
+
+## 🔧 Dependency management improvements
+
+- **ENH**: Moved `arrow` from Imports to Suggests to prevent hanging installation issues on macOS. The arrow package requires system dependencies (pkg-config, cmake, apache-arrow via Homebrew on macOS) that could cause installation to hang indefinitely when building from source. eyeris now gracefully falls back to DuckDB for parquet operations when arrow is not available, with informative installation instructions provided via `check_arrow()` helper function, by @shawntz in #273.
+
+- **ENH**: Added comprehensive installation guidance for Arrow and DuckDB dependencies. New `check_arrow()` helper function provides platform-specific installation instructions (macOS, Linux, Windows) with detailed steps for installing required system dependencies. Startup messages now inform users about missing optional dependencies and point to installation documentation, by @shawntz in #273.
+
+## 📚 Documentation
+
+- **DOC**: Updated README with detailed instructions for installing Arrow and DuckDB dependencies across different platforms, including Homebrew setup for macOS, system package installation for Linux distributions, and notes about when these packages are required, by @shawntz in #273.
+
 # eyeris 3.0.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This major release delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.

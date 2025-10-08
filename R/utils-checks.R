@@ -12,13 +12,59 @@
 check_duckdb <- function() {
   if (!requireNamespace("duckdb", quietly = TRUE)) {
     packageStartupMessage(
-      "\nDuckDB not found. Database features are disabled.\n\n",
+      "** DuckDB not found. Database features are disabled.\n\n",
       "=> To install DuckDB:\n",
       "  - macOS: install.packages('duckdb', type = 'binary')\n",
       "  - Linux: use system packages (e.g., `sudo apt-get install r-cran-duckdb`)\n",
       "           or install.packages('duckdb') if binaries are available\n",
       "  - Windows: install.packages('duckdb')\n\n",
-      "Once installed, rerun your function to enable database features.\n"
+      "Once installed, restart R and reload eyeris to enable database storage\n",
+      "(bidsify(..., db_enabled = TRUE) and eyeris_db_* functions).\n"
+    )
+    return(FALSE)
+  }
+  TRUE
+}
+
+#' Check for Arrow availability
+#'
+#' This internal helper checks whether the \pkg{arrow} package is installed.
+#' If it is not available, a status message is displayed with platform-specific
+#' installation instructions. The arrow package is used for efficient parquet
+#' file I/O. When not available, eyeris falls back to DuckDB for parquet
+#' operations, which is slower but functional.
+#'
+#' @return `TRUE` if \pkg{arrow} is installed, otherwise `FALSE` (with an
+#'   informative status message).
+#'
+#' @keywords internal
+check_arrow <- function() {
+  if (!requireNamespace("arrow", quietly = TRUE)) {
+    packageStartupMessage(
+      "** Arrow not found. Parquet operations will use DuckDB fallback (slower).\n\n",
+      "=> To install Arrow:\n\n",
+      "  - macOS:\n",
+      "    1. First install system dependencies with Homebrew:\n",
+      "       brew update\n",
+      "       brew install pkg-config cmake apache-arrow\n",
+      "    2. Then install the R package:\n",
+      "       install.packages('arrow', type = 'binary')\n\n",
+      "  - Linux (Ubuntu/Debian):\n",
+      "    1. Install system dependencies:\n",
+      "       sudo apt-get update\n",
+      "       sudo apt-get install -y libcurl4-openssl-dev libssl-dev\n",
+      "    2. Then install the R package:\n",
+      "       install.packages('arrow')\n\n",
+      "  - Linux (Fedora/RHEL):\n",
+      "    1. Install system dependencies:\n",
+      "       sudo dnf install libcurl-devel openssl-devel\n",
+      "    2. Then install the R package:\n",
+      "       install.packages('arrow')\n\n",
+      "  - Windows:\n",
+      "    install.packages('arrow')\n\n",
+      "For more details, see: https://arrow.apache.org/docs/r/\n\n",
+      "Once installed, restart R and reload eyeris to enable faster parquet export/import\n",
+      "(eyeris_db_to_parquet(), read_eyeris_parquet(), and related functions).\n"
     )
     return(FALSE)
   }
