@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,9 +73,23 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/v3.0.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.0.1" id="eyeris-301-lumpy-space-princess-lumpy-space-princess">eyeris 3.0.1 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-301-lumpy-space-princess-lumpy-space-princess"></a></h2><p class="text-muted">CRAN release: 2025-10-07</p>
+<p>This patch release improves dependency management for Arrow and DuckDB to prevent installation issues on macOS and other platforms.</p>
+<div class="section level3">
+<h3 id="id_-dependency-management-improvements-3-0-1">🔧 Dependency management improvements<a class="anchor" aria-label="anchor" href="#id_-dependency-management-improvements-3-0-1"></a></h3>
+<ul><li><p><strong>ENH</strong>: Moved <code>arrow</code> from Imports to Suggests to prevent hanging installation issues on macOS. The arrow package requires system dependencies (pkg-config, cmake, apache-arrow via Homebrew on macOS) that could cause installation to hang indefinitely when building from source. eyeris now gracefully falls back to DuckDB for parquet operations when arrow is not available, with informative installation instructions provided via <code><a href="../reference/check_arrow.html">check_arrow()</a></code> helper function, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/273" class="external-link">#273</a>.</p></li>
+<li><p><strong>ENH</strong>: Added comprehensive installation guidance for Arrow and DuckDB dependencies. New <code><a href="../reference/check_arrow.html">check_arrow()</a></code> helper function provides platform-specific installation instructions (macOS, Linux, Windows) with detailed steps for installing required system dependencies. Startup messages now inform users about missing optional dependencies and point to installation documentation, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/273" class="external-link">#273</a>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_-documentation-3-0-1">📚 Documentation<a class="anchor" aria-label="anchor" href="#id_-documentation-3-0-1"></a></h3>
+<ul><li>
+<strong>DOC</strong>: Updated README with detailed instructions for installing Arrow and DuckDB dependencies across different platforms, including Homebrew setup for macOS, system package installation for Linux distributions, and notes about when these packages are required, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/273" class="external-link">#273</a>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.0" id="eyeris-300-lumpy-space-princess-lumpy-space-princess">eyeris 3.0.0 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-300-lumpy-space-princess-lumpy-space-princess"></a></h2><p class="text-muted">CRAN release: 2025-09-17</p>
 <p>This major release delivers multiple performance enhancements and feature improvements, reducing processing time and improving overall efficiency across the pipeline.</p>
