@@ -4,9 +4,11 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST STABLE RELEASE"
+    - text: "v3.0.1 (CRAN)"
+      href: news/index.html#eyeris-301-lumpy-space-princess-lumpy-space-princess
+    - text: -------
     - text: "v3.0.0 (CRAN)"
       href: news/index.html#eyeris-300-lumpy-space-princess-lumpy-space-princess
-    - text: -------
     - text: "Previous Releases"
     - text: "v2.1.1 (CRAN)"
       href: news/index.html#eyeris-211-lumpy-space-princess-lumpy-space-princess
