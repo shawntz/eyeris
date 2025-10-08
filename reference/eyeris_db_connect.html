@@ -75,7 +75,7 @@ This function provides easy access for users to query their eyeris data."><meta 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Connect to eyeris project database (user-facing)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/R/utils-database.R" class="external-link"><code>R/utils-database.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v3.0.1/R/utils-database.R" class="external-link"><code>R/utils-database.R</code></a></small>
       <div class="d-none name"><code>eyeris_db_connect.Rd</code></div>
     </div>
 
@@ -131,13 +131,13 @@ If includes path, will use as provided.</p></dd>
 <span class="r-in"><span><span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"No eyeris DB found - create one first with bidsify(db_enabled = TRUE)"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 02:59:41] [OKAY] Connected to eyeris database:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpxYngTg/derivatives/my-project.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 02:59:41] [INFO] Executing query: SELECT * FROM (SELECT * FROM</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 06:54:28] [OKAY] Connected to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpz7rGMt/derivatives/my-project.eyerisdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 06:54:28] [INFO] Executing query: SELECT * FROM (SELECT * FROM</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> "timeseries_001_01_assocret_run01" UNION ALL SELECT * FROM</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> '001'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 02:59:41] [INFO] Disconnected from eyeris database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 06:54:28] [INFO] Disconnected from eyeris database</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
