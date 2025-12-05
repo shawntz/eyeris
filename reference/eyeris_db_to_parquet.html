@@ -15,7 +15,7 @@ N reasonably sized parquet files for easy management with GitHub, downloading,
 and distribution. Data is first grouped by table type (timeseries, epochs,
 events, etc.) since each has different columnar structures, then each group
 is split into the specified number of files. Files are organized in folders
-matching the database name for easy identification."><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"></head><body>
+matching the database name for easy identification."><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="2162fe5e9da2b07"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -195,200 +195,200 @@ for and warns about existing temporary tables before starting.</p>
 <span class="r-in"><span>    db_enabled <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>    db_path <span class="op">=</span> <span class="st">"memory-task"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:27] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="eyeris_db_to_parquet-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::zscore() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Block processing summary:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] block_1: OK (steps: 6, latest:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] block_1: OK (steps: 6, latest:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Running eyeris::summarize_confounds()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Epoching pupil data...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Block 1: found 10 matching events for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Epoching pupil data...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Block 1: found 10 matching events for</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> PROBEstartstoptrial</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Done!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Block 1: pupil data from 10 unique event</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Done!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Block 1: pupil data from 10 unique event</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> messages extracted</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Pupil epoching completed in 0.11 seconds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Recalculating epoched confounds for new</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Pupil epoching completed in 0.12 seconds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Recalculating epoched confounds for new</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> epochs...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Starting BIDSify for sub-001 (monocular)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Only 1 block detected...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Using run_num = 1 for single block data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Filtered epochs: epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Epoch names to save: epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Parallel processing detected for job unknown</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> (PID: 7836), using temporary database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Created temporary database:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/memory-task_temp_7836_20251008_071328_538.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] epoch_prePostProbe:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] block_1: data.frame with 20000 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] info: list with 1 elements</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] '/tmp/RtmpaKgHlo' already exists. Skipping</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Starting BIDSify for sub-001 (monocular)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Only 1 block detected...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Using run_num = 1 for single block data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Filtered epochs: epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Epoch names to save: epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Parallel processing detected for job unknown</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (PID: 6769), using temporary database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Created temporary database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/memory-task_temp_6769_20251205_195905_636.eyerisdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] epoch_prePostProbe:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] block_1: data.frame with 20000 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] info: list with 1 elements</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] '/tmp/Rtmpu0YvH8' already exists. Skipping</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] '/tmp/RtmpaKgHlo/derivatives' already exists.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] '/tmp/Rtmpu0YvH8/derivatives' already exists.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] '/tmp/RtmpaKgHlo/derivatives/sub-001' already</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] '/tmp/Rtmpu0YvH8/derivatives/sub-001' already</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/eye'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/eye'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> already exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Writing blinks data to</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-blinks.csv...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Wrote blinks data (1 rows) to CSV and database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Writing events data to</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-events.csv...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:28] [OKAY] Wrote events data (67 rows) to CSV and database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Processing single-run epoch: epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Writing blinks data to</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-blinks.csv...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Wrote blinks data (1 rows) to CSV and database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Writing events data to</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-events.csv...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:05] [OKAY] Wrote events data (67 rows) to CSV and database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Processing single-run epoch: epoch_prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> (label: prePostProbe)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Block block_1 for epoch epoch_prePostProbe has</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Block block_1 for epoch epoch_prePostProbe has</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 20000 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:28] [INFO] Found epoch events in structure:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:05] [INFO] Found epoch events in structure:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> PROBE_{startstop}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:28] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:05] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote epochs data (20000 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote epochs data (20000 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote timeseries data (20767 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote timeseries data (20767 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote run_confounds data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote run_confounds data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Created epoch summary for epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:06] [INFO] Created epoch summary for epoch_prePostProbe</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> with 9 fields</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote epoch_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote epoch_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Found epoch events in structure:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:06] [INFO] Found epoch events in structure:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> PROBE_{startstop}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_summary data (1 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Found epoch events in epoch structure:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:06] [INFO] Found epoch events in epoch structure:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> PROBE_{startstop}_{trial}</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN] No baseline structure found for epoch label:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN] No baseline structure found for epoch label:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:06] [OKAY] Wrote confounds_events data (6 rows) to CSV and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures' already exists.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures' already exists.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:29] [WARN]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:06] [WARN]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:31] [WARN]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:08] [WARN]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:32] [OKAY] Created gaze heatmap for run-01</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:32] [WARN]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:09] [OKAY] Created gaze heatmap for run-01</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:09] [WARN]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01' already</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> exists. Skipping creation...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:32] [INFO]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:09] [INFO]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> does not exist. Creating...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:32] [OKAY] BIDS directory successfully created at:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:39] [OKAY] Created epoch images zip:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:09] [OKAY] BIDS directory successfully created at:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> '/tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:16] [OKAY] Created epoch images zip:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> (70 images)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:39] [INFO] Using absolute zip file path:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:39] [OKAY] Embedded zip file as data URL (7903929 bytes)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:16] [INFO] Using absolute zip file path:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:16] [OKAY] Embedded zip file as data URL (7903929 bytes)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> processing file: sub-001_epoch-prePostProbe_run-01.Rmd</span>
@@ -398,17 +398,17 @@ for and warns about existing temporary tables before starting.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4/5 [session-info]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5/5               </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001_epoch-prePostProbe_run-01.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpaKgHlo/rmarkdown-str1e9c7ac1ffa9.html </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpu0YvH8/rmarkdown-str1a712dd7c82f.html </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001_epoch-prePostProbe_run-01.html</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:46] [WARN] Skipping block info for epoch 1 - no valid data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:46] [INFO] Removing duplicate plain epoch directory:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:46] [WARN] Metadata file already exists for 1:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/logs/run-01_metadata.json</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:46] [WARN] Metadata file already exists for 3:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/sub-001/ses-01/source/logs/run-03_metadata.json</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-10-08 07:13:46] [WARN] No detrend data found for run-01</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:23] [WARN] Skipping block info for epoch 1 - no valid data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:23] [INFO] Removing duplicate plain epoch directory:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:23] [WARN] Metadata file already exists for 1:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/logs/run-01_metadata.json</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:23] [WARN] Metadata file already exists for 3:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/sub-001/ses-01/source/logs/run-03_metadata.json</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:23] [WARN] No detrend data found for run-01</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> processing file: sub-001.Rmd</span>
@@ -418,35 +418,35 @@ for and warns about existing temporary tables before starting.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4/5 [session-info]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5/5               </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> output file: sub-001.knit.md</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpaKgHlo/rmarkdown-str1e9c1e0228db.html </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> /opt/hostedtoolcache/pandoc/3.1.11/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpu0YvH8/rmarkdown-str1a717f59aee1.html </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Output created: sub-001.html</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Merging temporary database from job unknown</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> (PID: 7836) into main database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Merging 8 tables from temporary database to main</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:25] [INFO] Merging temporary database from job unknown</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (PID: 6769) into main database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:25] [INFO] Merging 8 tables from temporary database to main</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table 'blinks_001_01_memory_run01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:25] [INFO] Created new table 'blinks_001_01_memory_run01'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> with 1 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'confounds_events_001_01_memory_run01_prepostprobe' with 60 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'confounds_summary_001_01_memory_run01_prepostprobe' with 10 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'epoch_summary_001_01_memory_run01' with 1 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'epochs_001_01_memory_run01_prepostprobe' with 20000 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table 'events_001_01_memory_run01'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table 'events_001_01_memory_run01'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> with 67 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:48] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'run_confounds_001_01_memory_run01' with 6 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Created new table</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created new table</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'timeseries_001_01_memory_run01' with 20767 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Successfully merged 8/8 tables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Successfully merged job unknown (PID: 7836) data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Successfully merged 8/8 tables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Successfully merged job unknown (PID: 6769) data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> into main database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Disconnected from temporary database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Cleaned up temporary database file</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Finished BIDSify for sub-001 (Duration: 20.71</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Disconnected from temporary database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Cleaned up temporary database file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Finished BIDSify for sub-001 (Duration: 21.04</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> seconds)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># split into 3 parquet files per data type - creates memory-task/ folder</span></span></span>
@@ -455,83 +455,83 @@ for and warns about existing temporary tables before starting.</p>
 <span class="r-in"><span>  db_path <span class="op">=</span> <span class="st">"memory-task"</span>,</span></span>
 <span class="r-in"><span>  n_files_per_type <span class="op">=</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Created output directory:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/parquet/memory-task</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Connecting to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Created output directory:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/parquet/memory-task</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Connecting to eyeris database:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Connected to eyeris database:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/memory-task.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Found 8 valid tables in database (excluded 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Connected to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/memory-task.eyerisdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Found 8 valid tables in database (excluded 0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> temp tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Grouping tables by data type...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Found 7 data types: blinks, confounds, epoch,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Grouping tables by data type...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Found 7 data types: blinks, confounds, epoch,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> epochs, events, run, timeseries</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: blinks (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] blinks: 1 rows (~0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting blinks into 3 files (~1 rows per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: blinks (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] blinks: 1 rows (~0 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting blinks into 3 files (~1 rows per file)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_blinks_part-01-of-03.parquet: 1 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: confounds (2 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] confounds[prepostprobe]: 70 rows (~size est</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: confounds (2 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] confounds[prepostprobe]: 70 rows (~size est</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> deferred)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting confounds[prepostprobe] into 3 files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting confounds[prepostprobe] into 3 files</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> (~24 rows per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_confounds_prepostprobe_part-01-of-03.parquet: 24 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_confounds_prepostprobe_part-02-of-03.parquet: 24 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_confounds_prepostprobe_part-03-of-03.parquet: 22 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: epoch (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] epoch[nolabel]: 1 rows (~size est deferred)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting epoch[nolabel] into 3 files (~1 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: epoch (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] epoch[nolabel]: 1 rows (~size est deferred)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting epoch[nolabel] into 3 files (~1 rows</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created memory-task_epoch_part-01-of-03.parquet:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created memory-task_epoch_part-01-of-03.parquet:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: epochs (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] epochs[prepostprobe]: 20000 rows (~size est</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: epochs (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] epochs[prepostprobe]: 20000 rows (~size est</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> deferred)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting epochs[prepostprobe] into 3 files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting epochs[prepostprobe] into 3 files</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> (~6667 rows per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-01-of-03.parquet: 6667 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-02-of-03.parquet: 6667 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-03-of-03.parquet: 6666 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: events (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] events: 67 rows (~0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting events into 3 files (~23 rows per</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: events (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] events: 67 rows (~0 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting events into 3 files (~23 rows per</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-01-of-03.parquet: 23 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-02-of-03.parquet: 23 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-03-of-03.parquet: 21 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: run (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] run: 6 rows (~0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting run into 3 files (~2 rows per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created memory-task_run_part-01-of-03.parquet: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Processing data type: run (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] run: 6 rows (~0 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:26] [INFO] Splitting run into 3 files (~2 rows per file)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created memory-task_run_part-01-of-03.parquet: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created memory-task_run_part-02-of-03.parquet: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:26] [OKAY] Created memory-task_run_part-02-of-03.parquet: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created memory-task_run_part-03-of-03.parquet: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created memory-task_run_part-03-of-03.parquet: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: timeseries (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] timeseries: 20767 rows (~3.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting timeseries into 3 files (~6923 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Processing data type: timeseries (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] timeseries: 20767 rows (~3.3 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Splitting timeseries into 3 files (~6923 rows</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-01-of-03.parquet: 6923 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-02-of-03.parquet: 6923 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-03-of-03.parquet: 6921 rows (0.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Successfully created 17 parquet files across 7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Successfully created 17 parquet files across 7</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> data types</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Total output: 1.9 MB</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Disconnected from eyeris database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Total output: 1.9 MB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Disconnected from eyeris database</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># split with size constraint and specific data types using the same database</span></span></span>
 <span class="r-in"><span><span class="va">split_info</span> <span class="op">&lt;-</span> <span class="fu">eyeris_db_to_parquet</span><span class="op">(</span></span></span>
@@ -541,61 +541,61 @@ for and warns about existing temporary tables before starting.</p>
 <span class="r-in"><span>  max_file_size <span class="op">=</span> <span class="fl">50</span>,  <span class="co"># max 50MB per file</span></span></span>
 <span class="r-in"><span>  data_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"timeseries"</span>, <span class="st">"epochs"</span>, <span class="st">"events"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Connecting to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Connecting to eyeris database:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Connected to eyeris database:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/RtmpaKgHlo/derivatives/memory-task.eyerisdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Found 8 valid tables in database (excluded 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Connected to eyeris database:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> /tmp/Rtmpu0YvH8/derivatives/memory-task.eyerisdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Found 8 valid tables in database (excluded 0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> temp tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Grouping tables by data type...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Found 3 data types: epochs, events, timeseries</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: epochs (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] epochs[prepostprobe]: 20000 rows (~size est</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Grouping tables by data type...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Found 3 data types: epochs, events, timeseries</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Processing data type: epochs (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] epochs[prepostprobe]: 20000 rows (~size est</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> deferred)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting epochs[prepostprobe] into 5 files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Splitting epochs[prepostprobe] into 5 files</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> (~4000 rows per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-01-of-05.parquet: 4000 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-02-of-05.parquet: 4000 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-03-of-05.parquet: 4000 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-04-of-05.parquet: 4000 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_epochs_prepostprobe_part-05-of-05.parquet: 4000 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: events (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] events: 67 rows (~0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting events into 5 files (~14 rows per</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Processing data type: events (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] events: 67 rows (~0 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Splitting events into 5 files (~14 rows per</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-01-of-05.parquet: 14 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-02-of-05.parquet: 14 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-03-of-05.parquet: 14 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-04-of-05.parquet: 14 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_events_part-05-of-05.parquet: 11 rows (0 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Processing data type: timeseries (1 tables)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] timeseries: 20767 rows (~3.3 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Splitting timeseries into 5 files (~4154 rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Processing data type: timeseries (1 tables)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] timeseries: 20767 rows (~3.3 MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Splitting timeseries into 5 files (~4154 rows</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> per file)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-01-of-05.parquet: 4154 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-02-of-05.parquet: 4154 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-03-of-05.parquet: 4154 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-04-of-05.parquet: 4154 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Created</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Created</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> memory-task_timeseries_part-05-of-05.parquet: 4151 rows (0.2 MB)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-10-08 07:13:49] [OKAY] Successfully created 15 parquet files across 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:27] [OKAY] Successfully created 15 parquet files across 3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> data types</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Total output: 1.9 MB</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-10-08 07:13:49] [INFO] Disconnected from eyeris database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Total output: 1.9 MB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:27] [INFO] Disconnected from eyeris database</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -609,7 +609,7 @@ for and warns about existing temporary tables before starting.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Provided without <strong>any warranty</strong>.<br>The funders had no role in study design, data collection, and interpretation, or the decision to submit the work for publication.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Provided without <strong>any warranty</strong>.<br>The funders had no role in study design, data collection, and interpretation, or the decision to submit the work for publication.</p>
 </div>
 
     </footer></div>

@@ -1,0 +1,106 @@
+# Export eyeris database to chunked files
+
+High-level wrapper function to export large eyeris databases to chunked
+CSV or Parquet files by data type. Uses chunked processing to handle
+very large datasets without memory issues.
+
+## Usage
+
+``` r
+eyeris_db_to_chunked_files(
+  bids_dir,
+  db_path = "my-project",
+  output_dir = NULL,
+  chunk_size = 1e+06,
+  file_format = "csv",
+  data_types = NULL,
+  subjects = NULL,
+  max_file_size_mb = 50,
+  group_by_epoch_label = TRUE,
+  verbose = TRUE
+)
+```
+
+## Arguments
+
+- bids_dir:
+
+  Path to the BIDS directory containing the database
+
+- db_path:
+
+  Database name (defaults to "my-project", becomes
+  "my-project.eyerisdb")
+
+- output_dir:
+
+  Directory to save output files (defaults to
+  bids_dir/derivatives/eyerisdb_export)
+
+- chunk_size:
+
+  Number of rows to process per chunk (default: 1000000)
+
+- file_format:
+
+  Output format: "csv" or "parquet" (default: "csv")
+
+- data_types:
+
+  Vector of data types to export. If NULL (default), exports all
+  available
+
+- subjects:
+
+  Vector of subject IDs to include. If NULL (default), includes all
+  subjects
+
+- max_file_size_mb:
+
+  Maximum file size in MB per output file (default: 50). When exceeded,
+  automatically creates numbered files (e.g., data_01-of-03.csv,
+  data_02-of-03.csv)
+
+- group_by_epoch_label:
+
+  If TRUE (default), processes epoch-related data types separately by
+  epoch label to reduce memory footprint and produce label-specific
+  files. When FALSE, epochs with different labels are merged into single
+  large files (not recommended).
+
+- verbose:
+
+  Whether to print progress messages (default: TRUE)
+
+## Value
+
+List containing information about exported files
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# These examples require an existing eyeris database
+
+# Export entire database to CSV files
+if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+  export_info <- eyeris_db_to_chunked_files(
+    bids_dir = tempdir(),
+    db_path = "large-project",
+    chunk_size = 50000,
+    file_format = "csv"
+  )
+}
+
+# Export specific data types to Parquet
+if (file.exists(file.path(tempdir(), "derivatives", "large-project.eyerisdb"))) {
+  export_info <- eyeris_db_to_chunked_files(
+    bids_dir = tempdir(),
+    db_path = "large-project",
+    data_types = c("timeseries", "events"),
+    file_format = "parquet",
+    chunk_size = 75000
+  )
+}
+} # }
+```

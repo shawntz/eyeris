@@ -1,0 +1,283 @@
+# Building Your Own Custom Pipeline Extensions
+
+One key strength of the preprocessing framework within `eyeris` is its
+modularity.
+
+While we encourage most users to use the
+[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+function for simplicity and reproducibility, advanced users can create
+custom preprocessing steps that seamlessly integrate into the pipeline.
+
+This vignette walks you through the structure required to write your own
+`eyeris`-compatible preprocessing functions.
+
+## 🧩 How the Pipeline Works
+
+Under the hood, each preprocessing function in `eyeris` is a wrapper
+around a core operation that gets tracked, versioned, and stored using
+the
+[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md).
+
+Custom pipeline steps must conform to the `eyeris` protocol for maximum
+compatibility with the downstream functions we provide.
+
+Following the `eyeris` protocol also ensures: - all operations follow a
+predictable structure, and - that new pupil data columns based on
+previous operations in the chain are able to be dynamically constructed
+within the core `timeseries` data frame.
+
+For instance:
+`pupil_raw -> pupil_raw_deblink -> pupil_raw_deblink_detransient -> ...`
+
+If you’re unfamiliar with how these columns are structured and tracked,
+first check out the companion vignette: [📦 Anatomy of an `eyeris`
+Object](https://shawnschwartz.com/eyeris/articles/anatomy.md).
+
+## 🛠 Creating a Custom Extension for `eyeris`
+
+Let’s say you want to write a new `eyeris` extension function called
+`winsorize()` to apply
+[winsorization](https://en.wikipedia.org/wiki/Winsorizing) to extreme
+pupil values.
+
+### 1) Write the core operation function
+
+This function should accept a data frame `x`, a string `prev_op` (i.e.,
+the name of the previous pupil column), and any custom parameters.
+
+#### To illustrate:
+
+``` r
+winsorize_pupil <- function(x, prev_op, lower = 0.01, upper = 0.99) {
+  vec <- x[[prev_op]]
+  q <- quantile(vec, probs = c(lower, upper), na.rm = TRUE)
+  vec[vec < q[1]] <- q[1]
+  vec[vec > q[2]] <- q[2]
+  vec
+}
+```
+
+### 2) Create the wrapper using the `eyeris::pipeline_handler()`
+
+The
+[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+enables your function to automatically:
+
+- track your function within the `eyeris` list object’s `params` field,
+- append a new column to each block within the `timeseries` list of data
+  frames, and
+- update the object’s `latest` pointer.
+
+#### To illustrate:
+
+``` r
+#' Winsorize pupil values
+#'
+#' Applies winsorization to extreme pupil values within each block.
+#'
+#' @param eyeris An `eyeris` object created by [load_asc()].
+#' @param lower Lower quantile threshold. Default is 0.01.
+#' @param upper Upper quantile threshold. Default is 0.99.
+#' @param call_info A list of call information and parameters. If not provided,
+#'   it will be generated from the function call.
+#'
+#' @return Updated `eyeris` object with new winsorized pupil column.
+winsorize <- function(eyeris, lower = 0.01, upper = 0.99, call_info = NULL) {
+  # create call_info if not provided
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(lower = lower, upper = upper)
+    )
+  } else {
+    call_info
+  }
+
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+    
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+    
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+  }
+}
+```
+
+### 3) Understanding Call Stack Tracking
+
+The `call_info` parameter is crucial for maintaining reproducibility and
+debugging in `eyeris`. It captures:
+
+- **`call_stack`**: The exact function call that was made (using
+  [`match.call()`](https://rdrr.io/r/base/match.call.html))
+- **`parameters`**: A list of all parameters passed to your function
+
+This information is automatically stored in
+`eyeris$params[[new_suffix]]` and can be used for: - Generating
+reproducible reports - Debugging pipeline issues - Tracking parameter
+changes across different runs
+
+**Important Notes:** - Always include `call_info = NULL` as the last
+parameter in your function signature - Use
+[`match.call()`](https://rdrr.io/r/base/match.call.html) to capture the
+function call - Pass all your function parameters in the `parameters`
+list - Always pass `call_info = call_info` as the last argument to
+[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+
+### 4) Function Structure Breakdown
+
+1.  **Function signature**: Always include `call_info = NULL` as the
+    last parameter
+2.  **Call info creation**: Create the call_info list if not provided
+3.  **Pipeline handler call**: Pass all parameters including call_info
+4.  **Parameter order**:
+    - First: `eyeris` object
+    - Second: your core operation function name
+    - Third: the suffix for column naming
+    - Fourth+: your function parameters
+    - Last: `call_info = call_info`
+
+## 🎉 And that’s it!
+
+You should now be able to use your new function extension as a component
+within a new custom `eyeris` pipeline declaration. To illustrate:
+
+``` r
+system.file("extdata", "memory.asc", package = "eyeris") |>
+  eyeris::load_asc(block = "auto") |>
+  eyeris::deblink(extend = 50) |>
+  winsorize()
+```
+
+## 💪 Best Practices
+
+- **Use consistent naming:** i.e., match your suffix
+  (e.g. `"winsorize"`) to the column and log structure:
+  - If you call `pipeline_handler(..., "winsorize")`
+  - Then, your function names should reflect that:
+    - the public facing `winsorize()` wrapper function, and
+    - the private `winsorize_pupil()` logic implementation function.
+  - You will then see `pupil_raw_*_winsorize` as the new output column!
+- **Respect previous steps:** Your custom function should rely only on
+  `prev_op`, not on ***any hardcoded column names***!
+- **Return the expected data type:** Be sure that you private function
+  always returns a modified vector type, as the underlying
+  [`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+  is looking out for a vector it can transpose into the new column that
+  will be added to the `timeseries` data frame within the resulting
+  `eyeris` object.
+- **Test on individual blocks:** Always try your private function logic
+  on a single data block (e.g., `eyeris$timeseries[[1]]`) to debug
+  before integrating it with the `eyeris` pipeline protocol.
+- **Include call stack tracking:** Always implement proper `call_info`
+  handling for reproducibility and debugging capabilities.
+
+## 🔍 Advanced: Custom Call Info Handling
+
+For more complex functions, you might want to customize the `call_info`
+structure:
+
+``` r
+custom_function <- function(eyeris, param1, param2, call_info = NULL) {
+  # custom call_info with additional metadata
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(param1 = param1, param2 = param2),
+      metadata = list(
+        timestamp = Sys.time(),
+        version = "1.0.0",
+        description = "Custom processing step"
+      )
+    )
+  } else {
+    call_info
+  }
+
+  pipeline_handler(
+    eyeris,
+    custom_pupil_function,
+    "custom",
+    param1 = param1,
+    param2 = param2,
+    call_info = call_info
+  )
+}
+```
+
+## ✨ Summary
+
+We hope you are now convinced at the power and extensibility the
+`eyeris` protocol enables! As we demonstrated here, with just a little
+bit of structure, you can create custom extension steps tailored to your
+specific analysis needs – all while preserving the reproducibility and
+organizational core principles `eyeris` was designed and built around.
+
+If you’d like to contribute new steps to `eyeris`, feel free to open a
+pull request or discussion on
+[GitHub](https://github.com/shawntz/eyeris)!
+
+------------------------------------------------------------------------
+
+## 📚 Citing `eyeris`
+
+If you use the `eyeris` package in your research, please cite it!
+
+Run the following in R to get the citation:
+
+``` r
+citation("eyeris")
+#> To cite package 'eyeris' in publications use:
+#> 
+#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   extensible, and reproducible pupillometry preprocessing framework in
+#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
+#>   <https://doi.org/10.1101/2025.06.01.657312>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Article{,
+#>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
+#>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
+#>     journal = {bioRxiv},
+#>     year = {2025},
+#>     pages = {1--37},
+#>     doi = {10.1101/2025.06.01.657312},
+#>   }
+```

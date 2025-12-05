@@ -1,0 +1,690 @@
+# Working with eyeris Databases: A Complete Guide
+
+## Introduction
+
+The `eyeris` package provides powerful database functionality that
+serves as an alternative to CSV file storage for your pupillometry data.
+This guide will walk you through the complete database workflow, from
+creation to data extraction, and explain why you might want to choose
+database storage over traditional CSV files.
+
+### Why Use Databases Instead of CSV Files?
+
+#### The Case for Database Storage
+
+**1. Scalability and Performance**
+
+- **Massive datasets**: When processing hundreds or thousands of
+  subjects, CSV files can become unwieldy. A single database file can
+  efficiently store data from thousands of participants.
+- **Faster queries**: Instead of reading multiple CSV files and
+  filtering in `R`, databases can filter and aggregate data at the
+  storage level, dramatically reducing memory usage and processing time.
+- **Concurrent access**: Multiple researchers can query the same
+  database simultaneously without file locking issues.
+
+**2. Cloud Computing Advantages**
+
+- **Reduced I/O costs**: On cloud platforms (AWS, GCP, Azure), reading
+  many small CSV files incurs significant I/O costs. A single database
+  file reduces these costs dramatically.
+- **Bandwidth efficiency**: Transferring one database file is much
+  faster than syncing thousands of CSV files.
+- **Storage optimization**: Databases compress data more efficiently
+  than individual CSV files.
+
+**3. Data Integrity and Management**
+
+- **Schema validation**: Built-in data type validation prevents
+  corruption.
+- **Metadata storage**: Databases automatically track creation
+  timestamps, data types, and relationships.
+
+**4. Analysis Efficiency**
+
+- **`SQL` queries**: Leverage the power of `SQL` for complex filtering,
+  aggregation, and joins.
+- **Memory efficiency**: Load only the data you need instead of entire
+  datasets.
+- **Cross-platform compatibility**: `DuckDB` databases work across `R`,
+  `Python`, and other analysis platforms.
+
+#### When to Use CSV vs a Database
+
+**Use CSV files when:**
+
+- Small datasets (\< 10 subjects)
+- Simple analysis workflows
+- Need human-readable data formats
+- Working with external tools that require CSV input
+
+**Use databases when:**
+
+- Large datasets (\> 20 subjects)
+- Complex queries across multiple data types
+- Cloud computing environments
+- Collaborative research projects
+- Long-term data storage and archival
+
+## Getting Started: Creating Your First `eyeris` Database
+
+### Basic Database Creation
+
+The simplest way to create an `eyeris` database is by enabling database
+output during the
+[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+process:
+
+``` r
+# load your EyeLink eye-tracking data ASC file
+eyeris_data <- load_asc("path/to/your/data.asc")
+
+# preprocess and epoch your data with eyeris glassbox functions
+processed_data <- eyeris_data %>%
+  glassbox() %>%
+  epoch(
+    events = "TRIAL_START_{trial_type}_{trial_number}",
+    limits = c(-0.5, 2.0),
+    label = "trial_epochs"
+  )
+
+# Enable eyeris database alongside CSV files
+bidsify(
+  processed_data,
+  bids_dir = "~/my_eyetracking_study",
+  participant_id = "001",
+  session_num = "01",
+  task_name = "memory_task",
+  csv_enabled = TRUE,    # still create CSV files
+  db_enabled = TRUE,     # while also creating your eyeris project database
+  db_path = "study_database"  # creates study_database.eyerisdb
+)
+```
+
+### Database-Only Workflow (Cloud Optimized)
+
+For cloud computing or large-scale processing, you can *(and probably
+should)* considering skipping CSV creation entirely:
+
+``` r
+bidsify(
+  processed_data,
+  bids_dir = "~/my_eyetracking_study", 
+  participant_id = "001",
+  session_num = "01", 
+  task_name = "memory_task",
+  csv_enabled = FALSE,   # skip CSV creation
+  db_enabled = TRUE,     # use an eyeris project database only
+  db_path = "study_database"
+)
+```
+
+### Batch Processing Multiple Subjects
+
+Here’s how to efficiently process multiple subjects into a single
+database:
+
+``` r
+subjects <- c("001", "002", "003", "004", "005")
+data_dir <- "~/raw_eyetracking_data"
+bids_dir <- "~/processed_study_data"
+
+for (subject_id in subjects) {
+  cat("Processing subject", subject_id, "\n")
+  
+  subject_data <- file.path(
+      data_dir, 
+      paste0("sub-", subject_id),
+      "eye",
+      paste0("sub-", subject_id, ".asc")
+    ) %>%
+    glassbox() %>%
+    epoch(
+      events = "STIMULUS_{condition}_{trial}",
+      limits = c(-1, 3),
+      label = "stimulus_response"
+    )
+  
+  # then add to eyeris database (which automatically handles subject cleanup)
+  bidsify(
+    subject_data,
+    bids_dir = bids_dir,
+    participant_id = subject_id,
+    session_num = "01",
+    task_name = "attention_task", 
+    csv_enabled = FALSE,
+    db_enabled = TRUE,
+    db_path = "attention_study_db"
+  )
+}
+```
+
+## Connecting to and Exploring `eyeris` Databases
+
+### Basic Database Connection
+
+``` r
+con <- eyeris_db_connect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db"  # will look for attention_study_db.eyerisdb
+)
+
+# be sure to always disconnect when done (or use on.exit to ensure cleanup)
+on.exit(eyeris_db_disconnect(con))
+```
+
+### `eyeris` Database Overview and Exploration
+
+``` r
+# first get a comprehensive summary of your eyeris project database
+summary_info <- eyeris_db_summary(
+  "~/processed_study_data", 
+  "attention_study_db"
+)
+
+summary_info$subjects      # all subjects in database
+summary_info$data_types    # available data types
+summary_info$sessions      # session information
+summary_info$tasks         # task names
+summary_info$total_tables  # total number of tables
+
+# list all available tables
+all_tables <- eyeris_db_list_tables(con)
+print(all_tables)
+
+# filter tables by data type
+timeseries_tables <- eyeris_db_list_tables(con, data_type = "timeseries")
+confounds_tables <- eyeris_db_list_tables(con, data_type = "run_confounds")
+
+# filter tables by subject
+subject_001_tables <- eyeris_db_list_tables(con, subject = "001")
+```
+
+## Data Extraction: From Simple to Advanced
+
+### Simple Data Extraction
+
+The
+[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+function provides easy one-liner access to your data:
+
+``` r
+# extract ALL data for ALL subjects (returns a named list)
+all_data <- eyeris_db_collect("~/processed_study_data", "attention_study_db")
+
+# view available data types
+names(all_data)
+
+# access specific data types
+timeseries_data <- all_data$timeseries
+events_data <- all_data$events
+confounds_data <- all_data$run_confounds
+```
+
+### Targeted Data Extraction
+
+``` r
+# extract data for specific subjects only
+subset_subjects <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db",
+  subjects = c("001", "002", "003")
+)
+
+# extract specific data types only
+behavioral_data <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data", 
+  db_path = "attention_study_db",
+  data_types = c("events", "epochs", "confounds_summary")
+)
+
+# extract data for specific sessions and tasks
+session_01_data <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db", 
+  sessions = "01",
+  tasks = "attention_task"
+)
+```
+
+### Working with Binocular Data
+
+``` r
+# extract data from both eyes
+binocular_data <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db"
+)
+
+# the function automatically combines left and right eye data
+# check if you have binocular data
+unique(binocular_data$timeseries$eye_suffix)  # should show "eyeL" and "eyeR"
+
+# extract data for specific eye only
+left_eye_data <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db", 
+  eye_suffixes = "eyeL"
+)
+```
+
+### Epoch-Specific Extraction
+
+``` r
+# extract specific epoch data
+trial_epochs <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data",
+  db_path = "attention_study_db",
+  data_types = c("epochs", "confounds_events", "confounds_summary"),
+  epoch_labels = "stimulus_response"  # match your epoch label
+)
+
+# multiple epoch types
+multiple_epochs <- eyeris_db_collect(
+  bids_dir = "~/processed_study_data", 
+  db_path = "attention_study_db",
+  data_types = "epochs",
+  epoch_labels = c("stimulus_response", "baseline_period")
+)
+```
+
+### Output Format Options
+
+``` r
+list_format <- eyeris_db_collect("~/processed_study_data")
+
+# access individual data types
+pupil_data <- list_format$timeseries
+trial_data <- list_format$epochs
+```
+
+## Advanced Database Operations
+
+### Direct SQL Queries
+
+For maximum flexibility, you can also write and execute custom SQL
+queries:
+
+``` r
+# first connect to your eyeris project database
+con <- eyeris_db_connect("~/processed_study_data", "attention_study_db")
+
+# write your custom SQL query
+custom_query <- "
+  SELECT subject_id, session_id, task_name, 
+         AVG(pupil_raw_deblink_detransient_interpolate_lpfilt_z) as mean_pupil,
+         COUNT(*) as n_samples
+  FROM timeseries_001_01_attention_task_run01_eyeL 
+  WHERE pupil_clean IS NOT NULL
+  GROUP BY subject_id, session_id, task_name
+"
+
+results <- DBI::dbGetQuery(con, custom_query)
+print(results)
+
+# a complex cross-table query
+complex_query <- "
+  SELECT e.subject_id,
+         e.matched_event,
+         e.text_unique,
+         AVG(t.pupil_raw_deblink_detransient_interpolate_lpfilt_z) as mean_pupil_in_epoch,
+         c.blink_rate_hz
+  FROM epochs_001_01_attention_task_run01_stimulus_response_eyeL e
+  JOIN timeseries_001_01_attention_task_run01_eyeL t 
+    ON e.subject_id = t.subject_id 
+    AND t.time_orig BETWEEN e.epoch_start AND e.epoch_end
+  JOIN run_confounds_001_01_attention_task_run01_eyeL c
+    ON e.subject_id = c.subject_id
+  GROUP BY e.subject_id, e.matched_event, e.text_unique, c.blink_rate_hz
+"
+
+complex_results <- DBI::dbGetQuery(con, complex_query)
+print(complex_results)
+```
+
+### Reading Individual Tables
+
+``` r
+# read a specific table directly
+specific_table <- eyeris_db_read(
+  con = con,
+  table_name = "timeseries_001_01_attention_task_run01_eyeL"
+)
+
+# read from eyeris database with filters
+filtered_data <- eyeris_db_read(
+  con = con,
+  data_type = "events",
+  subject = "001",
+  session = "01", 
+  task = "attention_task"
+)
+
+# read epoch data from eyeris database with specific epoch label
+epoch_data <- eyeris_db_read(
+  con = con,
+  data_type = "epochs", 
+  subject = "001",
+  epoch_label = "stimulus_response"
+)
+```
+
+## Real-World Analysis Examples
+
+### Example 1: Pupil Response Analysis Across Subjects
+
+``` r
+# extract all timeseries data
+pupil_data <- eyeris_db_collect(
+  "~/processed_study_data",
+  data_types = "timeseries"
+)$timeseries
+
+# analyze pupil responses by subject and condition
+pupil_summary <- pupil_data %>%
+  filter(!is.na(pupil_clean)) %>%
+  group_by(subject_id, session_id) %>%
+  summarise(
+    mean_pupil = mean(pupil_clean),
+    sd_pupil = sd(pupil_clean),
+    samples_per_subject = n(),
+    .groups = 'drop'
+  )
+
+print(pupil_summary)
+
+# compare to loading individual CSV files (which should be much slower!)
+# csv_files <- list.files("~/processed_study_data", 
+#                        pattern = "*timeseries*.csv", 
+#                        recursive = TRUE, full.names = TRUE)
+# csv_data <- map_dfr(csv_files, read_csv)
+```
+
+### Example 2: Quality Control and Confounds Analysis
+
+``` r
+# extract confounds data for quality control
+confounds_data <- eyeris_db_collect(
+  "~/processed_study_data",
+  data_types = c("run_confounds", "confounds_summary")
+)
+
+# identify subjects with poor data quality
+quality_control <- confounds_data$run_confounds %>%
+  group_by(subject_id, session_id) %>%
+  summarise(
+    mean_blink_rate = mean(blink_rate_hz, na.rm = TRUE),
+    mean_prop_invalid = mean(prop_invalid, na.rm = TRUE), 
+    mean_gaze_variance = mean(gaze_x_var_px, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    high_blink_rate = mean_blink_rate > 0.5,  # arbitrary thresholds
+    high_invalid_data = mean_prop_invalid > 0.3,
+    high_gaze_variance = mean_gaze_variance > 10000,
+    exclude_subject = high_blink_rate | high_invalid_data | high_gaze_variance
+  )
+
+# then view the subjects recommended for exclusion
+exclude_list <- quality_control %>%
+  filter(exclude_subject) %>%
+  select(subject_id, session_id, exclude_subject)
+
+print(exclude_list)
+```
+
+## Performance Comparison: Database vs CSV
+
+### Speed and Memory Benchmarks
+
+``` r
+# benchmark database approach
+system.time({
+  db_data <- eyeris_db_collect(
+    "~/processed_study_data",
+    subjects = c("001", "002", "003", "004", "005"),
+    data_types = "timeseries"
+  )
+})
+
+# benchmark CSV approach
+# system.time({
+#   csv_files <- list.files("~/processed_study_data", 
+#                          pattern = "*timeseries*.csv", 
+#                          recursive = TRUE, full.names = TRUE)
+#   csv_data <- map_dfr(csv_files[1:5], read_csv)  # only first 5 subjects
+# })
+
+# memory usage comparison
+object.size(db_data)  # database extraction
+# object.size(csv_data)  # CSV loading
+
+# file size comparison
+db_file_size <- file.size("~/processed_study_data/derivatives/attention_study_db.eyerisdb")
+csv_total_size <- sum(file.size(list.files("~/processed_study_data", 
+                                          pattern = "*.csv", 
+                                          recursive = TRUE, 
+                                          full.names = TRUE)))
+
+cat("Database file size:", round(db_file_size / 1024^2, 2), "MB\n")
+cat("Total CSV file size:", round(csv_total_size / 1024^2, 2), "MB\n")
+cat("Storage efficiency:", round(db_file_size / csv_total_size * 100, 1), "% of CSV size\n")
+```
+
+## Best Practices and Tips
+
+### Database Management
+
+``` r
+# 1. Always use descriptive database names
+bidsify(data, db_path = "study_name_pilot_2024")  # good
+# bidsify(data, db_path = "my-project")           # default, not descriptive
+
+# 2. Use database-only mode for large studies
+bidsify(data, csv_enabled = FALSE, db_enabled = TRUE)  # efficient
+
+# 3. Create separate databases for different experiments
+bidsify(data, db_path = "experiment_1_attention")
+bidsify(data, db_path = "experiment_2_memory") 
+
+# 4. always disconnect from databases
+con <- eyeris_db_connect("~/data", "study_db")
+# ... do your work ...
+# then disconnect ...
+eyeris_db_disconnect(con)
+
+# or use on.exit for automatic cleanup
+process_data <- function() {
+  con <- eyeris_db_connect("~/data", "study_db")
+  on.exit(eyeris_db_disconnect(con))
+  
+  # ... your analysis code here ...
+  
+  results <- eyeris_db_collect("~/data", "study_db")
+  return(results)
+}
+```
+
+### Cloud Computing Optimization
+
+``` r
+# 1. Use database-only workflow to minimize I/O costs
+process_cloud_data <- function(subject_list, input_bucket, output_bucket) {
+  for (subject in subject_list) {
+    # ... for demo purposes only -- download raw data ...
+    download_from_cloud(subject, input_bucket)
+    
+    # ... process and add to database (no CSV files) ...
+    eyeris_data <- glassbox(local_file) %>%
+      epoch(...)
+    
+    bidsify(
+      eyeris_data,
+      bids_dir = "local_processing",
+      participant_id = subject,
+      csv_enabled = FALSE,  # skip CSV for cloud efficiency
+      db_enabled = TRUE,
+      db_path = "cloud_study_db"
+    )
+    
+    # clean up local files
+    unlink(local_file)
+  }
+  
+  # upload final database back to your cloud
+  upload_to_cloud("cloud_study_db.eyerisdb", output_bucket)
+}
+
+# 2. use database for distributed analysis
+analyze_cloud_data <- function() {
+  # download only the database file
+  download_from_cloud("cloud_study_db.eyerisdb")
+  
+  # extract only the data you need
+  analysis_data <- eyeris_db_collect(
+    "local_processing",
+    data_types = c("epochs", "confounds_summary"),
+    subjects = target_subjects
+  )
+  
+  # run analysis on extracted subset
+  results <- run_statistical_analysis(analysis_data)
+  
+  return(results)
+}
+```
+
+### Error Handling and Debugging
+
+``` r
+# safe eyeris project database operations with error handling
+safe_extract <- function(bids_dir, db_path, ...) {
+  tryCatch({
+    data <- eyeris_db_collect(bids_dir, db_path, ...)
+    return(data)
+  }, error = function(e) {
+    cat("Error extracting data:", e$message, "\n")
+    
+    # first check if eyeris project database exists
+    db_file <- file.path(bids_dir, "derivatives", paste0(db_path, ".eyerisdb"))
+    if (!file.exists(db_file)) {
+      cat("eyeris project database file not found:", db_file, "\n")
+      return(NULL)
+    }
+    
+    # try connecting to your eyeris project database
+    con <- tryCatch({
+      eyeris_db_connect(bids_dir, db_path)
+    }, error = function(e2) {
+      cat("Cannot connect to eyeris project database:", e2$message, "\n")
+      return(NULL)
+    })
+    
+    if (!is.null(con)) {
+      # list available tables for debugging
+      tables <- eyeris_db_list_tables(con)
+      cat("Available tables:\n")
+      print(tables)
+      eyeris_db_disconnect(con)
+    }
+    
+    return(NULL)
+  })
+}
+
+# example usage
+data <- safe_extract("~/my_study", "study_database", 
+                    subjects = c("001", "002"), 
+                    data_types = "timeseries")
+```
+
+## Migration and Interoperability
+
+### Converting Existing CSV Data to Database
+
+``` r
+# if you have existing eyeris-derived CSV files and want to migrate to a database
+migrate_csv_to_database <- function(bids_dir, db_path) {
+  # ... find all CSV files ...
+  csv_files <- list.files(bids_dir, pattern = "\\.csv$", 
+                         recursive = TRUE, full.names = TRUE)
+  
+  # ... connect to an eyeris database ...
+  con <- eyeris_db_connect(bids_dir, db_path)
+  on.exit(eyeris_db_disconnect(con))
+  
+  for (csv_file in csv_files) {
+    cat("Processing:", basename(csv_file), "\n")
+    
+    # parse filename to extract metadata
+    # ... (which of course depends on your CSV naming convention) ...
+    filename_parts <- parse_bids_filename(basename(csv_file))
+    
+    # ... read CSV data ...
+    csv_data <- read.csv(csv_file)
+    
+    # ... then write to the eyeris project database ...
+    write_eyeris_data_to_db(
+      data = csv_data,
+      con = con,
+      data_type = filename_parts$data_type,
+      sub = filename_parts$subject,
+      ses = filename_parts$session,
+      task = filename_parts$task,
+      # ... other parameters
+    )
+  }
+  
+  cat("Migration complete!\n")
+}
+```
+
+### Exporting Database Data Back to CSV
+
+``` r
+# export specific data back to CSV format (if needed)
+export_database_subset <- function(bids_dir, db_path, output_dir) {
+  
+  # ... extract data from the eyeris project database ...
+  data <- eyeris_db_collect(bids_dir, db_path, 
+                             subjects = c("001", "002"),
+                             data_types = c("timeseries", "events"))
+  
+  # ... create an output directory ...
+  dir.create(output_dir, recursive = TRUE)
+  
+  # ... then export each data type ...
+  for (data_type in names(data)) {
+    filename <- file.path(output_dir, paste0(data_type, "_subset.csv"))
+    write.csv(data[[data_type]], filename, row.names = FALSE)
+    cat("Exported:", filename, "\n")
+  }
+}
+```
+
+## Conclusion
+
+The eyeris database functionality provides a powerful, scalable
+alternative to CSV files for eye-tracking data storage and analysis. Key
+advantages include:
+
+- **Performance**: Faster queries and reduced memory usage
+- **Scalability**: Handle data from hundreds of subjects efficiently  
+- **Cloud optimization**: Reduced I/O costs and bandwidth usage
+- **Flexibility**: `SQL` queries and cross-platform compatibility
+
+Whether you’re running a small pilot study or a large-scale
+multi-session experiment, `eyeris` databases can streamline your
+workflow and improve analysis efficiency. Start with the simple
+[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+function for most use cases, and leverage direct `SQL` queries when you
+need maximum flexibility.
+
+For questions or issues with database functionality, please refer to the
+`eyeris` documentation or open an issue on the GitHub repository.
+
+## Session Information
+
+``` r
+sessionInfo()
+```
