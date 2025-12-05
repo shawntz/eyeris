@@ -20,6 +20,7 @@ jobs:
   build:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    continue-on-error: ${{ matrix.config.r == 'devel' }}
     strategy:
       fail-fast: false
       matrix:
