@@ -20,14 +20,15 @@ jobs:
   build:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-    continue-on-error: ${{ matrix.config.r == 'devel' }}
     strategy:
       fail-fast: false
       matrix:
         config:
         - {os: macos-latest,   r: 'release'}
         - {os: windows-latest, r: 'release'}
-        - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+        # NOTE: R-devel temporarily disabled due to Rcpp 1.1.0 incompatibility
+        # with R-devel (R_ext/PrtUtil.h removed). Re-enable when Rcpp is updated.
+        # - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
         - {os: ubuntu-latest,   r: 'release'}
         - {os: ubuntu-latest,   r: 'oldrel-1'}
 
