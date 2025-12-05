@@ -56,6 +56,9 @@ template:
   light-switch: false
   theme: breeze-light
   math-rendering: mathjax
+  includes:
+    in_header: |
+      <script async src="https://cdn.seline.com/seline.js" data-token="2162fe5e9da2b07"></script>
   bslib:
       bootswatch: united
       base_font: {google: "Raleway"}
