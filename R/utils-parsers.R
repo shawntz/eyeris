@@ -37,6 +37,11 @@ format_call_stack <- function(callstack) {
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
+            # Skip epoch-related parameters to avoid memory issues
+            if (grepl("epoch", name, ignore.case = TRUE) || 
+                name == "events" || name == "baseline_events") {
+              return(paste0(name, " = <omitted>"))
+            }
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
@@ -68,6 +73,11 @@ format_call_stack <- function(callstack) {
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
+            # Skip epoch-related parameters to avoid memory issues
+            if (grepl("epoch", name, ignore.case = TRUE) || 
+                name == "events" || name == "baseline_events") {
+              return(paste0(name, " = <omitted>"))
+            }
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
