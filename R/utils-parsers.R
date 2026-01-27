@@ -38,10 +38,19 @@ format_call_stack <- function(callstack) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
             # Skip epoch-related parameters to avoid memory issues
-            if (grepl("epoch", name, ignore.case = TRUE) || 
-                name == "events" || name == "baseline_events") {
+            # Only omit if the parameter name suggests it's event/epoch data
+            # AND it's a complex object (list or data.frame)
+            should_omit <- FALSE
+            if ((grepl("epoch", name, ignore.case = TRUE) || 
+                 name == "events" || name == "baseline_events") &&
+                (is.list(val) || is.data.frame(val))) {
+              should_omit <- TRUE
+            }
+            
+            if (should_omit) {
               return(paste0(name, " = <omitted>"))
             }
+            
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
@@ -74,10 +83,19 @@ format_call_stack <- function(callstack) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
             # Skip epoch-related parameters to avoid memory issues
-            if (grepl("epoch", name, ignore.case = TRUE) || 
-                name == "events" || name == "baseline_events") {
+            # Only omit if the parameter name suggests it's event/epoch data
+            # AND it's a complex object (list or data.frame)
+            should_omit <- FALSE
+            if ((grepl("epoch", name, ignore.case = TRUE) || 
+                 name == "events" || name == "baseline_events") &&
+                (is.list(val) || is.data.frame(val))) {
+              should_omit <- TRUE
+            }
+            
+            if (should_omit) {
               return(paste0(name, " = <omitted>"))
             }
+            
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {

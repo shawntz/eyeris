@@ -1,5 +1,5 @@
 test_that("format_call_stack omits epoch parameters to avoid memory issues", {
-  # Create a mock call stack with epoch-related parameters
+  # Create a mock call stack with epoch-related parameters that are lists
   large_events <- list(
     data.frame(time = 1:1000, msg = paste0("event_", 1:1000)),
     data.frame(time = 1:1000, msg = paste0("event_end_", 1:1000))
@@ -9,15 +9,16 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
     epoch = list(
       call_stack = quote(epoch(eyeris, events = events, limits = c(-0.5, 1.5))),
       parameters = list(
-        events = large_events,
-        limits = c(-0.5, 1.5),
+        events = large_events,  # list - should be omitted
+        limits = c(-0.5, 1.5),  # vector - should NOT be omitted
         label = NULL,
         baseline = FALSE,
         baseline_type = "sub",
-        baseline_events = large_events,
+        baseline_events = large_events,  # list - should be omitted
         baseline_period = NULL,
         hz = 1000,
-        verbose = TRUE
+        verbose = TRUE,
+        epoch_length = 100  # scalar - should NOT be omitted
       )
     )
   )
@@ -30,7 +31,7 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   expect_equal(nrow(result), 1)
   expect_true("parameters" %in% names(result))
   
-  # Check that epoch-related parameters are omitted
+  # Check that epoch-related list/data.frame parameters are omitted
   param_str <- result$parameters[1]
   expect_true(grepl("events = <omitted>", param_str, fixed = TRUE))
   expect_true(grepl("baseline_events = <omitted>", param_str, fixed = TRUE))
@@ -39,6 +40,7 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   expect_true(grepl("limits =", param_str))
   expect_true(grepl("baseline = FALSE", param_str, fixed = TRUE))
   expect_true(grepl("hz = 1000", param_str, fixed = TRUE))
+  expect_true(grepl("epoch_length = 100", param_str, fixed = TRUE))
   
   # Ensure the parameter string is not excessively long
   # (Without the fix, it would be thousands of characters)
@@ -82,7 +84,8 @@ test_that("format_call_stack handles 'call' structure in addition to 'call_stack
       call = quote(epoch(eyeris, events = events)),
       parameters = list(
         events = list(data.frame(time = 1:100, msg = rep("test", 100))),
-        limits = NULL
+        limits = NULL,
+        epoch_count = 5  # scalar with "epoch" in name - should NOT be omitted
       )
     )
   )
@@ -92,4 +95,29 @@ test_that("format_call_stack handles 'call' structure in addition to 'call_stack
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
   expect_true(grepl("events = <omitted>", result$parameters[1], fixed = TRUE))
+  expect_true(grepl("epoch_count = 5", result$parameters[1], fixed = TRUE))
+})
+
+test_that("format_call_stack only omits complex epoch objects, not scalars", {
+  # Create a mock call stack with scalar epoch-related parameters
+  mock_callstack <- list(
+    test = list(
+      call_stack = quote(test(epoch_length = 100, epoch_data = data)),
+      parameters = list(
+        epoch_length = 100,  # scalar - should NOT be omitted
+        epoch_count = 5,     # scalar - should NOT be omitted
+        epoch_data = list(data.frame(x = 1:100))  # list - should be omitted
+      )
+    )
+  )
+  
+  result <- format_call_stack(mock_callstack)
+  param_str <- result$parameters[1]
+  
+  # Scalars with "epoch" in name should NOT be omitted
+  expect_true(grepl("epoch_length = 100", param_str, fixed = TRUE))
+  expect_true(grepl("epoch_count = 5", param_str, fixed = TRUE))
+  
+  # Complex objects with "epoch" in name should be omitted
+  expect_true(grepl("epoch_data = <omitted>", param_str, fixed = TRUE))
 })
