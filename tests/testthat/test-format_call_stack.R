@@ -121,3 +121,25 @@ test_that("format_call_stack only omits complex epoch objects, not scalars", {
   # Complex objects with "epoch" in name should be omitted
   expect_true(grepl("epoch_data = <omitted>", param_str, fixed = TRUE))
 })
+
+test_that("format_call_stack uses case-insensitive matching for events/baseline_events", {
+  # Test case variations of "events" and "baseline_events"
+  mock_callstack <- list(
+    test = list(
+      call_stack = quote(test(Events = e1, EVENTS = e2, baseline_Events = e3)),
+      parameters = list(
+        Events = list(data.frame(x = 1:100)),
+        EVENTS = list(data.frame(x = 1:100)),
+        baseline_Events = list(data.frame(x = 1:100))
+      )
+    )
+  )
+  
+  result <- format_call_stack(mock_callstack)
+  param_str <- result$parameters[1]
+  
+  # All case variations should be omitted
+  expect_true(grepl("Events = <omitted>", param_str, fixed = TRUE))
+  expect_true(grepl("EVENTS = <omitted>", param_str, fixed = TRUE))
+  expect_true(grepl("baseline_Events = <omitted>", param_str, fixed = TRUE))
+})
