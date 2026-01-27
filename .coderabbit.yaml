@@ -1,0 +1,104 @@
+# CodeRabbit Configuration for eyeris R Package
+# See https://docs.coderabbit.ai/guides/configure-coderabbit for more information
+
+language: en-US
+
+# Enable early access features
+early_access: false
+
+# Enable or disable CodeRabbit reviews
+reviews:
+  # Enable automatic reviews on pull requests
+  auto_review:
+    enabled: true
+    # Review drafts as well
+    drafts: false
+
+  # Configure what to include in reviews
+  profile: chill
+  
+  # Request changes or comment
+  request_changes_workflow: false
+  
+  # Automatically dismiss stale reviews when new commits are pushed
+  auto_dismiss_stale_reviews: false
+
+  # Configure review tools
+  tools:
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+
+  # Path-based review rules
+  path_filters:
+    - "!**/man/**"  # Exclude auto-generated R documentation
+    - "!**/pkgdown/**"  # Exclude pkgdown site files
+    - "!**.Rd"  # Exclude R documentation files
+    - "!NEWS.md"  # Exclude changelog as it's manually curated
+
+  # Ignore specific patterns
+  ignore_patterns:
+    - "^docs/"
+    - "^_pkgdown.yml"
+    - "^.Rbuildignore"
+
+# Configure chat functionality
+chat:
+  # Enable AI chat functionality on PRs
+  enabled: true
+  
+  # Auto-reply to certain types of comments
+  auto_reply: true
+
+# Knowledge base configuration
+knowledge_base:
+  # Paths to important documentation
+  learnings:
+    scope: global
+  
+  # Custom instructions for reviews
+  opt_out_instructions: |
+    This is an R package for pupillometry data preprocessing.
+    Please consider R package development best practices and CRAN requirements.
+    Pay special attention to:
+    - R coding style and conventions
+    - Documentation completeness (roxygen2 comments)
+    - Unit test coverage
+    - NAMESPACE exports
+    - Dependencies management in DESCRIPTION
+    - Vignettes clarity
+    - Examples in documentation
+
+# Configure which files to skip
+exclude:
+  # Build artifacts and generated files
+  - "*.Rproj"
+  - ".Rhistory"
+  - ".RData"
+  - ".Rproj.user"
+  - "**.Rd"
+  - "**/man/**"
+  - "pkgdown/**"
+  - "_pkgdown.yml"
+  
+  # Git and CI configuration
+  - ".gitignore"
+  - ".Rbuildignore"
+  
+  # Lock files and package manager files
+  - "renv.lock"
+  - "packrat.lock"
+  
+  # Data files
+  - "data-raw/**"
+  - "data/**"
+
+# Configure tone and style of reviews
+tone_instructions: |
+  Be constructive, supportive, and educational in code reviews.
+  Focus on meaningful improvements rather than nitpicking.
+  For R package development, consider CRAN policies and best practices.
+  Praise good practices and suggest improvements with examples when possible.
