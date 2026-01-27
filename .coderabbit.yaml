@@ -60,7 +60,7 @@ knowledge_base:
     scope: global
   
   # Custom instructions for reviews
-  opt_out_instructions: |
+  instructions: |
     This is an R package for pupillometry data preprocessing.
     Please consider R package development best practices and CRAN requirements.
     Pay special attention to:
