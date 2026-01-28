@@ -133,7 +133,6 @@ test_that("format_call_stack uses case-insensitive matching for events/baseline_
   
   result <- format_call_stack(mock_callstack)
   param_str <- result$parameters[1]
-  
   # All case variations should be omitted
   expect_true(grepl("Events = <omitted>", param_str, fixed = TRUE))
   expect_true(grepl("EVENTS = <omitted>", param_str, fixed = TRUE))
