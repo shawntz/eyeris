@@ -14,10 +14,10 @@ should_omit_parameter <- function(name, val) {
   # 1. Parameter name suggests it's event/epoch data (case-insensitive)
   # 2. AND it's a complex object (list, which includes data.frames)
   name_lower <- tolower(name)
-  is_epoch_related <- grepl("epoch", name_lower) || 
-                      name_lower == "events" || 
-                      name_lower == "baseline_events"
-  
+  is_epoch_related <- grepl("epoch", name_lower) ||
+    name_lower == "events" ||
+    name_lower == "baseline_events"
+
   is_epoch_related && is.list(val)
 }
 

@@ -9,16 +9,16 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
     epoch = list(
       call_stack = quote(epoch(eyeris, events = events, limits = c(-0.5, 1.5))),
       parameters = list(
-        events = large_events,  # list - should be omitted
-        limits = c(-0.5, 1.5),  # vector - should NOT be omitted
+        events = large_events, # list - should be omitted
+        limits = c(-0.5, 1.5), # vector - should NOT be omitted
         label = NULL,
         baseline = FALSE,
         baseline_type = "sub",
-        baseline_events = large_events,  # list - should be omitted
+        baseline_events = large_events, # list - should be omitted
         baseline_period = NULL,
         hz = 1000,
         verbose = TRUE,
-        epoch_length = 100  # scalar - should NOT be omitted
+        epoch_length = 100 # scalar - should NOT be omitted
       )
     )
   )
@@ -52,11 +52,7 @@ test_that("format_call_stack handles regular parameters normally", {
   mock_callstack <- list(
     lpfilt = list(
       call_stack = quote(lpfilt(eyeris, cutoff = 4, order = 3)),
-      parameters = list(
-        cutoff = 4,
-        order = 3,
-        verbose = TRUE
-      )
+      parameters = list(cutoff = 4, order = 3, verbose = TRUE)
     )
   )
   
@@ -85,7 +81,7 @@ test_that("format_call_stack handles 'call' structure in addition to 'call_stack
       parameters = list(
         events = list(data.frame(time = 1:100, msg = rep("test", 100))),
         limits = NULL,
-        epoch_count = 5  # scalar with "epoch" in name - should NOT be omitted
+        epoch_count = 5 # scalar with "epoch" in name - should NOT be omitted
       )
     )
   )
@@ -104,9 +100,9 @@ test_that("format_call_stack only omits complex epoch objects, not scalars", {
     test = list(
       call_stack = quote(test(epoch_length = 100, epoch_data = data)),
       parameters = list(
-        epoch_length = 100,  # scalar - should NOT be omitted
-        epoch_count = 5,     # scalar - should NOT be omitted
-        epoch_data = list(data.frame(x = 1:100))  # list - should be omitted
+        epoch_length = 100, # scalar - should NOT be omitted
+        epoch_count = 5, # scalar - should NOT be omitted
+        epoch_data = list(data.frame(x = 1:100)) # list - should be omitted
       )
     )
   )
