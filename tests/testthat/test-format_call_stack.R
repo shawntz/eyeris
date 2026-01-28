@@ -23,7 +23,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   )
   # Format the call stack
   result <- format_call_stack(mock_callstack)
-  
   # Check that result is a data frame
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
