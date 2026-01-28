@@ -130,7 +130,6 @@ test_that("format_call_stack uses case-insensitive matching for events/baseline_
       )
     )
   )
-  
   result <- format_call_stack(mock_callstack)
   param_str <- result$parameters[1]
   # All case variations should be omitted
