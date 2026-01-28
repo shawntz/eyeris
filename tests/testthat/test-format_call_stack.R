@@ -41,7 +41,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   expect_true(grepl("baseline = FALSE", param_str, fixed = TRUE))
   expect_true(grepl("hz = 1000", param_str, fixed = TRUE))
   expect_true(grepl("epoch_length = 100", param_str, fixed = TRUE))
-  
   # Ensure the parameter string is not excessively long
   # (Without the fix, it would be thousands of characters)
   expect_lt(nchar(param_str), 500)
