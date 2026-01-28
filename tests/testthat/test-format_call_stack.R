@@ -57,7 +57,6 @@ test_that("format_call_stack handles regular parameters normally", {
   # Check that result is correct
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
-  
   # Check that regular parameters are deparsed normally
   param_str <- result$parameters[1]
   expect_true(grepl("cutoff = 4", param_str))
