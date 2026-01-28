@@ -21,7 +21,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
       )
     )
   )
-  
   # Format the call stack
   result <- format_call_stack(mock_callstack)
   
