@@ -1,3 +1,26 @@
+#' Check if a parameter should be omitted from call stack display
+#'
+#' Determines if a parameter should be omitted when formatting call stacks
+#' to avoid memory issues with large epoch-related data structures.
+#'
+#' @param name The parameter name
+#' @param val The parameter value
+#'
+#' @return TRUE if the parameter should be omitted, FALSE otherwise
+#'
+#' @keywords internal
+should_omit_parameter <- function(name, val) {
+  # Only omit if:
+  # 1. Parameter name suggests it's event/epoch data (case-insensitive)
+  # 2. AND it's a complex object (list, which includes data.frames)
+  name_lower <- tolower(name)
+  is_epoch_related <- grepl("epoch", name_lower) ||
+    name_lower == "events" ||
+    name_lower == "baseline_events"
+
+  is_epoch_related && is.list(val)
+}
+
 #' Parse call stack information
 #'
 #' Extracts function name and arguments from a call string.
@@ -37,6 +60,11 @@ format_call_stack <- function(callstack) {
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
+            
+            if (should_omit_parameter(name, val)) {
+              return(paste0(name, " = <omitted>"))
+            }
+            
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
@@ -68,6 +96,11 @@ format_call_stack <- function(callstack) {
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
+            
+            if (should_omit_parameter(name, val)) {
+              return(paste0(name, " = <omitted>"))
+            }
+            
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
