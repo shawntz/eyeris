@@ -35,7 +35,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   param_str <- result$parameters[1]
   expect_true(grepl("events = <omitted>", param_str, fixed = TRUE))
   expect_true(grepl("baseline_events = <omitted>", param_str, fixed = TRUE))
-  
   # Check that other parameters are still present
   expect_true(grepl("limits =", param_str))
   expect_true(grepl("baseline = FALSE", param_str, fixed = TRUE))
