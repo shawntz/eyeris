@@ -68,7 +68,6 @@ test_that("format_call_stack handles regular parameters normally", {
   expect_true(grepl("cutoff = 4", param_str))
   expect_true(grepl("order = 3", param_str))
   expect_true(grepl("verbose = TRUE", param_str, fixed = TRUE))
-  
   # Should not have <omitted> for non-epoch parameters
   expect_false(grepl("<omitted>", param_str, fixed = TRUE))
 })
