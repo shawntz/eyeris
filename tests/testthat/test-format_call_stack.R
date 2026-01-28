@@ -30,7 +30,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
   expect_true("parameters" %in% names(result))
-  
   # Check that epoch-related list/data.frame parameters are omitted
   param_str <- result$parameters[1]
   expect_true(grepl("events = <omitted>", param_str, fixed = TRUE))
