@@ -94,7 +94,6 @@ format_call_stack <- function(callstack) {
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
             val <- params[[name]]
-            
             if (should_omit_parameter(name, val)) {
               return(paste0(name, " = <omitted>"))
             }
