@@ -52,7 +52,6 @@ test_that("format_call_stack handles regular parameters normally", {
       parameters = list(cutoff = 4, order = 3, verbose = TRUE)
     )
   )
-  
   # Format the call stack
   result <- format_call_stack(mock_callstack)
   # Check that result is correct
