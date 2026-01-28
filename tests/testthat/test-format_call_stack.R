@@ -87,7 +87,6 @@ test_that("format_call_stack handles 'call' structure in addition to 'call_stack
   )
   
   result <- format_call_stack(mock_callstack)
-  
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
   expect_true(grepl("events = <omitted>", result$parameters[1], fixed = TRUE))
