@@ -63,7 +63,6 @@ format_call_stack <- function(callstack) {
             if (should_omit_parameter(name, val)) {
               return(paste0(name, " = <omitted>"))
             }
-            
             if (is.null(val)) {
               paste0(name, " = NULL")
             } else if (is.character(val)) {
