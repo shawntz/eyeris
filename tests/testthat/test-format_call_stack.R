@@ -4,7 +4,6 @@ test_that("format_call_stack omits epoch parameters to avoid memory issues", {
     data.frame(time = 1:1000, msg = paste0("event_", 1:1000)),
     data.frame(time = 1:1000, msg = paste0("event_end_", 1:1000))
   )
-  
   mock_callstack <- list(
     epoch = list(
       call_stack = quote(epoch(eyeris, events = events, limits = c(-0.5, 1.5))),
