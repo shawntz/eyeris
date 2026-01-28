@@ -122,3 +122,69 @@ test_that("format_call_stack uses case-insensitive matching for events/baseline_
   expect_true(grepl("EVENTS = <omitted>", param_str, fixed = TRUE))
   expect_true(grepl("baseline_Events = <omitted>", param_str, fixed = TRUE))
 })
+
+test_that("sanitize_call_stack omits epoch parameters before JSON serialization", {
+  # Create a mock params list similar to what eyeris$params would contain
+  large_events <- list(
+    data.frame(time = 1:1000, msg = paste0("event_", 1:1000)),
+    data.frame(time = 1:1000, msg = paste0("event_end_", 1:1000))
+  )
+
+  mock_params <- list(
+    deblink = list(
+      call_stack = quote(deblink(eyeris, extend = 50)),
+      parameters = list(extend = 50, verbose = TRUE)
+    ),
+    epoch = list(
+      call_stack = quote(epoch(eyeris, events = events, limits = c(-0.5, 1.5))),
+      parameters = list(
+        events = large_events,
+        limits = c(-0.5, 1.5),
+        baseline_events = large_events,
+        hz = 1000
+      )
+    )
+  )
+
+  # Sanitize the call stack (this happens before JSON serialization)
+  sanitized <- sanitize_call_stack(mock_params)
+
+  # Check that epoch-related parameters are replaced with "<omitted>"
+  expect_equal(sanitized$epoch$parameters$events, "<omitted>")
+  expect_equal(sanitized$epoch$parameters$baseline_events, "<omitted>")
+
+  # Check that non-epoch parameters are preserved
+  expect_equal(sanitized$epoch$parameters$limits, c(-0.5, 1.5))
+  expect_equal(sanitized$epoch$parameters$hz, 1000)
+
+  # Check that deblink parameters are fully preserved
+  expect_equal(sanitized$deblink$parameters$extend, 50)
+  expect_equal(sanitized$deblink$parameters$verbose, TRUE)
+
+  # The sanitized result should be much smaller than the original
+  # (testing that large data frames don't make it through)
+  json_output <- jsonlite::toJSON(sanitized, auto_unbox = TRUE)
+  expect_lt(nchar(as.character(json_output)), 1000)
+})
+
+test_that("sanitize_call_stack handles data frames in non-epoch parameters", {
+  # Data frames that are NOT epoch-related should be summarized, not omitted
+  mock_params <- list(
+    some_step = list(
+      call_stack = quote(some_step(eyeris, data = df)),
+      parameters = list(
+        some_data = data.frame(x = 1:100, y = 1:100),
+        cutoff = 4
+      )
+    )
+  )
+
+  sanitized <- sanitize_call_stack(mock_params)
+
+  # Non-epoch data frames should be summarized
+  expect_true(grepl("<data.frame:", sanitized$some_step$parameters$some_data))
+  expect_true(grepl("100 rows", sanitized$some_step$parameters$some_data))
+
+  # Regular parameters should be unchanged
+  expect_equal(sanitized$some_step$parameters$cutoff, 4)
+})

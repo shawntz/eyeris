@@ -327,11 +327,42 @@ make_md_table_multiline <- function(df) {
   md_table
 }
 
-sanitize_call_stack <- function(x) {
+sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
+
+  # Filter out epoch-related large data structures before JSON serialization
+  # to prevent memory issues during report rendering
+  # Only filter when we're inside a "parameters" list
+  if (in_parameters && !is.null(parent_name)) {
+    name_lower <- tolower(parent_name)
+    is_epoch_related <- grepl("epoch", name_lower) ||
+      name_lower == "events" ||
+      name_lower == "baseline_events"
+
+    # Omit complex objects (lists, data.frames) with epoch-related names
+    if (is_epoch_related && (is.list(x) || is.data.frame(x))) {
+      return("<omitted>")
+    }
+  }
+
   if (is.call(x)) {
     deparse(x)
+  } else if (is.data.frame(x)) {
+    # Convert data frames to a simple summary to avoid huge JSON output
+    paste0("<data.frame: ", nrow(x), " rows x ", ncol(x), " cols>")
   } else if (is.list(x)) {
-    lapply(x, sanitize_call_stack)
+    # Check if we're entering a "parameters" list
+    is_entering_parameters <- !is.null(parent_name) && parent_name == "parameters"
+
+    # Process list elements, passing the name for filtering
+    result <- lapply(names(x), function(name) {
+      sanitize_call_stack(
+        x[[name]],
+        parent_name = name,
+        in_parameters = in_parameters || is_entering_parameters
+      )
+    })
+    names(result) <- names(x)
+    result
   } else {
     x
   }
