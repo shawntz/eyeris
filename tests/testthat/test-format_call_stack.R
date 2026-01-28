@@ -113,7 +113,6 @@ test_that("format_call_stack only omits complex epoch objects, not scalars", {
   # Scalars with "epoch" in name should NOT be omitted
   expect_true(grepl("epoch_length = 100", param_str, fixed = TRUE))
   expect_true(grepl("epoch_count = 5", param_str, fixed = TRUE))
-  
   # Complex objects with "epoch" in name should be omitted
   expect_true(grepl("epoch_data = <omitted>", param_str, fixed = TRUE))
 })
