@@ -368,7 +368,8 @@ sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
     paste0("<data.frame: ", nrow(x), " rows x ", ncol(x), " cols>")
   } else if (is.list(x)) {
     # Check if we're entering a "parameters" list
-    is_entering_parameters <- !is.null(parent_name) && parent_name == "parameters"
+    is_entering_parameters <- !is.null(parent_name) &&
+      parent_name == "parameters"
 
     # Check if this is a call_stack field containing sys.calls() output
     # sys.calls() returns a list of calls which can contain huge objects
@@ -381,7 +382,9 @@ sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
       call_names <- sapply(x, function(call) {
         if (is.call(call)) {
           fn_name <- as.character(call[[1]])
-          if (length(fn_name) > 1) fn_name <- fn_name[length(fn_name)]
+          if (length(fn_name) > 1) {
+            fn_name <- fn_name[length(fn_name)]
+          }
           fn_name
         } else {
           "unknown"

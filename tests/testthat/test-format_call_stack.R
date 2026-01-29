@@ -199,10 +199,7 @@ test_that("sanitize_call_stack truncates very long call_stack values", {
         quote(epoch(eyeris, events = events)),
         quote(pipeline_handler(eyeris, operation, suffix))
       ),
-      parameters = list(
-        limits = c(-0.5, 1.5),
-        hz = 1000
-      )
+      parameters = list(limits = c(-0.5, 1.5), hz = 1000)
     )
   )
 
