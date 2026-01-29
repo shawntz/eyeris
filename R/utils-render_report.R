@@ -326,7 +326,6 @@ make_md_table_multiline <- function(df) {
 }
 
 sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
-
   # Filter out epoch-related large data structures before JSON serialization
   # to prevent memory issues during report rendering
   # Only filter when we're inside a "parameters" list
