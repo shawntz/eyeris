@@ -147,7 +147,7 @@ custom_eye <- system.file("extdata", "memory.asc", package = "eyeris") |>
   winsorize()
 
 plot(custom_eye, seed = 1)
-#> ℹ [2025-12-05 19:59:47] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-02-01 01:13:27] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 

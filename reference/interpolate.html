@@ -17,7 +17,7 @@ uses "na.approx()" function from the zoo package, which implements linear
 interpolation using the "approx()" function from the stats package.
 Currently, NAs at the beginning and the end of the data are replaced with
 values on either end, respectively, using the "rule = 2" argument in the
-approx() function.'><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="2162fe5e9da2b07"></script></head><body>
+approx() function.'><meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -157,22 +157,22 @@ part of the full <code>eyeris</code> glassbox preprocessing pipeline.</p></div>
 <span class="r-in"><span>  <span class="co"># set to FALSE to skip (not recommended)</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="glassbox.html">glassbox</a></span><span class="op">(</span>interpolate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:31] [INFO] Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:12:32] [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="interpolate-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:31] [WARN] Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:31] [WARN] Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2025-12-05 19:59:31] [WARN] Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::zscore() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:31] [INFO] Block processing summary:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:31] [INFO] block_1: OK (steps: 6, latest:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-02-01 01:12:32] [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-02-01 01:12:32] [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-02-01 01:12:32] [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:12:32] [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:12:32] [INFO] block_1: OK (steps: 6, latest:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2025-12-05 19:59:31] [OKAY] Running eyeris::summarize_confounds()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2025-12-05 19:59:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-02-01 01:12:32] [OKAY] Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:12:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="interpolate-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="interpolate-3.png" alt="" width="700" height="433"></span>
