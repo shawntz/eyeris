@@ -46,7 +46,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     package = "eyeris"
   )
 
-  sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
+  sticker_path <- system.file("sticker", "sticker.png", package = "eyeris")
 
   run_ids <- list.dirs(
     file.path(out, "source", "figures"),

@@ -91,7 +91,7 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     package = "eyeris"
   )
 
-  sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
+  sticker_path <- system.file("sticker", "sticker.png", package = "eyeris")
 
   epoch_lightbox_html <- print_lightbox_img_html(epochs)
 
