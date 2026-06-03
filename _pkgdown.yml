@@ -58,7 +58,7 @@ template:
   math-rendering: mathjax
   includes:
     in_header: |
-      <script async src="https://cdn.seline.com/seline.js" data-token="2162fe5e9da2b07"></script>
+      <script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script>
   bslib:
       bootswatch: united
       base_font: {google: "Raleway"}
