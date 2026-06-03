@@ -1,3 +1,26 @@
+#' Check if a parameter should be omitted from call stack display
+#'
+#' Determines if a parameter should be omitted when formatting call stacks
+#' to avoid memory issues with large epoch-related data structures.
+#'
+#' @param name The parameter name
+#' @param val The parameter value
+#'
+#' @return TRUE if the parameter should be omitted, FALSE otherwise
+#'
+#' @keywords internal
+should_omit_parameter <- function(name, val) {
+  # Only omit if:
+  # 1. Parameter name suggests it's event/epoch data (case-insensitive)
+  # 2. AND it's a complex object (list, which includes data.frames)
+  name_lower <- tolower(name)
+  is_epoch_related <- grepl("epoch", name_lower) ||
+    name_lower == "events" ||
+    name_lower == "baseline_events"
+
+  is_epoch_related && is.list(val)
+}
+
 #' Parse call stack information
 #'
 #' Extracts function name and arguments from a call string.
@@ -22,6 +45,51 @@ parse_call_stack <- function(call_str) {
 #'
 #' @keywords internal
 format_call_stack <- function(callstack) {
+  # Helper function to safely deparse and truncate
+
+  safe_deparse <- function(x, max_chars = 200) {
+    if (is.character(x)) {
+      # Already a string - just truncate if needed
+      result <- paste(x, collapse = " ")
+    } else {
+      result <- tryCatch(
+        paste(deparse(x, width.cutoff = 100L), collapse = " "),
+        error = function(e) "<error deparsing>"
+      )
+    }
+    # Truncate if too long
+    if (nchar(result) > max_chars) {
+      paste0(substr(result, 1, max_chars), "...")
+    } else {
+      result
+    }
+  }
+
+  # Helper to format a single parameter value
+
+  format_param_value <- function(name, val) {
+    if (should_omit_parameter(name, val)) {
+      return(paste0(name, " = <omitted>"))
+    }
+    if (is.null(val)) {
+      paste0(name, " = NULL")
+    } else if (is.character(val) && length(val) == 1) {
+      # Check if it's already an <omitted> or similar marker
+      if (grepl("^<.*>$", val) || nchar(val) < 100) {
+        paste0(name, " = '", val, "'")
+      } else {
+        paste0(name, " = '<truncated>'")
+      }
+    } else if (is.logical(val) && length(val) == 1) {
+      paste0(name, " = ", val)
+    } else if (is.numeric(val) && length(val) <= 5) {
+      paste0(name, " = ", safe_deparse(val, 50))
+    } else {
+      # For complex objects, just show type info
+      paste0(name, " = <", class(val)[1], ">")
+    }
+  }
+
   params_parsed <- do.call(
     rbind,
     lapply(names(callstack), function(step) {
@@ -31,23 +99,17 @@ format_call_stack <- function(callstack) {
         call_obj <- step_data$call
         params <- step_data$parameters
 
-        call_str <- deparse(call_obj)
-        call_str <- paste(call_str, collapse = "")
+        call_str <- safe_deparse(call_obj, 300)
 
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
-            val <- params[[name]]
-            if (is.null(val)) {
-              paste0(name, " = NULL")
-            } else if (is.character(val)) {
-              paste0(name, " = '", val, "'")
-            } else if (is.logical(val)) {
-              paste0(name, " = ", val)
-            } else {
-              paste0(name, " = ", deparse(val))
-            }
+            format_param_value(name, params[[name]])
           })
           param_str <- paste(param_strs, collapse = ", ")
+          # Final truncation for param string
+          if (nchar(param_str) > 500) {
+            param_str <- paste0(substr(param_str, 1, 500), "...")
+          }
         } else {
           param_str <- "no parameters"
         }
@@ -62,23 +124,17 @@ format_call_stack <- function(callstack) {
         call_obj <- step_data$call_stack
         params <- step_data$parameters
 
-        call_str <- deparse(call_obj)
-        call_str <- paste(call_str, collapse = "")
+        call_str <- safe_deparse(call_obj, 300)
 
         if (length(params) > 0) {
           param_strs <- sapply(names(params), function(name) {
-            val <- params[[name]]
-            if (is.null(val)) {
-              paste0(name, " = NULL")
-            } else if (is.character(val)) {
-              paste0(name, " = '", val, "'")
-            } else if (is.logical(val)) {
-              paste0(name, " = ", val)
-            } else {
-              paste0(name, " = ", deparse(val))
-            }
+            format_param_value(name, params[[name]])
           })
           param_str <- paste(param_strs, collapse = ", ")
+          # Final truncation for param string
+          if (nchar(param_str) > 500) {
+            param_str <- paste0(substr(param_str, 1, 500), "...")
+          }
         } else {
           param_str <- "no parameters"
         }
@@ -91,8 +147,7 @@ format_call_stack <- function(callstack) {
         )
       } else {
         parsed <- parse_call_stack(step_data)
-        args <- deparse(parsed$Arguments)
-        args <- paste(args, collapse = "")
+        args <- safe_deparse(parsed$Arguments, 300)
 
         data.frame(
           step = step,

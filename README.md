@@ -84,7 +84,7 @@ manually.
 - `📝 Logging Commands`: Automatically capture all console output and
   errors to timestamped log files.
 
-<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" width="100%" />
+<img src="https://github.com/shawntz/eyeris/raw/dev/inst/figures/interactive-reports-demo.gif" alt="" width="100%" />
 
 ## 📖 Function Reference
 
@@ -281,7 +281,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v3.0.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v3.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 #> ** DuckDB not found. Database features are disabled.
 #> 
@@ -293,37 +293,6 @@ library(eyeris)
 #> 
 #> Once installed, restart R and reload eyeris to enable database storage
 #> (bidsify(..., db_enabled = TRUE) and eyeris_db_* functions).
-#> ** Arrow not found. Parquet operations will use DuckDB fallback (slower).
-#> 
-#> => To install Arrow:
-#> 
-#>   - macOS:
-#>     1. First install system dependencies with Homebrew:
-#>        brew update
-#>        brew install pkg-config cmake apache-arrow
-#>     2. Then install the R package:
-#>        install.packages('arrow', type = 'binary')
-#> 
-#>   - Linux (Ubuntu/Debian):
-#>     1. Install system dependencies:
-#>        sudo apt-get update
-#>        sudo apt-get install -y libcurl4-openssl-dev libssl-dev
-#>     2. Then install the R package:
-#>        install.packages('arrow')
-#> 
-#>   - Linux (Fedora/RHEL):
-#>     1. Install system dependencies:
-#>        sudo dnf install libcurl-devel openssl-devel
-#>     2. Then install the R package:
-#>        install.packages('arrow')
-#> 
-#>   - Windows:
-#>     install.packages('arrow')
-#> 
-#> For more details, see: https://arrow.apache.org/docs/r/
-#> 
-#> Once installed, restart R and reload eyeris to enable faster parquet export/import
-#> (eyeris_db_to_parquet(), read_eyeris_parquet(), and related functions).
 
 demo_data <- eyelink_asc_demo_dataset()
 
@@ -331,20 +300,20 @@ eyeris_preproc <- glassbox(
   demo_data,
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::load_asc()
-#> ℹ [2025-10-06 19:54:25] [INFO] Processing block: block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2025-10-06 19:54:25] [INFO] Block processing summary:
-#> ℹ [2025-10-06 19:54:25] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-01-27 17:35:36] [INFO] Processing block: block_1
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-01-27 17:35:36] [INFO] Block processing summary:
+#> ℹ [2026-01-27 17:35:36] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ### Step-wise correction of pupillary signal
@@ -370,24 +339,24 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
-#> ℹ [2025-10-06 19:54:25] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-01-27 17:35:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 ```
 
-<img src="man/figures/README-timeseries-plot-1.png" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-1.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" alt="" width="100%" />
 
-    #> ℹ [2025-10-06 19:54:26] [INFO] Creating progressive summary plot for block_1
+    #> ℹ [2026-01-27 17:35:37] [INFO] Creating progressive summary plot for block_1
 
-<img src="man/figures/README-timeseries-plot-7.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-7.png" alt="" width="100%" />
 
-    #> ✔ [2025-10-06 19:54:27] [OKAY] Progressive summary plot created successfully!
+    #> ✔ [2026-01-27 17:35:38] [OKAY] Progressive summary plot created successfully!
 
     plot_gaze_heatmap(
       eyeris = eyeris_preproc,
       block = 1
     )
 
-<img src="man/figures/README-timeseries-plot-8.png" width="100%" />
+<img src="man/figures/README-timeseries-plot-8.png" alt="" width="100%" />
 
 ## 🗄 Database Storage: Scalable Alternative to CSV Files
 
@@ -667,7 +636,7 @@ any issues that arise.
 
 ## :see_no_evil: `eyeris` dependency graph
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
 
 ------------------------------------------------------------------------
 
