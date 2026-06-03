@@ -110,7 +110,6 @@ The `.asc` file should be a standard EyeLink ASCII output file containing:
 
 - Sample data with timestamps, gaze coordinates (x, y), and pupil size
 - Event messages (e.g., `MSG` lines with trial markers, stimulus onsets)
-- Blink events detected by the eye tracker
 - Recording metadata (sample rate, pupil measurement type, etc.)
 
 **Example Code for Loading Custom Data:**
@@ -121,7 +120,6 @@ my_data_path <- "/path/to/your/data/participant_01.asc"
 
 # Load the data file
 my_data <- eyeris::glassbox(my_data_path)
-
 ```
 
 **Important Notes:**
