@@ -122,9 +122,6 @@ my_data_path <- "/path/to/your/data/participant_01.asc"
 # Load the data file
 my_data <- eyeris::glassbox(my_data_path)
 
-# Or load it in two steps for more control
-my_data <- eyeris::load_asc(my_data_path, block = "auto")
-my_data_preprocessed <- eyeris::glassbox(my_data)
 ```
 
 **Important Notes:**
