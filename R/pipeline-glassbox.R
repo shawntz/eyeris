@@ -172,15 +172,15 @@ glassbox <- function(
 
   # check if user accidentally passed an eyeris object instead of a file path
   if (inherits(file, "eyeris")) {
-    log_error(
+    log_error(paste0(
       "You passed an eyeris object to glassbox(), but glassbox() expects a file path.\n\n",
       "It looks like you may have called load_asc() first:\n",
       "  eyeris_data <- load_asc('file.asc')\n",
-      "  glassbox(eyeris_data)  # <-- This causes an error\n\n",
+      "  eyeris_data %>% glassbox()  # <-- This causes an error\n\n",
       "Instead, pass the file path directly to glassbox():\n",
       "  'file.asc' %>% glassbox() %>% ...\n\n",
       "The eyeris package handles .asc file reading internally."
-    )
+    ))
   }
 
   # the default glassbox pipeline parameters
