@@ -5,6 +5,7 @@
 After extracting epochs from your data,
 
 ``` r
+
 eye <- eye |>
   epoch(
     events = "PROBE_START_{trial}",
@@ -30,6 +31,7 @@ When running `bidsify` on the previously epoched data, be sure to set
 `html_report` to `TRUE` (as shown below).
 
 ``` r
+
 bidsify(
   eyeris = eye_1c,
   bids_dir = tempdir(), # Replace with preferred path, like "~/Documents/eyeris"
@@ -136,6 +138,7 @@ You can also create gaze heatmaps manually using the
 function:
 
 ``` r
+
 plot_gaze_heatmap(
   eyeris = eyeris_data$timeseries$block_1,
   screen_width = eyeris_data$info$screen.x,
@@ -169,6 +172,7 @@ If you use the `eyeris` package in your research, please cite it!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 

@@ -58,37 +58,37 @@ manually.
 Below is a table of all main `eyeris` functions, organized by feature,
 with links to their documentation and a brief description.
 
-| **Feature**                                  | **Function Documentation**                                                                                                 | **Description**                                                                                                                             |
-|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| **Pipeline Orchestration**                   | [glassbox()](https://shawnschwartz.com/eyeris/reference/glassbox.html)                                                     | Run the full recommended preprocessing pipeline with a single function call.                                                                |
-| **BIDSify**                                  | [bidsify()](https://shawnschwartz.com/eyeris/reference/bidsify.html)                                                       | Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance. |
-| **Data Loading**                             | [load_asc()](https://shawnschwartz.com/eyeris/reference/load_asc.html)                                                     | Load EyeLink `.asc` files into an `eyeris` object.                                                                                          |
-| **Blink Artifact Removal**                   | [deblink()](https://shawnschwartz.com/eyeris/reference/deblink.html)                                                       | Remove blink artifacts by extending and masking missing samples.                                                                            |
-| **Transient (Speed-Based) Artifact Removal** | [detransient()](https://shawnschwartz.com/eyeris/reference/detransient.html)                                               | Remove transient spikes in the pupil signal using a moving MAD filter.                                                                      |
-| **Linear Interpolation**                     | [interpolate()](https://shawnschwartz.com/eyeris/reference/interpolate.html)                                               | Interpolate missing (NA) samples in the pupil signal.                                                                                       |
-| **Lowpass Filtering**                        | [lpfilt()](https://shawnschwartz.com/eyeris/reference/lpfilt.html)                                                         | Apply a Butterworth lowpass filter to the pupil signal.                                                                                     |
-| **Downsampling**                             | [downsample()](https://shawnschwartz.com/eyeris/reference/downsample.html)                                                 | Downsample the pupil signal to a lower sampling rate.                                                                                       |
-| **Binning**                                  | [bin()](https://shawnschwartz.com/eyeris/reference/bin.html)                                                               | Bin pupil data into specified time bins using mean or median.                                                                               |
-| **Detrending**                               | [detrend()](https://shawnschwartz.com/eyeris/reference/detrend.html)                                                       | Remove slow drifts from the pupil signal by linear detrending.                                                                              |
-| **Z-scoring**                                | [zscore()](https://shawnschwartz.com/eyeris/reference/zscore.html)                                                         | Z-score the pupil signal within each block.                                                                                                 |
-| **Confound Summary**                         | [summarize_confounds()](https://shawnschwartz.com/eyeris/reference/summarize_confounds.html)                               | Summarize and visualize confounding variables for each preprocessing step.                                                                  |
-| **Epoching & Baselining**                    | [epoch()](https://shawnschwartz.com/eyeris/reference/epoch.html)                                                           | Extract time-locked epochs from the continuous pupil signal.                                                                                |
-| **Plotting**                                 | [plot()](https://shawnschwartz.com/eyeris/reference/plot.eyeris.html)                                                      | Plot the pupil signal and preprocessing steps.                                                                                              |
-| **Gaze Heatmaps**                            | [plot_gaze_heatmap()](https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html)                                   | Generate heatmaps of gaze position across the screen.                                                                                       |
-| **Binocular Correlation**                    | [plot_binocular_correlation()](https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.html)                 | Compute correlation between left and right eye pupil signals.                                                                               |
-| **Demo (Monocular) Dataset**                 | [eyelink_asc_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_demo_dataset.html)                     | Load a demo monocular recording EyeLink dataset for testing and examples.                                                                   |
-| **Demo (Binocular) Dataset**                 | [eyelink_asc_binocular_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_binocular_demo_dataset.html) | Load a demo binocular recording EyeLink dataset for testing and examples.                                                                   |
-| **Logging Commands**                         | [eyelogger()](https://shawnschwartz.com/eyeris/reference/eyelogger.html)                                                   | Automatically capture all console output and errors to timestamped log files.                                                               |
-| **Database Storage**                         | [eyeris_db_collect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.html)                                   | High-performance database storage and querying alternative to CSV files.                                                                    |
-| **Database Summary**                         | [eyeris_db_summary()](https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html)                                   | Get comprehensive overview of database contents and metadata.                                                                               |
-| **Database Connection**                      | [eyeris_db_connect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.html)                                   | Connect to eyeris databases for custom queries and operations.                                                                              |
-| **Database Export (Chunked)**                | [eyeris_db_to_chunked_files()](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html)                 | Export large databases in configurable chunks with automatic file size limits.                                                              |
-| **Database Export (Parquet)**                | [eyeris_db_to_parquet()](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html)                             | Export database to high-performance Parquet format files.                                                                                   |
-| **Read Parquet Files**                       | [read_eyeris_parquet()](https://shawnschwartz.com/eyeris/reference/read_eyeris_parquet.html)                               | Read and combine eyeris Parquet files with schema-aligned binding.                                                                          |
-| **Database Sharing (Split)**                 | [eyeris_db_split_for_sharing()](https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.html)               | Split databases into chunks for easier sharing and collaboration.                                                                           |
-| **Database Sharing (Reconstruct)**           | [eyeris_db_reconstruct_from_chunks()](https://shawnschwartz.com/eyeris/reference/eyeris_db_reconstruct_from_chunks.html)   | Reconstruct complete databases from shared chunks.                                                                                          |
-| **Custom Extensions**                        | *See vignette: [Custom Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)*                      | Learn how to write your own pipeline steps and integrate them with `eyeris`.                                                                |
-| **Internal API Reference**                   | *See vignette: [Internal API Reference](https://shawnschwartz.com/eyeris/articles/internal-api.html)*                      | Comprehensive documentation of all internal functions for advanced users and developers.                                                    |
+| **Feature** | **Function Documentation** | **Description** |
+|----|----|----|
+| **Pipeline Orchestration** | [glassbox()](https://shawnschwartz.com/eyeris/reference/glassbox.html) | Run the full recommended preprocessing pipeline with a single function call. |
+| **BIDSify** | [bidsify()](https://shawnschwartz.com/eyeris/reference/bidsify.html) | Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance. |
+| **Data Loading** | [load_asc()](https://shawnschwartz.com/eyeris/reference/load_asc.html) | Load EyeLink `.asc` files into an `eyeris` object. |
+| **Blink Artifact Removal** | [deblink()](https://shawnschwartz.com/eyeris/reference/deblink.html) | Remove blink artifacts by extending and masking missing samples. |
+| **Transient (Speed-Based) Artifact Removal** | [detransient()](https://shawnschwartz.com/eyeris/reference/detransient.html) | Remove transient spikes in the pupil signal using a moving MAD filter. |
+| **Linear Interpolation** | [interpolate()](https://shawnschwartz.com/eyeris/reference/interpolate.html) | Interpolate missing (NA) samples in the pupil signal. |
+| **Lowpass Filtering** | [lpfilt()](https://shawnschwartz.com/eyeris/reference/lpfilt.html) | Apply a Butterworth lowpass filter to the pupil signal. |
+| **Downsampling** | [downsample()](https://shawnschwartz.com/eyeris/reference/downsample.html) | Downsample the pupil signal to a lower sampling rate. |
+| **Binning** | [bin()](https://shawnschwartz.com/eyeris/reference/bin.html) | Bin pupil data into specified time bins using mean or median. |
+| **Detrending** | [detrend()](https://shawnschwartz.com/eyeris/reference/detrend.html) | Remove slow drifts from the pupil signal by linear detrending. |
+| **Z-scoring** | [zscore()](https://shawnschwartz.com/eyeris/reference/zscore.html) | Z-score the pupil signal within each block. |
+| **Confound Summary** | [summarize_confounds()](https://shawnschwartz.com/eyeris/reference/summarize_confounds.html) | Summarize and visualize confounding variables for each preprocessing step. |
+| **Epoching & Baselining** | [epoch()](https://shawnschwartz.com/eyeris/reference/epoch.html) | Extract time-locked epochs from the continuous pupil signal. |
+| **Plotting** | [plot()](https://shawnschwartz.com/eyeris/reference/plot.eyeris.html) | Plot the pupil signal and preprocessing steps. |
+| **Gaze Heatmaps** | [plot_gaze_heatmap()](https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html) | Generate heatmaps of gaze position across the screen. |
+| **Binocular Correlation** | [plot_binocular_correlation()](https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.html) | Compute correlation between left and right eye pupil signals. |
+| **Demo (Monocular) Dataset** | [eyelink_asc_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_demo_dataset.html) | Load a demo monocular recording EyeLink dataset for testing and examples. |
+| **Demo (Binocular) Dataset** | [eyelink_asc_binocular_demo_dataset()](https://shawnschwartz.com/eyeris/reference/eyelink_asc_binocular_demo_dataset.html) | Load a demo binocular recording EyeLink dataset for testing and examples. |
+| **Logging Commands** | [eyelogger()](https://shawnschwartz.com/eyeris/reference/eyelogger.html) | Automatically capture all console output and errors to timestamped log files. |
+| **Database Storage** | [eyeris_db_collect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.html) | High-performance database storage and querying alternative to CSV files. |
+| **Database Summary** | [eyeris_db_summary()](https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html) | Get comprehensive overview of database contents and metadata. |
+| **Database Connection** | [eyeris_db_connect()](https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.html) | Connect to eyeris databases for custom queries and operations. |
+| **Database Export (Chunked)** | [eyeris_db_to_chunked_files()](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html) | Export large databases in configurable chunks with automatic file size limits. |
+| **Database Export (Parquet)** | [eyeris_db_to_parquet()](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html) | Export database to high-performance Parquet format files. |
+| **Read Parquet Files** | [read_eyeris_parquet()](https://shawnschwartz.com/eyeris/reference/read_eyeris_parquet.html) | Read and combine eyeris Parquet files with schema-aligned binding. |
+| **Database Sharing (Split)** | [eyeris_db_split_for_sharing()](https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.html) | Split databases into chunks for easier sharing and collaboration. |
+| **Database Sharing (Reconstruct)** | [eyeris_db_reconstruct_from_chunks()](https://shawnschwartz.com/eyeris/reference/eyeris_db_reconstruct_from_chunks.html) | Reconstruct complete databases from shared chunks. |
+| **Custom Extensions** | *See vignette: [Custom Extensions](https://shawnschwartz.com/eyeris/articles/custom-extensions.html)* | Learn how to write your own pipeline steps and integrate them with `eyeris`. |
+| **Internal API Reference** | *See vignette: [Internal API Reference](https://shawnschwartz.com/eyeris/articles/internal-api.html)* | Comprehensive documentation of all internal functions for advanced users and developers. |
 
 > For a full list of all functions, see the [eyeris reference
 > index](https://shawnschwartz.com/eyeris/reference/index.html).
@@ -124,12 +124,14 @@ You can install the stable release of [`eyeris` from
 CRAN](https://cran.r-project.org/package=eyeris) with:
 
 ``` r
+
 install.packages("eyeris")
 ```
 
 or
 
 ``` r
+
 # install.packages("pak")
 pak::pak("eyeris")
 ```
@@ -140,6 +142,7 @@ You can install the development version of [`eyeris` from
 GitHub](https://github.com/shawntz/eyeris) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("shawntz/eyeris", ref = "dev")
 ```
@@ -158,6 +161,7 @@ datasets. Required for `bidsify(..., db_enabled = TRUE)` and all
 `eyeris_db_*` functions:
 
 ``` r
+
 install.packages("duckdb")
 ```
 
@@ -189,6 +193,7 @@ brew install pkg-config cmake apache-arrow
 ```
 
 ``` r
+
 install.packages("arrow", type = "binary")
 ```
 
@@ -201,6 +206,7 @@ sudo apt-get install -y libcurl4-openssl-dev libssl-dev
 ```
 
 ``` r
+
 install.packages("arrow")
 ```
 
@@ -212,12 +218,14 @@ sudo dnf install libcurl-devel openssl-devel
 ```
 
 ``` r
+
 install.packages("arrow")
 ```
 
 **Windows users:**
 
 ``` r
+
 install.packages("arrow")
 ```
 
@@ -250,6 +258,7 @@ flexibly construct and compare different pipelines.
 We hope you enjoy! -Shawn
 
 ``` r
+
 set.seed(32)
 
 library(eyeris)
@@ -323,6 +332,7 @@ eyeris_preproc <- glassbox(
 ### Step-wise correction of pupillary signal
 
 ``` r
+
 plot(eyeris_preproc, add_progressive_summary = TRUE)
 ```
 
@@ -334,6 +344,7 @@ animation](https://github.com/shawntz/eyeris/raw/dev/inst/figures/hists_coalesce
 ### Final pre-post correction of pupillary signal (raw ➡ preprocessed)
 
 ``` r
+
 start_time <- min(eyeris_preproc$timeseries$block_1$time_secs)
 end_time <- max(eyeris_preproc$timeseries$block_1$time_secs)
 
@@ -392,6 +403,7 @@ Enable `eyeris` project database storage alongside or instead of CSV
 files:
 
 ``` r
+
 bidsify(
   processed_data,
   bids_dir = "~/my_study",
@@ -420,6 +432,7 @@ bidsify(
 Extract all your data with one function call:
 
 ``` r
+
 # extract ALL data for ALL subjects
 all_data <- eyeris_db_collect("~/my_study", "study_database")
 
@@ -439,6 +452,7 @@ subset_data <- eyeris_db_collect(
 ### Database Overview and Management
 
 ``` r
+
 # get a comprehensive database summary
 summary <- eyeris_db_summary("~/my_study", "study_database")
 summary$subjects      # all subjects in database
@@ -613,6 +627,7 @@ You can wrap any `eyeris` command or block of code in
 `eyelogger({ ... })`:
 
 ``` r
+
 library(eyeris)
 
 # log a simple code block with messages, warnings, and prints
@@ -687,6 +702,7 @@ our preprint!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 

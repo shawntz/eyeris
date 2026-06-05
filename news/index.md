@@ -127,6 +127,7 @@ efficiency across the pipeline.
 > Usage examples:
 >
 > ``` r
+>
 > # Automatic detection in HPC environments
 > data |> bidsify(db_enabled = TRUE)
 >
@@ -865,6 +866,7 @@ CRAN release: 2025-06-13
   is as simple as wrapping your command like this:
 
   ``` r
+
   eyelogger({
     glassbox(eyelink_asc_demo_dataset(), interactive_preview = FALSE)
   }, log_dir = file.path("~/Documents", "eyeris_logs"))

@@ -23,6 +23,7 @@ code)!
 ## 1 Load and Preprocess Your Data
 
 ``` r
+
 # Load eyeris
 library(eyeris)
 #> 
@@ -32,20 +33,20 @@ library(eyeris)
 # Load the example memory task file and run default glassbox preproc workflow
 demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
-#> ✔ [2026-02-01 01:14:01] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-02-01 01:14:02] [INFO] Processing block: block_1
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-02-01 01:14:02] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-02-01 01:14:02] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-02-01 01:14:02] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-02-01 01:14:02] [INFO] Block processing summary:
-#> ℹ [2026-02-01 01:14:02] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 04:12:35] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 04:12:36] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 04:12:36] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 04:12:36] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 04:12:36] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 04:12:36] [INFO] Block processing summary:
+#> ℹ [2026-06-05 04:12:36] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-02-01 01:14:02] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 04:12:36] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ## 2 Extract Data Epochs
@@ -62,15 +63,16 @@ flexible extraction of trials using:
 > Extract a 2-second window centered around each “PROBE” event.
 
 ``` r
+
 eye_1a <- eye |>
   epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-02-01 01:14:02] [INFO] Epoching pupil data...
-#> ℹ [2026-02-01 01:14:02] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-02-01 01:14:02] [OKAY] Done!
-#> ✔ [2026-02-01 01:14:02] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-06-05 04:12:36] [INFO] Epoching pupil data...
+#> ℹ [2026-06-05 04:12:36] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-06-05 04:12:36] [OKAY] Done!
+#> ✔ [2026-06-05 04:12:36] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-02-01 01:14:02] [OKAY] Pupil epoching completed in 0.19 seconds
-#> ℹ [2026-02-01 01:14:02] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-05 04:12:36] [OKAY] Pupil epoching completed in 0.15 seconds
+#> ℹ [2026-06-05 04:12:36] [INFO] Recalculating epoched confounds for new
 #> epochs...
 ```
 
@@ -78,6 +80,7 @@ Now, if you take a look at `eye`, you’ll notice there’s a new list
 element within this `eyeris` object: `epoch_probe`.
 
 ``` r
+
 eye_1a$epoch_probe
 #> $block_1
 #> # A tibble: 20,000 × 21
@@ -144,20 +147,21 @@ to be safe.**
 > label to the resulting epoch set.
 
 ``` r
+
 eye_1b <- eye |>
   epoch(
     events = "PROBE_START_{trial}",
     limits = c(0, 1),
     label = "probeAfter"
   )
-#> ℹ [2026-02-01 01:14:03] [INFO] Epoching pupil data...
-#> ℹ [2026-02-01 01:14:03] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-05 04:12:37] [INFO] Epoching pupil data...
+#> ℹ [2026-06-05 04:12:37] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-02-01 01:14:03] [OKAY] Done!
-#> ✔ [2026-02-01 01:14:03] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-05 04:12:37] [OKAY] Done!
+#> ✔ [2026-06-05 04:12:37] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-02-01 01:14:03] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-02-01 01:14:03] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-05 04:12:37] [OKAY] Pupil epoching completed in 0.06 seconds
+#> ℹ [2026-06-05 04:12:37] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 eye_1b |>
@@ -229,6 +233,7 @@ as event messages at the start of each probe trial on our `PsychoPy` /
 > it to the epoch data.
 
 ``` r
+
 eye_1c <- eye |>
   epoch(
     events = "PROBE_START_{trial}",
@@ -256,6 +261,7 @@ baseline period).
 > Manually define start and end times for two trials:
 
 ``` r
+
 start_events <- data.frame(
   time = c(11334491, 11338691),
   msg = c("TRIALID 22", "TRIALID 23")
@@ -281,6 +287,7 @@ which saves the raw and epoched data in a structured, `BIDS`-inspired
 format.
 
 ``` r
+
 bidsify(
   eyeris = eye_1c,
   bids_dir = "~/Documents/eyeris",
@@ -360,6 +367,7 @@ If you use the `eyeris` package in your research, please cite it!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 

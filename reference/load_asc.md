@@ -1,7 +1,7 @@
 # Load and parse SR Research EyeLink `.asc` files
 
 This function builds upon the
-[`eyelinker::read.asc()`](https://rdrr.io/pkg/eyelinker/man/read.asc.html)
+[`eyelinker::read.asc()`](https://rdrr.io/pkg/eyelinker/man/read_asc.html)
 function to parse the messages and metadata within the EyeLink `.asc`
 file. After loading and additional processing, this function returns an
 S3 `eyeris` class for use in all subsequent `eyeris` pipeline steps and
@@ -105,7 +105,7 @@ Advanced users may call it directly if needed.
 
 ## See also
 
-[`eyelinker::read.asc()`](https://rdrr.io/pkg/eyelinker/man/read.asc.html)
+[`eyelinker::read.asc()`](https://rdrr.io/pkg/eyelinker/man/read_asc.html)
 which this function wraps.
 
 [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
@@ -119,21 +119,21 @@ demo_data <- eyelink_asc_demo_dataset()
 
 demo_data |>
   eyeris::glassbox(load_asc = list(block = 1))
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-02-01 01:13:23] [INFO] Processing block: block_1
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 04:12:04] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-02-01 01:13:23] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-02-01 01:13:23] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-02-01 01:13:23] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-02-01 01:13:23] [INFO] Block processing summary:
-#> ℹ [2026-02-01 01:13:23] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-05 04:12:04] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 04:12:04] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 04:12:04] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 04:12:04] [INFO] Block processing summary:
+#> ℹ [2026-06-05 04:12:04] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-02-01 01:13:23] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 04:12:04] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
 #> 

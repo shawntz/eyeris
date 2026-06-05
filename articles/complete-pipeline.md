@@ -46,6 +46,7 @@ consequences on your pupil timeseries data).
 If you haven’t already installed the `eyeris` package:
 
 ``` r
+
 # Install latest stable release from CRAN
 # install.packages("eyeris")
 
@@ -61,6 +62,7 @@ If you haven’t already installed the `eyeris` package:
 ### Loading `eyeris` Package
 
 ``` r
+
 library(eyeris)
 #> 
 #> eyeris v3.0.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
@@ -69,12 +71,87 @@ library(eyeris)
 
 ### Loading Your Raw Data
 
+#### Using the Demo Dataset
+
 For this demo, we’ll use our built in demo dataset, which contains a
 handful of trials from an associative memory task recorded in our lab.
 
 ``` r
+
 demo_data <- eyelink_asc_demo_dataset()
 ```
+
+#### Loading Your Own Custom Data
+
+To load your own EyeLink pupillometry data, you need an `.asc` file
+converted from your original `.edf` file using the official EyeLink
+`edf2asc` command-line utility provided by SR Research.
+
+**Expected Data Format:**
+
+The `.asc` file should be a standard EyeLink ASCII output file
+containing:
+
+- Sample data with timestamps, gaze coordinates (x, y), and pupil size
+- Event messages (e.g., `MSG` lines with trial markers, stimulus onsets)
+- Recording metadata (sample rate, pupil measurement type, etc.)
+
+**Example Code for Loading Custom Data:**
+
+``` r
+
+# Point to your own .asc file
+my_data_path <- "/path/to/your/data/participant_01.asc"
+
+# Load the data file
+my_data <- eyeris::glassbox(my_data_path)
+```
+
+**Important Notes:**
+
+- **File Path**: Replace `"/path/to/your/data/participant_01.asc"` with
+  the actual path to your `.asc` file.
+
+- **Block Handling**: Use `block = "auto"` (default) to automatically
+  detect multiple recording segments within the same file. This is
+  recommended for most use cases. See
+  [`?eyeris::load_asc`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  for other options.
+
+- **Binocular Data**: If you have binocular recordings, you can specify
+  how to handle them:
+
+  ``` r
+
+  # Average both eyes (default)
+  my_data <- eyeris::glassbox(
+    my_data_path,
+    load_asc = list(binocular_mode = "average")
+  )
+
+  # Use only left eye
+  my_data <- eyeris::glassbox(
+    my_data_path,
+    load_asc = list(binocular_mode = "left")
+  )
+
+  # Use only right eye
+  my_data <- eyeris::glassbox(
+    my_data_path,
+    load_asc = list(binocular_mode = "right")
+  )
+
+  # Process both eyes independently
+  my_data <- eyeris::glassbox(
+    my_data_path,
+    load_asc = list(binocular_mode = "both")
+  )
+  ```
+
+- **Data Quality**: Ensure your data was recorded **without** online
+  filtering applied by the EyeLink Host PC. The `eyeris` pipeline
+  expects raw, unfiltered data. See the [Caveats](#caveats) section
+  below for more details on this critical requirement.
 
 ### Running the Fully-Automated Pipeline
 
@@ -82,26 +159,27 @@ Here, we use the example data along with the default prescribed
 parameters and pipeline recipe:
 
 ``` r
+
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-02-01 01:13:47] [INFO] Processing block: block_1
-#> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-05 04:12:23] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 04:12:24] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::lpfilt() for block_1
 ```
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-1.png)
 
-    #> ! [2026-02-01 01:13:47] [WARN] Skipping eyeris::downsample() for block_1
-    #> ! [2026-02-01 01:13:47] [WARN] Skipping eyeris::bin() for block_1
-    #> ! [2026-02-01 01:13:47] [WARN] Skipping eyeris::detrend() for block_1
-    #> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::zscore() for block_1
-    #> ℹ [2026-02-01 01:13:47] [INFO] Block processing summary:
-    #> ℹ [2026-02-01 01:13:47] [INFO] block_1: OK (steps: 6, latest:
+    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::downsample() for block_1
+    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::bin() for block_1
+    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::detrend() for block_1
+    #> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::zscore() for block_1
+    #> ℹ [2026-06-05 04:12:24] [INFO] Block processing summary:
+    #> ℹ [2026-06-05 04:12:24] [INFO] block_1: OK (steps: 6, latest:
     #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-    #> ✔ [2026-02-01 01:13:47] [OKAY] Running eyeris::summarize_confounds()
+    #> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::summarize_confounds()
 
     # Preview first and second steps of the pipeline
     plot(
@@ -110,7 +188,7 @@ output <- eyeris::glassbox(demo_data)
       preview_window = c(0, max(output$timeseries$block_1$time_secs)),
       seed = 0
     )
-    #> ℹ [2026-02-01 01:13:47] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+    #> ℹ [2026-06-05 04:12:24] [INFO] Plotting block 1 with sampling rate 1000 Hz from
     #> possible blocks: 1
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-2.png)![](complete-pipeline_files/figure-html/unnamed-chunk-3-3.png)
@@ -118,6 +196,7 @@ output <- eyeris::glassbox(demo_data)
 ### Running the Pipeline Interactively
 
 ``` r
+
 output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
 ```
 
@@ -132,26 +211,27 @@ pipeline step to
 #### Example
 
 ``` r
+
 output <- eyeris::glassbox(
   demo_data,
   interactive_preview = FALSE, # TRUE to visualize each step in real-time
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2026-02-01 01:13:51] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-02-01 01:13:52] [INFO] Processing block: block_1
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-02-01 01:13:52] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-02-01 01:13:52] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-02-01 01:13:52] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-02-01 01:13:52] [INFO] Block processing summary:
-#> ℹ [2026-02-01 01:13:52] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 04:12:27] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 04:12:27] [INFO] Block processing summary:
+#> ℹ [2026-06-05 04:12:27] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-02-01 01:13:52] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ##### Pipeline Steps with Overridable Parameters
@@ -311,6 +391,7 @@ If you use the `eyeris` package in your research, please cite it!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 

@@ -35,6 +35,7 @@ The easiest way to export your entire database is with
 [`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md):
 
 ``` r
+
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/your/bids/directory",
   db_path = "my-project"  # your database name
@@ -73,6 +74,7 @@ You can customize the maximum file size to create smaller, more
 manageable files:
 
 ``` r
+
 # Create smaller files for easy distribution
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/bids",
@@ -91,6 +93,7 @@ services - Working with limited storage space
 For large databases, you may only need certain types of data:
 
 ``` r
+
 # Export only pupil timeseries and events
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/bids", 
@@ -111,6 +114,7 @@ Detected blinks
 For better performance and compression, use Parquet format:
 
 ``` r
+
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/bids",
   db_path = "large-project",
@@ -130,6 +134,7 @@ CSV) - **Faster reading** with
 ### Reading Single Files Back into R
 
 ``` r
+
 # Read a single CSV file
 data <- read.csv("path/to/timeseries_chunked.csv")
 
@@ -144,6 +149,7 @@ if (requireNamespace("arrow", quietly = TRUE)) {
 When files are split due to size limits, you can recombine them:
 
 ``` r
+
 # Find all parts of a split dataset
 files <- list.files(
   "path/to/eyerisdb_export/my-project/", 
@@ -168,6 +174,7 @@ combined_data <- read_eyeris_parquet(
 For specialized analysis, you can process chunks with custom functions:
 
 ``` r
+
 # Connect to database directly
 con <- eyeris_db_connect("/path/to/bids", "large-project")
 
@@ -213,6 +220,7 @@ eyeris_db_disconnect(con)
 For databases with hundreds of millions of rows:
 
 ``` r
+
 # Optimize for very large datasets
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/bids",
@@ -253,6 +261,7 @@ result <- eyeris_db_to_chunked_files(
 If you encounter out-of-memory errors:
 
 ``` r
+
 # Reduce chunk size
 result <- eyeris_db_to_chunked_files(
   bids_dir = "/path/to/bids",

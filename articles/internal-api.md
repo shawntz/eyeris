@@ -32,6 +32,7 @@ as they may change without notice in future versions.
 data by extending NA padding around detected blinks.
 
 ``` r
+
 eyeris:::deblink_pupil(x, prev_op, extend)
 ```
 
@@ -54,6 +55,7 @@ eyeris:::deblink_pupil(x, prev_op, extend)
 pupil data using speed-based thresholding.
 
 ``` r
+
 eyeris:::detransient_pupil(x, prev_op, n, mad_thresh)
 ```
 
@@ -76,6 +78,7 @@ NA)
 consecutive time points.
 
 ``` r
+
 eyeris:::speed(x, y)
 ```
 
@@ -97,6 +100,7 @@ eyeris:::speed(x, y)
 interpolation.
 
 ``` r
+
 eyeris:::interpolate_pupil(x, prev_op, verbose)
 ```
 
@@ -119,6 +123,7 @@ eyeris:::interpolate_pupil(x, prev_op, verbose)
 data using Butterworth filter design.
 
 ``` r
+
 eyeris:::lpfilt_pupil(x, prev_op, wp, ws, rp, rs, fs, plot_freqz)
 ```
 
@@ -142,6 +147,7 @@ eyeris:::lpfilt_pupil(x, prev_op, wp, ws, rp, rs, fs, plot_freqz)
 anti-aliasing filtering.
 
 ``` r
+
 eyeris:::downsample_pupil(x, prev_op, target_fs, plot_freqz, current_fs, rp, rs)
 ```
 
@@ -164,6 +170,7 @@ sample rate
 or other methods.
 
 ``` r
+
 eyeris:::bin_pupil(x, prev_op, bins_per_second, method, current_fs)
 ```
 
@@ -188,6 +195,7 @@ eyeris:::bin_pupil(x, prev_op, bins_per_second, method, current_fs)
 regression.
 
 ``` r
+
 eyeris:::detrend_pupil(x, prev_op)
 ```
 
@@ -205,6 +213,7 @@ residuals
 **Description**: Internal function to z-score normalize pupil data.
 
 ``` r
+
 eyeris:::zscore_pupil(x, prev_op)
 ```
 
@@ -221,6 +230,7 @@ eyeris:::zscore_pupil(x, prev_op)
 **Description**: Calculate z-scores for a numeric vector.
 
 ``` r
+
 eyeris:::get_zscores(x)
 ```
 
@@ -243,6 +253,7 @@ eyeris:::get_zscores(x)
 epoching process.
 
 ``` r
+
 eyeris:::epoch_pupil(x, prev_op, evs, lims, label, c_bline, a_bline, bline_type, bline_evs, bline_per, hz, verbose)
 ```
 
@@ -270,6 +281,7 @@ eyeris:::epoch_pupil(x, prev_op, evs, lims, label, c_bline, a_bline, bline_type,
 multi-block data.
 
 ``` r
+
 eyeris:::epoch_and_baseline_block(x, blk, lab, evs, lims, msg_s, msg_e, c_bline, a_bline, bline_type, bline_evs, bline_per, hz, verbose)
 ```
 
@@ -283,6 +295,7 @@ specified block
 epoching mathematics.
 
 ``` r
+
 eyeris:::process_epoch_and_baselines(eyeris, timestamps, evs, lims, hz, verbose)
 ```
 
@@ -297,6 +310,7 @@ eyeris:::process_epoch_and_baselines(eyeris, timestamps, evs, lims, hz, verbose)
 timestamps.
 
 ``` r
+
 eyeris:::epoch_manually(eyeris, ts_list, hz, verbose)
 ```
 
@@ -307,6 +321,7 @@ eyeris:::epoch_manually(eyeris, ts_list, hz, verbose)
 limits.
 
 ``` r
+
 eyeris:::epoch_only_start_msg(eyeris, start, hz, verbose)
 ```
 
@@ -317,6 +332,7 @@ eyeris:::epoch_only_start_msg(eyeris, start, hz, verbose)
 it.
 
 ``` r
+
 eyeris:::epoch_start_msg_and_limits(eyeris, start, lims, hz, verbose)
 ```
 
@@ -327,6 +343,7 @@ eyeris:::epoch_start_msg_and_limits(eyeris, start, lims, hz, verbose)
 timestamps.
 
 ``` r
+
 eyeris:::epoch_start_end_msg(eyeris, start, end, hz, verbose)
 ```
 
@@ -343,6 +360,7 @@ eyeris:::epoch_start_end_msg(eyeris, start, end, hz, verbose)
 single pupil data processing step.
 
 ``` r
+
 eyeris:::get_confounds_for_step(pupil_df, pupil_vec, screen_width, screen_height, hz)
 ```
 
@@ -362,6 +380,7 @@ step
 **Description**: Calculate confounds specifically for epoched data.
 
 ``` r
+
 eyeris:::calculate_epoched_confounds(eyeris, epoch_names, hz, verbose)
 ```
 
@@ -376,6 +395,7 @@ eyeris:::calculate_epoched_confounds(eyeris, epoch_names, hz, verbose)
 physiological constraints.
 
 ``` r
+
 eyeris:::tag_blinks(pupil_df, pupil_vec)
 ```
 
@@ -388,6 +408,7 @@ eyeris:::tag_blinks(pupil_df, pupil_vec)
 points.
 
 ``` r
+
 eyeris:::calc_euclidean_dist(x1, y1, x2, y2)
 ```
 
@@ -400,6 +421,7 @@ eyeris:::calc_euclidean_dist(x1, y1, x2, y2)
 (0-1 range).
 
 ``` r
+
 eyeris:::normalize_gaze_coords(pupil_df, screen_width, screen_height)
 ```
 
@@ -411,6 +433,7 @@ eyeris:::normalize_gaze_coords(pupil_df, screen_width, screen_height)
 **Description**: Tag gaze coordinates as on-screen or off-screen.
 
 ``` r
+
 eyeris:::tag_gaze_coords(pupil_df, screen_width, screen_height, overshoot_buffer)
 ```
 
@@ -425,6 +448,7 @@ eyeris:::tag_gaze_coords(pupil_df, screen_width, screen_height, overshoot_buffer
 comprehensive error handling.
 
 ``` r
+
 eyeris:::export_confounds_to_csv(confounds_list, output_dir, filename_prefix, verbose, run_num, csv_enabled, db_con, sub, ses, task, eye_suffix, epoch_label)
 ```
 
@@ -442,6 +466,7 @@ eyeris:::export_confounds_to_csv(confounds_list, output_dir, filename_prefix, ve
 **Description**: Generate formatted timestamp for logging messages.
 
 ``` r
+
 eyeris:::get_log_timestamp()
 ```
 
@@ -455,6 +480,7 @@ eyeris:::get_log_timestamp()
 string interpolation.
 
 ``` r
+
 eyeris:::log_message(level, ..., verbose, wrap, .envir)
 ```
 
@@ -473,6 +499,7 @@ eyeris:::log_message(level, ..., verbose, wrap, .envir)
 types.
 
 ``` r
+
 eyeris:::log_info(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
 eyeris:::log_success(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
 eyeris:::log_warn(..., verbose = TRUE, wrap = TRUE, .envir = parent.frame())
@@ -491,6 +518,7 @@ eyeris:::log_error(..., wrap = TRUE, .envir = parent.frame())
 **Description**: Check if input argument is provided and not `NULL`.
 
 ``` r
+
 eyeris:::check_input(arg)
 ```
 
@@ -501,6 +529,7 @@ eyeris:::check_input(arg)
 structure.
 
 ``` r
+
 eyeris:::check_data(eyeris, fun)
 ```
 
@@ -511,6 +540,7 @@ eyeris:::check_data(eyeris, fun)
 increasing.
 
 ``` r
+
 eyeris:::check_time_monotonic(time_vector, time_col_name)
 ```
 
@@ -521,6 +551,7 @@ eyeris:::check_time_monotonic(time_vector, time_col_name)
 data.
 
 ``` r
+
 eyeris:::is_binocular_object(x)
 ```
 
@@ -535,6 +566,7 @@ eyeris:::is_binocular_object(x)
 proper error handling.
 
 ``` r
+
 eyeris:::check_and_create_dir(basedir, dir, verbose)
 ```
 
@@ -551,6 +583,7 @@ eyeris:::check_and_create_dir(basedir, dir, verbose)
 comprehensive error handling.
 
 ``` r
+
 eyeris:::connect_eyeris_database(bids_dir, db_path, verbose)
 ```
 
@@ -562,6 +595,7 @@ eyeris:::connect_eyeris_database(bids_dir, db_path, verbose)
 **Description**: Safely disconnect from `eyeris` `DuckDB` database.
 
 ``` r
+
 eyeris:::disconnect_eyeris_database(con, verbose)
 ```
 
@@ -576,6 +610,7 @@ eyeris:::disconnect_eyeris_database(con, verbose)
 database storage.
 
 ``` r
+
 eyeris:::create_table_name(data_type, sub, ses, task, run, eye_suffix, epoch_label)
 ```
 
@@ -588,6 +623,7 @@ eyeris:::create_table_name(data_type, sub, ses, task, run, eye_suffix, epoch_lab
 handling and validation.
 
 ``` r
+
 eyeris:::write_eyeris_data_to_db(data, db_con, data_type, sub, ses, task, run, eye_suffix, epoch_label, verbose)
 ```
 
@@ -600,6 +636,7 @@ eyeris:::write_eyeris_data_to_db(data, db_con, data_type, sub, ses, task, run, e
 handling.
 
 ``` r
+
 eyeris:::write_csv_and_db(data, csv_path, csv_enabled, db_con, data_type, sub, ses, task, run, eye_suffix, epoch_label, verbose)
 ```
 
@@ -614,6 +651,7 @@ eyeris:::write_csv_and_db(data, csv_path, csv_enabled, db_con, data_type, sub, s
 unique naming.
 
 ``` r
+
 eyeris:::create_temp_eyeris_database(base_db_path, parallel_id, verbose)
 ```
 
@@ -626,6 +664,7 @@ eyeris:::create_temp_eyeris_database(base_db_path, parallel_id, verbose)
 locking.
 
 ``` r
+
 eyeris:::merge_temp_database(temp_db_path, main_db_path, verbose)
 ```
 
@@ -638,6 +677,7 @@ eyeris:::merge_temp_database(temp_db_path, main_db_path, verbose)
 error handling.
 
 ``` r
+
 eyeris:::cleanup_temp_database(temp_db_info, verbose)
 ```
 
@@ -656,6 +696,7 @@ eyeris:::cleanup_temp_database(temp_db_info, verbose)
 labels.
 
 ``` r
+
 eyeris:::clean_string(str)
 ```
 
@@ -668,6 +709,7 @@ eyeris:::clean_string(str)
 labels.
 
 ``` r
+
 eyeris:::sanitize_event_tag(string, prefix)
 ```
 
@@ -682,6 +724,7 @@ eyeris:::sanitize_event_tag(string, prefix)
 names.
 
 ``` r
+
 eyeris:::get_block_numbers(x)
 ```
 
@@ -695,6 +738,7 @@ eyeris:::get_block_numbers(x)
 **Description**: Generate BIDS-compatible filenames for data export.
 
 ``` r
+
 eyeris:::make_bids_fname(sub_id, task_name, run_num, desc, ses_id, epoch_name, epoch_events, baseline_events, baseline_type, eye_suffix)
 ```
 
@@ -707,6 +751,7 @@ eyeris:::make_bids_fname(sub_id, task_name, run_num, desc, ses_id, epoch_name, e
 eye’s data.
 
 ``` r
+
 eyeris:::run_bidsify(eyeris, save_all, epochs_list, bids_dir, participant_id, session_num, task_name, run_num, save_raw, html_report, ...)
 ```
 
@@ -725,6 +770,7 @@ eyeris:::run_bidsify(eyeris, save_all, epochs_list, bids_dir, participant_id, se
 operations.
 
 ``` r
+
 eyeris:::progress_bar(total, msg, width, show_eta, clear)
 ```
 
@@ -736,6 +782,7 @@ eyeris:::progress_bar(total, msg, width, show_eta, clear)
 **Description**: Create a simple counter-style progress bar.
 
 ``` r
+
 eyeris:::counter_bar(total, msg, width)
 ```
 
@@ -745,6 +792,7 @@ eyeris:::counter_bar(total, msg, width)
 **Description**: Advance a progress bar by specified number of steps.
 
 ``` r
+
 eyeris:::tick(pb, by)
 ```
 
@@ -757,6 +805,7 @@ eyeris:::tick(pb, by)
 standardized error reporting.
 
 ``` r
+
 eyeris:::error_handler(e, e_class)
 ```
 
@@ -773,6 +822,7 @@ eyeris:::error_handler(e, e_class)
 error handling.
 
 ``` r
+
 eyeris:::render_report(rmd_f)
 ```
 
@@ -783,6 +833,7 @@ eyeris:::render_report(rmd_f)
 `R Markdown` format.
 
 ``` r
+
 eyeris:::make_report(eyeris, out, plots, eye_suffix, ...)
 ```
 
@@ -798,6 +849,7 @@ Many internal functions are designed to work within the pipeline
 architecture:
 
 ``` r
+
 # example of internal function chaining
 eyeris_obj |>
   eyeris:::deblink_pupil(prev_op = "pupil_raw", extend = 100) |>
@@ -810,6 +862,7 @@ eyeris_obj |>
 All internal functions include comprehensive error handling:
 
 ``` r
+
 # Internal functions validate inputs and provide informative errors
 try({
   eyeris:::check_data(invalid_object, "function_name")

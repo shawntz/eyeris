@@ -18,8 +18,8 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -190,35 +190,107 @@ adjust parameters stepwise until you are satisfied with your choices
 <div class="section level3">
 <h3 id="loading-your-raw-data">Loading Your Raw Data<a class="anchor" aria-label="anchor" href="#loading-your-raw-data"></a>
 </h3>
+<div class="section level4">
+<h4 id="using-the-demo-dataset">Using the Demo Dataset<a class="anchor" aria-label="anchor" href="#using-the-demo-dataset"></a>
+</h4>
 <p>For this demo, we’ll use our built in demo dataset, which contains a
 handful of trials from an associative memory task recorded in our
 lab.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level4">
+<h4 id="loading-your-own-custom-data">Loading Your Own Custom Data<a class="anchor" aria-label="anchor" href="#loading-your-own-custom-data"></a>
+</h4>
+<p>To load your own EyeLink pupillometry data, you need an
+<code>.asc</code> file converted from your original <code>.edf</code>
+file using the official EyeLink <code>edf2asc</code> command-line
+utility provided by SR Research.</p>
+<p><strong>Expected Data Format:</strong></p>
+<p>The <code>.asc</code> file should be a standard EyeLink ASCII output
+file containing:</p>
+<ul>
+<li>Sample data with timestamps, gaze coordinates (x, y), and pupil
+size</li>
+<li>Event messages (e.g., <code>MSG</code> lines with trial markers,
+stimulus onsets)</li>
+<li>Recording metadata (sample rate, pupil measurement type, etc.)</li>
+</ul>
+<p><strong>Example Code for Loading Custom Data:</strong></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Point to your own .asc file</span></span>
+<span><span class="va">my_data_path</span> <span class="op">&lt;-</span> <span class="st">"/path/to/your/data/participant_01.asc"</span></span>
+<span></span>
+<span><span class="co"># Load the data file</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">my_data_path</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li><p><strong>File Path</strong>: Replace
+<code>"/path/to/your/data/participant_01.asc"</code> with the actual
+path to your <code>.asc</code> file.</p></li>
+<li><p><strong>Block Handling</strong>: Use <code>block = "auto"</code>
+(default) to automatically detect multiple recording segments within the
+same file. This is recommended for most use cases. See
+<code><a href="../reference/load_asc.html">?eyeris::load_asc</a></code> for other options.</p></li>
+<li>
+<p><strong>Binocular Data</strong>: If you have binocular
+recordings, you can specify how to handle them:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Average both eyes (default)</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
+<span>  <span class="va">my_data_path</span>,</span>
+<span>  load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>binocular_mode <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use only left eye</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
+<span>  <span class="va">my_data_path</span>,</span>
+<span>  load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>binocular_mode <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use only right eye</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
+<span>  <span class="va">my_data_path</span>,</span>
+<span>  load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>binocular_mode <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Process both eyes independently</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
+<span>  <span class="va">my_data_path</span>,</span>
+<span>  load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>binocular_mode <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</li>
+<li><p><strong>Data Quality</strong>: Ensure your data was recorded
+<strong>without</strong> online filtering applied by the EyeLink Host
+PC. The <code>eyeris</code> pipeline expects raw, unfiltered data. See
+the <a href="#caveats">Caveats</a> section below for more details on
+this critical requirement.</p></li>
+</ul>
+</div>
+</div>
 <div class="section level3">
 <h3 id="running-the-fully-automated-pipeline">Running the Fully-Automated Pipeline<a class="anchor" aria-label="anchor" href="#running-the-fully-automated-pipeline"></a>
 </h3>
 <p>Here, we use the example data along with the default prescribed
 parameters and pipeline recipe:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run an automated pipeline with no real-time inspection of parameters</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:47] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::lpfilt() for block_1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:23] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:24] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::lpfilt() for block_1</span></span></code></pre></div>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:47] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:47] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:47] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:47] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:47] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:24] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:24] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:24] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:24] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:24] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:47] [OKAY] Running eyeris::summarize_confounds()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:24] [OKAY] Running eyeris::summarize_confounds()</span></span>
 <span></span>
 <span><span class="co"># Preview first and second steps of the pipeline</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
@@ -227,14 +299,14 @@ parameters and pipeline recipe:</p>
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:47] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:24] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
 <span><span class="co">#&gt; possible blocks: 1</span></span></code></pre>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-2.png" class="r-plt" alt="" width="100%"><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-3.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="running-the-pipeline-interactively">Running the Pipeline Interactively<a class="anchor" aria-label="anchor" href="#running-the-pipeline-interactively"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span>, interactive_preview <span class="op">=</span> <span class="cn">TRUE</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -247,27 +319,27 @@ the appropriate parameter(s) for each pipeline step to
 <div class="section level4">
 <h4 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span></span>
 <span>  <span class="va">demo_data</span>,</span>
 <span>  interactive_preview <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># TRUE to visualize each step in real-time</span></span>
 <span>  deblink <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>extend <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:51] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:52] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:52] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:52] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-02-01 01:13:52] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:52] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-02-01 01:13:52] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:27] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:27] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:27] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-05 04:12:27] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:27] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-05 04:12:27] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-02-01 01:13:52] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-05 04:12:27] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 <div class="section level5">
 <h5 id="pipeline-steps-with-overridable-parameters">Pipeline Steps with Overridable Parameters<a class="anchor" aria-label="anchor" href="#pipeline-steps-with-overridable-parameters"></a>
 </h5>
@@ -435,7 +507,7 @@ and <em>co-author of</em> <code>eyeris</code>.</p></li>
 cite it!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>

@@ -76,6 +76,7 @@ output during the
 process:
 
 ``` r
+
 # load your EyeLink eye-tracking data ASC file
 eyeris_data <- load_asc("path/to/your/data.asc")
 
@@ -107,6 +108,7 @@ For cloud computing or large-scale processing, you can *(and probably
 should)* considering skipping CSV creation entirely:
 
 ``` r
+
 bidsify(
   processed_data,
   bids_dir = "~/my_eyetracking_study", 
@@ -125,6 +127,7 @@ Here’s how to efficiently process multiple subjects into a single
 database:
 
 ``` r
+
 subjects <- c("001", "002", "003", "004", "005")
 data_dir <- "~/raw_eyetracking_data"
 bids_dir <- "~/processed_study_data"
@@ -164,6 +167,7 @@ for (subject_id in subjects) {
 ### Basic Database Connection
 
 ``` r
+
 con <- eyeris_db_connect(
   bids_dir = "~/processed_study_data",
   db_path = "attention_study_db"  # will look for attention_study_db.eyerisdb
@@ -176,6 +180,7 @@ on.exit(eyeris_db_disconnect(con))
 ### `eyeris` Database Overview and Exploration
 
 ``` r
+
 # first get a comprehensive summary of your eyeris project database
 summary_info <- eyeris_db_summary(
   "~/processed_study_data", 
@@ -209,6 +214,7 @@ The
 function provides easy one-liner access to your data:
 
 ``` r
+
 # extract ALL data for ALL subjects (returns a named list)
 all_data <- eyeris_db_collect("~/processed_study_data", "attention_study_db")
 
@@ -224,6 +230,7 @@ confounds_data <- all_data$run_confounds
 ### Targeted Data Extraction
 
 ``` r
+
 # extract data for specific subjects only
 subset_subjects <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
@@ -250,6 +257,7 @@ session_01_data <- eyeris_db_collect(
 ### Working with Binocular Data
 
 ``` r
+
 # extract data from both eyes
 binocular_data <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
@@ -271,6 +279,7 @@ left_eye_data <- eyeris_db_collect(
 ### Epoch-Specific Extraction
 
 ``` r
+
 # extract specific epoch data
 trial_epochs <- eyeris_db_collect(
   bids_dir = "~/processed_study_data",
@@ -291,6 +300,7 @@ multiple_epochs <- eyeris_db_collect(
 ### Output Format Options
 
 ``` r
+
 list_format <- eyeris_db_collect("~/processed_study_data")
 
 # access individual data types
@@ -306,6 +316,7 @@ For maximum flexibility, you can also write and execute custom SQL
 queries:
 
 ``` r
+
 # first connect to your eyeris project database
 con <- eyeris_db_connect("~/processed_study_data", "attention_study_db")
 
@@ -345,6 +356,7 @@ print(complex_results)
 ### Reading Individual Tables
 
 ``` r
+
 # read a specific table directly
 specific_table <- eyeris_db_read(
   con = con,
@@ -374,6 +386,7 @@ epoch_data <- eyeris_db_read(
 ### Example 1: Pupil Response Analysis Across Subjects
 
 ``` r
+
 # extract all timeseries data
 pupil_data <- eyeris_db_collect(
   "~/processed_study_data",
@@ -403,6 +416,7 @@ print(pupil_summary)
 ### Example 2: Quality Control and Confounds Analysis
 
 ``` r
+
 # extract confounds data for quality control
 confounds_data <- eyeris_db_collect(
   "~/processed_study_data",
@@ -438,6 +452,7 @@ print(exclude_list)
 ### Speed and Memory Benchmarks
 
 ``` r
+
 # benchmark database approach
 system.time({
   db_data <- eyeris_db_collect(
@@ -476,6 +491,7 @@ cat("Storage efficiency:", round(db_file_size / csv_total_size * 100, 1), "% of 
 ### Database Management
 
 ``` r
+
 # 1. Always use descriptive database names
 bidsify(data, db_path = "study_name_pilot_2024")  # good
 # bidsify(data, db_path = "my-project")           # default, not descriptive
@@ -508,6 +524,7 @@ process_data <- function() {
 ### Cloud Computing Optimization
 
 ``` r
+
 # 1. Use database-only workflow to minimize I/O costs
 process_cloud_data <- function(subject_list, input_bucket, output_bucket) {
   for (subject in subject_list) {
@@ -557,6 +574,7 @@ analyze_cloud_data <- function() {
 ### Error Handling and Debugging
 
 ``` r
+
 # safe eyeris project database operations with error handling
 safe_extract <- function(bids_dir, db_path, ...) {
   tryCatch({
@@ -603,6 +621,7 @@ data <- safe_extract("~/my_study", "study_database",
 ### Converting Existing CSV Data to Database
 
 ``` r
+
 # if you have existing eyeris-derived CSV files and want to migrate to a database
 migrate_csv_to_database <- function(bids_dir, db_path) {
   # ... find all CSV files ...
@@ -642,6 +661,7 @@ migrate_csv_to_database <- function(bids_dir, db_path) {
 ### Exporting Database Data Back to CSV
 
 ``` r
+
 # export specific data back to CSV format (if needed)
 export_database_subset <- function(bids_dir, db_path, output_dir) {
   
@@ -686,5 +706,6 @@ For questions or issues with database functionality, please refer to the
 ## Session Information
 
 ``` r
+
 sessionInfo()
 ```

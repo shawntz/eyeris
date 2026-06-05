@@ -48,6 +48,7 @@ the name of the previous pupil column), and any custom parameters.
 #### To illustrate:
 
 ``` r
+
 winsorize_pupil <- function(x, prev_op, lower = 0.01, upper = 0.99) {
   vec <- x[[prev_op]]
   q <- quantile(vec, probs = c(lower, upper), na.rm = TRUE)
@@ -71,6 +72,7 @@ enables your function to automatically:
 #### To illustrate:
 
 ``` r
+
 #' Winsorize pupil values
 #'
 #' Applies winsorization to extreme pupil values within each block.
@@ -179,6 +181,7 @@ You should now be able to use your new function extension as a component
 within a new custom `eyeris` pipeline declaration. To illustrate:
 
 ``` r
+
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc(block = "auto") |>
   eyeris::deblink(extend = 50) |>
@@ -214,6 +217,7 @@ For more complex functions, you might want to customize the `call_info`
 structure:
 
 ``` r
+
 custom_function <- function(eyeris, param1, param2, call_info = NULL) {
   # custom call_info with additional metadata
   call_info <- if (is.null(call_info)) {
@@ -262,6 +266,7 @@ If you use the `eyeris` package in your research, please cite it!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 

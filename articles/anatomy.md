@@ -89,6 +89,7 @@ doing***), etc.
 ### The Default `glassbox()` Steps and Parameters, Deconstructed:
 
 ``` r
+
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc(block = "auto") |>
   eyeris::deblink(extend = 50) |>
@@ -119,6 +120,7 @@ If you use the `eyeris` package in your research, please cite it!
 Run the following in R to get the citation:
 
 ``` r
+
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
