@@ -49,7 +49,7 @@ metadata in the \code{eyeris} S3 class object}
 \item{seed}{Random seed for current plotting session. Leave NULL to select
 \code{preview_n} number of random preview "epochs" (of \code{preview_duration}) each
 time. Otherwise, choose any seed-integer as you would normally select for
-\code{\link[base:Random]{base::set.seed()}}, and you will be able to continue re-plotting the same
+\code{\link[base:set.seed]{base::set.seed()}}, and you will be able to continue re-plotting the same
 random example pupil epochs each time -- which is helpful when adjusting
 parameters within and across \code{eyeris} workflow steps}
 
@@ -139,5 +139,5 @@ plot(
 
 }
 \seealso{
-\code{\link[lifecycle:deprecate_soft]{lifecycle::deprecate_warn()}}
+\code{\link[lifecycle:deprecate_warn]{lifecycle::deprecate_warn()}}
 }

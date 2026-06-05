@@ -22,6 +22,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Shawn Schwartz \email{shawn.t.schwartz@gmail.com} (\href{https://orcid.org/0000-0001-6444-8451}{ORCID})
 
+Authors:
+\itemize{
+  \item Shawn Schwartz \email{shawn.t.schwartz@gmail.com} (\href{https://orcid.org/0000-0001-6444-8451}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Mingjian He [contributor]

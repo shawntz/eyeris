@@ -145,5 +145,5 @@ plot(output, seed = 0)
 
 }
 \seealso{
-\code{\link[lifecycle:deprecate_soft]{lifecycle::deprecate_warn()}}
+\code{\link[lifecycle:deprecate_warn]{lifecycle::deprecate_warn()}}
 }
