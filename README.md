@@ -261,6 +261,23 @@ documentation](https://arrow.apache.org/docs/r/).
 > instructions anytime via `?check_duckdb` and `?check_arrow`. Once
 > installed, restart R and reload `eyeris` to enable these features.
 
+### System Requirements
+
+**Minimum requirements:**
+
+- R \>= 4.1.0
+- 8 GB RAM for basic preprocessing
+
+**Recommended for large datasets:**
+
+- 16 GB RAM or more when generating HTML reports with `bidsify()`,
+  especially for datasets with many epochs or long recordings
+- SSD storage for improved I/O performance with database operations
+
+> **Note:** HTML report generation uses `pandoc` internally via
+> `rmarkdown`. Large preprocessing pipelines with many epochs may
+> require additional memory during report rendering.
+
 ## ✏ Example
 
 ### The `glassbox()` “prescription” function
@@ -293,6 +310,37 @@ library(eyeris)
 #> 
 #> Once installed, restart R and reload eyeris to enable database storage
 #> (bidsify(..., db_enabled = TRUE) and eyeris_db_* functions).
+#> ** Arrow not found. Parquet operations will use DuckDB fallback (slower).
+#> 
+#> => To install Arrow:
+#> 
+#>   - macOS:
+#>     1. First install system dependencies with Homebrew:
+#>        brew update
+#>        brew install pkg-config cmake apache-arrow
+#>     2. Then install the R package:
+#>        install.packages('arrow', type = 'binary')
+#> 
+#>   - Linux (Ubuntu/Debian):
+#>     1. Install system dependencies:
+#>        sudo apt-get update
+#>        sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+#>     2. Then install the R package:
+#>        install.packages('arrow')
+#> 
+#>   - Linux (Fedora/RHEL):
+#>     1. Install system dependencies:
+#>        sudo dnf install libcurl-devel openssl-devel
+#>     2. Then install the R package:
+#>        install.packages('arrow')
+#> 
+#>   - Windows:
+#>     install.packages('arrow')
+#> 
+#> For more details, see: https://arrow.apache.org/docs/r/
+#> 
+#> Once installed, restart R and reload eyeris to enable faster parquet export/import
+#> (eyeris_db_to_parquet(), read_eyeris_parquet(), and related functions).
 
 demo_data <- eyelink_asc_demo_dataset()
 
@@ -300,20 +348,20 @@ eyeris_preproc <- glassbox(
   demo_data,
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-01-27 17:35:36] [INFO] Processing block: block_1
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-01-27 17:35:36] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-01-27 17:35:36] [INFO] Block processing summary:
-#> ℹ [2026-01-27 17:35:36] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 00:01:48] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 00:01:48] [INFO] Block processing summary:
+#> ℹ [2026-06-05 00:01:48] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-01-27 17:35:36] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ### Step-wise correction of pupillary signal
@@ -339,17 +387,17 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
-#> ℹ [2026-01-27 17:35:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 00:01:48] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 ```
 
 <img src="man/figures/README-timeseries-plot-1.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-2.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-3.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-4.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-5.png" alt="" width="100%" /><img src="man/figures/README-timeseries-plot-6.png" alt="" width="100%" />
 
-    #> ℹ [2026-01-27 17:35:37] [INFO] Creating progressive summary plot for block_1
+    #> ℹ [2026-06-05 00:01:48] [INFO] Creating progressive summary plot for block_1
 
 <img src="man/figures/README-timeseries-plot-7.png" alt="" width="100%" />
 
-    #> ✔ [2026-01-27 17:35:38] [OKAY] Progressive summary plot created successfully!
+    #> ✔ [2026-06-05 00:01:49] [OKAY] Progressive summary plot created successfully!
 
     plot_gaze_heatmap(
       eyeris = eyeris_preproc,
