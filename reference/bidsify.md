@@ -189,101 +189,101 @@ demo_data |>
     html_report = TRUE, # generate interactive report document
     report_seed = 0 # make randomly selected plot epochs reproducible
   )
-#> ✔ [2026-06-05 14:57:42] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 14:57:43] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-05 14:59:30] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 14:59:31] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-05 14:57:43] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 14:57:43] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 14:57:43] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 14:57:43] [INFO] Block processing summary:
-#> ℹ [2026-06-05 14:57:43] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-05 14:59:31] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 14:59:31] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 14:59:31] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 14:59:31] [INFO] Block processing summary:
+#> ℹ [2026-06-05 14:59:31] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 14:57:43] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-05 14:57:43] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-06-05 14:57:43] [INFO] Only 1 block detected...
-#> ℹ [2026-06-05 14:57:43] [INFO] Using run_num = 01 for single block data
-#> ! [2026-06-05 14:57:43] [WARN] '/tmp/RtmpokLa2t' already exists. Skipping
+#> ✔ [2026-06-05 14:59:31] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-05 14:59:31] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-06-05 14:59:31] [INFO] Only 1 block detected...
+#> ℹ [2026-06-05 14:59:31] [INFO] Using run_num = 01 for single block data
+#> ! [2026-06-05 14:59:31] [WARN] '/tmp/Rtmpc7oaOE' already exists. Skipping
 #> creation...
-#> ℹ [2026-06-05 14:57:43] [INFO] '/tmp/RtmpokLa2t/derivatives' does not exist.
+#> ℹ [2026-06-05 14:59:31] [INFO] '/tmp/Rtmpc7oaOE/derivatives' does not exist.
 #> Creating...
-#> ✔ [2026-06-05 14:57:43] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives'
-#> ℹ [2026-06-05 14:57:43] [INFO] '/tmp/RtmpokLa2t/derivatives/sub-001' does not
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives'
+#> ℹ [2026-06-05 14:59:31] [INFO] '/tmp/Rtmpc7oaOE/derivatives/sub-001' does not
 #> exist. Creating...
-#> ✔ [2026-06-05 14:57:43] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001'
-#> ℹ [2026-06-05 14:57:43] [INFO] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001'
+#> ℹ [2026-06-05 14:59:31] [INFO] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
 #> does not exist. Creating...
-#> ✔ [2026-06-05 14:57:43] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
-#> ℹ [2026-06-05 14:57:43] [INFO] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye'
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
+#> ℹ [2026-06-05 14:59:31] [INFO] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye'
 #> does not exist. Creating...
-#> ✔ [2026-06-05 14:57:43] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye'
-#> ℹ [2026-06-05 14:57:43] [INFO] Writing blinks data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
-#> ✔ [2026-06-05 14:57:43] [OKAY] Wrote blinks data (1 rows) to CSV
-#> ℹ [2026-06-05 14:57:43] [INFO] Writing events data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
-#> ✔ [2026-06-05 14:57:43] [OKAY] Wrote events data (67 rows) to CSV
-#> ✔ [2026-06-05 14:57:43] [OKAY] Wrote timeseries data (20767 rows) to CSV
-#> ✔ [2026-06-05 14:57:44] [OKAY] Wrote run_confounds data (6 rows) to CSV
-#> ℹ [2026-06-05 14:57:44] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures' does not exist.
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye'
+#> ℹ [2026-06-05 14:59:31] [INFO] Writing blinks data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
+#> ✔ [2026-06-05 14:59:31] [OKAY] Wrote blinks data (1 rows) to CSV
+#> ℹ [2026-06-05 14:59:31] [INFO] Writing events data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
+#> ✔ [2026-06-05 14:59:31] [OKAY] Wrote events data (67 rows) to CSV
+#> ✔ [2026-06-05 14:59:31] [OKAY] Wrote timeseries data (20767 rows) to CSV
+#> ✔ [2026-06-05 14:59:31] [OKAY] Wrote run_confounds data (6 rows) to CSV
+#> ℹ [2026-06-05 14:59:31] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures' does not exist.
 #> Creating...
-#> ✔ [2026-06-05 14:57:44] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures'
-#> ℹ [2026-06-05 14:57:44] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' does not
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures'
+#> ℹ [2026-06-05 14:59:31] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' does not
 #> exist. Creating...
-#> ✔ [2026-06-05 14:57:44] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01'
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-06-05 14:59:31] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01'
+#> ℹ [2026-06-05 14:59:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:45] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:46] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:46] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:46] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:46] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:34] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ! [2026-06-05 14:57:46] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 14:59:34] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ✔ [2026-06-05 14:57:47] [OKAY] Created gaze heatmap for run-01
-#> ! [2026-06-05 14:57:49] [WARN] No detrend data found for run-01
+#> ✔ [2026-06-05 14:59:35] [OKAY] Created gaze heatmap for run-01
+#> ! [2026-06-05 14:59:36] [WARN] No detrend data found for run-01
 #> 
 #> 
 #> processing file: sub-001.Rmd
@@ -293,10 +293,10 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af949e64a5c.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae01f888046.html 
 #> 
 #> Output created: sub-001.html
-#> ℹ [2026-06-05 14:57:50] [INFO] Finished BIDSify for sub-001 (Duration: 6.65
+#> ℹ [2026-06-05 14:59:37] [INFO] Finished BIDSify for sub-001 (Duration: 6.29
 #> seconds)
 
 # example with epoched data
@@ -314,171 +314,171 @@ demo_data |>
     task_name = "assocret",
     run_num = "01"
   )
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 14:57:50] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-05 14:57:50] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 14:57:50] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 14:57:50] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 14:57:50] [INFO] Block processing summary:
-#> ℹ [2026-06-05 14:57:50] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 14:59:37] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 14:59:37] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 14:59:37] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 14:59:37] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 14:59:38] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 14:59:38] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 14:59:38] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 14:59:38] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 14:59:38] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 14:59:38] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 14:59:38] [INFO] Block processing summary:
+#> ℹ [2026-06-05 14:59:38] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 14:57:50] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-05 14:57:50] [INFO] Epoching pupil data...
-#> ℹ [2026-06-05 14:57:50] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-06-05 14:59:38] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-05 14:59:38] [INFO] Epoching pupil data...
+#> ℹ [2026-06-05 14:59:38] [INFO] Block 1: found 10 matching events for
 #> PROBEstartstoptrial
-#> ✔ [2026-06-05 14:57:51] [OKAY] Done!
-#> ✔ [2026-06-05 14:57:51] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-06-05 14:59:38] [OKAY] Done!
+#> ✔ [2026-06-05 14:59:38] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-06-05 14:57:51] [OKAY] Pupil epoching completed in 0.21 seconds
-#> ℹ [2026-06-05 14:57:51] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-05 14:59:38] [OKAY] Pupil epoching completed in 0.19 seconds
+#> ℹ [2026-06-05 14:59:38] [INFO] Recalculating epoched confounds for new
 #> epochs...
-#> ℹ [2026-06-05 14:57:51] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-06-05 14:57:51] [INFO] Only 1 block detected...
-#> ℹ [2026-06-05 14:57:51] [INFO] Using run_num = 01 for single block data
-#> ℹ [2026-06-05 14:57:51] [INFO] Filtered epochs: epoch_prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] Epoch names to save: epoch_prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] epoch_prePostProbe:
-#> ℹ [2026-06-05 14:57:51] [INFO] block_1: data.frame with 20000 rows
-#> ℹ [2026-06-05 14:57:51] [INFO] info: list with 1 elements
-#> ! [2026-06-05 14:57:51] [WARN] '/tmp/RtmpokLa2t' already exists. Skipping
+#> ℹ [2026-06-05 14:59:38] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-06-05 14:59:38] [INFO] Only 1 block detected...
+#> ℹ [2026-06-05 14:59:38] [INFO] Using run_num = 01 for single block data
+#> ℹ [2026-06-05 14:59:38] [INFO] Filtered epochs: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:38] [INFO] Epoch names to save: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:38] [INFO] epoch_prePostProbe:
+#> ℹ [2026-06-05 14:59:38] [INFO] block_1: data.frame with 20000 rows
+#> ℹ [2026-06-05 14:59:38] [INFO] info: list with 1 elements
+#> ! [2026-06-05 14:59:38] [WARN] '/tmp/Rtmpc7oaOE' already exists. Skipping
 #> creation...
-#> ! [2026-06-05 14:57:51] [WARN] '/tmp/RtmpokLa2t/derivatives' already exists.
+#> ! [2026-06-05 14:59:38] [WARN] '/tmp/Rtmpc7oaOE/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:57:51] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001' already
+#> ! [2026-06-05 14:59:38] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-06-05 14:57:51] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
+#> ! [2026-06-05 14:59:38] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ! [2026-06-05 14:57:51] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye'
+#> ! [2026-06-05 14:59:38] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye'
 #> already exists. Skipping creation...
-#> ℹ [2026-06-05 14:57:51] [INFO] Writing blinks data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote blinks data (1 rows) to CSV
-#> ℹ [2026-06-05 14:57:51] [INFO] Writing events data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote events data (67 rows) to CSV
-#> ℹ [2026-06-05 14:57:51] [INFO] Processing single-run epoch: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:38] [INFO] Writing blinks data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
+#> ✔ [2026-06-05 14:59:38] [OKAY] Wrote blinks data (1 rows) to CSV
+#> ℹ [2026-06-05 14:59:38] [INFO] Writing events data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
+#> ✔ [2026-06-05 14:59:38] [OKAY] Wrote events data (67 rows) to CSV
+#> ℹ [2026-06-05 14:59:38] [INFO] Processing single-run epoch: epoch_prePostProbe
 #> (label: prePostProbe)
-#> ℹ [2026-06-05 14:57:51] [INFO] Block block_1 for epoch epoch_prePostProbe has
+#> ℹ [2026-06-05 14:59:38] [INFO] Block block_1 for epoch epoch_prePostProbe has
 #> 20000 rows
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:38] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 14:59:38] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:38] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:38] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:38] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote epochs data (20000 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote timeseries data (20767 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote run_confounds data (6 rows) to CSV
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote epochs data (20000 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote timeseries data (20767 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote run_confounds data (6 rows) to CSV
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] Created epoch summary for epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:39] [INFO] Created epoch summary for epoch_prePostProbe
 #> with 9 fields
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote epoch_summary data (1 rows) to CSV
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote epoch_summary data (1 rows) to CSV
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 14:59:39] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:57:51] [INFO] Found epoch events in epoch structure:
+#> ℹ [2026-06-05 14:59:39] [INFO] Found epoch events in epoch structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:57:51] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:39] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:57:51] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ! [2026-06-05 14:57:51] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:39] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ! [2026-06-05 14:59:39] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:57:51] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 14:59:39] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:57:51] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:57:54] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ! [2026-06-05 14:57:54] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 14:59:41] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ✔ [2026-06-05 14:57:54] [OKAY] Created gaze heatmap for run-01
-#> ! [2026-06-05 14:57:54] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ✔ [2026-06-05 14:59:41] [OKAY] Created gaze heatmap for run-01
+#> ! [2026-06-05 14:59:41] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:57:54] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
+#> ℹ [2026-06-05 14:59:41] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
 #> does not exist. Creating...
-#> ✔ [2026-06-05 14:57:54] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
-#> ✔ [2026-06-05 14:58:02] [OKAY] Created epoch images zip:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
+#> ✔ [2026-06-05 14:59:41] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
+#> ✔ [2026-06-05 14:59:48] [OKAY] Created epoch images zip:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
 #> (70 images)
-#> ℹ [2026-06-05 14:58:02] [INFO] Using absolute zip file path:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
-#> ✔ [2026-06-05 14:58:02] [OKAY] Embedded zip file as data URL (7903929 bytes)
+#> ℹ [2026-06-05 14:59:48] [INFO] Using absolute zip file path:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
+#> ✔ [2026-06-05 14:59:49] [OKAY] Embedded zip file as data URL (7903929 bytes)
 #> 
 #> 
 #> processing file: sub-001_epoch-prePostProbe_run-01.Rmd
@@ -488,13 +488,13 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_epoch-prePostProbe_run-01.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af9529fa18.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae05c32788a.html 
 #> 
 #> Output created: sub-001_epoch-prePostProbe_run-01.html
-#> ! [2026-06-05 14:58:09] [WARN] Skipping block info for epoch 1 - no valid data
-#> ℹ [2026-06-05 14:58:09] [INFO] Removing duplicate plain epoch directory:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe
-#> ! [2026-06-05 14:58:09] [WARN] No detrend data found for run-01
+#> ! [2026-06-05 14:59:56] [WARN] Skipping block info for epoch 1 - no valid data
+#> ℹ [2026-06-05 14:59:56] [INFO] Removing duplicate plain epoch directory:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe
+#> ! [2026-06-05 14:59:56] [WARN] No detrend data found for run-01
 #> 
 #> 
 #> processing file: sub-001.Rmd
@@ -504,10 +504,10 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af9250d6c8b.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae037a2b8b9.html 
 #> 
 #> Output created: sub-001.html
-#> ℹ [2026-06-05 14:58:11] [INFO] Finished BIDSify for sub-001 (Duration: 19.73
+#> ℹ [2026-06-05 14:59:57] [INFO] Finished BIDSify for sub-001 (Duration: 19.2
 #> seconds)
 
 # example with run_num for single block data
@@ -527,173 +527,173 @@ demo_data |>
     task_name = "assocret",
     run_num = "03" # override default run-01 (block_1) to use run-03 instead
   )
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 14:58:11] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-05 14:58:11] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 14:58:11] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 14:58:11] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 14:58:11] [INFO] Block processing summary:
-#> ℹ [2026-06-05 14:58:11] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 14:59:57] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 14:59:58] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 14:59:58] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 14:59:58] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 14:59:58] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 14:59:58] [INFO] Block processing summary:
+#> ℹ [2026-06-05 14:59:58] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 14:58:11] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-05 14:58:11] [INFO] Epoching pupil data...
-#> ℹ [2026-06-05 14:58:11] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-06-05 14:59:58] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-05 14:59:58] [INFO] Epoching pupil data...
+#> ℹ [2026-06-05 14:59:58] [INFO] Block 1: found 10 matching events for
 #> PROBEstartstoptrial
-#> ✔ [2026-06-05 14:58:11] [OKAY] Done!
-#> ✔ [2026-06-05 14:58:11] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-06-05 14:59:58] [OKAY] Done!
+#> ✔ [2026-06-05 14:59:58] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-06-05 14:58:11] [OKAY] Pupil epoching completed in 0.12 seconds
-#> ℹ [2026-06-05 14:58:11] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-05 14:59:58] [OKAY] Pupil epoching completed in 0.12 seconds
+#> ℹ [2026-06-05 14:59:58] [INFO] Recalculating epoched confounds for new
 #> epochs...
-#> ℹ [2026-06-05 14:58:11] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-06-05 14:58:11] [INFO] Only 1 block detected...
-#> ℹ [2026-06-05 14:58:11] [INFO] Using run_num = 03 for single block data
-#> ℹ [2026-06-05 14:58:11] [INFO] Filtered epochs: epoch_prePostProbe
-#> ℹ [2026-06-05 14:58:11] [INFO] Epoch names to save: epoch_prePostProbe
-#> ℹ [2026-06-05 14:58:11] [INFO] epoch_prePostProbe:
-#> ℹ [2026-06-05 14:58:11] [INFO] block_1: data.frame with 20000 rows
-#> ℹ [2026-06-05 14:58:11] [INFO] info: list with 1 elements
-#> ! [2026-06-05 14:58:11] [WARN] '/tmp/RtmpokLa2t' already exists. Skipping
+#> ℹ [2026-06-05 14:59:58] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-06-05 14:59:58] [INFO] Only 1 block detected...
+#> ℹ [2026-06-05 14:59:58] [INFO] Using run_num = 03 for single block data
+#> ℹ [2026-06-05 14:59:58] [INFO] Filtered epochs: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:58] [INFO] Epoch names to save: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:58] [INFO] epoch_prePostProbe:
+#> ℹ [2026-06-05 14:59:58] [INFO] block_1: data.frame with 20000 rows
+#> ℹ [2026-06-05 14:59:58] [INFO] info: list with 1 elements
+#> ! [2026-06-05 14:59:58] [WARN] '/tmp/Rtmpc7oaOE' already exists. Skipping
 #> creation...
-#> ! [2026-06-05 14:58:11] [WARN] '/tmp/RtmpokLa2t/derivatives' already exists.
+#> ! [2026-06-05 14:59:58] [WARN] '/tmp/Rtmpc7oaOE/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:58:11] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001' already
+#> ! [2026-06-05 14:59:58] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-06-05 14:58:11] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
+#> ! [2026-06-05 14:59:58] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ! [2026-06-05 14:58:11] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye'
+#> ! [2026-06-05 14:59:58] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye'
 #> already exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:11] [INFO] Writing blinks data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-blinks.csv...
-#> ✔ [2026-06-05 14:58:11] [OKAY] Wrote blinks data (1 rows) to CSV
-#> ℹ [2026-06-05 14:58:11] [INFO] Writing events data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-events.csv...
-#> ✔ [2026-06-05 14:58:11] [OKAY] Wrote events data (67 rows) to CSV
-#> ℹ [2026-06-05 14:58:11] [INFO] Processing single-run epoch: epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:58] [INFO] Writing blinks data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-blinks.csv...
+#> ✔ [2026-06-05 14:59:58] [OKAY] Wrote blinks data (1 rows) to CSV
+#> ℹ [2026-06-05 14:59:58] [INFO] Writing events data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-events.csv...
+#> ✔ [2026-06-05 14:59:58] [OKAY] Wrote events data (67 rows) to CSV
+#> ℹ [2026-06-05 14:59:58] [INFO] Processing single-run epoch: epoch_prePostProbe
 #> (label: prePostProbe)
-#> ℹ [2026-06-05 14:58:11] [INFO] Block block_1 for epoch epoch_prePostProbe has
+#> ℹ [2026-06-05 14:59:58] [INFO] Block block_1 for epoch epoch_prePostProbe has
 #> 20000 rows
-#> ! [2026-06-05 14:58:11] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:58] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:11] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 14:59:58] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:11] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:58] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:11] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:58] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:11] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:58] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote epochs data (20000 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote timeseries data (20767 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote run_confounds data (6 rows) to CSV
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:58] [OKAY] Wrote epochs data (20000 rows) to CSV
+#> ✔ [2026-06-05 14:59:58] [OKAY] Wrote timeseries data (20767 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote run_confounds data (6 rows) to CSV
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:12] [INFO] Created epoch summary for epoch_prePostProbe
+#> ℹ [2026-06-05 14:59:59] [INFO] Created epoch summary for epoch_prePostProbe
 #> with 9 fields
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote epoch_summary data (1 rows) to CSV
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote epoch_summary data (1 rows) to CSV
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:12] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 14:59:59] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_summary data (1 rows) to CSV
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_summary data (1 rows) to CSV
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:12] [INFO] Found epoch events in epoch structure:
+#> ℹ [2026-06-05 14:59:59] [INFO] Found epoch events in epoch structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:12] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 14:59:59] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ✔ [2026-06-05 14:58:12] [OKAY] Wrote confounds_events data (6 rows) to CSV
-#> ! [2026-06-05 14:58:12] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ✔ [2026-06-05 14:59:59] [OKAY] Wrote confounds_events data (6 rows) to CSV
+#> ! [2026-06-05 14:59:59] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ℹ [2026-06-05 14:58:12] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03' does not
+#> ℹ [2026-06-05 14:59:59] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03' does not
 #> exist. Creating...
-#> ✔ [2026-06-05 14:58:12] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03'
-#> ℹ [2026-06-05 14:58:12] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ✔ [2026-06-05 14:59:59] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03'
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:12] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:12] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:12] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:12] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 14:59:59] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:13] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:14] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:00] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:14] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:01] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:14] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:01] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-06-05 14:58:14] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:01] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ! [2026-06-05 14:58:14] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03' already
+#> ! [2026-06-05 15:00:01] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03' already
 #> exists. Skipping creation...
-#> ✔ [2026-06-05 14:58:14] [OKAY] Created gaze heatmap for run-03
-#> ! [2026-06-05 14:58:14] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03' already
+#> ✔ [2026-06-05 15:00:01] [OKAY] Created gaze heatmap for run-03
+#> ! [2026-06-05 15:00:01] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:14] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe'
+#> ℹ [2026-06-05 15:00:01] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe'
 #> does not exist. Creating...
-#> ✔ [2026-06-05 14:58:14] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe'
-#> ✔ [2026-06-05 14:58:22] [OKAY] Created epoch images zip:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe/run-03.zip
+#> ✔ [2026-06-05 15:00:01] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe'
+#> ✔ [2026-06-05 15:00:08] [OKAY] Created epoch images zip:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe/run-03.zip
 #> (70 images)
-#> ℹ [2026-06-05 14:58:22] [INFO] Using absolute zip file path:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe/run-03.zip
-#> ✔ [2026-06-05 14:58:22] [OKAY] Embedded zip file as data URL (7969936 bytes)
+#> ℹ [2026-06-05 15:00:08] [INFO] Using absolute zip file path:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe/run-03.zip
+#> ✔ [2026-06-05 15:00:08] [OKAY] Embedded zip file as data URL (7969936 bytes)
 #> 
 #> 
 #> processing file: sub-001_epoch-prePostProbe_run-03.Rmd
@@ -703,13 +703,13 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_epoch-prePostProbe_run-03.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-03.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-03.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af931fbc4cf.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-03.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-03.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae07fdad066.html 
 #> 
 #> Output created: sub-001_epoch-prePostProbe_run-03.html
-#> ! [2026-06-05 14:58:30] [WARN] Skipping block info for epoch 1 - no valid data
-#> ℹ [2026-06-05 14:58:30] [INFO] Removing duplicate plain epoch directory:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe
-#> ! [2026-06-05 14:58:32] [WARN] No detrend data found for run-03
+#> ! [2026-06-05 15:00:16] [WARN] Skipping block info for epoch 1 - no valid data
+#> ℹ [2026-06-05 15:00:16] [INFO] Removing duplicate plain epoch directory:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-03/epoch_prePostProbe
+#> ! [2026-06-05 15:00:17] [WARN] No detrend data found for run-03
 #> 
 #> 
 #> processing file: sub-001.Rmd
@@ -719,10 +719,10 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af97522df2b.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae018f05a5.html 
 #> 
 #> Output created: sub-001.html
-#> ℹ [2026-06-05 14:58:33] [INFO] Finished BIDSify for sub-001 (Duration: 22.14
+#> ℹ [2026-06-05 15:00:19] [INFO] Finished BIDSify for sub-001 (Duration: 20.76
 #> seconds)
 
 # example with database storage enabled
@@ -741,199 +741,199 @@ demo_data |>
     db_enabled = TRUE,  # enable eyerisdb database storage
     db_path = "my-project"  # custom project database name
   )
-#> ✔ [2026-06-05 14:58:33] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 14:58:33] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 14:58:33] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 14:58:34] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 14:58:34] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 14:58:34] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-05 14:58:34] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 14:58:34] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 14:58:34] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 14:58:34] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 14:58:34] [INFO] Block processing summary:
-#> ℹ [2026-06-05 14:58:34] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 15:00:19] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 15:00:19] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 15:00:19] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 15:00:19] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 15:00:19] [INFO] Block processing summary:
+#> ℹ [2026-06-05 15:00:19] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 14:58:34] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-05 14:58:34] [INFO] Epoching pupil data...
-#> ℹ [2026-06-05 14:58:34] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-06-05 15:00:19] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-05 15:00:19] [INFO] Epoching pupil data...
+#> ℹ [2026-06-05 15:00:19] [INFO] Block 1: found 10 matching events for
 #> PROBEstartstoptrial
-#> ✔ [2026-06-05 14:58:34] [OKAY] Done!
-#> ✔ [2026-06-05 14:58:34] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-06-05 15:00:19] [OKAY] Done!
+#> ✔ [2026-06-05 15:00:19] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-06-05 14:58:34] [OKAY] Pupil epoching completed in 0.15 seconds
-#> ℹ [2026-06-05 14:58:34] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-05 15:00:19] [OKAY] Pupil epoching completed in 0.12 seconds
+#> ℹ [2026-06-05 15:00:19] [INFO] Recalculating epoched confounds for new
 #> epochs...
-#> ℹ [2026-06-05 14:58:34] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-06-05 14:58:34] [INFO] Only 1 block detected...
-#> ℹ [2026-06-05 14:58:34] [INFO] Using run_num = 1 for single block data
-#> ℹ [2026-06-05 14:58:34] [INFO] Filtered epochs: epoch_prePostProbe
-#> ℹ [2026-06-05 14:58:34] [INFO] Epoch names to save: epoch_prePostProbe
-#> ℹ [2026-06-05 14:58:34] [INFO] Parallel processing detected for job unknown
-#> (PID: 6905), using temporary database
-#> ✔ [2026-06-05 14:58:34] [OKAY] Created temporary database:
-#> /tmp/RtmpokLa2t/derivatives/my-project_temp_6905_20260605_145834_698.eyerisdb
-#> ℹ [2026-06-05 14:58:34] [INFO] epoch_prePostProbe:
-#> ℹ [2026-06-05 14:58:34] [INFO] block_1: data.frame with 20000 rows
-#> ℹ [2026-06-05 14:58:34] [INFO] info: list with 1 elements
-#> ! [2026-06-05 14:58:34] [WARN] '/tmp/RtmpokLa2t' already exists. Skipping
+#> ℹ [2026-06-05 15:00:19] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-06-05 15:00:19] [INFO] Only 1 block detected...
+#> ℹ [2026-06-05 15:00:19] [INFO] Using run_num = 1 for single block data
+#> ℹ [2026-06-05 15:00:19] [INFO] Filtered epochs: epoch_prePostProbe
+#> ℹ [2026-06-05 15:00:19] [INFO] Epoch names to save: epoch_prePostProbe
+#> ℹ [2026-06-05 15:00:19] [INFO] Parallel processing detected for job unknown
+#> (PID: 6880), using temporary database
+#> ✔ [2026-06-05 15:00:20] [OKAY] Created temporary database:
+#> /tmp/Rtmpc7oaOE/derivatives/my-project_temp_6880_20260605_150019_998.eyerisdb
+#> ℹ [2026-06-05 15:00:20] [INFO] epoch_prePostProbe:
+#> ℹ [2026-06-05 15:00:20] [INFO] block_1: data.frame with 20000 rows
+#> ℹ [2026-06-05 15:00:20] [INFO] info: list with 1 elements
+#> ! [2026-06-05 15:00:20] [WARN] '/tmp/Rtmpc7oaOE' already exists. Skipping
 #> creation...
-#> ! [2026-06-05 14:58:34] [WARN] '/tmp/RtmpokLa2t/derivatives' already exists.
+#> ! [2026-06-05 15:00:20] [WARN] '/tmp/Rtmpc7oaOE/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:58:34] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001' already
+#> ! [2026-06-05 15:00:20] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-06-05 14:58:34] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
+#> ! [2026-06-05 15:00:20] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ! [2026-06-05 14:58:34] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye'
+#> ! [2026-06-05 15:00:20] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye'
 #> already exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:34] [INFO] Writing blinks data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
-#> ✔ [2026-06-05 14:58:34] [OKAY] Wrote blinks data (1 rows) to CSV and database
-#> ℹ [2026-06-05 14:58:34] [INFO] Writing events data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote events data (67 rows) to CSV and database
-#> ℹ [2026-06-05 14:58:35] [INFO] Processing single-run epoch: epoch_prePostProbe
+#> ℹ [2026-06-05 15:00:20] [INFO] Writing blinks data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote blinks data (1 rows) to CSV and database
+#> ℹ [2026-06-05 15:00:20] [INFO] Writing events data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote events data (67 rows) to CSV and database
+#> ℹ [2026-06-05 15:00:20] [INFO] Processing single-run epoch: epoch_prePostProbe
 #> (label: prePostProbe)
-#> ℹ [2026-06-05 14:58:35] [INFO] Block block_1 for epoch epoch_prePostProbe has
+#> ℹ [2026-06-05 15:00:20] [INFO] Block block_1 for epoch epoch_prePostProbe has
 #> 20000 rows
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:35] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 15:00:20] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote epochs data (20000 rows) to CSV and
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote epochs data (20000 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote timeseries data (20767 rows) to CSV and
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote timeseries data (20767 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote run_confounds data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote run_confounds data (6 rows) to CSV and
 #> database
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:35] [INFO] Created epoch summary for epoch_prePostProbe
+#> ℹ [2026-06-05 15:00:20] [INFO] Created epoch summary for epoch_prePostProbe
 #> with 9 fields
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:20] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:35] [INFO] Found epoch events in structure:
+#> ℹ [2026-06-05 15:00:20] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:20] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:35] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-06-05 14:58:35] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:21] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-06-05 14:58:35] [INFO] Found epoch events in epoch structure:
+#> ℹ [2026-06-05 15:00:21] [INFO] Found epoch events in epoch structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-06-05 14:58:36] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:21] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-06-05 14:58:36] [WARN] No baseline structure found for epoch label:
+#> ! [2026-06-05 15:00:21] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-06-05 14:58:36] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-06-05 15:00:21] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ! [2026-06-05 14:58:36] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ! [2026-06-05 15:00:21] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:58:36] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 15:00:21] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:21] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:21] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:21] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:21] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:21] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:22] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:23] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:23] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:23] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:23] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:23] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ! [2026-06-05 14:58:38] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 15:00:23] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ✔ [2026-06-05 14:58:39] [OKAY] Created gaze heatmap for run-01
-#> ! [2026-06-05 14:58:39] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ✔ [2026-06-05 15:00:23] [OKAY] Created gaze heatmap for run-01
+#> ! [2026-06-05 15:00:23] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:39] [INFO]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
+#> ℹ [2026-06-05 15:00:23] [INFO]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
 #> does not exist. Creating...
-#> ✔ [2026-06-05 14:58:39] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
-#> ✔ [2026-06-05 14:58:46] [OKAY] Created epoch images zip:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
+#> ✔ [2026-06-05 15:00:23] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe'
+#> ✔ [2026-06-05 15:00:30] [OKAY] Created epoch images zip:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
 #> (70 images)
-#> ℹ [2026-06-05 14:58:46] [INFO] Using absolute zip file path:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
-#> ✔ [2026-06-05 14:58:46] [OKAY] Embedded zip file as data URL (7903929 bytes)
+#> ℹ [2026-06-05 15:00:30] [INFO] Using absolute zip file path:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe/run-01.zip
+#> ✔ [2026-06-05 15:00:30] [OKAY] Embedded zip file as data URL (7903929 bytes)
 #> 
 #> 
 #> processing file: sub-001_epoch-prePostProbe_run-01.Rmd
@@ -943,13 +943,13 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_epoch-prePostProbe_run-01.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af95d663fbe.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae07a3db339.html 
 #> 
 #> Output created: sub-001_epoch-prePostProbe_run-01.html
-#> ! [2026-06-05 14:58:54] [WARN] Skipping block info for epoch 1 - no valid data
-#> ℹ [2026-06-05 14:58:54] [INFO] Removing duplicate plain epoch directory:
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe
-#> ! [2026-06-05 14:58:54] [WARN] No detrend data found for run-01
+#> ! [2026-06-05 15:00:38] [WARN] Skipping block info for epoch 1 - no valid data
+#> ℹ [2026-06-05 15:00:38] [INFO] Removing duplicate plain epoch directory:
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01/epoch_prePostProbe
+#> ! [2026-06-05 15:00:38] [WARN] No detrend data found for run-01
 #> 
 #> 
 #> processing file: sub-001.Rmd
@@ -959,35 +959,35 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af95c27c9e4.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae02a324e52.html 
 #> 
 #> Output created: sub-001.html
-#> ℹ [2026-06-05 14:58:56] [INFO] Merging temporary database from job unknown
-#> (PID: 6905) into main database
-#> ℹ [2026-06-05 14:58:56] [INFO] Merging 8 tables from temporary database to main
+#> ℹ [2026-06-05 15:00:40] [INFO] Merging temporary database from job unknown
+#> (PID: 6880) into main database
+#> ℹ [2026-06-05 15:00:40] [INFO] Merging 8 tables from temporary database to main
 #> database
-#> ℹ [2026-06-05 14:58:56] [INFO] Created new table 'blinks_001_01_assocret_run01'
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table 'blinks_001_01_assocret_run01'
 #> with 1 rows
-#> ℹ [2026-06-05 14:58:56] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table
 #> 'confounds_events_001_01_assocret_run01_prepostprobe' with 60 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table
 #> 'confounds_summary_001_01_assocret_run01_prepostprobe' with 10 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table
 #> 'epoch_summary_001_01_assocret_run01' with 1 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table
 #> 'epochs_001_01_assocret_run01_prepostprobe' with 20000 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table 'events_001_01_assocret_run01'
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table 'events_001_01_assocret_run01'
 #> with 67 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:40] [INFO] Created new table
 #> 'run_confounds_001_01_assocret_run01' with 6 rows
-#> ℹ [2026-06-05 14:58:57] [INFO] Created new table
+#> ℹ [2026-06-05 15:00:41] [INFO] Created new table
 #> 'timeseries_001_01_assocret_run01' with 20767 rows
-#> ✔ [2026-06-05 14:58:57] [OKAY] Successfully merged 8/8 tables
-#> ✔ [2026-06-05 14:58:57] [OKAY] Successfully merged job unknown (PID: 6905) data
+#> ✔ [2026-06-05 15:00:41] [OKAY] Successfully merged 8/8 tables
+#> ✔ [2026-06-05 15:00:41] [OKAY] Successfully merged job unknown (PID: 6880) data
 #> into main database
-#> ℹ [2026-06-05 14:58:57] [INFO] Disconnected from temporary database
-#> ✔ [2026-06-05 14:58:57] [OKAY] Cleaned up temporary database file
-#> ℹ [2026-06-05 14:58:57] [INFO] Finished BIDSify for sub-001 (Duration: 23.05
+#> ℹ [2026-06-05 15:00:41] [INFO] Disconnected from temporary database
+#> ✔ [2026-06-05 15:00:41] [OKAY] Cleaned up temporary database file
+#> ℹ [2026-06-05 15:00:41] [INFO] Finished BIDSify for sub-001 (Duration: 21.28
 #> seconds)
 
 # example for large-scale cloud compute (database only, no CSV files)
@@ -1001,90 +1001,90 @@ demo_data |>
     csv_enabled = FALSE,  # disable CSV files
     db_enabled = TRUE     # database storage only
   )
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 14:58:57] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-05 14:58:57] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 14:58:57] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 14:58:57] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 14:58:57] [INFO] Block processing summary:
-#> ℹ [2026-06-05 14:58:57] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 15:00:41] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 15:00:41] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 15:00:41] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 15:00:41] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 15:00:41] [INFO] Block processing summary:
+#> ℹ [2026-06-05 15:00:41] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 14:58:57] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-05 14:58:57] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-06-05 14:58:57] [INFO] Only 1 block detected...
-#> ℹ [2026-06-05 14:58:57] [INFO] Using run_num = 1 for single block data
-#> ℹ [2026-06-05 14:58:57] [INFO] Parallel processing detected for job unknown
-#> (PID: 6905), using temporary database
-#> ✔ [2026-06-05 14:58:58] [OKAY] Created temporary database:
-#> /tmp/RtmpokLa2t/derivatives/my-project_temp_6905_20260605_145857_996.eyerisdb
-#> ! [2026-06-05 14:58:58] [WARN] '/tmp/RtmpokLa2t' already exists. Skipping
+#> ✔ [2026-06-05 15:00:41] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-05 15:00:41] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-06-05 15:00:41] [INFO] Only 1 block detected...
+#> ℹ [2026-06-05 15:00:41] [INFO] Using run_num = 1 for single block data
+#> ℹ [2026-06-05 15:00:41] [INFO] Parallel processing detected for job unknown
+#> (PID: 6880), using temporary database
+#> ✔ [2026-06-05 15:00:41] [OKAY] Created temporary database:
+#> /tmp/Rtmpc7oaOE/derivatives/my-project_temp_6880_20260605_150041_518.eyerisdb
+#> ! [2026-06-05 15:00:41] [WARN] '/tmp/Rtmpc7oaOE' already exists. Skipping
 #> creation...
-#> ! [2026-06-05 14:58:58] [WARN] '/tmp/RtmpokLa2t/derivatives' already exists.
+#> ! [2026-06-05 15:00:41] [WARN] '/tmp/Rtmpc7oaOE/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:58:58] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001' already
+#> ! [2026-06-05 15:00:41] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-06-05 14:58:58] [WARN] '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01'
+#> ! [2026-06-05 15:00:41] [WARN] '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:58] [INFO] Writing blinks data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
-#> ✔ [2026-06-05 14:58:58] [OKAY] Wrote blinks data (1 rows) to database
-#> ℹ [2026-06-05 14:58:58] [INFO] Writing events data to
-#> /tmp/RtmpokLa2t/derivatives/sub-001/ses-01/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
-#> ✔ [2026-06-05 14:58:58] [OKAY] Wrote events data (67 rows) to database
-#> ✔ [2026-06-05 14:58:58] [OKAY] Wrote timeseries data (20767 rows) to database
-#> ✔ [2026-06-05 14:58:58] [OKAY] Wrote run_confounds data (6 rows) to database
-#> ! [2026-06-05 14:58:58] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ℹ [2026-06-05 15:00:41] [INFO] Writing blinks data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/sub-001_ses-01_task-assocret_run-01_desc-blinks.csv...
+#> ✔ [2026-06-05 15:00:41] [OKAY] Wrote blinks data (1 rows) to database
+#> ℹ [2026-06-05 15:00:41] [INFO] Writing events data to
+#> /tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/sub-001_ses-01_task-assocret_run-01_desc-events.csv...
+#> ✔ [2026-06-05 15:00:41] [OKAY] Wrote events data (67 rows) to database
+#> ✔ [2026-06-05 15:00:41] [OKAY] Wrote timeseries data (20767 rows) to database
+#> ✔ [2026-06-05 15:00:41] [OKAY] Wrote run_confounds data (6 rows) to database
+#> ! [2026-06-05 15:00:41] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ! [2026-06-05 14:58:58] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 15:00:41] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ℹ [2026-06-05 14:58:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:58:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:59:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:59:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:59:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:59:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-06-05 14:59:00] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 15:00:44] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ! [2026-06-05 14:59:00] [WARN]
-#> '/tmp/RtmpokLa2t/derivatives/sub-001/ses-01/source/figures/run-01' already
+#> ! [2026-06-05 15:00:44] [WARN]
+#> '/tmp/Rtmpc7oaOE/derivatives/sub-001/ses-01/source/figures/run-01' already
 #> exists. Skipping creation...
-#> ✔ [2026-06-05 14:59:00] [OKAY] Created gaze heatmap for run-01
-#> ! [2026-06-05 14:59:00] [WARN] No detrend data found for run-01
+#> ✔ [2026-06-05 15:00:44] [OKAY] Created gaze heatmap for run-01
+#> ! [2026-06-05 15:00:44] [WARN] No detrend data found for run-01
 #> 
 #> 
 #> processing file: sub-001.Rmd
@@ -1094,27 +1094,27 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpokLa2t/rmarkdown-str1af932207ba.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmpc7oaOE/rmarkdown-str1ae03f216bc1.html 
 #> 
 #> Output created: sub-001.html
-#> ℹ [2026-06-05 14:59:02] [INFO] Merging temporary database from job unknown
-#> (PID: 6905) into main database
-#> ℹ [2026-06-05 14:59:02] [INFO] Merging 4 tables from temporary database to main
+#> ℹ [2026-06-05 15:00:45] [INFO] Merging temporary database from job unknown
+#> (PID: 6880) into main database
+#> ℹ [2026-06-05 15:00:45] [INFO] Merging 4 tables from temporary database to main
 #> database
-#> ℹ [2026-06-05 14:59:02] [INFO] Merged 1 rows into existing table
+#> ℹ [2026-06-05 15:00:45] [INFO] Merged 1 rows into existing table
 #> 'blinks_001_01_assocret_run01'
-#> ℹ [2026-06-05 14:59:02] [INFO] Merged 67 rows into existing table
+#> ℹ [2026-06-05 15:00:45] [INFO] Merged 67 rows into existing table
 #> 'events_001_01_assocret_run01'
-#> ℹ [2026-06-05 14:59:02] [INFO] Merged 6 rows into existing table
+#> ℹ [2026-06-05 15:00:45] [INFO] Merged 6 rows into existing table
 #> 'run_confounds_001_01_assocret_run01'
-#> ℹ [2026-06-05 14:59:02] [INFO] Merged 20767 rows into existing table
+#> ℹ [2026-06-05 15:00:45] [INFO] Merged 20767 rows into existing table
 #> 'timeseries_001_01_assocret_run01'
-#> ✔ [2026-06-05 14:59:02] [OKAY] Successfully merged 4/4 tables
-#> ✔ [2026-06-05 14:59:02] [OKAY] Successfully merged job unknown (PID: 6905) data
+#> ✔ [2026-06-05 15:00:45] [OKAY] Successfully merged 4/4 tables
+#> ✔ [2026-06-05 15:00:46] [OKAY] Successfully merged job unknown (PID: 6880) data
 #> into main database
-#> ℹ [2026-06-05 14:59:02] [INFO] Disconnected from temporary database
-#> ✔ [2026-06-05 14:59:02] [OKAY] Cleaned up temporary database file
-#> ℹ [2026-06-05 14:59:02] [INFO] Finished BIDSify for sub-001 (Duration: 4.74
+#> ℹ [2026-06-05 15:00:46] [INFO] Disconnected from temporary database
+#> ✔ [2026-06-05 15:00:46] [OKAY] Cleaned up temporary database file
+#> ℹ [2026-06-05 15:00:46] [INFO] Finished BIDSify for sub-001 (Duration: 4.6
 #> seconds)
 # }
 ```
