@@ -65,7 +65,7 @@ If you haven’t already installed the `eyeris` package:
 
 library(eyeris)
 #> 
-#> eyeris v3.0.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v3.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 ```
 
@@ -162,24 +162,24 @@ parameters and pipeline recipe:
 
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-06-05 04:12:23] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 04:12:24] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 15:01:09] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::lpfilt() for block_1
 ```
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-1.png)
 
-    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::downsample() for block_1
-    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::bin() for block_1
-    #> ! [2026-06-05 04:12:24] [WARN] Skipping eyeris::detrend() for block_1
-    #> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::zscore() for block_1
-    #> ℹ [2026-06-05 04:12:24] [INFO] Block processing summary:
-    #> ℹ [2026-06-05 04:12:24] [INFO] block_1: OK (steps: 6, latest:
+    #> ! [2026-06-05 15:01:09] [WARN] Skipping eyeris::downsample() for block_1
+    #> ! [2026-06-05 15:01:09] [WARN] Skipping eyeris::bin() for block_1
+    #> ! [2026-06-05 15:01:09] [WARN] Skipping eyeris::detrend() for block_1
+    #> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::zscore() for block_1
+    #> ℹ [2026-06-05 15:01:09] [INFO] Block processing summary:
+    #> ℹ [2026-06-05 15:01:09] [INFO] block_1: OK (steps: 6, latest:
     #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-    #> ✔ [2026-06-05 04:12:24] [OKAY] Running eyeris::summarize_confounds()
+    #> ✔ [2026-06-05 15:01:09] [OKAY] Running eyeris::summarize_confounds()
 
     # Preview first and second steps of the pipeline
     plot(
@@ -188,7 +188,7 @@ output <- eyeris::glassbox(demo_data)
       preview_window = c(0, max(output$timeseries$block_1$time_secs)),
       seed = 0
     )
-    #> ℹ [2026-06-05 04:12:24] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+    #> ℹ [2026-06-05 15:01:09] [INFO] Plotting block 1 with sampling rate 1000 Hz from
     #> possible blocks: 1
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-2.png)![](complete-pipeline_files/figure-html/unnamed-chunk-3-3.png)
@@ -218,20 +218,20 @@ output <- eyeris::glassbox(
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 04:12:27] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 04:12:27] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 04:12:27] [INFO] Block processing summary:
-#> ℹ [2026-06-05 04:12:27] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 15:01:14] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 15:01:14] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 15:01:14] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 15:01:14] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 15:01:14] [INFO] Block processing summary:
+#> ℹ [2026-06-05 15:01:14] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 04:12:27] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 15:01:14] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ##### Pipeline Steps with Overridable Parameters

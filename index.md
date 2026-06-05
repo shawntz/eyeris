@@ -242,6 +242,24 @@ documentation](https://arrow.apache.org/docs/r/).
 > Once installed, restart R and reload `eyeris` to enable these
 > features.
 
+### System Requirements
+
+**Minimum requirements:**
+
+- R \>= 4.1.0
+- 8 GB RAM for basic preprocessing
+
+**Recommended for large datasets:**
+
+- 16 GB RAM or more when generating HTML reports with
+  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md),
+  especially for datasets with many epochs or long recordings
+- SSD storage for improved I/O performance with database operations
+
+> **Note:** HTML report generation uses `pandoc` internally via
+> `rmarkdown`. Large preprocessing pipelines with many epochs may
+> require additional memory during report rendering.
+
 ## ✏ Example
 
 ### The `glassbox()` “prescription” function
@@ -263,7 +281,7 @@ set.seed(32)
 
 library(eyeris)
 #> 
-#> eyeris v3.0.1 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v3.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 #> ** DuckDB not found. Database features are disabled.
 #> 
@@ -313,20 +331,20 @@ eyeris_preproc <- glassbox(
   demo_data,
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::load_asc()
-#> ℹ [2025-10-06 19:54:25] [INFO] Processing block: block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2025-10-06 19:54:25] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2025-10-06 19:54:25] [INFO] Block processing summary:
-#> ℹ [2025-10-06 19:54:25] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-05 00:01:48] [INFO] Processing block: block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-05 00:01:48] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-05 00:01:48] [INFO] Block processing summary:
+#> ℹ [2026-06-05 00:01:48] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2025-10-06 19:54:25] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ### Step-wise correction of pupillary signal
@@ -353,20 +371,20 @@ plot(eyeris_preproc,
   preview_window = c(start_time, end_time),
   add_progressive_summary = TRUE
 )
-#> ℹ [2025-10-06 19:54:25] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-06-05 00:01:48] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 ```
 
 ![](reference/figures/README-timeseries-plot-1.png)![](reference/figures/README-timeseries-plot-2.png)![](reference/figures/README-timeseries-plot-3.png)![](reference/figures/README-timeseries-plot-4.png)![](reference/figures/README-timeseries-plot-5.png)![](reference/figures/README-timeseries-plot-6.png)
 
 ``` R
-#> ℹ [2025-10-06 19:54:26] [INFO] Creating progressive summary plot for block_1
+#> ℹ [2026-06-05 00:01:48] [INFO] Creating progressive summary plot for block_1
 ```
 
 ![](reference/figures/README-timeseries-plot-7.png)
 
 ``` R
-#> ✔ [2025-10-06 19:54:27] [OKAY] Progressive summary plot created successfully!
+#> ✔ [2026-06-05 00:01:49] [OKAY] Progressive summary plot created successfully!
 
 plot_gaze_heatmap(
   eyeris = eyeris_preproc,

@@ -43,6 +43,11 @@ Useful links:
 **Maintainer**: Shawn Schwartz <shawn.t.schwartz@gmail.com>
 ([ORCID](https://orcid.org/0000-0001-6444-8451))
 
+Authors:
+
+- Shawn Schwartz <shawn.t.schwartz@gmail.com>
+  ([ORCID](https://orcid.org/0000-0001-6444-8451))
+
 Other contributors:
 
 - Mingjian He \[contributor\]
