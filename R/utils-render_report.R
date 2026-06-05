@@ -146,16 +146,14 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       sprintf("run-%02d_metadata.json", run_id)
     )
 
-    if (!file.exists(meta_path)) {
-      jsonlite::write_json(
-        run_metadata,
-        meta_path,
-        pretty = TRUE,
-        auto_unbox = TRUE
-      )
-    } else {
-      log_warn("Metadata file already exists for {run_id}: {meta_path}")
-    }
+    # Always regenerate metadata to ensure it uses the latest sanitization
+    # This prevents issues with old files containing huge epoch data
+    jsonlite::write_json(
+      run_metadata,
+      meta_path,
+      pretty = TRUE,
+      auto_unbox = TRUE
+    )
 
     if (file.exists(meta_path)) {
       meta <- jsonlite::read_json(meta_path)
@@ -327,11 +325,87 @@ make_md_table_multiline <- function(df) {
   md_table
 }
 
-sanitize_call_stack <- function(x) {
+sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
+  # Filter out epoch-related large data structures before JSON serialization
+  # to prevent memory issues during report rendering
+  # Only filter when we're inside a "parameters" list
+  if (in_parameters && !is.null(parent_name)) {
+    name_lower <- tolower(parent_name)
+    is_epoch_related <- grepl("epoch", name_lower) ||
+      name_lower == "events" ||
+      name_lower == "baseline_events"
+
+    # Omit complex objects (lists, data.frames) with epoch-related names
+    if (is_epoch_related && (is.list(x) || is.data.frame(x))) {
+      return("<omitted>")
+    }
+  }
+
   if (is.call(x)) {
-    deparse(x)
+    # Deparse the call but limit output size to prevent memory issues
+    # This handles cases where sys.calls() captures large objects
+    deparsed <- tryCatch(
+      {
+        result <- deparse(x, width.cutoff = 500L)
+        # Limit to first few lines if it's very long
+        if (length(result) > 5) {
+          result <- c(result[1:3], "...")
+        }
+        collapsed <- paste(result, collapse = " ")
+        # Final size limit
+        if (nchar(collapsed) > 500) {
+          paste0(substr(collapsed, 1, 500), "...")
+        } else {
+          collapsed
+        }
+      },
+      error = function(e) "<call: error deparsing>"
+    )
+    deparsed
+  } else if (is.data.frame(x)) {
+    # Convert data frames to a simple summary to avoid huge JSON output
+    paste0("<data.frame: ", nrow(x), " rows x ", ncol(x), " cols>")
   } else if (is.list(x)) {
-    lapply(x, sanitize_call_stack)
+    # Check if we're entering a "parameters" list
+    is_entering_parameters <- !is.null(parent_name) &&
+      parent_name == "parameters"
+
+    # Check if this is a call_stack field containing sys.calls() output
+    # sys.calls() returns a list of calls which can contain huge objects
+    is_call_stack_field <- !is.null(parent_name) &&
+      parent_name %in% c("call_stack", "call")
+
+    if (is_call_stack_field && length(x) > 0) {
+      # This is likely sys.calls() output - just get the function names
+      # and a simplified representation
+      call_names <- sapply(x, function(call) {
+        if (is.call(call)) {
+          fn_name <- as.character(call[[1]])
+          if (length(fn_name) > 1) {
+            fn_name <- fn_name[length(fn_name)]
+          }
+          fn_name
+        } else {
+          "unknown"
+        }
+      })
+      # Return simplified call stack
+      return(paste(call_names, collapse = " > "))
+    }
+
+    # Process list elements, passing the name for filtering
+    result <- lapply(names(x), function(name) {
+      sanitize_call_stack(
+        x[[name]],
+        parent_name = name,
+        in_parameters = in_parameters || is_entering_parameters
+      )
+    })
+    names(result) <- names(x)
+    result
+  } else if (is.character(x) && length(x) == 1 && nchar(x) > 1000) {
+    # Truncate very long strings
+    paste0(substr(x, 1, 500), "... <truncated>")
   } else {
     x
   }

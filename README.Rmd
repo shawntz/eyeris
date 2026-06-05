@@ -219,6 +219,20 @@ For more details, see the [Arrow R documentation](https://arrow.apache.org/docs/
 
 > **Note:** When you load `eyeris`, startup messages will inform you if DuckDB or Arrow are not installed and provide detailed platform-specific installation instructions. You can also access these instructions anytime via `?check_duckdb` and `?check_arrow`. Once installed, restart R and reload `eyeris` to enable these features.
 
+### System Requirements
+
+**Minimum requirements:**
+
+- R >= 4.1.0
+- 8 GB RAM for basic preprocessing
+
+**Recommended for large datasets:**
+
+- 16 GB RAM or more when generating HTML reports with `bidsify()`, especially for datasets with many epochs or long recordings
+- SSD storage for improved I/O performance with database operations
+
+> **Note:** HTML report generation uses `pandoc` internally via `rmarkdown`. Large preprocessing pipelines with many epochs may require additional memory during report rendering.
+
 ## ✏ Example
 
 ### The `glassbox()` "prescription" function

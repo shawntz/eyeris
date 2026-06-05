@@ -17,7 +17,10 @@
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING\.md$
 ^CRAN-SUBMISSION$
-^inst/figures$
+^inst/figures/.*\.gif$
+^inst/figures/adventure-time$
+^inst/figures/report_example_annotated-1\.png$
 ^doc$
 ^Meta$
 ^\.air\.toml$
+^\.claude$

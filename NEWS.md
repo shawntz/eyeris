@@ -1,3 +1,23 @@
+# eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.
+
+## 🐛 Bugs fixed
+
+- **FF (#275)**: Fixed HTML rendering failure on headless Linux systems with older pandoc versions (e.g., v2.7.3) caused by a missing sticker path. Previously, the blanket exclusion of `^inst/figures$` in `.Rbuildignore` caused `system.file("figures", "sticker.png", package = "eyeris")` to return `""`, producing `<img src=''>` markup that older pandoc versions cannot render. Replaced the blanket exclusion with targeted file-level exclusions for large demo assets (GIFs, character images, annotated example screenshots) while keeping only the essential `sticker.png` (21KB) in the installed package. Net package size increase is +21KB, well within CRAN's 5MB limit, by @shawntz in #286.
+
+- **FF (#278)**: Fixed pandoc out-of-memory (`exit 137`) errors when rendering HTML reports with large epoch event data. `format_call_stack()` was calling `deparse()` on all parameters including large epoch event lists (thousands of rows), generating strings that consumed gigabytes of memory. Added `should_omit_parameter()` helper to detect and filter epoch-related parameters containing complex objects (lists/data.frames) before deparsing. Large parameters are now displayed as `<omitted>` in the call stack while scalar values (e.g., `epoch_length = 100`) are preserved. Added comprehensive test coverage for parameter filtering, case-insensitive matching, and scalar preservation, by @shawntz in #280.
+
+- **FF (#291)**: Fixed downsampled epoch data being visually compressed in HTML plots. When downsampling was applied in the Glassbox pipeline, epoch plots showed 5-second windows compressed to ~0.5 seconds (a 10x compression). The root cause was that `epoch_pupil()` used the original sampling rate (`info$sample.rate`) instead of the decimated rate (`decimated.sample.rate`) when calculating epoch timebins, causing sample counts to be divided by the wrong Hz value. Updated `epoch_pupil()` to check for `decimated.sample.rate` first before falling back to the original rate. X-axis labels and CSV output were already correct; this fix applies the same logic to the plot rendering, by @shawntz and @alicexue in #292.
+
+## 🔧 Minor improvements and fixes
+
+- **FF (#287)**: Fixed misleading `load_asc()` usage pattern in the database guide documentation, where examples incorrectly instructed users to call `load_asc()` and pipe the result into `glassbox()`. This caused errors because `eyeris` expects a file path string to be passed directly into the pipeline; `load_asc()` is handled internally. Updated examples to show the correct usage pattern and added a runtime error in `glassbox()` that detects when a user passes an `eyeris` object instead of a file path, with a helpful message explaining the correct approach, by @shawntz and @alicexue in #288.
+
+## 📚 Documentation
+
+- **DOC**: Added a system requirements section to the README with platform-specific guidance for installing runtime dependencies, by @shawntz in #282.
+
 # eyeris 3.0.1 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This patch release improves dependency management for Arrow and DuckDB to prevent installation issues on macOS and other platforms.
