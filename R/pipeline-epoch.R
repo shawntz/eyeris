@@ -375,7 +375,13 @@ epoch_pupil <- function(
   start_time <- Sys.time()
 
   if (is.null(hz)) {
-    hz <- x$info$sample.rate
+    # use decimated sample rate if available (after downsample/bin),
+    # otherwise use original sample rate
+    hz <- if (!is.na(x$decimated.sample.rate)) {
+      x$decimated.sample.rate
+    } else {
+      x$info$sample.rate
+    }
   }
 
   msg_s <- evs[1]
