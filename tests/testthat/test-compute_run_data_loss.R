@@ -10,7 +10,8 @@ test_that("compute_run_data_loss returns a sensible percentage from confounds", 
   expect_lte(pct, 100)
 
   # should match the canonical confounds metric on the raw signal
-  expected <- sample_data$confounds$unepoched_timeseries$block_1$pupil_raw$prop_invalid * 100
+  expected <- sample_data$confounds$unepoched_timeseries$block_1$pupil_raw$prop_invalid *
+    100
   expect_equal(pct, expected)
 })
 
@@ -51,9 +52,7 @@ test_that("compute_run_data_loss resolves binocular eyes", {
       binocular_mode = "both",
       confounds = list(
         unepoched_timeseries = list(
-          block_1 = list(
-            pupil_raw = data.frame(prop_invalid = prop_invalid)
-          )
+          block_1 = list(pupil_raw = data.frame(prop_invalid = prop_invalid))
         )
       )
     )
@@ -63,6 +62,12 @@ test_that("compute_run_data_loss resolves binocular eyes", {
   class(bino) <- "eyeris"
 
   expect_true(is_binocular_object(bino))
-  expect_equal(compute_run_data_loss(bino, run_num = 1, eye_suffix = "eye-L"), 10)
-  expect_equal(compute_run_data_loss(bino, run_num = 1, eye_suffix = "eye-R"), 40)
+  expect_equal(
+    compute_run_data_loss(bino, run_num = 1, eye_suffix = "eye-L"),
+    10
+  )
+  expect_equal(
+    compute_run_data_loss(bino, run_num = 1, eye_suffix = "eye-R"),
+    40
+  )
 })
