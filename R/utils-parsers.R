@@ -192,8 +192,8 @@ get_block_numbers <- function(x) {
     return(sprintf("%02d", 1)) # default fallback instead of NULL
   }
 
-  # ensure we always return a valid number
-  if (is.na(block_nums)) {
+  # ensure we always return a valid number (handles multiblock vectors too)
+  if (length(block_nums) == 0 || all(is.na(block_nums))) {
     return(1) # default fallback instead of NULL
   }
 

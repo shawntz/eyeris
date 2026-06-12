@@ -170,18 +170,11 @@ glassbox <- function(
     skip_detransient <- NULL
   }
 
-  # check if user accidentally passed an eyeris object instead of a file path
-  if (inherits(file, "eyeris")) {
-    log_error(paste0(
-      "You passed an eyeris object to glassbox(), but glassbox() expects a file path.\n\n",
-      "It looks like you may have called load_asc() first:\n",
-      "  eyeris_data <- load_asc('file.asc')\n",
-      "  eyeris_data %>% glassbox()  # <-- This causes an error\n\n",
-      "Instead, pass the file path directly to glassbox():\n",
-      "  'file.asc' %>% glassbox() %>% ...\n\n",
-      "The eyeris package handles .asc file reading internally."
-    ))
-  }
+  # a pre-constructed eyeris object (e.g., from load_generic() for non-EyeLink
+  # trackers, or an already-loaded load_asc() object) may be passed directly:
+  # we detect it here and skip the file-loading step below, running the
+  # remaining pipeline on the object as-is.
+  preloaded_eyeris <- inherits(file, "eyeris")
 
   # the default glassbox pipeline parameters
   default_params <- list(
@@ -199,6 +192,19 @@ glassbox <- function(
 
   # override defaults
   params <- utils::modifyList(default_params, list(...))
+
+  # if a pre-loaded eyeris object was supplied, skip the file-loading step and
+  # run the remaining pipeline directly on the object
+  if (preloaded_eyeris) {
+    params$load_asc <- FALSE
+    log_info(
+      paste(
+        "Received a pre-loaded `eyeris` object; skipping the load step and",
+        "running the remaining pipeline on it directly."
+      ),
+      verbose = verbose
+    )
+  }
 
   # handle method parameter for bin operation
   if (
@@ -463,52 +469,6 @@ glassbox <- function(
     log_success("Running eyeris::load_asc()", verbose = verbose)
     file <- pipeline[["load_asc"]](file, params, original_call)
 
-    # handle binocular objects
-    if (is_binocular_object(file)) {
-      log_info(
-        "Detected binocular data - processing left and right eyes separately",
-        verbose = verbose
-      )
-
-      # process left eye
-      left_result <- glassbox_internal(
-        file$left,
-        interactive_preview,
-        preview_n,
-        preview_duration,
-        preview_window,
-        verbose,
-        params,
-        original_call,
-        seed
-      )
-
-      # process right eye
-      right_result <- glassbox_internal(
-        file$right,
-        interactive_preview,
-        preview_n,
-        preview_duration,
-        preview_window,
-        verbose,
-        params,
-        original_call,
-        seed
-      )
-
-      # return combined structure
-      list_out <- list(
-        left = left_result,
-        right = right_result,
-        original_file = file$original_file,
-        raw_binocular_object = file$raw_binocular_object
-      )
-
-      class(list_out) <- "eyeris"
-
-      return(list_out)
-    }
-
     if (interactive_preview) {
       plot_with_seed(
         file = file,
@@ -530,6 +490,53 @@ glassbox <- function(
         return(file)
       }
     }
+  }
+
+  # handle binocular objects (whether freshly loaded above or passed in
+  # pre-loaded) by processing the left and right eyes separately
+  if (is_binocular_object(file)) {
+    log_info(
+      "Detected binocular data - processing left and right eyes separately",
+      verbose = verbose
+    )
+
+    # process left eye
+    left_result <- glassbox_internal(
+      file$left,
+      interactive_preview,
+      preview_n,
+      preview_duration,
+      preview_window,
+      verbose,
+      params,
+      original_call,
+      seed
+    )
+
+    # process right eye
+    right_result <- glassbox_internal(
+      file$right,
+      interactive_preview,
+      preview_n,
+      preview_duration,
+      preview_window,
+      verbose,
+      params,
+      original_call,
+      seed
+    )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = file$original_file,
+      raw_binocular_object = file$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
   }
 
   has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 0
