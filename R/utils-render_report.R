@@ -212,12 +212,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   boilerplate_filename <- paste0(boilerplate_filename, ".md")
 
   writeLines(
-    c(
-      "# eyeris preprocessing methods boilerplate",
-      "",
-      boilerplate_md,
-      ""
-    ),
+    c("# eyeris preprocessing methods boilerplate", "", boilerplate_md, ""),
     con = file.path(logs_dir, boilerplate_filename)
   )
 

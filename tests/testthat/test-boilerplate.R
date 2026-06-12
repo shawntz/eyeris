@@ -9,18 +9,12 @@ make_mock_eyeris <- function(n_blocks = 2, params = NULL) {
         call_stack = quote(deblink(eyeris, extend = 50)),
         parameters = list(extend = 50)
       ),
-      detransient = list(
-        parameters = list(n = 16, mad_thresh = NULL)
-      ),
-      interpolate = list(
-        parameters = list(verbose = TRUE)
-      ),
+      detransient = list(parameters = list(n = 16, mad_thresh = NULL)),
+      interpolate = list(parameters = list(verbose = TRUE)),
       lpfilt = list(
         parameters = list(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = FALSE)
       ),
-      z = list(
-        parameters = list()
-      )
+      z = list(parameters = list())
     )
   }
 
@@ -97,11 +91,7 @@ test_that("boilerplate() includes the CC BY license + attribution note", {
   bp <- as.character(boilerplate(obj))
 
   expect_match(bp, "CC BY 4.0", fixed = TRUE)
-  expect_match(
-    bp,
-    "creativecommons.org/licenses/by/4.0/",
-    fixed = TRUE
-  )
+  expect_match(bp, "creativecommons.org/licenses/by/4.0/", fixed = TRUE)
   expect_match(bp, "safe to", fixed = TRUE)
   expect_match(bp, "copy and paste", fixed = TRUE)
   # attribution is now required via citation
@@ -134,9 +124,7 @@ test_that("version argument overrides the reported package version", {
 })
 
 test_that("asymmetric deblink extend is described as backward/forward", {
-  params <- list(
-    deblink = list(parameters = list(extend = c(40, 60)))
-  )
+  params <- list(deblink = list(parameters = list(extend = c(40, 60))))
   obj <- make_mock_eyeris(params = params)
   bp <- as.character(boilerplate(obj))
   expect_match(bp, "40 ms backward and 60 ms forward", fixed = TRUE)
@@ -164,18 +152,20 @@ test_that("epoching and baseline correction are described when present", {
 })
 
 test_that("downsample and bin steps are described with their params", {
-  ds <- make_mock_eyeris(params = list(
-    downsample = list(parameters = list(target_fs = 100))
-  ))
+  ds <- make_mock_eyeris(
+    params = list(downsample = list(parameters = list(target_fs = 100)))
+  )
   expect_match(
     as.character(boilerplate(ds)),
     "downsampled to 100 Hz",
     fixed = TRUE
   )
 
-  bn <- make_mock_eyeris(params = list(
-    bin = list(parameters = list(bins_per_second = 50, method = "median"))
-  ))
+  bn <- make_mock_eyeris(
+    params = list(
+      bin = list(parameters = list(bins_per_second = 50, method = "median"))
+    )
+  )
   bp_bin <- as.character(boilerplate(bn))
   expect_match(bp_bin, "50 bins per second", fixed = TRUE)
   expect_match(bp_bin, "median of the samples", fixed = TRUE)
@@ -201,16 +191,14 @@ test_that("binocular objects are detected and noted", {
   right <- eye
   right$binocular_mode <- "both"
 
-  binoc <- list(
-    left = left,
-    right = right,
-    original_file = "sub-001.asc"
-  )
+  binoc <- list(left = left, right = right, original_file = "sub-001.asc")
   class(binoc) <- "eyeris"
 
   bp <- as.character(boilerplate(binoc))
   expect_match(bp, "binocular", fixed = TRUE)
-  expect_match(bp, "left and right eyes were preprocessed independently",
+  expect_match(
+    bp,
+    "left and right eyes were preprocessed independently",
     fixed = TRUE
   )
 })

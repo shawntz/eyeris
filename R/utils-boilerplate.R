@@ -522,12 +522,7 @@ describe_boilerplate_step <- function(step, p, info) {
       sentence <- paste0(sentence, ".")
       if (isTRUE(p$baseline)) {
         bt <- if (!is.null(p$baseline_type)) p$baseline_type[1] else "sub"
-        bt_word <- switch(
-          bt,
-          sub = "subtractive",
-          div = "divisive",
-          bt
-        )
+        bt_word <- switch(bt, sub = "subtractive", div = "divisive", bt)
         sentence <- paste0(
           sentence,
           sprintf(
