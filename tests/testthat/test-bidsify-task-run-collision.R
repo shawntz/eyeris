@@ -34,7 +34,10 @@ test_that("filter_task_run_dirs scopes run directories to a single task", {
   expect_setequal(filter_task_run_dirs(dirs, NULL), "run-01")
   # task with an underscore is matched by exact string equality, not regex
   expect_setequal(
-    filter_task_run_dirs(c("task-study_a_run-01", "task-study_run-01"), "study_a"),
+    filter_task_run_dirs(
+      c("task-study_a_run-01", "task-study_run-01"),
+      "study_a"
+    ),
     "task-study_a_run-01"
   )
 })

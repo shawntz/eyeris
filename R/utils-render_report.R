@@ -519,10 +519,9 @@ print_plots <- function(plots, eye_suffix = NULL, task = NULL) {
 
   # restrict to THIS task's run directories so plots from another task sharing
   # the same source/figures/ parent are not mixed into this report (#293)
-  run_dirs <- run_dirs[basename(run_dirs) %in% filter_task_run_dirs(
-    basename(run_dirs),
-    task
-  )]
+  run_dirs <- run_dirs[
+    basename(run_dirs) %in% filter_task_run_dirs(basename(run_dirs), task)
+  ]
 
   if (length(run_dirs) > 0) {
     for (run_dir in run_dirs) {
@@ -586,10 +585,7 @@ print_plots <- function(plots, eye_suffix = NULL, task = NULL) {
         # derive the filename prefix from the (task-namespaced) directory name
         # so reads always match what save_detrend_plots() wrote (#293)
         rd <- basename(run_dir)
-        detrend_plot_path <- file.path(
-          run_dir,
-          paste0(rd, "_detrend.png")
-        )
+        detrend_plot_path <- file.path(run_dir, paste0(rd, "_detrend.png"))
 
         # if eye_suffix is provided, look for the suffixed version
         if (!is.null(eye_suffix)) {
