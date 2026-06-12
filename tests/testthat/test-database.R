@@ -344,10 +344,7 @@ test_that("eyeris_db_read aligns heterogeneous table schemas", {
   con <- connect_eyeris_database(temp_bids_dir, "schema-test", verbose = FALSE)
 
   # simulate an "old" confounds table (eyeris <= 3.1.0): no prop_missing
-  old_data <- data.frame(
-    blink_count = c(2, 4),
-    stringsAsFactors = FALSE
-  )
+  old_data <- data.frame(blink_count = c(2, 4), stringsAsFactors = FALSE)
   write_eyeris_data_to_db(
     data = old_data,
     con = con,

@@ -477,8 +477,13 @@ eyeris_db_read <- function(
         type_label <- if (is.null(data_type)) "matching" else data_type
         log_info(
           paste0(
-            "Detected ", n_schemas, " differing column schemas across ",
-            length(valid_tables), " '", type_label, "' tables; aligning ",
+            "Detected ",
+            n_schemas,
+            " differing column schemas across ",
+            length(valid_tables),
+            " '",
+            type_label,
+            "' tables; aligning ",
             "columns and filling missing values with NA."
           ),
           verbose = TRUE
