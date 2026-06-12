@@ -65,7 +65,7 @@ eyeris
             │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
             ├── source
             │   └── figures
-            │       └── run-01
+            │       └── task-assocret_run-01
             │           ├── epoch_prePostProbe
             │           │   ├── run-01_PROBE_START_22_1.png
             │           │   ├── run-01_PROBE_START_22_2.png
@@ -81,22 +81,22 @@ eyeris
             │           │   ├── run-01_PROBE_STOP_22_5.png
             │           │   ├── run-01_PROBE_STOP_22_6.png
             │           │   ├── ...
-            │           ├── run-01_fig-1_desc-histogram.jpg
-            │           ├── run-01_fig-1_desc-timeseries.jpg
-            ├── sub-001_epoch-prePostProbe_run-01.html
-            └── sub-001.html
+            │           ├── task-assocret_run-01_fig-1_desc-histogram.jpg
+            │           ├── task-assocret_run-01_fig-1_desc-timeseries.jpg
+            ├── sub-001_task-assocret_epoch-prePostProbe_run-01.html
+            └── sub-001_task-assocret.html
 
 9 directories, 80 files
 ```
 
 Here, notice specifically these two files:
 
-- <highlight>sub-001.html</highlight>
-- <highlight>sub-001_epoch-prePostProbe_run-01.html</highlight>
+- <highlight>sub-001_task-assocret.html</highlight>
+- <highlight>sub-001_task-assocret_epoch-prePostProbe_run-01.html</highlight>
 
 ## 3 Previewing your Entire Pupil Timeseries
 
-> `sub-001.html` will look something like this:
+> `sub-001_task-assocret.html` will look something like this:
 
 ```{r echo=FALSE, out.width='75%'}
 img_url <- paste0("https://github.com/shawntz/eyeris/raw/dev/inst/",
@@ -106,7 +106,7 @@ knitr::include_graphics(img_url)
 
 ## 4 Data QC of Extracted Pupil Epochs with Interactive Reports
 
-> Meanwhile, `sub-001_epoch-prePostProbe_run-01.html` will enable you to
+> Meanwhile, `sub-001_task-assocret_epoch-prePostProbe_run-01.html` will enable you to
 interact with images of each extracted data epoch (for which you will see
 include separate images for each epoch at each sequential stage of the
 preprocessing pipeline). This feature was intentionally designed to make data

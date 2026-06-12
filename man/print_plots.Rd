@@ -4,12 +4,14 @@
 \alias{print_plots}
 \title{Print plots in markdown format}
 \usage{
-print_plots(plots, eye_suffix = NULL)
+print_plots(plots, eye_suffix = NULL, task = NULL)
 }
 \arguments{
 \item{plots}{Vector of plot file paths}
 
 \item{eye_suffix}{Optional eye suffix for binocular data}
+
+\item{task}{Optional BIDS task name used to scope run directories (#293)}
 }
 \value{
 A character string containing markdown plot references
