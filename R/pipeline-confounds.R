@@ -657,8 +657,7 @@ calculate_epoched_confounds <- function(
         pre_epoch_window <- c(epoch_start_time - 200, epoch_start_time)
         pre_epoch_data <- eyeris$timeseries[[block_name]] |>
           dplyr::filter(
-            time_orig >= pre_epoch_window[1] &
-              time_orig <= pre_epoch_window[2]
+            time_orig >= pre_epoch_window[1] & time_orig <= pre_epoch_window[2]
           )
 
         for (step_name in pupil_steps) {
@@ -680,7 +679,10 @@ calculate_epoched_confounds <- function(
               zscore_max = NA_real_,
               zscore_min = NA_real_,
               prop_blink_time = NA_real_,
-              pre_epoch_pupil_sd = sd(pre_epoch_data[[step_name]], na.rm = TRUE),
+              pre_epoch_pupil_sd = sd(
+                pre_epoch_data[[step_name]],
+                na.rm = TRUE
+              ),
               epoch_pupil_sd = NA_real_
             )
             next

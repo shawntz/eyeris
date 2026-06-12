@@ -6,10 +6,7 @@ test_that("get_confounds_for_step() reports n_missing and prop_missing", {
   na_idx <- c(3, 10, 11, 12, 77) # 5 missing samples
   pupil_vec[na_idx] <- NA
 
-  pupil_df <- data.frame(
-    eye_x = runif(n, 0, 800),
-    eye_y = runif(n, 0, 600)
-  )
+  pupil_df <- data.frame(eye_x = runif(n, 0, 800), eye_y = runif(n, 0, 600))
 
   step_confounds <- eyeris:::get_confounds_for_step(
     pupil_df = pupil_df,
@@ -51,9 +48,9 @@ test_that("summarize_confounds() exposes prop_missing at block and epoch levels"
   # must match the actual NA proportion of the underlying step column
   for (step_name in names(block)) {
     step_confounds <- block[[step_name]]
-    expect_true(
-      all(c("n_missing", "prop_missing", "n_samples") %in% names(step_confounds))
-    )
+    expect_true(all(
+      c("n_missing", "prop_missing", "n_samples") %in% names(step_confounds)
+    ))
     expect_gte(step_confounds$prop_missing, 0)
     expect_lte(step_confounds$prop_missing, 1)
     expect_equal(
@@ -74,10 +71,12 @@ test_that("summarize_confounds() exposes prop_missing at block and epoch levels"
   epoch_block_name <- names(epoched[[epoch_name]])[1]
   epoch_block <- epoched[[epoch_name]][[epoch_block_name]]
 
-  expect_true(
-    all(c("n_missing", "prop_missing", "n_samples") %in% names(epoch_block))
-  )
-  expect_true(all(epoch_block$prop_missing >= 0 & epoch_block$prop_missing <= 1))
+  expect_true(all(
+    c("n_missing", "prop_missing", "n_samples") %in% names(epoch_block)
+  ))
+  expect_true(all(
+    epoch_block$prop_missing >= 0 & epoch_block$prop_missing <= 1
+  ))
   expect_equal(
     epoch_block$prop_missing,
     epoch_block$n_missing / epoch_block$n_samples
