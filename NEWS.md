@@ -1,3 +1,9 @@
+# eyeris (development version)
+
+## 🐛 Bugs fixed
+
+- **FF (#294)**: Fixed misleading diagnostic plots for pipeline steps that precede downsampling/binning. When `downsample` (or `bin`) was enabled, the working time series retained only the decimated samples, so diagnostic plots for earlier steps (e.g., `deblink`) were rendered at the decimated rate — making intact data appear largely absent. The full-resolution (pre-decimation) time series is now preserved in `eyeris$timeseries_pre_decimation` when a `downsample()`/`bin()` step runs, and `plot.eyeris()` (plus the progressive-summary report plot) now renders each step at the appropriate resolution: steps preceding decimation use the original full-resolution data, while the decimation step and any subsequent steps use the decimated data, by @shawntz and @alicexue in #294.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.

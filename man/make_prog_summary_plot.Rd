@@ -11,7 +11,8 @@ make_prog_summary_plot(
   plot_params = list(),
   run_id = "run-01",
   cex = 2,
-  eye_suffix = NULL
+  eye_suffix = NULL,
+  full_pupil_data = NULL
 )
 }
 \arguments{
