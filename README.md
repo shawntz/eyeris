@@ -65,6 +65,36 @@ quality and participant attention patterns. These heatmaps are
 automatically generated in the BIDS reports and can also be created
 manually.
 
+<div class="alert alert-light">
+
+### 👁 Supported eye-tracker formats
+
+The current version of `eyeris` reads data recorded with **SR Research
+EyeLink** eye-trackers (via the `.asc` files produced by EyeLink’s
+`edf2asc` converter). EyeLink remains the most widely used research-grade
+system in the pupillometry community, so we focused our initial efforts
+there to ensure a robust, well-tested foundation.
+
+That said, `eyeris` is designed from the ground up to be
+**format-agnostic downstream of data loading**: every preprocessing step
+operates on a standardized internal `eyeris` object rather than on raw
+EyeLink files. This means support for additional open-source and vendor
+eye-tracker formats (e.g., Pupil Labs, Tobii, GazePoint, and the
+emerging [BIDS Eye Tracking](https://bids.neuroimaging.io/)
+specification) can be added by writing a new data-loading function that
+maps raw samples and event messages onto the same internal
+representation — no changes to the preprocessing pipeline are required.
+
+**Roadmap & community contributions.** Broadening native support for
+other tracker formats is on our roadmap, and we actively welcome
+community contributions of new loaders. If you would like to help add
+support for your tracker of choice, please open an issue or pull
+request — see the [contribution
+guidelines](https://shawnschwartz.com/eyeris/CONTRIBUTING.html) to get
+started.
+
+</div>
+
 ## 🚀 Feature Highlights
 
 - `📦 Modular Design`: Each preprocessing step is a standalone function
