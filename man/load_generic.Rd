@@ -184,7 +184,7 @@ other trackers:
 \item \strong{Missing samples.} \code{\link[=deblink]{deblink()}} reconstructs missing/blink regions
 directly from \code{NA} (and \code{0}) values in the pupil column -- it does \emph{not}
 require the \code{blinks} table. If your tracker drops samples or encodes missing
-pupil data some other way, recode those samples to \code{NA} in the \code{pupil}
+pupil data some other way, set those samples to \code{NA} in the \code{pupil}
 column so deblinking and the confound calculations behave correctly.
 \item \strong{Irregular sampling.} If consecutive timestamps are not uniformly spaced,
 \code{load_generic()} emits a warning, because several downstream steps assume a

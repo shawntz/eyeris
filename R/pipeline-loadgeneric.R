@@ -80,7 +80,7 @@
 #' * **Missing samples.** [eyeris::deblink()] reconstructs missing/blink regions
 #'   directly from `NA` (and `0`) values in the pupil column -- it does *not*
 #'   require the `blinks` table. If your tracker drops samples or encodes missing
-#'   pupil data some other way, recode those samples to `NA` in the `pupil`
+#'   pupil data some other way, set those samples to `NA` in the `pupil`
 #'   column so deblinking and the confound calculations behave correctly.
 #' * **Irregular sampling.** If consecutive timestamps are not uniformly spaced,
 #'   `load_generic()` emits a warning, because several downstream steps assume a
