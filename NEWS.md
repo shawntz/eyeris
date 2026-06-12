@@ -1,3 +1,11 @@
+# eyeris 3.1.0.9000 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This development version introduces an fMRIPrep-style, reproducible methods boilerplate generator that ties code provenance to reporting.
+
+## ✨ New features
+
+- **NEW (#302)**: Added `boilerplate()`, an fMRIPrep-style methods-text generator that auto-writes a reproducible, copy-and-paste-ready Markdown description of the exact preprocessing workflow that was run, generated directly from the parameters captured in `eyeris$params`. The generator walks the pipeline steps in canonical order (`load_asc` → `deblink` → `detransient` → `interpolate` → `lpfilt` → `downsample`/`bin` → `detrend` → `zscore` → `epoch`), substitutes in the actual parameter values used, and handles multi-block (multi-run), multi-step, custom-extension, and binocular pipelines. The boilerplate is now embedded in every diagnostic HTML report (new "Reproducible Methods Boilerplate" section) and written to `derivatives/.../source/logs/methods_boilerplate.md` alongside the per-run `.json` metadata sidecars it references. The generated text is dedicated to the public domain under a [Creative Commons CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) license, with an explicit note letting users know it is safe to paste the Markdown content directly into their manuscript's methods section, by @shawntz in #302.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.

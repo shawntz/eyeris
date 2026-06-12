@@ -102,6 +102,7 @@ reference:
       Save out BIDS-style derivatives, generate diagnostic HTML reports, and interactively plot and explore your pupil data.
     contents:
       - bidsify
+      - boilerplate
       - summarize_confounds
       - plot.eyeris
       - plot_gaze_heatmap
