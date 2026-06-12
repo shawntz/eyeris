@@ -34,7 +34,12 @@ test_that("load_generic returns a valid eyeris object with expected slots", {
   expect_s3_class(result, "eyeris")
 
   expected_objects <- c(
-    "file", "timeseries", "events", "blinks", "info", "latest"
+    "file",
+    "timeseries",
+    "events",
+    "blinks",
+    "info",
+    "latest"
   )
   expect_true(all(expected_objects %in% names(result)))
 })
@@ -51,8 +56,16 @@ test_that("timeseries has the canonical eyeris columns", {
   expect_true(is.data.frame(ts))
   expect_true(all(
     c(
-      "block", "time_orig", "time_secs", "time_scaled",
-      "eye_x", "eye_y", "eye", "hz", "type", "pupil_raw"
+      "block",
+      "time_orig",
+      "time_secs",
+      "time_scaled",
+      "eye_x",
+      "eye_y",
+      "eye",
+      "hz",
+      "type",
+      "pupil_raw"
     ) %in%
       names(ts)
   ))
@@ -87,7 +100,11 @@ test_that("info is populated with the minimal required metadata", {
 })
 
 test_that("latest pointer initializes to pupil_raw", {
-  result <- load_generic(pupil = make_samples(), sample_rate = 1000, verbose = FALSE)
+  result <- load_generic(
+    pupil = make_samples(),
+    sample_rate = 1000,
+    verbose = FALSE
+  )
   expect_equal(result$latest$block_1, "pupil_raw")
   expect_false(result$binocular)
 })
@@ -168,7 +185,11 @@ test_that("gaze supplied as a separate data frame is merged onto pupil", {
 # events handling -------------------------------------------------------------
 
 test_that("events default to empty tables when not supplied", {
-  eye <- load_generic(pupil = make_samples(), sample_rate = 1000, verbose = FALSE)
+  eye <- load_generic(
+    pupil = make_samples(),
+    sample_rate = 1000,
+    verbose = FALSE
+  )
   expect_true(is.data.frame(eye$events$block_1))
   expect_equal(nrow(eye$events$block_1), 0)
 })
@@ -190,7 +211,11 @@ test_that("blinks are stored as the third standardized data frame", {
 })
 
 test_that("blinks default to empty tables when not supplied", {
-  eye <- load_generic(pupil = make_samples(), sample_rate = 1000, verbose = FALSE)
+  eye <- load_generic(
+    pupil = make_samples(),
+    sample_rate = 1000,
+    verbose = FALSE
+  )
   expect_true(is.data.frame(eye$blinks$block_1))
   expect_equal(nrow(eye$blinks$block_1), 0)
 })
@@ -313,17 +338,17 @@ test_that("mapping remaps non-standard column names", {
 # error handling --------------------------------------------------------------
 
 test_that("missing required columns raise informative errors", {
-  expect_error(
-    load_generic(pupil = data.frame(foo = 1:10), sample_rate = 1000, verbose = FALSE)
-  )
-  expect_error(
-    load_generic(
-      pupil = make_samples(),
-      events = data.frame(t = 1, m = "x"), # wrong column names
-      sample_rate = 1000,
-      verbose = FALSE
-    )
-  )
+  expect_error(load_generic(
+    pupil = data.frame(foo = 1:10),
+    sample_rate = 1000,
+    verbose = FALSE
+  ))
+  expect_error(load_generic(
+    pupil = make_samples(),
+    events = data.frame(t = 1, m = "x"), # wrong column names
+    sample_rate = 1000,
+    verbose = FALSE
+  ))
 })
 
 # epoching --------------------------------------------------------------------

@@ -237,9 +237,7 @@ load_generic <- function(
   )
 
   # gaze: prefer columns within `pupil`, else a separate `gaze` df, else NA ----
-  if (
-    mapping$eye_x %in% names(pupil) && mapping$eye_y %in% names(pupil)
-  ) {
+  if (mapping$eye_x %in% names(pupil) && mapping$eye_y %in% names(pupil)) {
     samples$eye_x <- as.numeric(pupil[[mapping$eye_x]])
     samples$eye_y <- as.numeric(pupil[[mapping$eye_y]])
   } else if (!is.null(gaze)) {
@@ -332,9 +330,7 @@ load_generic <- function(
   list_out$binocular_mode <- NULL
 
   # latest pointer (mirror process_eyeris_data) ------------------------------
-  if (
-    is.list(list_out$timeseries) && !is.data.frame(list_out$timeseries)
-  ) {
+  if (is.list(list_out$timeseries) && !is.data.frame(list_out$timeseries)) {
     list_out$latest <- setNames(
       as.list(rep("pupil_raw", length(list_out$timeseries))),
       names(list_out$timeseries)
@@ -366,8 +362,13 @@ load_generic <- function(
 
   log_info(
     paste0(
-      "Loaded generic '", tracker, "' data: ",
-      length(list_out$timeseries), " block(s), ", hz, " Hz."
+      "Loaded generic '",
+      tracker,
+      "' data: ",
+      length(list_out$timeseries),
+      " block(s), ",
+      hz,
+      " Hz."
     ),
     verbose = verbose
   )
@@ -472,16 +473,20 @@ ensure_block_col <- function(df, time_col, raw_df) {
     range(raw_df$time_orig[raw_df$block == b], na.rm = TRUE)
   })
 
-  df$block <- vapply(df[[time_col]], function(t) {
-    if (!is.na(t)) {
-      for (i in seq_along(blocks)) {
-        if (t >= ranges[[i]][1] && t <= ranges[[i]][2]) {
-          return(blocks[i])
+  df$block <- vapply(
+    df[[time_col]],
+    function(t) {
+      if (!is.na(t)) {
+        for (i in seq_along(blocks)) {
+          if (t >= ranges[[i]][1] && t <= ranges[[i]][2]) {
+            return(blocks[i])
+          }
         }
       }
-    }
-    blocks[1] # fallback: assign to the first block
-  }, numeric(1))
+      blocks[1] # fallback: assign to the first block
+    },
+    numeric(1)
+  )
 
   df
 }
@@ -535,9 +540,7 @@ assemble_generic_blocks <- function(raw_df, events_df, blinks_df, block) {
     }
   } else {
     # single block, omit the block column from all tables
-    out$timeseries <- list(
-      "block_1" = raw_df |> dplyr::select(-block)
-    )
+    out$timeseries <- list("block_1" = raw_df |> dplyr::select(-block))
     out$events <- list(
       "block_1" = events_df |> dplyr::select(-dplyr::any_of("block"))
     )
@@ -563,7 +566,9 @@ assemble_generic_blocks <- function(raw_df, events_df, blinks_df, block) {
 #' @keywords internal
 resolve_sample_rate <- function(sample_rate, time_ms, verbose) {
   if (!is.null(sample_rate)) {
-    if (!is.numeric(sample_rate) || length(sample_rate) != 1 || sample_rate <= 0) {
+    if (
+      !is.numeric(sample_rate) || length(sample_rate) != 1 || sample_rate <= 0
+    ) {
       log_error("`sample_rate` must be a single positive number (in Hz).")
     }
     return(sample_rate)
@@ -580,7 +585,9 @@ resolve_sample_rate <- function(sample_rate, time_ms, verbose) {
   hz <- round(1000 / stats::median(deltas))
   log_warn(
     paste0(
-      "`sample_rate` not provided; inferred ", hz, " Hz from the median ",
+      "`sample_rate` not provided; inferred ",
+      hz,
+      " Hz from the median ",
       "timestamp spacing. We recommend passing the true rate explicitly."
     ),
     verbose = verbose
@@ -611,7 +618,9 @@ warn_irregular_sampling <- function(timeseries, verbose) {
     if (md > 0 && mean(abs(deltas - md) > 0.5 * md) > 0.01) {
       log_warn(
         paste0(
-          "Non-uniform sampling intervals detected in ", bn, ". Several ",
+          "Non-uniform sampling intervals detected in ",
+          bn,
+          ". Several ",
           "preprocessing steps assume a fixed sampling rate; if your tracker ",
           "drops samples, consider resampling onto a uniform grid first."
         ),
@@ -634,11 +643,14 @@ warn_irregular_sampling <- function(timeseries, verbose) {
 #' @keywords internal
 require_col <- function(df, col, df_name, role) {
   if (!col %in% names(df)) {
-    log_error(
-      paste0(
-        "The `", df_name, "` data frame must contain a ", role, " column named '",
-        col, "'. Use `mapping` to point eyeris at a differently-named column."
-      )
-    )
+    log_error(paste0(
+      "The `",
+      df_name,
+      "` data frame must contain a ",
+      role,
+      " column named '",
+      col,
+      "'. Use `mapping` to point eyeris at a differently-named column."
+    ))
   }
 }
