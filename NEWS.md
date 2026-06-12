@@ -1,3 +1,9 @@
+# eyeris (development version)
+
+## 🚀 New features
+
+- **ENH (#300)**: Added a hardware-quirk guardrail that detects non-uniform sampling intervals in the input timeseries. Different eye trackers behave differently when pupil data is missing: EyeLink zero-fills, but some hardware silently *drops* samples, leaving gaps in the otherwise evenly spaced time vector. Because downstream pipeline steps (e.g., `detransient()`, `lpfilt()`, `downsample()`) assume a fixed sampling rate, such gaps can silently distort results. The new internal `check_uniform_sampling_intervals()` helper infers the expected inter-sample interval from the data (robust to dropped samples and sub-millisecond timestamp rounding), checks each recording segment independently so that legitimate between-block gaps are not flagged, and emits an informative warning estimating the number of dropped samples when irregular intervals are detected. It also cross-checks the data-derived interval against the device's reported sampling rate to catch *systematic* dropout (e.g., every Nth sample missing), which leaves a uniform but coarser grid that gap detection alone cannot see. The check is wired into `load_asc()` so the quirk is surfaced early, before any preprocessing begins, by @shawntz.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.
