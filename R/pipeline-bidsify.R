@@ -399,10 +399,12 @@ run_bidsify <- function(
           names(eyeris$timeseries_pre_decimation) == original_block_name
         ] <- new_block_name
         if (
-          "block" %in% colnames(eyeris$timeseries_pre_decimation[[new_block_name]])
+          "block" %in%
+            colnames(eyeris$timeseries_pre_decimation[[new_block_name]])
         ) {
-          eyeris$timeseries_pre_decimation[[new_block_name]]$block <-
-            as.numeric(run_num)
+          eyeris$timeseries_pre_decimation[[
+            new_block_name
+          ]]$block <- as.numeric(run_num)
         }
       }
     }

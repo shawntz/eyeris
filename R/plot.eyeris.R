@@ -374,9 +374,7 @@ plot.eyeris <- function(
         }
 
         if (!is.null(params$next_step)) {
-          plot_data <- epoch_n[[params$next_step[length(
-            params$next_step
-          )]]]
+          plot_data <- epoch_n[[params$next_step[length(params$next_step)]]]
         } else {
           plot_data <- epoch_n[[pupil_steps[i]]]
         }

@@ -729,8 +729,9 @@ glassbox <- function(
         if (is.null(file$timeseries_pre_decimation)) {
           file$timeseries_pre_decimation <- list()
         }
-        file$timeseries_pre_decimation[[block_name]] <-
-          temp_file$timeseries_pre_decimation[[block_name]]
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
       }
 
       # track latest pointer from successfully processed blocks
@@ -1276,8 +1277,9 @@ glassbox_internal <- function(
         if (is.null(file$timeseries_pre_decimation)) {
           file$timeseries_pre_decimation <- list()
         }
-        file$timeseries_pre_decimation[[block_name]] <-
-          temp_file$timeseries_pre_decimation[[block_name]]
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
       }
 
       # track latest pointer from successfully processed blocks

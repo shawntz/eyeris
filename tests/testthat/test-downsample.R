@@ -76,12 +76,10 @@ test_that("downsample() preserves full-resolution data for diagnostic plots", {
   # the downsample step is drawn at the decimated resolution
   rec <- new.env()
   rec$lens <- numeric(0)
-  testthat::local_mocked_bindings(
-    robust_plot = function(y, x = NULL, ...) {
-      rec$lens <- c(rec$lens, length(y))
-      invisible(NULL)
-    }
-  )
+  testthat::local_mocked_bindings(robust_plot = function(y, x = NULL, ...) {
+    rec$lens <- c(rec$lens, length(y))
+    invisible(NULL)
+  })
 
   pupil_steps <- grep("^pupil_", names(decimated), value = TRUE)
   deblink_idx <- which(pupil_steps == deblink_col)
@@ -92,7 +90,12 @@ test_that("downsample() preserves full-resolution data for diagnostic plots", {
   on.exit(grDevices::dev.off(), add = TRUE)
 
   rec$lens <- numeric(0)
-  plot(gbox_down, steps = deblink_idx, preview_window = c(0, max_t), verbose = FALSE)
+  plot(
+    gbox_down,
+    steps = deblink_idx,
+    preview_window = c(0, max_t),
+    verbose = FALSE
+  )
   deblink_points <- utils::tail(rec$lens, 1)
 
   rec$lens <- numeric(0)

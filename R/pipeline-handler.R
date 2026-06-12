@@ -237,8 +237,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           if (is.null(eyeris$timeseries_pre_decimation)) {
             eyeris$timeseries_pre_decimation <- list()
           }
-          eyeris$timeseries_pre_decimation[[i_block]] <-
-            trim_pre_decimation_cols(data)
+          eyeris$timeseries_pre_decimation[[
+            i_block
+          ]] <- trim_pre_decimation_cols(data)
           list_ds_bin <- do.call(
             operation,
             c(list(data, block_prev_operation), dots)

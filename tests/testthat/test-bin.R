@@ -67,7 +67,10 @@ test_that("bin() preserves full-resolution data for diagnostic plots", {
   # plotting a pre-bin step does not error
   grDevices::pdf(tempfile(fileext = ".pdf"))
   on.exit(grDevices::dev.off(), add = TRUE)
-  expect_no_error(
-    plot(gbox_bin, steps = 2, preview_window = c(0, max(decimated$time_secs)), verbose = FALSE)
-  )
+  expect_no_error(plot(
+    gbox_bin,
+    steps = 2,
+    preview_window = c(0, max(decimated$time_secs)),
+    verbose = FALSE
+  ))
 })
