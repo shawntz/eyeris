@@ -1,3 +1,9 @@
+# eyeris (development version)
+
+## 📚 Documentation
+
+- **DOC (#298)**: Added cross-references from every modular preprocessing function (`load_asc()`, `deblink()`, `detransient()`, `interpolate()`, `lpfilt()`, `downsample()`, `bin()`, `detrend()`, and `zscore()`) to a complete, end-to-end reference pipeline that demonstrates how all functions are chained together in practice. Each function's help page now points readers to the "Building Blocks Under the Hood" section of the *Anatomy of an `eyeris` Object* vignette, which was expanded into an explicit, fully-annotated reference that maps each step one-to-one to the default `glassbox()` recipe. The *Complete Pupillometry Pipeline Walkthrough* vignette now links to that reference from a new "Advanced: Building the Pipeline Manually" section, by @shawntz.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.

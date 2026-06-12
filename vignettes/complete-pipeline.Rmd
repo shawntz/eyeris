@@ -216,8 +216,18 @@ output <- eyeris::glassbox(
 3. `eyeris::detransient()`: 
   > `n`, `mad_thresh`
   
-4. `eyeris::lpfilt()`: 
+4. `eyeris::lpfilt()`:
   > `wp`, `ws`, `rp`, `rs`, `plot_freqz`
+
+### Advanced: Building the Pipeline Manually
+
+`glassbox()` is the recommended entry point, but every preprocessing function it
+wraps is also exported and can be chained together directly as a "building
+block." For a **complete, deconstructed reference pipeline** --- each `eyeris`
+preprocessing function called in sequence, mapped one-to-one to the default
+`glassbox()` recipe --- see the
+[**Building Blocks Under the Hood**](anatomy.html#building-blocks-under-the-hood)
+section of the *Anatomy of an `eyeris` Object* vignette.
 
 ## 💬 Caveats
 
