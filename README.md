@@ -70,7 +70,7 @@ manually.
 ### 👁 Supported eye-tracker formats
 
 The current version of `eyeris` reads data recorded with **SR Research
-EyeLink** eye-trackers (via the `.asc` files produced by EyeLink’s
+EyeLink** eye-trackers (via the `.asc` files produced by the EyeLink
 `edf2asc` converter). EyeLink remains the most widely used research-grade
 system in the pupillometry community, so we focused our initial efforts
 there to ensure a robust, well-tested foundation.
