@@ -1,3 +1,9 @@
+# eyeris (development version)
+
+## ✨ New features
+
+- **EF (#296)**: Added a "percent data lost" annotation to the timeseries visualizations in the HTML report. Each run in the *Preprocessed Data Previews* section now displays the percent of samples in the raw pupil timeseries that are invalid (missing/during a blink, or off-screen), surfacing data loss directly in the report to reinforce workflow transparency. The metric reuses the canonical `prop_invalid` value from `summarize_confounds()` when available and falls back to computing missingness directly from the raw timeseries otherwise, by @shawntz in #296.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.
