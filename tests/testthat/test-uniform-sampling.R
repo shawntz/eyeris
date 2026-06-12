@@ -26,9 +26,10 @@ test_that("check_uniform_sampling_intervals passes on uniformly sampled data", {
   expect_equal(res_500$n_irregular, 0L)
 
   # uniform data should not emit any warning message
-  msgs <- testthat::capture_messages(
-    eyeris:::check_uniform_sampling_intervals(seq(0, 1000, by = 1), hz = 1000)
-  )
+  msgs <- testthat::capture_messages(eyeris:::check_uniform_sampling_intervals(
+    seq(0, 1000, by = 1),
+    hz = 1000
+  ))
   expect_length(msgs, 0)
 })
 
@@ -47,9 +48,10 @@ test_that("check_uniform_sampling_intervals detects dropped samples", {
   expect_equal(res$prop_irregular, 0.25)
 
   # informative warning is emitted
-  warning_text <- captured_warning(
-    eyeris:::check_uniform_sampling_intervals(dropped, hz = 1000)
-  )
+  warning_text <- captured_warning(eyeris:::check_uniform_sampling_intervals(
+    dropped,
+    hz = 1000
+  ))
   expect_match(warning_text, "Non-uniform sampling intervals detected")
   expect_match(warning_text, "Estimated 2 dropped sample")
 })
@@ -74,9 +76,9 @@ test_that("check_uniform_sampling_intervals infers interval without hz", {
   expect_equal(res$n_missing_samples, 2L)
 
   # nominal rate is reported as inferred when hz is absent
-  warning_text <- captured_warning(
-    eyeris:::check_uniform_sampling_intervals(dropped)
-  )
+  warning_text <- captured_warning(eyeris:::check_uniform_sampling_intervals(
+    dropped
+  ))
   expect_match(warning_text, "inferred from data")
 })
 
@@ -113,13 +115,11 @@ test_that("check_uniform_sampling_intervals checks blocks independently", {
   expect_true(res_drop[[1]]$uniform)
   expect_false(res_drop[[2]]$uniform)
 
-  warning_text <- captured_warning(
-    eyeris:::check_uniform_sampling_intervals(
-      dropped_in_block,
-      hz = 1000,
-      blocks = blocks
-    )
-  )
+  warning_text <- captured_warning(eyeris:::check_uniform_sampling_intervals(
+    dropped_in_block,
+    hz = 1000,
+    blocks = blocks
+  ))
   expect_match(warning_text, "block_2")
 })
 
@@ -152,13 +152,11 @@ test_that("check_uniform_sampling_intervals handles degenerate inputs", {
   expect_equal(res_na$n_missing_samples, 1L)
 
   # verbose = FALSE suppresses the warning message
-  msgs <- testthat::capture_messages(
-    eyeris:::check_uniform_sampling_intervals(
-      c(0, 1, 2, 5, 6),
-      hz = 1000,
-      verbose = FALSE
-    )
-  )
+  msgs <- testthat::capture_messages(eyeris:::check_uniform_sampling_intervals(
+    c(0, 1, 2, 5, 6),
+    hz = 1000,
+    verbose = FALSE
+  ))
   expect_length(msgs, 0)
 })
 
@@ -187,9 +185,10 @@ test_that("check_uniform_sampling_intervals detects systematic dropout via hz", 
   expect_equal(res$n_irregular, 0L) # no sporadic gaps, the grid is uniform
   expect_equal(res$expected_interval, 2)
 
-  warning_text <- captured_warning(
-    eyeris:::check_uniform_sampling_intervals(decimated, hz = 1000)
-  )
+  warning_text <- captured_warning(eyeris:::check_uniform_sampling_intervals(
+    decimated,
+    hz = 1000
+  ))
   expect_match(warning_text, "Effective sampling rate")
   expect_match(warning_text, "systematic sample dropout")
 
@@ -214,7 +213,10 @@ test_that("check_uniform_sampling_intervals summary always carries rate_mismatch
     eyeris:::check_uniform_sampling_intervals(numeric(0))$rate_mismatch
   )
   expect_false(
-    eyeris:::check_uniform_sampling_intervals(seq(0, 10), hz = 1000)$rate_mismatch
+    eyeris:::check_uniform_sampling_intervals(
+      seq(0, 10),
+      hz = 1000
+    )$rate_mismatch
   )
 })
 
