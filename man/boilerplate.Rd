@@ -59,13 +59,14 @@ metadata sidecar that \code{eyeris} writes for every run
 (\code{source/logs/run-XX_metadata.json}), which together with the reported
 package version is sufficient to reproduce the pipeline exactly.
 
-\strong{License.} The auto-generated boilerplate text is dedicated to the public
-domain under the Creative Commons CC0 1.0 Universal public-domain dedication
-(\url{https://creativecommons.org/publicdomain/zero/1.0/}). It is explicitly safe
-to copy and paste the generated Markdown content directly into your
-manuscript, without restriction, permission, or attribution (a citation of
-\code{eyeris} is, of course, always appreciated). This mirrors the approach taken
-by fMRIPrep and other reproducible-pipeline tools.
+\strong{License & attribution.} The auto-generated boilerplate text is licensed
+under the Creative Commons Attribution 4.0 International (CC BY 4.0) license
+(\url{https://creativecommons.org/licenses/by/4.0/}). It is explicitly safe to
+copy and paste the generated Markdown content directly into your manuscript,
+provided that you give appropriate credit by citing \code{eyeris} (run
+\code{citation("eyeris")} for the reference); including that citation in your
+references satisfies the attribution requirement. This mirrors the approach
+taken by fMRIPrep and other reproducible-pipeline tools.
 
 When you run \code{\link[=bidsify]{bidsify()}} (or \code{\link[=glassbox]{glassbox()}} with reporting
 enabled), this same boilerplate is embedded in the diagnostic HTML report and

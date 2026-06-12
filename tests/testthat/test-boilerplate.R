@@ -92,25 +92,28 @@ test_that("boilerplate() references the per-run JSON metadata sidecar", {
   expect_match(bp, "Reproducibility", fixed = TRUE)
 })
 
-test_that("boilerplate() includes the CC0 license + copy-paste note", {
+test_that("boilerplate() includes the CC BY license + attribution note", {
   obj <- make_mock_eyeris()
   bp <- as.character(boilerplate(obj))
 
-  expect_match(bp, "CC0 1.0 Universal", fixed = TRUE)
+  expect_match(bp, "CC BY 4.0", fixed = TRUE)
   expect_match(
     bp,
-    "creativecommons.org/publicdomain/zero/1.0/",
+    "creativecommons.org/licenses/by/4.0/",
     fixed = TRUE
   )
   expect_match(bp, "safe to", fixed = TRUE)
   expect_match(bp, "copy and paste", fixed = TRUE)
+  # attribution is now required via citation
+  expect_match(bp, "citing `eyeris`", fixed = TRUE)
+  expect_match(bp, "attribution requirement", fixed = TRUE)
 })
 
 test_that("include_license / include_citation toggles work", {
   obj <- make_mock_eyeris()
 
   no_license <- as.character(boilerplate(obj, include_license = FALSE))
-  expect_false(grepl("CC0 1.0 Universal", no_license, fixed = TRUE))
+  expect_false(grepl("CC BY 4.0", no_license, fixed = TRUE))
 
   no_cite <- as.character(boilerplate(obj, include_citation = FALSE))
   expect_false(grepl("**Citation.**", no_cite, fixed = TRUE))

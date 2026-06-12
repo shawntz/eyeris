@@ -27,13 +27,14 @@
 #' (`source/logs/run-XX_metadata.json`), which together with the reported
 #' package version is sufficient to reproduce the pipeline exactly.
 #'
-#' **License.** The auto-generated boilerplate text is dedicated to the public
-#' domain under the Creative Commons CC0 1.0 Universal public-domain dedication
-#' (<https://creativecommons.org/publicdomain/zero/1.0/>). It is explicitly safe
-#' to copy and paste the generated Markdown content directly into your
-#' manuscript, without restriction, permission, or attribution (a citation of
-#' `eyeris` is, of course, always appreciated). This mirrors the approach taken
-#' by fMRIPrep and other reproducible-pipeline tools.
+#' **License & attribution.** The auto-generated boilerplate text is licensed
+#' under the Creative Commons Attribution 4.0 International (CC BY 4.0) license
+#' (<https://creativecommons.org/licenses/by/4.0/>). It is explicitly safe to
+#' copy and paste the generated Markdown content directly into your manuscript,
+#' provided that you give appropriate credit by citing `eyeris` (run
+#' `citation("eyeris")` for the reference); including that citation in your
+#' references satisfies the attribution requirement. This mirrors the approach
+#' taken by fMRIPrep and other reproducible-pipeline tools.
 #'
 #' When you run [eyeris::bidsify()] (or [eyeris::glassbox()] with reporting
 #' enabled), this same boilerplate is embedded in the diagnostic HTML report and
@@ -221,7 +222,8 @@ build_boilerplate_md <- function(
     "is provided so that your manuscript's methods section can faithfully and ",
     "reproducibly reflect exactly what `eyeris` did to your data. It is safe to ",
     "copy and paste this content directly into your manuscript and adapt it as ",
-    "needed."
+    "needed; please cite `eyeris` (see below) to provide attribution as ",
+    "required by its license."
   )
 
   # reproducibility / sidecar reference
@@ -276,12 +278,13 @@ build_boilerplate_md <- function(
 #' @keywords internal
 boilerplate_license_note <- function() {
   paste0(
-    "> **License.** This auto-generated boilerplate text is dedicated to the ",
-    "public domain under the [Creative Commons CC0 1.0 Universal]",
-    "(https://creativecommons.org/publicdomain/zero/1.0/) public-domain ",
-    "dedication. You may copy, modify, and reuse it -- including pasting the ",
-    "Markdown directly into your manuscript -- without restriction, permission, ",
-    "or attribution. (A citation of `eyeris` is, of course, always appreciated.)"
+    "> **License & attribution.** This auto-generated boilerplate text is ",
+    "licensed under the [Creative Commons Attribution 4.0 International ",
+    "(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) license. You ",
+    "are free to copy, adapt, and paste it directly into your manuscript, ",
+    "provided that you give appropriate credit by citing `eyeris` (run ",
+    "`citation('eyeris')` for the reference). Including the `eyeris` citation ",
+    "in your references satisfies this attribution requirement."
   )
 }
 
