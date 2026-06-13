@@ -2,6 +2,8 @@
 
 ## eyeris 3.1.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
+CRAN release: 2026-06-05
+
 This minor release delivers several robustness and stability
 improvements, fixing memory issues during HTML report rendering,
 correcting epoch plot compression after downsampling, and improving

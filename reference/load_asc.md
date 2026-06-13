@@ -119,21 +119,21 @@ demo_data <- eyelink_asc_demo_dataset()
 
 demo_data |>
   eyeris::glassbox(load_asc = list(block = 1))
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-05 15:02:24] [INFO] Processing block: block_1
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 02:19:31] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 02:19:32] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-05 15:02:24] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-05 15:02:24] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-05 15:02:24] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-05 15:02:24] [INFO] Block processing summary:
-#> ℹ [2026-06-05 15:02:24] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-13 02:19:32] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 02:19:32] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 02:19:32] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 02:19:32] [INFO] Block processing summary:
+#> ℹ [2026-06-13 02:19:32] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-05 15:02:24] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-13 02:19:32] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
 #> 
