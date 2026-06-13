@@ -18,11 +18,14 @@ get_confounds_for_step(pupil_df, pupil_vec, screen_width, screen_height, hz)
 \item{hz}{The sampling rate in Hz}
 }
 \value{
-A data frame containing confounds metrics for the current step
+A data frame containing confounds metrics for the current step,
+including \code{n_missing} and \code{prop_missing} (the count and proportion of
+missing/\code{NA} samples)
 }
 \description{
 Computes various metrics from pupil data including:
 \itemize{
+\item Missing data (count and proportion of \code{NA} samples)
 \item Blink detection
 \item Gaze on/off screen detection
 \item Gap analysis
@@ -32,5 +35,13 @@ Computes various metrics from pupil data including:
 \item Blink duration
 \item Blink time
 }
+}
+\details{
+Missing data is reported as both a raw count (\code{n_missing}) and a proportion
+(\code{prop_missing}, ranging from \code{0} to \code{1}) of samples in the window for which
+the pupil signal is \code{NA} (e.g., blinks and signal dropout prior to
+interpolation). Multiply \code{prop_missing} by \code{100} to obtain a percentage. This
+is distinct from \code{prop_invalid}, which additionally folds in samples flagged
+as blinks or off-screen gaze.
 }
 \keyword{internal}
