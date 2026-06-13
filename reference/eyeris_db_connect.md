@@ -50,12 +50,12 @@ tryCatch({
 }, error = function(e) {
   message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
 })
-#> ✔ [2026-06-13 02:19:22] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpooO0Ae/derivatives/my-project.eyerisdb
-#> ℹ [2026-06-13 02:19:22] [INFO] Executing query: SELECT * FROM (SELECT * FROM
+#> ✔ [2026-06-13 02:24:11] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpmPauMh/derivatives/my-project.eyerisdb
+#> ℹ [2026-06-13 02:24:11] [INFO] Executing query: SELECT * FROM (SELECT * FROM
 #> "timeseries_001_01_assocret_run01" UNION ALL SELECT * FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =
 #> '001'
-#> ℹ [2026-06-13 02:19:22] [INFO] Disconnected from eyeris database
+#> ℹ [2026-06-13 02:24:11] [INFO] Disconnected from eyeris database
 # }
 ```

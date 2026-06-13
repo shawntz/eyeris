@@ -78,6 +78,14 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="eyeris-development-version">eyeris (development version)<a class="anchor" aria-label="anchor" href="#eyeris-development-version"></a></h2>
+<div class="section level3">
+<h3 id="sparkles-new-features-development-version">✨ New features<a class="anchor" aria-label="anchor" href="#sparkles-new-features-development-version"></a></h3>
+<ul><li>
+<strong>ENH (<a href="https://github.com/shawntz/eyeris/issues/296" class="external-link">#296</a>)</strong>: Added a “percent data lost” annotation to the timeseries visualizations in the HTML report. Each run in the <em>Preprocessed Data Previews</em> section now displays the percent of samples in the raw pupil timeseries that are invalid (missing/during a blink, or off-screen), surfacing data loss directly in the report to reinforce workflow transparency. The metric reuses the canonical <code>prop_invalid</code> value from <code><a href="../reference/summarize_confounds.html">summarize_confounds()</a></code> when available and falls back to computing missingness directly from the raw timeseries otherwise, by <a href="https://github.com/shawntz" class="external-link">@shawntz</a> in <a href="https://github.com/shawntz/eyeris/issues/296" class="external-link">#296</a>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.1.0" id="eyeris-310-lumpy-space-princess-lumpy-space-princess">eyeris 3.1.0 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-310-lumpy-space-princess-lumpy-space-princess"></a></h2><p class="text-muted">CRAN release: 2026-06-05</p>
 <p>This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.</p>
 <div class="section level3">
