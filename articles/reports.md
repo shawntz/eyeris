@@ -56,7 +56,7 @@ Which will create a directory structure like this:
                 │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
                 ├── source
                 │   └── figures
-                │       └── run-01
+                │       └── task-assocret_run-01
                 │           ├── epoch_prePostProbe
                 │           │   ├── run-01_PROBE_START_22_1.png
                 │           │   ├── run-01_PROBE_START_22_2.png
@@ -72,33 +72,33 @@ Which will create a directory structure like this:
                 │           │   ├── run-01_PROBE_STOP_22_5.png
                 │           │   ├── run-01_PROBE_STOP_22_6.png
                 │           │   ├── ...
-                │           ├── run-01_fig-1_desc-histogram.jpg
-                │           ├── run-01_fig-1_desc-timeseries.jpg
-                ├── sub-001_epoch-prePostProbe_run-01.html
-                └── sub-001.html
+                │           ├── task-assocret_run-01_fig-1_desc-histogram.jpg
+                │           ├── task-assocret_run-01_fig-1_desc-timeseries.jpg
+                ├── sub-001_task-assocret_epoch-prePostProbe_run-01.html
+                └── sub-001_task-assocret.html
 
     9 directories, 80 files
 
 Here, notice specifically these two files:
 
-- sub-001.html
-- sub-001_epoch-prePostProbe_run-01.html
+- sub-001_task-assocret.html
+- sub-001_task-assocret_epoch-prePostProbe_run-01.html
 
 ## 3 Previewing your Entire Pupil Timeseries
 
-> `sub-001.html` will look something like this:
+> `sub-001_task-assocret.html` will look something like this:
 
 ![](https://github.com/shawntz/eyeris/raw/dev/inst/figures/report_example_annotated-1.png)
 
 ## 4 Data QC of Extracted Pupil Epochs with Interactive Reports
 
-> Meanwhile, `sub-001_epoch-prePostProbe_run-01.html` will enable you to
-> interact with images of each extracted data epoch (for which you will
-> see include separate images for each epoch at each sequential stage of
-> the preprocessing pipeline). This feature was intentionally designed
-> to make data QC a default behavior without the barriers of needing to
-> code up a script with loops to print out images of each preprocessing
-> step for each epoch for each participant.
+> Meanwhile, `sub-001_task-assocret_epoch-prePostProbe_run-01.html` will
+> enable you to interact with images of each extracted data epoch (for
+> which you will see include separate images for each epoch at each
+> sequential stage of the preprocessing pipeline). This feature was
+> intentionally designed to make data QC a default behavior without the
+> barriers of needing to code up a script with loops to print out images
+> of each preprocessing step for each epoch for each participant.
 >
 > **As you see below, you can use your left/right arrow keys on** **your
 > keyboard to quickly scan through the data from each trial, while**

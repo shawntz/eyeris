@@ -92,6 +92,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/filter_epochs.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/filter_task_run_dirs.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/find_baseline_structure.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/format_call_stack.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/get_block_numbers.html</loc></url>
@@ -122,6 +123,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/make_md_table_multiline.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/make_prog_summary_plot.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/make_report.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/make_run_dir_name.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/merge_events_with_timeseries.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/merge_temp_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/normalize_gaze_coords.html</loc></url>
@@ -146,6 +148,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/render_report.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/robust_plot.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/run_bidsify.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/run_dir_pattern.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/sanitize_event_tag.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/save_detrend_plots.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/save_progressive_summary_plots.html</loc></url>

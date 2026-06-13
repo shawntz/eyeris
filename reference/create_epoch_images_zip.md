@@ -17,6 +17,7 @@ create_epoch_images_zip(
   pupil_steps,
   eyeris_object,
   eye_suffix = NULL,
+  task = NULL,
   report_epoch_grouping_var_col = "matched_event",
   verbose = FALSE
 )
@@ -55,6 +56,10 @@ create_epoch_images_zip(
 - eye_suffix:
 
   Optional eye suffix for binocular data
+
+- task:
+
+  Optional BIDS task name used to namespace the zip file (#293)
 
 - report_epoch_grouping_var_col:
 

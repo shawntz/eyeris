@@ -78,21 +78,21 @@ No return value; creates a heatmap plot
 ``` r
 demo_data <- eyelink_asc_demo_dataset()
 eyeris_preproc <- glassbox(demo_data)
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 02:25:13] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 06:09:50] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-13 02:25:13] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 02:25:13] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-13 02:25:13] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 02:25:13] [INFO] Block processing summary:
-#> ℹ [2026-06-13 02:25:13] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-13 06:09:50] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 06:09:50] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 06:09:50] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 06:09:50] [INFO] Block processing summary:
+#> ℹ [2026-06-13 06:09:50] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-13 02:25:13] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-13 06:09:50] [OKAY] Running eyeris::summarize_confounds()
 plot_gaze_heatmap(eyeris = eyeris_preproc, block = 1)
 
 ```

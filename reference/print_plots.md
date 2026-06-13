@@ -5,7 +5,7 @@ Generates markdown code to display plots in the report.
 ## Usage
 
 ``` r
-print_plots(plots, eye_suffix = NULL, eyeris = NULL)
+print_plots(plots, eye_suffix = NULL, task = NULL, eyeris = NULL)
 ```
 
 ## Arguments
@@ -17,6 +17,10 @@ print_plots(plots, eye_suffix = NULL, eyeris = NULL)
 - eye_suffix:
 
   Optional eye suffix for binocular data
+
+- task:
+
+  Optional BIDS task name used to scope run directories (#293)
 
 - eyeris:
 

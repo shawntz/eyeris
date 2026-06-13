@@ -1,6 +1,40 @@
 # Changelog
 
-## eyeris (development version)
+## eyeris 3.2.0 (dev version) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
+
+This patch release fixes a report/figure collision that occurred when
+different task names shared the same run number within a
+subject/session.
+
+### 🐛 Bugs fixed
+
+- **FF ([\#293](https://github.com/shawntz/eyeris/issues/293))**: Fixed
+  a conflict where running
+  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  for two different tasks that share the same run number (e.g.,
+  `task-study_run-01` and `task-test_run-01`) under the same
+  subject/session caused the second task to silently overwrite the first
+  task’s HTML report and figures. BIDS allows different task names to
+  pair with the same run number within a block, but the report
+  (`sub-xyz.html`), the `source/figures/run-XX/` directories, and the
+  per-run `source/logs/run-XX_metadata.json` were keyed by run number
+  alone (and the report file by subject alone), so they collided across
+  tasks. The combination of `task` + `run` is now treated as the unique
+  key: figure directories and their figures are named
+  `task-{task}_run-XX[...]`, the preprocessing report is named
+  `sub-{sub}_task-{task}[...].html`, and the epoch gallery report and
+  zip files are likewise task-namespaced. A new internal
+  [`make_run_dir_name()`](https://shawnschwartz.com/eyeris/reference/make_run_dir_name.md)
+  helper is the single source of truth shared by every writer and
+  reader. The underlying data files (CSV/parquet/database) already
+  included the task entity and are unchanged. As a side effect this also
+  corrects a latent mismatch where the gaze-heatmap filename and
+  binocular-correlation plots ignored the `run_num` override. **Note:**
+  for single-task workflows this changes the on-disk report filename and
+  figure directory names (now task-namespaced); regenerate reports to
+  pick up the new layout, by [@shawntz](https://github.com/shawntz) and
+  [@alicexue](https://github.com/alicexue) in
+  [\#293](https://github.com/shawntz/eyeris/issues/293).
 
 ### ✨ New features
 

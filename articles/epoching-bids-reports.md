@@ -33,20 +33,20 @@ library(eyeris)
 # Load the example memory task file and run default glassbox preproc workflow
 demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
-#> ✔ [2026-06-13 02:25:44] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 02:25:45] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-06-13 02:25:45] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 02:25:45] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-13 02:25:45] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 02:25:45] [INFO] Block processing summary:
-#> ℹ [2026-06-13 02:25:45] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-06-13 06:10:21] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 06:10:21] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 06:10:21] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 06:10:21] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 06:10:22] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 06:10:22] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-06-13 06:10:22] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 06:10:22] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 06:10:22] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 06:10:22] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 06:10:22] [INFO] Block processing summary:
+#> ℹ [2026-06-13 06:10:22] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-13 02:25:45] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-13 06:10:22] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ## 2 Extract Data Epochs
@@ -66,13 +66,13 @@ flexible extraction of trials using:
 
 eye_1a <- eye |>
   epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-06-13 02:25:45] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 02:25:45] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-06-13 02:25:45] [OKAY] Done!
-#> ✔ [2026-06-13 02:25:45] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-06-13 06:10:22] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:10:22] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-06-13 06:10:22] [OKAY] Done!
+#> ✔ [2026-06-13 06:10:22] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-06-13 02:25:45] [OKAY] Pupil epoching completed in 0.19 seconds
-#> ℹ [2026-06-13 02:25:45] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:10:22] [OKAY] Pupil epoching completed in 0.19 seconds
+#> ℹ [2026-06-13 06:10:22] [INFO] Recalculating epoched confounds for new
 #> epochs...
 ```
 
@@ -154,14 +154,14 @@ eye_1b <- eye |>
     limits = c(0, 1),
     label = "probeAfter"
   )
-#> ℹ [2026-06-13 02:25:46] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 02:25:46] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:10:22] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:10:22] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-06-13 02:25:46] [OKAY] Done!
-#> ✔ [2026-06-13 02:25:46] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:10:23] [OKAY] Done!
+#> ✔ [2026-06-13 06:10:23] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 02:25:46] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-06-13 02:25:46] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:10:23] [OKAY] Pupil epoching completed in 0.08 seconds
+#> ℹ [2026-06-13 06:10:23] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 eye_1b |>
@@ -311,7 +311,7 @@ Which will create a directory structure like this:
                 │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
                 ├── source
                 │   └── figures
-                │       └── run-01
+                │       └── task-assocret_run-01
                 │           ├── epoch_prePostProbe
                 │           │   ├── run-01_PROBE_START_22_1.png
                 │           │   ├── run-01_PROBE_START_22_2.png
@@ -327,10 +327,10 @@ Which will create a directory structure like this:
                 │           │   ├── run-01_PROBE_STOP_22_5.png
                 │           │   ├── run-01_PROBE_STOP_22_6.png
                 │           │   ├── ...
-                │           ├── run-01_fig-1_desc-histogram.jpg
-                │           ├── run-01_fig-1_desc-timeseries.jpg
-                ├── sub-001_epoch-prePostProbe_run-01.html
-                └── sub-001.html
+                │           ├── task-assocret_run-01_fig-1_desc-histogram.jpg
+                │           ├── task-assocret_run-01_fig-1_desc-timeseries.jpg
+                ├── sub-001_task-assocret_epoch-prePostProbe_run-01.html
+                └── sub-001_task-assocret.html
 
     9 directories, 80 files
 
