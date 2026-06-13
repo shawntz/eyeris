@@ -1,4 +1,16 @@
-# eyeris 3.1.0.9000 (development version) "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 3.2.0 (pre-release) "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This patch release fixes a report/figure collision that occurred when different task names shared the same run number within a subject/session.
+
+## 🐛 Bugs fixed
+
+- **FF (#293)**: Fixed a conflict where running `bidsify()` for two different tasks that share the same run number (e.g., `task-study_run-01` and `task-test_run-01`) under the same subject/session caused the second task to silently overwrite the first task's HTML report and figures. BIDS allows different task names to pair with the same run number within a block, but the report (`sub-xyz.html`), the `source/figures/run-XX/` directories, and the per-run `source/logs/run-XX_metadata.json` were keyed by run number alone (and the report file by subject alone), so they collided across tasks. The combination of `task` + `run` is now treated as the unique key: figure directories and their figures are named `task-{task}_run-XX[...]`, the preprocessing report is named `sub-{sub}_task-{task}[...].html`, and the epoch gallery report and zip files are likewise task-namespaced. A new internal `make_run_dir_name()` helper is the single source of truth shared by every writer and reader. The underlying data files (CSV/parquet/database) already included the task entity and are unchanged. As a side effect this also corrects a latent mismatch where the gaze-heatmap filename and binocular-correlation plots ignored the `run_num` override. **Note:** for single-task workflows this changes the on-disk report filename and figure directory names (now task-namespaced); regenerate reports to pick up the new layout, by @shawntz and @alicexue in #293.
+
+## ✨ New features
+
+- **ENH (#296)**: Added a "percent data lost" annotation to the timeseries visualizations in the HTML report. Each run in the *Preprocessed Data Previews* section now displays the percent of samples in the raw pupil timeseries that are invalid (missing/during a blink, or off-screen), surfacing data loss directly in the report to reinforce workflow transparency. The metric reuses the canonical `prop_invalid` value from `summarize_confounds()` when available and falls back to computing missingness directly from the raw timeseries otherwise, by @shawntz in #296.
+
+# eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## 🐛 Bugs fixed
 

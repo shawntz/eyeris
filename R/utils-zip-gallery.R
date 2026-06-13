@@ -12,6 +12,7 @@
 #' @param pupil_steps Vector of pupil processing steps
 #' @param eyeris_object The full `eyeris` object (needed for screen dimensions)
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param task Optional BIDS task name used to namespace the zip file (#293)
 #' @param report_epoch_grouping_var_col Column name for grouping epochs
 #' @param verbose Whether to print verbose output
 #'
@@ -27,10 +28,11 @@ create_epoch_images_zip <- function(
   pupil_steps,
   eyeris_object,
   eye_suffix = NULL,
+  task = NULL,
   report_epoch_grouping_var_col = "matched_event",
   verbose = FALSE
 ) {
-  zip_filename <- sprintf("run-%02d", run_dir_num)
+  zip_filename <- make_run_dir_name(run_dir_num, task)
   if (!is.null(eye_suffix)) {
     zip_filename <- paste0(zip_filename, "_", eye_suffix)
   }

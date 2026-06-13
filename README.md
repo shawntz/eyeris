@@ -65,6 +65,36 @@ quality and participant attention patterns. These heatmaps are
 automatically generated in the BIDS reports and can also be created
 manually.
 
+<div class="alert alert-light">
+
+### 👁 Supported eye-tracker formats
+
+The current version of `eyeris` reads data recorded with **SR Research
+EyeLink** eye-trackers (via the `.asc` files produced by the EyeLink
+`edf2asc` converter). EyeLink remains the most widely used research-grade
+system in the pupillometry community, so we focused our initial efforts
+there to ensure a robust, well-tested foundation.
+
+That said, `eyeris` is designed from the ground up to be
+**format-agnostic downstream of data loading**: every preprocessing step
+operates on a standardized internal `eyeris` object rather than on raw
+EyeLink files. This means support for additional open-source and vendor
+eye-tracker formats (e.g., Pupil Labs, Tobii, GazePoint, and the
+emerging [BIDS Eye Tracking](https://bids.neuroimaging.io/)
+specification) can be added by writing a new data-loading function that
+maps raw samples and event messages onto the same internal
+representation — no changes to the preprocessing pipeline are required.
+
+**Roadmap & community contributions.** Broadening native support for
+other tracker formats is on our roadmap, and we actively welcome
+community contributions of new loaders. If you would like to help add
+support for your tracker of choice, please open an issue or pull
+request — see the [contribution
+guidelines](https://shawnschwartz.com/eyeris/CONTRIBUTING.html) to get
+started.
+
+</div>
+
 ## 🚀 Feature Highlights
 
 - `📦 Modular Design`: Each preprocessing step is a standalone function
@@ -514,7 +544,7 @@ For single-eye recordings, data are organized in the main eye directory:
     └── derivatives/
         └── sub-001/
             └── ses-01/
-                ├── sub-001.html
+                ├── sub-001_task-test.html
                 └── eye/
                     ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye.csv
                     ├── sub-001_ses-01_task-test_run-01_desc-confounds.csv
@@ -526,17 +556,17 @@ For single-eye recordings, data are organized in the main eye directory:
                     ├── sub-001_ses-01_task-test_run-01.html
                     └── source/
                         ├── figures/
-                        │   └── run-01/
-                        │       ├── run-01_fig-1_deblink.jpg
-                        │       ├── run-01_fig-2_detrend.jpg
-                        │       ├── run-01_fig-3_interpolate.jpg
-                        │       ├── run-01_fig-4_lpfilt.jpg
-                        │       ├── run-01_fig-5_zscore.jpg
-                        │       ├── run-01_gaze_heatmap.png
-                        │       ├── run-01_detrend.png
-                        │       └── run-01_desc-progressive_summary.png
+                        │   └── task-test_run-01/
+                        │       ├── task-test_run-01_fig-1_deblink.jpg
+                        │       ├── task-test_run-01_fig-2_detrend.jpg
+                        │       ├── task-test_run-01_fig-3_interpolate.jpg
+                        │       ├── task-test_run-01_fig-4_lpfilt.jpg
+                        │       ├── task-test_run-01_fig-5_zscore.jpg
+                        │       ├── task-test_run-01_gaze_heatmap.png
+                        │       ├── task-test_run-01_detrend.png
+                        │       └── task-test_run-01_desc-progressive_summary.png
                         └── logs/
-                            └── run-01_metadata.json
+                            └── task-test_run-01_metadata.json
 
 ### Binocular data structure
 
@@ -547,8 +577,8 @@ For binocular recordings, data are organized into separate `left` and
     └── derivatives/
         └── sub-001/
             └── ses-01/
-                ├── sub-001-L.html
-                ├── sub-001-R.html
+                ├── sub-001_task-test_eye-L.html
+                ├── sub-001_task-test_eye-R.html
                 ├── eye-L/
                 │   ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-L.csv
                 │   ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-L.csv
@@ -560,9 +590,9 @@ For binocular recordings, data are organized into separate `left` and
                 │   ├── sub-001_ses-01_task-test_run-01_eye-L.html
                 │   └── source/
                 │       ├── figures/
-                │       │   └── run-01/
+                │       │   └── task-test_run-01/
                 │       └── logs/
-                │           └── run-01_metadata.json
+                │           └── task-test_run-01_metadata.json
                 └── eye-R/
                     ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-R.csv
                     ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-R.csv
@@ -574,9 +604,9 @@ For binocular recordings, data are organized into separate `left` and
                     ├── sub-001_ses-01_task-test_run-01_eye-R.html
                     └── source/
                         ├── figures/
-                        │   └── run-01/
+                        │   └── task-test_run-01/
                         └── logs/
-                            └── run-01_metadata.json
+                            └── task-test_run-01_metadata.json
 
 ### File naming convention
 
