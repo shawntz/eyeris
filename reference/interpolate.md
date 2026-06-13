@@ -65,6 +65,14 @@ Advanced users may call it directly if needed.
 for the recommended way to run this step as part of the full `eyeris`
 glassbox preprocessing pipeline.
 
+For a complete, end-to-end reference pipeline that demonstrates how all
+`eyeris` preprocessing functions are chained together in practice, see
+the "Building Blocks Under the Hood" section of the *Anatomy of an
+`eyeris` Object* vignette —
+[`vignette("anatomy", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+— as well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
+[`vignette("complete-pipeline", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md).
+
 ## Examples
 
 ``` r
@@ -74,22 +82,22 @@ demo_data |>
   # set to FALSE to skip (not recommended)
   eyeris::glassbox(interpolate = TRUE) |>
   plot(seed = 0)
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 07:28:24] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 07:32:07] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-13 07:28:24] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 07:28:24] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-13 07:28:24] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 07:28:24] [INFO] Block processing summary:
-#> ℹ [2026-06-13 07:28:24] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-13 07:32:07] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 07:32:07] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 07:32:07] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 07:32:07] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 07:32:07] [INFO] Block processing summary:
+#> ℹ [2026-06-13 07:32:07] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-13 07:28:24] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-13 07:28:24] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-06-13 07:32:08] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-13 07:32:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 

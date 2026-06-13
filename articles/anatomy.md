@@ -88,6 +88,14 @@ doing***), etc.
 
 ### The Default `glassbox()` Steps and Parameters, Deconstructed:
 
+The chunk below is the **complete, end-to-end reference pipeline**. It
+reproduces the default
+[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+recipe step-by-step, with every `eyeris` preprocessing function chained
+together exactly as the wrapper calls them internally. Use it as a
+copy-paste template whenever you need to inspect, reorder, or swap out
+individual steps (e.g., during parameter optimization):
+
 ``` r
 
 system.file("extdata", "memory.asc", package = "eyeris") |>
@@ -96,12 +104,39 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::detransient(n = 16) |>
   eyeris::interpolate() |>
   eyeris::lpfilt(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE) |>
-  # eyeris::downsample() |>  # optional (please read docs before enabling)
-  # eyeris::bin() |>  # optional (please read docs before enabling)
-  # eyeris::detrend() |>  # optional (please read docs before enabling)
+  # eyeris::downsample(target_fs = 100) |>  # optional (read docs before enabling)
+  # eyeris::bin(bins_per_second = 10) |>  # optional (read docs before enabling)
+  # eyeris::detrend() |>  # optional (read docs before enabling)
   eyeris::zscore() |>
   eyeris::summarize_confounds()
 ```
+
+Each line above maps directly to one exported preprocessing function.
+Click any function below to jump to its help page, where you’ll find its
+parameters and a worked example:
+
+| Step | Function | What it does |
+|----|----|----|
+| 1\. Load | [`eyeris::load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md) | Parse the raw `.asc` file into an `eyeris` object |
+| 2\. Deblink | [`eyeris::deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md) | NA-pad samples surrounding blink artifacts |
+| 3\. Detransient | [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md) | Remove physiologically implausible jumps |
+| 4\. Interpolate | [`eyeris::interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md) | Linearly fill in missing samples |
+| 5\. Lowpass filter | [`eyeris::lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md) | Smooth the pupil time series |
+| *(optional)* Downsample | [`eyeris::downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md) | Decimate to a lower sampling rate (anti-aliased) |
+| *(optional)* Bin | [`eyeris::bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) | Average samples within fixed time bins |
+| *(optional)* Detrend | [`eyeris::detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md) | Remove a linear trend from the time series |
+| 6\. Z-score | [`eyeris::zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md) | Standardize to mean 0 and SD 1 |
+| *(summary)* Confounds | [`eyeris::summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md) | Tabulate per-step data-quality metrics |
+
+💡 **Note:**
+[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)
+and [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) are
+mutually exclusive (enable at most one), and
+[`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md) is
+disabled in the default
+[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+recipe. See each function’s help page for guidance before enabling these
+optional steps.
 
 💡 **For more detailed information on the implementation of functions
 within** **the

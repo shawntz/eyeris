@@ -50,9 +50,9 @@ tryCatch({
 }, error = function(e) {
   message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
 })
-#> ✔ [2026-06-13 07:27:32] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpgISDxS/derivatives/my-project.eyerisdb
-#> ℹ [2026-06-13 07:27:32] [INFO] Executing query: SELECT * FROM (SELECT
+#> ✔ [2026-06-13 07:31:16] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpFkhfGs/derivatives/my-project.eyerisdb
+#> ℹ [2026-06-13 07:31:16] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "time_orig", "time_secs", "time_scaled", "eye_x",
 #> "eye_y", "eye", "hz", "type", "pupil_raw", "pupil_raw_deblink",
@@ -68,6 +68,6 @@ tryCatch({
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =
 #> '001'
-#> ℹ [2026-06-13 07:27:32] [INFO] Disconnected from eyeris database
+#> ℹ [2026-06-13 07:31:16] [INFO] Disconnected from eyeris database
 # }
 ```

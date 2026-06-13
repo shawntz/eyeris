@@ -155,6 +155,31 @@ subject/session.
   [@shawntz](https://github.com/shawntz) in
   [\#302](https://github.com/shawntz/eyeris/issues/302).
 
+### 📚 Documentation
+
+- **DOC ([\#298](https://github.com/shawntz/eyeris/issues/298))**: Added
+  cross-references from every modular preprocessing function
+  ([`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md),
+  [`deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md),
+  [`detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md),
+  [`interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md),
+  [`lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md),
+  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md),
+  [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md),
+  [`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md),
+  and
+  [`zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md)) to
+  a complete, end-to-end reference pipeline that demonstrates how all
+  functions are chained together in practice. Each function’s help page
+  now points readers to the “Building Blocks Under the Hood” section of
+  the *Anatomy of an `eyeris` Object* vignette, which was expanded into
+  an explicit, fully-annotated reference that maps each step one-to-one
+  to the default
+  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  recipe. The *Complete Pupillometry Pipeline Walkthrough* vignette now
+  links to that reference from a new “Advanced: Building the Pipeline
+  Manually” section, by [@shawntz](https://github.com/shawntz).
+
 ## eyeris 3.1.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 CRAN release: 2026-06-05

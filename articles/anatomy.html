@@ -222,6 +222,12 @@ doing</em></strong>), etc.</p>
 <h3 id="the-default-glassbox-steps-and-parameters-deconstructed">The Default <code>glassbox()</code> Steps and Parameters,
 Deconstructed:<a class="anchor" aria-label="anchor" href="#the-default-glassbox-steps-and-parameters-deconstructed"></a>
 </h3>
+<p>The chunk below is the <strong>complete, end-to-end reference
+pipeline</strong>. It reproduces the default <code><a href="../reference/glassbox.html">glassbox()</a></code>
+recipe step-by-step, with every <code>eyeris</code> preprocessing
+function chained together exactly as the wrapper calls them internally.
+Use it as a copy-paste template whenever you need to inspect, reorder,
+or swap out individual steps (e.g., during parameter optimization):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"memory.asc"</span>, package <span class="op">=</span> <span class="st">"eyeris"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/load_asc.html">load_asc</a></span><span class="op">(</span>block <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -229,11 +235,90 @@ Deconstructed:<a class="anchor" aria-label="anchor" href="#the-default-glassbox-
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/detransient.html">detransient</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/interpolate.html">interpolate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/lpfilt.html">lpfilt</a></span><span class="op">(</span>wp <span class="op">=</span> <span class="fl">4</span>, ws <span class="op">=</span> <span class="fl">8</span>, rp <span class="op">=</span> <span class="fl">1</span>, rs <span class="op">=</span> <span class="fl">35</span>, plot_freqz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="co"># eyeris::downsample() |&gt;  # optional (please read docs before enabling)</span></span>
-<span>  <span class="co"># eyeris::bin() |&gt;  # optional (please read docs before enabling)</span></span>
-<span>  <span class="co"># eyeris::detrend() |&gt;  # optional (please read docs before enabling)</span></span>
+<span>  <span class="co"># eyeris::downsample(target_fs = 100) |&gt;  # optional (read docs before enabling)</span></span>
+<span>  <span class="co"># eyeris::bin(bins_per_second = 10) |&gt;  # optional (read docs before enabling)</span></span>
+<span>  <span class="co"># eyeris::detrend() |&gt;  # optional (read docs before enabling)</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/zscore.html">zscore</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/summarize_confounds.html">summarize_confounds</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Each line above maps directly to one exported preprocessing function.
+Click any function below to jump to its help page, where you’ll find its
+parameters and a worked example:</p>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="33%">
+<col width="46%">
+</colgroup>
+<thead><tr class="header">
+<th>Step</th>
+<th>Function</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1. Load</td>
+<td><code><a href="../reference/load_asc.html">eyeris::load_asc()</a></code></td>
+<td>Parse the raw <code>.asc</code> file into an <code>eyeris</code>
+object</td>
+</tr>
+<tr class="even">
+<td>2. Deblink</td>
+<td><code><a href="../reference/deblink.html">eyeris::deblink()</a></code></td>
+<td>NA-pad samples surrounding blink artifacts</td>
+</tr>
+<tr class="odd">
+<td>3. Detransient</td>
+<td><code><a href="../reference/detransient.html">eyeris::detransient()</a></code></td>
+<td>Remove physiologically implausible jumps</td>
+</tr>
+<tr class="even">
+<td>4. Interpolate</td>
+<td><code><a href="../reference/interpolate.html">eyeris::interpolate()</a></code></td>
+<td>Linearly fill in missing samples</td>
+</tr>
+<tr class="odd">
+<td>5. Lowpass filter</td>
+<td><code><a href="../reference/lpfilt.html">eyeris::lpfilt()</a></code></td>
+<td>Smooth the pupil time series</td>
+</tr>
+<tr class="even">
+<td>
+<em>(optional)</em> Downsample</td>
+<td><code><a href="../reference/downsample.html">eyeris::downsample()</a></code></td>
+<td>Decimate to a lower sampling rate (anti-aliased)</td>
+</tr>
+<tr class="odd">
+<td>
+<em>(optional)</em> Bin</td>
+<td><code><a href="../reference/bin.html">eyeris::bin()</a></code></td>
+<td>Average samples within fixed time bins</td>
+</tr>
+<tr class="even">
+<td>
+<em>(optional)</em> Detrend</td>
+<td><code><a href="../reference/detrend.html">eyeris::detrend()</a></code></td>
+<td>Remove a linear trend from the time series</td>
+</tr>
+<tr class="odd">
+<td>6. Z-score</td>
+<td><code><a href="../reference/zscore.html">eyeris::zscore()</a></code></td>
+<td>Standardize to mean 0 and SD 1</td>
+</tr>
+<tr class="even">
+<td>
+<em>(summary)</em> Confounds</td>
+<td><code><a href="../reference/summarize_confounds.html">eyeris::summarize_confounds()</a></code></td>
+<td>Tabulate per-step data-quality metrics</td>
+</tr>
+</tbody>
+</table>
+<div class="alert alert-light">
+<p>💡 <strong>Note:</strong> <code><a href="../reference/downsample.html">downsample()</a></code> and
+<code><a href="../reference/bin.html">bin()</a></code> are mutually exclusive (enable at most one), and
+<code><a href="../reference/detrend.html">detrend()</a></code> is disabled in the default
+<code><a href="../reference/glassbox.html">glassbox()</a></code> recipe. See each function’s help page for
+guidance before enabling these optional steps.</p>
+</div>
 <div class="alert alert-light" style="padding-bottom: 0;">
 <p>💡 <strong>For more detailed information on the implementation of
 functions within</strong> <strong>the <code><a href="../reference/glassbox.html">glassbox()</a></code> and thus
