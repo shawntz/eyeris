@@ -282,7 +282,12 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     dir.create(logs_dir, recursive = TRUE)
   }
 
+  # namespace by task so different tasks sharing a subject/session do not
+  # overwrite each other's boilerplate (mirrors the report/sidecar naming, #293)
   boilerplate_filename <- "methods_boilerplate"
+  if (!is.null(task) && nzchar(task)) {
+    boilerplate_filename <- paste0(boilerplate_filename, "_task-", task)
+  }
   if (!is.null(eye_suffix)) {
     boilerplate_filename <- paste0(boilerplate_filename, "_", eye_suffix)
   }
