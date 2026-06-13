@@ -1,6 +1,6 @@
 # Changelog
 
-## eyeris 3.2.0 (dev version) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
+## eyeris 3.2.0 (pre-release) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 This patch release fixes a report/figure collision that occurred when
 different task names shared the same run number within a
@@ -35,6 +35,37 @@ subject/session.
   pick up the new layout, by [@shawntz](https://github.com/shawntz) and
   [@alicexue](https://github.com/alicexue) in
   [\#293](https://github.com/shawntz/eyeris/issues/293).
+
+- **FF ([\#310](https://github.com/shawntz/eyeris/issues/310))**: Made
+  [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
+  (and, by extension,
+  [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md))
+  tolerant of tables whose column schemas diverge across `eyeris`
+  versions. Previously, the function built a naive
+  `SELECT * FROM t1 UNION ALL SELECT * FROM t2 ...` across every table
+  matching a `data_type`, which requires every matched table to share an
+  identical column schema. In an incremental study that spans an
+  `eyeris` upgrade — e.g., older `run_confounds_*` /
+  `confounds_events_*` tables written before the `n_missing` /
+  `prop_missing` columns were added, collected alongside data from a
+  newer version — DuckDB raised
+  `Binder Error: Set operations can only apply to expressions with the same number of result columns`.
+  Because the read was wrapped in
+  [`tryCatch()`](https://rdrr.io/r/base/conditions.html), this surfaced
+  as a warning and an empty
+  [`data.frame()`](https://rdrr.io/r/base/data.frame.html),
+  i.e. **silent data loss**.
+  [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
+  now computes the union of columns across all matching tables and
+  projects each table onto a consistent, ordered column list (filling
+  absent columns with `NULL`/`NA`) before the union, and
+  [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+  reconciles epoch-label results with a fill-aware bind. Identifiers are
+  SQL-escaped before quoting so column or table names are handled
+  safely, and an informational message is logged whenever divergent
+  schemas are detected and aligned, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#310](https://github.com/shawntz/eyeris/issues/310).
 
 ### ✨ New features
 

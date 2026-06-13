@@ -50,12 +50,24 @@ tryCatch({
 }, error = function(e) {
   message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
 })
-#> ✔ [2026-06-13 06:08:47] [OKAY] Connected to eyeris database:
-#> /tmp/RtmptU1Rvl/derivatives/my-project.eyerisdb
-#> ℹ [2026-06-13 06:08:47] [INFO] Executing query: SELECT * FROM (SELECT * FROM
-#> "timeseries_001_01_assocret_run01" UNION ALL SELECT * FROM
+#> ✔ [2026-06-13 06:45:36] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpHlMh5z/derivatives/my-project.eyerisdb
+#> ℹ [2026-06-13 06:45:36] [INFO] Executing query: SELECT * FROM (SELECT
+#> "subject_id", "session_id", "task_name", "data_type", "run_number",
+#> "created_timestamp", "block", "time_orig", "time_secs", "time_scaled", "eye_x",
+#> "eye_y", "eye", "hz", "type", "pupil_raw", "pupil_raw_deblink",
+#> "pupil_raw_deblink_detransient", "pupil_raw_deblink_detransient_interpolate",
+#> "pupil_raw_deblink_detransient_interpolate_lpfilt",
+#> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
+#> "timeseries_001_01_assocret_run01" UNION ALL SELECT "subject_id", "session_id",
+#> "task_name", "data_type", "run_number", "created_timestamp", "block",
+#> "time_orig", "time_secs", "time_scaled", "eye_x", "eye_y", "eye", "hz", "type",
+#> "pupil_raw", "pupil_raw_deblink", "pupil_raw_deblink_detransient",
+#> "pupil_raw_deblink_detransient_interpolate",
+#> "pupil_raw_deblink_detransient_interpolate_lpfilt",
+#> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =
 #> '001'
-#> ℹ [2026-06-13 06:08:47] [INFO] Disconnected from eyeris database
+#> ℹ [2026-06-13 06:45:36] [INFO] Disconnected from eyeris database
 # }
 ```
