@@ -76,6 +76,12 @@ steps
 
 ### The Default `glassbox()` Steps and Parameters, Deconstructed:
 
+The chunk below is the **complete, end-to-end reference pipeline**. It reproduces
+the default `glassbox()` recipe step-by-step, with every `eyeris` preprocessing
+function chained together exactly as the wrapper calls them internally. Use it as
+a copy-paste template whenever you need to inspect, reorder, or swap out
+individual steps (e.g., during parameter optimization):
+
 ```{r, eval=FALSE}
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc(block = "auto") |>
@@ -83,12 +89,36 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::detransient(n = 16) |>
   eyeris::interpolate() |>
   eyeris::lpfilt(wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE) |>
-  # eyeris::downsample() |>  # optional (please read docs before enabling)
-  # eyeris::bin() |>  # optional (please read docs before enabling)
-  # eyeris::detrend() |>  # optional (please read docs before enabling)
+  # eyeris::downsample(target_fs = 100) |>  # optional (read docs before enabling)
+  # eyeris::bin(bins_per_second = 10) |>  # optional (read docs before enabling)
+  # eyeris::detrend() |>  # optional (read docs before enabling)
   eyeris::zscore() |>
   eyeris::summarize_confounds()
 ```
+
+Each line above maps directly to one exported preprocessing function. Click any
+function below to jump to its help page, where you'll find its parameters and a
+worked example:
+
+| Step | Function | What it does |
+|------|----------|--------------|
+| 1. Load | `eyeris::load_asc()` | Parse the raw `.asc` file into an `eyeris` object |
+| 2. Deblink | `eyeris::deblink()` | NA-pad samples surrounding blink artifacts |
+| 3. Detransient | `eyeris::detransient()` | Remove physiologically implausible jumps |
+| 4. Interpolate | `eyeris::interpolate()` | Linearly fill in missing samples |
+| 5. Lowpass filter | `eyeris::lpfilt()` | Smooth the pupil time series |
+| _(optional)_ Downsample | `eyeris::downsample()` | Decimate to a lower sampling rate (anti-aliased) |
+| _(optional)_ Bin | `eyeris::bin()` | Average samples within fixed time bins |
+| _(optional)_ Detrend | `eyeris::detrend()` | Remove a linear trend from the time series |
+| 6. Z-score | `eyeris::zscore()` | Standardize to mean 0 and SD 1 |
+| _(summary)_ Confounds | `eyeris::summarize_confounds()` | Tabulate per-step data-quality metrics |
+
+<div class="alert alert-light">
+💡 <strong>Note:</strong> <code>downsample()</code> and <code>bin()</code> are
+mutually exclusive (enable at most one), and <code>detrend()</code> is disabled
+in the default <code>glassbox()</code> recipe. See each function's help page for
+guidance before enabling these optional steps.
+</div>
 
 <div class="alert alert-light" style="padding-bottom: 0;">
   💡 **For more detailed information on the implementation of functions within**
