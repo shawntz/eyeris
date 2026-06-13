@@ -269,6 +269,35 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     }
   }
 
+  # generate fMRIPrep-style, copy-and-paste-ready methods boilerplate from the
+  # captured pipeline params, and write it out alongside the per-run JSON
+  # metadata sidecars (CC BY 4.0-licensed; see build_boilerplate_md())
+  boilerplate_md <- build_boilerplate_md(
+    eyeris,
+    version = package_version,
+    n_runs = length(run_ids)
+  )
+
+  if (!dir.exists(logs_dir)) {
+    dir.create(logs_dir, recursive = TRUE)
+  }
+
+  # namespace by task so different tasks sharing a subject/session do not
+  # overwrite each other's boilerplate (mirrors the report/sidecar naming, #293)
+  boilerplate_filename <- "methods_boilerplate"
+  if (!is.null(task) && nzchar(task)) {
+    boilerplate_filename <- paste0(boilerplate_filename, "_task-", task)
+  }
+  if (!is.null(eye_suffix)) {
+    boilerplate_filename <- paste0(boilerplate_filename, "_", eye_suffix)
+  }
+  boilerplate_filename <- paste0(boilerplate_filename, ".md")
+
+  writeLines(
+    c("# eyeris preprocessing methods boilerplate", "", boilerplate_md, ""),
+    con = file.path(logs_dir, boilerplate_filename)
+  )
+
   title <- "`eyeris` preprocessing report"
 
   content <- paste0(
@@ -316,7 +345,10 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     "bootstrap.min.css');\n",
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
-    "\n## Preprocessing Summaries\n\n",
+    "\n\n---\n\n## Reproducible Methods Boilerplate\n\n",
+    boilerplate_md,
+    "\n",
+    "\n\n---\n\n## Preprocessing Summaries\n\n",
     save_progressive_summary_plots(
       eyeris = eyeris,
       out_dir = out,
