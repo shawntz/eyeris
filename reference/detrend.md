@@ -61,22 +61,22 @@ demo_data <- eyelink_asc_demo_dataset()
 demo_data |>
   eyeris::glassbox(detrend = TRUE) |>  # set to FALSE to skip step (default)
   plot(seed = 0)
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 02:18:07] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 02:18:53] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-13 02:18:07] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 02:18:07] [WARN] Skipping eyeris::bin() for block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::detrend() for block_1
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 02:18:07] [INFO] Block processing summary:
-#> ℹ [2026-06-13 02:18:07] [INFO] block_1: OK (steps: 7, latest:
+#> ! [2026-06-13 02:18:53] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 02:18:53] [WARN] Skipping eyeris::bin() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::detrend() for block_1
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 02:18:53] [INFO] Block processing summary:
+#> ℹ [2026-06-13 02:18:53] [INFO] block_1: OK (steps: 7, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_detrend_z)
-#> ✔ [2026-06-13 02:18:07] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-06-13 02:18:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-06-13 02:18:53] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-06-13 02:18:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
