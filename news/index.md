@@ -113,6 +113,29 @@ subject/session.
   > confounds schemas in the same database is not currently supported by
   > [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md).
 
+- **NEW ([\#302](https://github.com/shawntz/eyeris/issues/302))**: Added
+  [`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md),
+  an fMRIPrep-style methods-text generator that auto-writes a
+  reproducible, copy-and-paste-ready Markdown description of the exact
+  preprocessing workflow that was run, generated directly from the
+  parameters captured in `eyeris$params`. The generator walks the
+  pipeline steps in canonical order (`load_asc` → `deblink` →
+  `detransient` → `interpolate` → `lpfilt` → `downsample`/`bin` →
+  `detrend` → `zscore` → `epoch`), substitutes in the actual parameter
+  values used, and handles multi-block (multi-run), multi-step,
+  custom-extension, and binocular pipelines. The boilerplate is now
+  embedded in every diagnostic HTML report (new “Reproducible Methods
+  Boilerplate” section) and written to
+  `derivatives/.../source/logs/methods_boilerplate.md` alongside the
+  per-run `.json` metadata sidecars it references. The generated text is
+  licensed under [Creative Commons Attribution 4.0 International (CC BY
+  4.0)](https://creativecommons.org/licenses/by/4.0/), with an explicit
+  note letting users know it is safe to paste the Markdown content
+  directly into their manuscript’s methods section as long as they cite
+  `eyeris` to provide the required attribution, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#302](https://github.com/shawntz/eyeris/issues/302).
+
 ## eyeris 3.1.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 CRAN release: 2026-06-05

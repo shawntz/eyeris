@@ -33,6 +33,9 @@ interactively plot and explore your pupil data.
 - [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md) :
   Save out pupil time series data in a BIDS-like structure
 
+- [`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md)
+  : Generate a reproducible, copy-and-paste-ready methods boilerplate
+
 - [`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
   : Extract confounding variables calculated separately for each pupil
   data file

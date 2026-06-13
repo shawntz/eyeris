@@ -21,6 +21,10 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/bidsify.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/bin.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/bin_pupil.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/boilerplate.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/boilerplate_license_note.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/bp_num.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/build_boilerplate_md.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/calc_euclidean_dist.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/calculate_epoched_confounds.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/check_and_create_dir.html</loc></url>
@@ -55,6 +59,8 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/create_temp_eyeris_database.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/deblink.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/deblink_pupil.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/describe_boilerplate_step.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/describe_boilerplate_steps.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/detransient.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/detransient_pupil.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/detrend.html</loc></url>
@@ -136,6 +142,7 @@
 <url><loc>https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/plot_pupil_distribution.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/plot_with_seed.html</loc></url>
+<url><loc>https://shawnschwartz.com/eyeris/reference/print.eyeris_boilerplate.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_lightbox_img_html.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_lightbox_img_html_legacy.html</loc></url>
 <url><loc>https://shawnschwartz.com/eyeris/reference/print_plots.html</loc></url>
