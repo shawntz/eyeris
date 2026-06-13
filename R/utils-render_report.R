@@ -724,6 +724,13 @@ save_detrend_plots <- function(
 #'   Used for plot titles and file naming. Defaults to `"run-01"`
 #' @param cex Character expansion factor for plot elements. Defaults to `2.0`
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param full_pupil_data Optional data frame containing the full-resolution
+#'   (pre-decimation) pupil time series, with the same `pupil_*` and `time_secs`
+#'   columns as `pupil_data` (e.g.,
+#'   `eyeris$timeseries_pre_decimation$block_1`). When supplied, preprocessing
+#'   steps that precede a `downsample()`/`bin()` step are drawn from this
+#'   full-resolution data instead of the decimated `pupil_data`, so they are not
+#'   shown at the decimated sampling rate. Defaults to `NULL`
 #'
 #' @return NULL (invisibly). Creates a plot showing progressive preprocessing
 #'   effects with multiple layers overlaid on the same time series
