@@ -18,3 +18,4 @@ The input \code{x}, invisibly
 Renders the Markdown boilerplate text to the console as-is (rather than as a
 single escaped string).
 }
+\keyword{internal}

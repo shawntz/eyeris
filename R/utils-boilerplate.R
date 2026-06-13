@@ -103,6 +103,8 @@ boilerplate <- function(
 #'
 #' @return The input `x`, invisibly
 #'
+#' @keywords internal
+#'
 #' @export
 print.eyeris_boilerplate <- function(x, ...) {
   cat(unclass(x))
