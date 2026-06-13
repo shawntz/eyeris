@@ -490,6 +490,14 @@ eyeris_db_read <- function(
         )
       }
 
+      # safely quote SQL identifiers: escape any embedded double-quote per the
+      # SQL standard (" -> "") before wrapping, so a column/table name that
+      # contains a double-quote cannot produce invalid SQL (which would
+      # otherwise be swallowed by tryCatch into an empty data.frame)
+      quote_ident <- function(x) {
+        paste0("\"", gsub("\"", "\"\"", x, fixed = TRUE), "\"")
+      }
+
       union_queries <- c()
       for (table in valid_tables) {
         table_cols <- table_fields[[table]]
@@ -497,9 +505,9 @@ eyeris_db_read <- function(
           all_columns,
           function(col) {
             if (col %in% table_cols) {
-              paste0("\"", col, "\"")
+              quote_ident(col)
             } else {
-              paste0("NULL AS \"", col, "\"")
+              paste0("NULL AS ", quote_ident(col))
             }
           },
           character(1)
@@ -509,9 +517,8 @@ eyeris_db_read <- function(
           paste0(
             "SELECT ",
             paste(select_cols, collapse = ", "),
-            " FROM \"",
-            table,
-            "\""
+            " FROM ",
+            quote_ident(table)
           )
         )
       }

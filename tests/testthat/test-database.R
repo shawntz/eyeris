@@ -463,6 +463,32 @@ test_that("eyeris_db_collect binds epoch labels with diverging schemas", {
   )
 })
 
+# test 10: identifier quoting is escaped, not just wrapped (#310 review)
+test_that("eyeris_db_read escapes double-quotes in column names", {
+  con <- connect_eyeris_database(temp_bids_dir, "quote-test", verbose = FALSE)
+
+  # a column name containing a double-quote would, without escaping, produce
+  # `SELECT "wei"rd"` -> a SQL syntax error that tryCatch swallows into an
+  # empty data.frame (silent data loss). Escaping emits `"wei""rd"` instead.
+  t1 <- data.frame(`wei"rd` = c(1, 2), subject_id = "020", check.names = FALSE)
+  t2 <- data.frame(
+    `wei"rd` = c(3, 4, 5),
+    extra = c(9, 9, 9),
+    subject_id = "021",
+    check.names = FALSE
+  )
+  DBI::dbWriteTable(con, "qtest_020_01_test_run01", t1)
+  DBI::dbWriteTable(con, "qtest_021_01_test_run01", t2)
+
+  result <- eyeris_db_read(con, data_type = "qtest")
+
+  expect_equal(nrow(result), 5)
+  expect_true('wei"rd' %in% colnames(result))
+  expect_setequal(unique(result$subject_id), c("020", "021"))
+
+  disconnect_eyeris_database(con, verbose = FALSE)
+})
+
 # clean up test files
 if (dir.exists(temp_bids_dir)) {
   unlink(temp_bids_dir, recursive = TRUE)
