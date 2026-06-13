@@ -724,6 +724,16 @@ glassbox <- function(
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
       }
 
+      # preserve full-resolution (pre-decimation) data for diagnostic plotting
+      if (!is.null(temp_file$timeseries_pre_decimation[[block_name]])) {
+        if (is.null(file$timeseries_pre_decimation)) {
+          file$timeseries_pre_decimation <- list()
+        }
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
+      }
+
       # track latest pointer from successfully processed blocks
       if (
         !is.null(temp_file$latest[[block_name]]) &&
@@ -1260,6 +1270,16 @@ glassbox_internal <- function(
       # preserve decimated.sample.rate from processed blocks
       if (!is.null(temp_file$decimated.sample.rate)) {
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
+      }
+
+      # preserve full-resolution (pre-decimation) data for diagnostic plotting
+      if (!is.null(temp_file$timeseries_pre_decimation[[block_name]])) {
+        if (is.null(file$timeseries_pre_decimation)) {
+          file$timeseries_pre_decimation <- list()
+        }
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
       }
 
       # track latest pointer from successfully processed blocks

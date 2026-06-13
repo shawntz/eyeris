@@ -11,10 +11,24 @@
 #' `$confounds`
 #'   The confounds are organized hierarchically by block and preprocessing step.
 #'   Each step contains metrics such as:
+#'   - Missing data (`n_missing` and `prop_missing`)
 #'   - Blink rate and duration statistics
 #'   - Gaze position (x,y) mean and standard deviation
 #'   - Pupil size mean, standard deviation, and range
-#'   - Missing data percentage
+#'
+#'   Missing data is reported as both a count (`n_missing`) and a proportion
+#'   (`prop_missing`, `0` to `1`; multiply by `100` for a percentage) of `NA`
+#'   samples. It is computed at two levels so you can choose the granularity
+#'   appropriate to your design:
+#'   - **Block level**: `confounds$unepoched_timeseries[[block]][[step]]`
+#'     reports `prop_missing` across the entire recording block.
+#'   - **Epoch/trial level**: `confounds$epoched_timeseries[[epoch]][[block]]`
+#'     reports `prop_missing` for each epoched event (e.g., per trial).
+#'
+#'   `eyeris` intentionally does not enforce a fixed missing-data exclusion
+#'   cutoff. Instead, `prop_missing` is exposed so you can define your own
+#'   exclusion thresholds at whichever level (trial, epoch, or block) is
+#'   appropriate for your study.
 #'
 #' @examples
 #' # load demo dataset
@@ -125,6 +139,7 @@ summarize_confounds <- function(eyeris) {
 #' Calculate confounds for a single pupil data step
 #'
 #' Computes various metrics from pupil data including:
+#' - Missing data (count and proportion of `NA` samples)
 #' - Blink detection
 #' - Gaze on/off screen detection
 #' - Gap analysis
@@ -134,13 +149,22 @@ summarize_confounds <- function(eyeris) {
 #' - Blink duration
 #' - Blink time
 #'
+#' Missing data is reported as both a raw count (`n_missing`) and a proportion
+#' (`prop_missing`, ranging from `0` to `1`) of samples in the window for which
+#' the pupil signal is `NA` (e.g., blinks and signal dropout prior to
+#' interpolation). Multiply `prop_missing` by `100` to obtain a percentage. This
+#' is distinct from `prop_invalid`, which additionally folds in samples flagged
+#' as blinks or off-screen gaze.
+#'
 #' @param pupil_df A data frame containing pupil data
 #' @param pupil_vec A vector of pupil data for the current step
 #' @param screen_width The screen width in pixels
 #' @param screen_height The screen height in pixels
 #' @param hz The sampling rate in Hz
 #'
-#' @return A data frame containing confounds metrics for the current step
+#' @return A data frame containing confounds metrics for the current step,
+#'   including `n_missing` and `prop_missing` (the count and proportion of
+#'   missing/`NA` samples)
 #'
 #' @keywords internal
 get_confounds_for_step <- function(
@@ -163,7 +187,8 @@ get_confounds_for_step <- function(
   }
 
   total_time_ms <- (nrow(pupil_df) - 1) / hz * 1000
-  is_invalid <- is.na(pupil_vec) | pupil_df$is_blink | pupil_df$is_offscreen
+  is_missing <- is.na(pupil_vec)
+  is_invalid <- is_missing | pupil_df$is_blink | pupil_df$is_offscreen
   gap_rle <- if (!any(is.na(is_invalid))) {
     rle(is_invalid)
   } else {
@@ -186,6 +211,8 @@ get_confounds_for_step <- function(
     sampling_rate_hz = hz,
     total_time_ms = total_time_ms,
     n_samples = nrow(pupil_df),
+    n_missing = sum(is_missing),
+    prop_missing = mean(is_missing),
     n_invalid = sum(is_invalid),
     prop_invalid = mean(is_invalid),
     n_gaps = length(gap_lengths),
@@ -620,10 +647,44 @@ calculate_epoched_confounds <- function(
         )
 
         step_confounds_list <- list()
+
+        # resolved once per epoch (constant across preprocessing steps)
+        text_unique_val <- if ("text_unique" %in% colnames(epoch_subset)) {
+          unique(epoch_subset$text_unique)[1]
+        } else {
+          id
+        }
+        pre_epoch_window <- c(epoch_start_time - 200, epoch_start_time)
+        pre_epoch_data <- eyeris$timeseries[[block_name]] |>
+          dplyr::filter(
+            time_orig >= pre_epoch_window[1] & time_orig <= pre_epoch_window[2]
+          )
+
         for (step_name in pupil_steps) {
           pupil_vec <- epoch_subset[[step_name]]
 
+          # when an epoch is entirely missing for this step, the pupil-shape
+          # metrics (range, z-scores, sd) are undefined; we still emit a row
+          # with prop_missing = 1 so that fully-missing epochs remain visible
+          # to users filtering trials on `prop_missing`
           if (all(is.na(pupil_vec))) {
+            step_confounds_list[[step_name]] <- data.frame(
+              matched_event = id,
+              text_unique = text_unique_val,
+              step = sub("pupil_", "", step_name),
+              n_samples = nrow(epoch_subset),
+              n_missing = nrow(epoch_subset),
+              prop_missing = 1,
+              range = NA_real_,
+              zscore_max = NA_real_,
+              zscore_min = NA_real_,
+              prop_blink_time = NA_real_,
+              pre_epoch_pupil_sd = sd(
+                pre_epoch_data[[step_name]],
+                na.rm = TRUE
+              ),
+              epoch_pupil_sd = NA_real_
+            )
             next
           }
 
@@ -635,21 +696,13 @@ calculate_epoched_confounds <- function(
             hz = hz
           )
 
-          pre_epoch_window <- c(epoch_start_time - 200, epoch_start_time)
-          pre_epoch_data <- eyeris$timeseries[[block_name]] |>
-            dplyr::filter(
-              time_orig >= pre_epoch_window[1] &
-                time_orig <= pre_epoch_window[2]
-            )
-
           step_df <- data.frame(
             matched_event = id,
-            text_unique = if ("text_unique" %in% colnames(epoch_subset)) {
-              unique(epoch_subset$text_unique)[1]
-            } else {
-              id
-            },
+            text_unique = text_unique_val,
             step = sub("pupil_", "", step_name),
+            n_samples = base_confounds$n_samples,
+            n_missing = base_confounds$n_missing,
+            prop_missing = base_confounds$prop_missing,
             range = diff(range(pupil_vec, na.rm = TRUE)),
             zscore_max = max(scale(pupil_vec), na.rm = TRUE),
             zscore_min = min(scale(pupil_vec), na.rm = TRUE),

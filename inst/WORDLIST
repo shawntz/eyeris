@@ -15,6 +15,7 @@ ccessbility
 al
 asc
 ASC
+assocret
 bandpass
 baselining
 Baselining
@@ -28,6 +29,7 @@ changelog
 Clewett
 cli
 codebase
+coercible
 Creating
 customizable
 deblink
@@ -60,6 +62,7 @@ Epoching
 et
 extensibility
 eyelink
+fMRIPrep
 EyeLink
 eyelinker
 eyelinkio
@@ -98,6 +101,7 @@ modularity
 monotonicity
 msg
 na
+namespaced
 nq
 nteroperability
 nav
@@ -209,3 +213,10 @@ eyeris'
 CRAN's
 GIFs
 pandoc
+GazePoint
+Tobii
+Labs
+edf2asc
+loaders
+roadmap
+Roadmap

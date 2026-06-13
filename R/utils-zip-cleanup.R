@@ -26,9 +26,9 @@ zip_and_cleanup_source_figures <- function(
     return(NULL)
   }
 
-  # find all run dirs (run-01, run-02, etc.)
+  # find all run dirs (run-01, run-02, task-study_run-01, etc.)
   run_dirs <- list.dirs(figures_dir, full.names = TRUE, recursive = FALSE)
-  run_dirs <- run_dirs[grepl("run-\\d+$", basename(run_dirs))]
+  run_dirs <- run_dirs[grepl(run_dir_pattern(), basename(run_dirs))]
 
   if (length(run_dirs) == 0) {
     log_info("No run directories found in: {figures_dir}", verbose = verbose)
@@ -222,9 +222,9 @@ cleanup_run_dir_images <- function(
     return(invisible(FALSE))
   }
 
-  # find all run dirs (run-01, run-02, etc.)
+  # find all run dirs (run-01, run-02, task-study_run-01, etc.)
   run_dirs <- list.dirs(figures_dir, full.names = TRUE, recursive = FALSE)
-  run_dirs <- run_dirs[grepl("run-\\d+$", basename(run_dirs))]
+  run_dirs <- run_dirs[grepl(run_dir_pattern(), basename(run_dirs))]
 
   if (length(run_dirs) == 0) {
     log_info("No run directories found in: {figures_dir}", verbose = verbose)

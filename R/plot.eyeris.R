@@ -252,6 +252,14 @@ plot.eyeris <- function(
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
+  # when a downsample/bin step has run, the stored timeseries only retains the
+  # decimated samples. plot earlier (pre-decimation) pipeline steps from the
+  # preserved full-resolution data so they are not misleadingly shown at the
+  # decimated sampling rate (issue #294)
+  full_pupil_data <- get_pre_decimation_block(x, block)
+  has_decimation <- !is.null(full_pupil_data)
+  full_hz <- x$info$sample.rate
+
   colorpal <- eyeris_color_palette()
   colors <- c("black", colorpal)
 
@@ -285,12 +293,28 @@ plot.eyeris <- function(
       )
     })
 
+    # build matching full-resolution epochs (over the same time windows) so
+    # that pre-decimation steps can be plotted at their original sampling rate
+    random_epochs_full <- NULL
+    if (has_decimation) {
+      epoch_starts <- vapply(
+        random_epochs,
+        function(e) min(e$time_secs, na.rm = TRUE),
+        numeric(1)
+      )
+      random_epochs_full <- lapply(epoch_starts, function(s0) {
+        slice_epoch_window(full_pupil_data, s0, preview_duration)
+      })
+    }
+
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     detrend_plotted <- FALSE
     for (i in seq_along(pupil_steps)) {
+      use_full <- has_decimation && !is_decimated_col(pupil_steps[i])
       for (n in 1:preview_n) {
-        st <- min(random_epochs[[n]]$time_orig)
-        et <- max(random_epochs[[n]]$time_orig)
+        epoch_n <- if (use_full) random_epochs_full[[n]] else random_epochs[[n]]
+        st <- min(epoch_n$time_orig, na.rm = TRUE)
+        et <- max(epoch_n$time_orig, na.rm = TRUE)
         title <- paste0("\n[", st, " - ", et, "]")
         header <- paste0(
           gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
@@ -350,16 +374,14 @@ plot.eyeris <- function(
         }
 
         if (!is.null(params$next_step)) {
-          plot_data <- random_epochs[[n]][[params$next_step[length(
-            params$next_step
-          )]]]
+          plot_data <- epoch_n[[params$next_step[length(params$next_step)]]]
         } else {
-          plot_data <- random_epochs[[n]][[pupil_steps[i]]]
+          plot_data <- epoch_n[[pupil_steps[i]]]
         }
 
         is_placeholder <- "message" %in%
-          colnames(random_epochs[[n]]) &&
-          any(random_epochs[[n]]$message == "NO_VALID_SAMPLES")
+          colnames(epoch_n) &&
+          any(epoch_n$message == "NO_VALID_SAMPLES")
         no_valid_data <- is.null(plot_data) || all(is.na(plot_data))
 
         if (is_placeholder || no_valid_data) {
@@ -384,7 +406,7 @@ plot.eyeris <- function(
           do.call(
             robust_plot,
             c(
-              list(y = plot_data, x = random_epochs[[n]]$time_scaled),
+              list(y = plot_data, x = epoch_n$time_scaled),
               plot_params,
               list(
                 type = "l",
@@ -403,7 +425,11 @@ plot.eyeris <- function(
 
       if (plot_distributions) {
         plot_pupil_distribution(
-          data = pupil_data[[pupil_steps[i]]],
+          data = if (use_full) {
+            full_pupil_data[[pupil_steps[i]]]
+          } else {
+            pupil_data[[pupil_steps[i]]]
+          },
           color = colors[i],
           main = header,
           xlab = y_label,
@@ -415,31 +441,41 @@ plot.eyeris <- function(
     }
     par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   } else {
-    preview_window_indices <- round(preview_window * hz) + 1
-    start_index <- preview_window_indices[1]
-    end_index <- preview_window_indices[2]
-
-    if (
-      start_index < 1 ||
-        start_index > nrow(pupil_data) ||
-        end_index < 1 ||
-        end_index > nrow(pupil_data) ||
-        start_index >= end_index
-    ) {
-      log_error(
-        "Invalid preview_window: start/end index out of range or invalid."
-      )
-    }
-
-    sliced_pupil_data <- pupil_data[start_index:end_index, ]
-
-    # time axis in ms for proper scaling
-    time_ms <- (sliced_pupil_data$time_scaled -
-      min(sliced_pupil_data$time_scaled))
-
     for (i in seq_along(pupil_steps)) {
-      st <- pupil_data$time_orig[start_index]
-      et <- pupil_data$time_orig[end_index]
+      # plot pre-decimation steps from the preserved full-resolution data at
+      # the original sampling rate; decimated steps stay on the decimated data
+      use_full <- has_decimation && !is_decimated_col(pupil_steps[i])
+      this_data <- if (use_full) full_pupil_data else pupil_data
+      this_hz <- if (use_full) full_hz else hz
+
+      preview_window_indices <- round(preview_window * this_hz) + 1
+      start_index <- preview_window_indices[1]
+      end_index <- preview_window_indices[2]
+
+      if (use_full) {
+        # the preserved full-resolution frame can extend slightly past the
+        # decimated frame the preview_window was derived from; clamp rather
+        # than error so the same window can be drawn at full resolution
+        start_index <- max(1, start_index)
+        end_index <- min(nrow(this_data), end_index)
+      }
+
+      if (
+        start_index < 1 ||
+          start_index > nrow(this_data) ||
+          end_index < 1 ||
+          end_index > nrow(this_data) ||
+          start_index >= end_index
+      ) {
+        log_error(
+          "Invalid preview_window: start/end index out of range or invalid."
+        )
+      }
+
+      sliced_pupil_data <- this_data[start_index:end_index, ]
+
+      st <- this_data$time_orig[start_index]
+      et <- this_data$time_orig[end_index]
 
       if (grepl("z", pupil_steps[i])) {
         y_units <- "(z)"
@@ -487,7 +523,7 @@ plot.eyeris <- function(
 
       if (plot_distributions) {
         plot_pupil_distribution(
-          data = pupil_data[[pupil_steps[i]]],
+          data = this_data[[pupil_steps[i]]],
           color = colors[i],
           main = paste(paste0(
             gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
@@ -528,7 +564,8 @@ plot.eyeris <- function(
           } else {
             "run-01"
           },
-          cex = 1.15
+          cex = 1.15,
+          full_pupil_data = full_pupil_data
         )
 
         log_success(
@@ -547,6 +584,72 @@ plot.eyeris <- function(
 
   # reset plotting parameters to prevent downstream issues
   par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = c(5, 4, 4, 2) + 0.1)
+}
+
+#' Identify decimated (downsample/bin) pupil columns
+#'
+#' A pupil column is considered "decimated" if it was produced by the
+#' `downsample()`/`bin()` step or by any step that follows it. Such columns
+#' are stored at the decimated sampling rate, whereas earlier columns should
+#' be plotted from the preserved full-resolution data (see issue #294).
+#'
+#' @param col A character vector of pupil column names
+#'
+#' @return A logical vector that is `TRUE` for decimated columns
+#'
+#' @keywords internal
+is_decimated_col <- function(col) {
+  # match the `_downsample`/`_bin` operation suffix whether it is the final
+  # column (e.g. `..._downsample`) or has later steps appended (e.g.
+  # `..._downsample_detrend`, `..._bin_z`), while avoiding accidental matches
+  # mid-token in unrelated names
+  grepl("(_downsample|_bin)($|_)", col)
+}
+
+#' Retrieve the preserved full-resolution data for a block
+#'
+#' Returns the full-resolution (pre-decimation) time series for the requested
+#' block, if it was preserved when a `downsample()`/`bin()` step ran. Used so
+#' that diagnostic plots of earlier pipeline steps can be rendered at their
+#' original sampling rate rather than the decimated rate (see issue #294).
+#'
+#' @param x An object of class `eyeris`
+#' @param block The block number to retrieve
+#'
+#' @return A data frame of full-resolution time series data for the block, or
+#' `NULL` if no pre-decimation data was preserved
+#'
+#' @keywords internal
+get_pre_decimation_block <- function(x, block) {
+  pre <- x$timeseries_pre_decimation
+  if (is.null(pre)) {
+    return(NULL)
+  }
+  if (is.data.frame(pre)) {
+    return(pre)
+  }
+  pre[[paste0("block_", block)]]
+}
+
+#' Slice a fixed time window out of a time series for previewing
+#'
+#' Extracts the rows of `df` whose `time_secs` fall within
+#' `[start_secs, start_secs + d)` and (re)computes a `time_scaled` column (in
+#' milliseconds, relative to the window start). Used to draw a full-resolution
+#' preview epoch over the same time window selected on the decimated data.
+#'
+#' @param df A data frame containing a `time_secs` column
+#' @param start_secs The start of the window in seconds
+#' @param d The window duration in seconds
+#'
+#' @return A data frame containing the rows that fall within the window
+#'
+#' @keywords internal
+slice_epoch_window <- function(df, start_secs, d) {
+  in_window <- df$time_secs >= start_secs & df$time_secs < (start_secs + d)
+  epoch <- df[in_window, , drop = FALSE]
+  epoch$time_scaled <- (epoch$time_secs - start_secs) * 1000
+  epoch
 }
 
 #' Draw random epochs for plotting

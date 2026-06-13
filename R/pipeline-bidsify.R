@@ -387,6 +387,26 @@ run_bidsify <- function(
       }
 
       names(eyeris$latest)[1] <- new_block_name
+
+      # keep the preserved full-resolution data keyed to the renamed block so
+      # diagnostic plots can still find it for pre-decimation steps (issue #294)
+      if (
+        !is.null(eyeris$timeseries_pre_decimation) &&
+          is.list(eyeris$timeseries_pre_decimation) &&
+          original_block_name %in% names(eyeris$timeseries_pre_decimation)
+      ) {
+        names(eyeris$timeseries_pre_decimation)[
+          names(eyeris$timeseries_pre_decimation) == original_block_name
+        ] <- new_block_name
+        if (
+          "block" %in%
+            colnames(eyeris$timeseries_pre_decimation[[new_block_name]])
+        ) {
+          eyeris$timeseries_pre_decimation[[
+            new_block_name
+          ]]$block <- as.numeric(run_num)
+        }
+      }
     }
 
     epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
@@ -1619,7 +1639,7 @@ run_bidsify <- function(
       } else {
         i_run
       }
-      run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+      run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
       check_and_create_dir(run_dir, verbose = verbose)
 
       # make step-by-step plots
@@ -1628,8 +1648,8 @@ run_bidsify <- function(
       for (i in seq_along(pupil_steps)) {
         for (p in seq_along(plot_types)) {
           fig_name <- sprintf(
-            "run-%02d_fig-%d_desc-%s",
-            run_dir_num,
+            "%s_fig-%d_desc-%s",
+            make_run_dir_name(run_dir_num, task),
             i,
             plot_types[p]
           )
@@ -1694,8 +1714,8 @@ run_bidsify <- function(
           fig_filename <- file.path(
             run_dir,
             sprintf(
-              "run-%02d_fig-full-%d_desc-%s",
-              run_dir_num,
+              "%s_fig-full-%d_desc-%s",
+              make_run_dir_name(run_dir_num, task),
               i_step,
               plot_types[p]
             )
@@ -1774,12 +1794,12 @@ run_bidsify <- function(
         ) &&
           all(c("screen.x", "screen.y") %in% colnames(eyeris$info))
       ) {
-        run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+        run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
         check_and_create_dir(run_dir, verbose = verbose)
 
         heatmap_filename <- file.path(
           run_dir,
-          sprintf("run-%02d_gaze_heatmap", i_run)
+          sprintf("%s_gaze_heatmap", make_run_dir_name(run_dir_num, task))
         )
 
         if (!is.null(eye_suffix)) {
@@ -1838,12 +1858,15 @@ run_bidsify <- function(
       has_binocular <- !is.null(raw_binocular_object)
 
       if (has_binocular) {
-        run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+        run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
         check_and_create_dir(run_dir, verbose = verbose)
 
         correlation_filename <- file.path(
           run_dir,
-          sprintf("run-%02d_binocular_correlation", i_run)
+          sprintf(
+            "%s_binocular_correlation",
+            make_run_dir_name(run_dir_num, task)
+          )
         )
 
         correlation_filename <- paste0(correlation_filename, ".png")
@@ -1957,7 +1980,7 @@ run_bidsify <- function(
             get_block_numbers(bn)
           }
 
-          run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+          run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
           check_and_create_dir(run_dir, verbose = verbose)
           epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
           check_and_create_dir(epochs_out, verbose = verbose)
@@ -1972,6 +1995,7 @@ run_bidsify <- function(
             pupil_steps = pupil_steps,
             eyeris_object = eyeris,
             eye_suffix = eye_suffix,
+            task = task,
             report_epoch_grouping_var_col = actual_grouping_col,
             verbose = verbose
           )
@@ -1981,7 +2005,7 @@ run_bidsify <- function(
             zip_relative_path <- file.path(
               "source",
               "figures",
-              sprintf("run-%02d", run_dir_num),
+              make_run_dir_name(run_dir_num, task),
               names(epochs_to_save)[i],
               basename(epoch_zip_path)
             )
@@ -2018,7 +2042,7 @@ run_bidsify <- function(
             get_block_numbers(bn)
           }
 
-          run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+          run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
           plain_epoch_dir <- file.path(run_dir, names(epochs_to_save)[i])
 
           if (dir.exists(plain_epoch_dir)) {
