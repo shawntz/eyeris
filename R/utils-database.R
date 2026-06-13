@@ -449,11 +449,77 @@ eyeris_db_read <- function(
         return(data.frame())
       }
 
+      # build per-table SELECTs that project a consistent, ordered column
+      # list so heterogeneous schemas can still be UNION ALL'd together.
+      # This guards against the "Set operations can only apply to expressions
+      # with the same number of result columns" binder error that occurs when
+      # matching tables were written by different eyeris versions (e.g., the
+      # addition of n_missing / prop_missing to confounds tables). Columns a
+      # given table lacks are filled with NULL (-> NA after collection) rather
+      # than silently dropping all rows. (see #310)
+      table_fields <- list()
+      all_columns <- character(0)
+      for (table in valid_tables) {
+        cols <- DBI::dbListFields(con, table)
+        table_fields[[table]] <- cols
+        # preserve column order: keep first-seen order, append new columns
+        all_columns <- c(all_columns, cols[!(cols %in% all_columns)])
+      }
+
+      # inform the user when schemas diverge so the alignment is not silent
+      signatures <- vapply(
+        table_fields,
+        function(cols) paste(sort(cols), collapse = "|"),
+        character(1)
+      )
+      n_schemas <- length(unique(signatures))
+      if (n_schemas > 1) {
+        type_label <- if (is.null(data_type)) "matching" else data_type
+        log_info(
+          paste0(
+            "Detected ",
+            n_schemas,
+            " differing column schemas across ",
+            length(valid_tables),
+            " '",
+            type_label,
+            "' tables; aligning ",
+            "columns and filling missing values with NA."
+          ),
+          verbose = TRUE
+        )
+      }
+
+      # safely quote SQL identifiers: escape any embedded double-quote per the
+      # SQL standard (" -> "") before wrapping, so a column/table name that
+      # contains a double-quote cannot produce invalid SQL (which would
+      # otherwise be swallowed by tryCatch into an empty data.frame)
+      quote_ident <- function(x) {
+        paste0("\"", gsub("\"", "\"\"", x, fixed = TRUE), "\"")
+      }
+
       union_queries <- c()
       for (table in valid_tables) {
+        table_cols <- table_fields[[table]]
+        select_cols <- vapply(
+          all_columns,
+          function(col) {
+            if (col %in% table_cols) {
+              quote_ident(col)
+            } else {
+              paste0("NULL AS ", quote_ident(col))
+            }
+          },
+          character(1)
+        )
         union_queries <- c(
           union_queries,
-          paste0("SELECT * FROM \"", table, "\"")
+          paste0(
+            "SELECT ",
+            paste(select_cols, collapse = ", "),
+            " FROM ",
+            quote_ident(table)
+          )
         )
       }
 
@@ -908,9 +974,12 @@ eyeris_db_collect <- function(
             }
           }
 
-          # combine all epoch data
+          # combine all epoch data; use a fill-aware bind so epoch labels whose
+          # tables were written by different eyeris versions (and therefore
+          # carry different columns) are reconciled with NA rather than erroring
+          # out the way base `rbind()` would (see #310)
           if (length(epoch_data_list) > 0) {
-            combined_data <- do.call(rbind, epoch_data_list)
+            combined_data <- dplyr::bind_rows(epoch_data_list)
             result_list[[data_type]] <- combined_data
           }
           # check if there are any tables for this data type at all
