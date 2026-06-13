@@ -975,7 +975,10 @@ save_progressive_summary_plots <- function(
       plot_params = plot_params,
       run_id = run_id,
       eye_suffix = eye_suffix,
-      full_pupil_data = eyeris$timeseries_pre_decimation[[block]]
+      full_pupil_data = get_pre_decimation_block(
+        eyeris,
+        sub("^block_", "", block)
+      )
     )
 
     grDevices::dev.off()
