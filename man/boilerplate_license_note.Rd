@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-boilerplate.R
 \name{boilerplate_license_note}
 \alias{boilerplate_license_note}
-\title{Creative Commons CC0 license note for the methods boilerplate}
+\title{Creative Commons CC BY 4.0 license note for the methods boilerplate}
 \usage{
 boilerplate_license_note()
 }
@@ -10,6 +10,6 @@ boilerplate_license_note()
 A length-one character string of Markdown
 }
 \description{
-Creative Commons CC0 license note for the methods boilerplate
+Creative Commons CC BY 4.0 license note for the methods boilerplate
 }
 \keyword{internal}

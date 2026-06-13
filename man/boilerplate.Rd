@@ -22,9 +22,9 @@ in the boilerplate. Defaults to \code{NULL}, in which case the currently install
 \item{include_citation}{Logical. Whether to append a formatted citation for
 \code{eyeris}. Defaults to \code{TRUE}.}
 
-\item{include_license}{Logical. Whether to append the Creative Commons CC0
-license note that tells users it is safe to paste the text into a manuscript.
-Defaults to \code{TRUE}.}
+\item{include_license}{Logical. Whether to append the Creative Commons CC BY
+4.0 license note telling users it is safe to paste the text into a manuscript
+as long as they cite \code{eyeris} for attribution. Defaults to \code{TRUE}.}
 }
 \value{
 A length-one character string of Markdown-formatted methods

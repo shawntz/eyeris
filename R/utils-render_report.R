@@ -271,7 +271,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   # generate fMRIPrep-style, copy-and-paste-ready methods boilerplate from the
   # captured pipeline params, and write it out alongside the per-run JSON
-  # metadata sidecars (CC0-licensed; see build_boilerplate_md())
+  # metadata sidecars (CC BY 4.0-licensed; see build_boilerplate_md())
   boilerplate_md <- build_boilerplate_md(
     eyeris,
     version = package_version,

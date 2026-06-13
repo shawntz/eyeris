@@ -47,9 +47,9 @@
 #' `eyeris` version is used.
 #' @param include_citation Logical. Whether to append a formatted citation for
 #' `eyeris`. Defaults to `TRUE`.
-#' @param include_license Logical. Whether to append the Creative Commons CC0
-#' license note that tells users it is safe to paste the text into a manuscript.
-#' Defaults to `TRUE`.
+#' @param include_license Logical. Whether to append the Creative Commons CC BY
+#' 4.0 license note telling users it is safe to paste the text into a manuscript
+#' as long as they cite `eyeris` for attribution. Defaults to `TRUE`.
 #'
 #' @return A length-one character string of Markdown-formatted methods
 #' boilerplate (invisibly classed as `eyeris_boilerplate` so it prints nicely at
@@ -123,7 +123,7 @@ print.eyeris_boilerplate <- function(x, ...) {
 #' @param n_runs Optional integer number of recording blocks/runs; inferred from
 #' the object when `NULL`
 #' @param include_citation Logical; whether to append a citation
-#' @param include_license Logical; whether to append the CC0 license note
+#' @param include_license Logical; whether to append the CC BY 4.0 license note
 #'
 #' @return A length-one character string of Markdown
 #'
@@ -271,7 +271,7 @@ build_boilerplate_md <- function(
   paste(parts, collapse = "\n\n")
 }
 
-#' Creative Commons CC0 license note for the methods boilerplate
+#' Creative Commons CC BY 4.0 license note for the methods boilerplate
 #'
 #' @return A length-one character string of Markdown
 #'

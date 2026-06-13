@@ -23,7 +23,7 @@ the object when \code{NULL}}
 
 \item{include_citation}{Logical; whether to append a citation}
 
-\item{include_license}{Logical; whether to append the CC0 license note}
+\item{include_license}{Logical; whether to append the CC BY 4.0 license note}
 }
 \value{
 A length-one character string of Markdown
