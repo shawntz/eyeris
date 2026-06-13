@@ -2,9 +2,22 @@
 
 ## eyeris 3.2.0 (pre-release) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
-This patch release fixes a report/figure collision that occurred when
-different task names shared the same run number within a
-subject/session.
+This release fixes several correctness and data-integrity bugs and adds
+new transparency and reproducibility tooling. Bug fixes resolve a
+report/figure collision when different task names shared the same run
+number within a subject/session, misleading diagnostic plots for
+pipeline steps that precede downsampling/binning, and silent data loss
+in
+[`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)/[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+when table schemas diverged across `eyeris` versions. New features add a
+“percent data lost” annotation to the HTML report, expose a
+`prop_missing`/`n_missing` missing-data column at the block and trial
+levels for user-defined filtering, and introduce
+[`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md),
+an fMRIPrep-style generator that auto-writes copy-and-paste-ready
+methods text from the parameters captured in your pipeline.
+Documentation now cross-references every modular preprocessing function
+to a complete end-to-end reference pipeline.
 
 ### 🐛 Bugs fixed
 
