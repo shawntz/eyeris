@@ -339,6 +339,156 @@ test_that("epoch labels are included in table names", {
   disconnect_eyeris_database(con, verbose = FALSE)
 })
 
+# test 8: schema-tolerant reads across diverging table versions (issue #310)
+test_that("eyeris_db_read aligns heterogeneous table schemas", {
+  con <- connect_eyeris_database(temp_bids_dir, "schema-test", verbose = FALSE)
+
+  # simulate an "old" confounds table (eyeris <= 3.1.0): no prop_missing
+  old_data <- data.frame(blink_count = c(2, 4), stringsAsFactors = FALSE)
+  write_eyeris_data_to_db(
+    data = old_data,
+    con = con,
+    data_type = "run_confounds",
+    sub = "010",
+    ses = "01",
+    task = "test",
+    run = "01",
+    verbose = FALSE
+  )
+
+  # simulate a "new" confounds table: adds n_missing / prop_missing columns
+  new_data <- data.frame(
+    blink_count = c(1, 3, 5),
+    n_missing = c(10, 20, 30),
+    prop_missing = c(0.1, 0.2, 0.3),
+    stringsAsFactors = FALSE
+  )
+  write_eyeris_data_to_db(
+    data = new_data,
+    con = con,
+    data_type = "run_confounds",
+    sub = "011",
+    ses = "01",
+    task = "test",
+    run = "01",
+    verbose = FALSE
+  )
+
+  # the two tables have different column counts -> a naive `SELECT * UNION ALL`
+  # would raise a binder error and (under tryCatch) silently return 0 rows
+  combined <- eyeris_db_read(con, data_type = "run_confounds")
+
+  # all rows from BOTH tables must be returned (2 old + 3 new)
+  expect_equal(nrow(combined), 5)
+  expect_setequal(unique(combined$subject_id), c("010", "011"))
+
+  # the union of columns is present, including the newer-only columns
+  expect_true(all(c("n_missing", "prop_missing") %in% colnames(combined)))
+
+  # the older table's rows are filled with NA for the columns it lacked
+  old_rows <- combined[combined$subject_id == "010", ]
+  expect_true(all(is.na(old_rows$prop_missing)))
+  expect_true(all(is.na(old_rows$n_missing)))
+
+  # the newer table's rows keep their real values
+  new_rows <- combined[combined$subject_id == "011", ]
+  expect_setequal(new_rows$prop_missing, c(0.1, 0.2, 0.3))
+
+  # filters still work on the aligned result
+  filtered <- eyeris_db_read(con, data_type = "run_confounds", subject = "010")
+  expect_equal(nrow(filtered), 2)
+  expect_true(all(is.na(filtered$prop_missing)))
+
+  disconnect_eyeris_database(con, verbose = FALSE)
+})
+
+# test 9: collect reconciles epoch labels written with diverging schemas (#310)
+test_that("eyeris_db_collect binds epoch labels with diverging schemas", {
+  con <- connect_eyeris_database(temp_bids_dir, "collect-sch", verbose = FALSE)
+
+  # epoch label "labela": "old" schema (no prop_missing)
+  write_eyeris_data_to_db(
+    data = data.frame(blink_count = c(2, 4), stringsAsFactors = FALSE),
+    con = con,
+    data_type = "confounds_events",
+    sub = "012",
+    ses = "01",
+    task = "test",
+    run = "01",
+    epoch_label = "labela",
+    verbose = FALSE
+  )
+
+  # epoch label "labelb": "new" schema (adds prop_missing)
+  write_eyeris_data_to_db(
+    data = data.frame(
+      blink_count = c(1, 3, 5),
+      prop_missing = c(0.1, 0.2, 0.3),
+      stringsAsFactors = FALSE
+    ),
+    con = con,
+    data_type = "confounds_events",
+    sub = "013",
+    ses = "01",
+    task = "test",
+    run = "01",
+    epoch_label = "labelb",
+    verbose = FALSE
+  )
+
+  disconnect_eyeris_database(con, verbose = FALSE)
+
+  # collecting both epoch labels would previously fail in do.call(rbind, ...)
+  # because the two epoch-label results carry different column sets
+  result <- eyeris_db_collect(
+    bids_dir = temp_bids_dir,
+    db_path = "collect-sch",
+    data_types = "confounds_events",
+    verbose = FALSE
+  )
+
+  expect_true("confounds_events" %in% names(result))
+  combined <- result[["confounds_events"]]
+
+  # all rows from both epoch labels are present (2 + 3)
+  expect_equal(nrow(combined), 5)
+  expect_setequal(unique(combined$subject_id), c("012", "013"))
+  expect_true("prop_missing" %in% colnames(combined))
+
+  # the "old"-schema epoch label rows are NA-filled for prop_missing
+  expect_true(all(is.na(combined$prop_missing[combined$subject_id == "012"])))
+  expect_setequal(
+    combined$prop_missing[combined$subject_id == "013"],
+    c(0.1, 0.2, 0.3)
+  )
+})
+
+# test 10: identifier quoting is escaped, not just wrapped (#310 review)
+test_that("eyeris_db_read escapes double-quotes in column names", {
+  con <- connect_eyeris_database(temp_bids_dir, "quote-test", verbose = FALSE)
+
+  # a column name containing a double-quote would, without escaping, produce
+  # `SELECT "wei"rd"` -> a SQL syntax error that tryCatch swallows into an
+  # empty data.frame (silent data loss). Escaping emits `"wei""rd"` instead.
+  t1 <- data.frame(`wei"rd` = c(1, 2), subject_id = "020", check.names = FALSE)
+  t2 <- data.frame(
+    `wei"rd` = c(3, 4, 5),
+    extra = c(9, 9, 9),
+    subject_id = "021",
+    check.names = FALSE
+  )
+  DBI::dbWriteTable(con, "qtest_020_01_test_run01", t1)
+  DBI::dbWriteTable(con, "qtest_021_01_test_run01", t2)
+
+  result <- eyeris_db_read(con, data_type = "qtest")
+
+  expect_equal(nrow(result), 5)
+  expect_true('wei"rd' %in% colnames(result))
+  expect_setequal(unique(result$subject_id), c("020", "021"))
+
+  disconnect_eyeris_database(con, verbose = FALSE)
+})
+
 # clean up test files
 if (dir.exists(temp_bids_dir)) {
   unlink(temp_bids_dir, recursive = TRUE)
