@@ -845,6 +845,13 @@ save_detrend_plots <- function(
 #'   Used for plot titles and file naming. Defaults to `"run-01"`
 #' @param cex Character expansion factor for plot elements. Defaults to `2.0`
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param full_pupil_data Optional data frame containing the full-resolution
+#'   (pre-decimation) pupil time series, with the same `pupil_*` and `time_secs`
+#'   columns as `pupil_data` (e.g.,
+#'   `eyeris$timeseries_pre_decimation$block_1`). When supplied, preprocessing
+#'   steps that precede a `downsample()`/`bin()` step are drawn from this
+#'   full-resolution data instead of the decimated `pupil_data`, so they are not
+#'   shown at the decimated sampling rate. Defaults to `NULL`
 #'
 #' @return NULL (invisibly). Creates a plot showing progressive preprocessing
 #'   effects with multiple layers overlaid on the same time series
@@ -872,24 +879,26 @@ make_prog_summary_plot <- function(
   plot_params = list(),
   run_id = "run-01",
   cex = 2.0,
-  eye_suffix = NULL
+  eye_suffix = NULL,
+  full_pupil_data = NULL
 ) {
   plot_steps <- pupil_steps[!grepl("_z$", pupil_steps)]
 
-  time_range <- range(pupil_data$time_secs, na.rm = TRUE)
-  start_idx <- which.min(abs(pupil_data$time_secs - time_range[1]))
-  end_idx <- which.min(abs(pupil_data$time_secs - time_range[2]))
-
-  time_subset <- pupil_data$time_secs[start_idx:end_idx]
   layer_data <- list()
   for (i in seq_along(plot_steps)) {
-    step_data <- pupil_data[[plot_steps[i]]][start_idx:end_idx]
+    # plot pre-decimation steps from the preserved full-resolution data so
+    # they are not shown at the decimated sampling rate (see issue #294)
+    use_full <- !is.null(full_pupil_data) && !is_decimated_col(plot_steps[i])
+    src <- if (use_full) full_pupil_data else pupil_data
+
+    step_data <- src[[plot_steps[i]]]
+    step_time <- src$time_secs
     valid_indices <- is.finite(step_data)
     if (sum(valid_indices) < 100) {
       next
     }
     layer_data[[i]] <- list(
-      time = time_subset[valid_indices],
+      time = step_time[valid_indices],
       signal = step_data[valid_indices],
       step_name = plot_steps[i]
     )
@@ -1090,7 +1099,11 @@ save_progressive_summary_plots <- function(
       preview_n = preview_n,
       plot_params = plot_params,
       run_id = run_id,
-      eye_suffix = eye_suffix
+      eye_suffix = eye_suffix,
+      full_pupil_data = get_pre_decimation_block(
+        eyeris,
+        sub("^block_", "", block)
+      )
     )
 
     grDevices::dev.off()

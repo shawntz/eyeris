@@ -387,6 +387,26 @@ run_bidsify <- function(
       }
 
       names(eyeris$latest)[1] <- new_block_name
+
+      # keep the preserved full-resolution data keyed to the renamed block so
+      # diagnostic plots can still find it for pre-decimation steps (issue #294)
+      if (
+        !is.null(eyeris$timeseries_pre_decimation) &&
+          is.list(eyeris$timeseries_pre_decimation) &&
+          original_block_name %in% names(eyeris$timeseries_pre_decimation)
+      ) {
+        names(eyeris$timeseries_pre_decimation)[
+          names(eyeris$timeseries_pre_decimation) == original_block_name
+        ] <- new_block_name
+        if (
+          "block" %in%
+            colnames(eyeris$timeseries_pre_decimation[[new_block_name]])
+        ) {
+          eyeris$timeseries_pre_decimation[[
+            new_block_name
+          ]]$block <- as.numeric(run_num)
+        }
+      }
     }
 
     epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
