@@ -1,4 +1,4 @@
-# eyeris 3.1.1 (dev version) "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+# eyeris 3.2.0 (dev version) "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This patch release fixes a report/figure collision that occurred when different task names shared the same run number within a subject/session.
 
