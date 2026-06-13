@@ -12,6 +12,77 @@ render_report <- function(rmd_f) {
   unlink(rmd_f)
 }
 
+#' Build the canonical run-directory basename
+#'
+#' Returns the basename used for both the per-run figure directory and the
+#' filename prefix of every figure it contains. When `task` is supplied, the
+#' name is namespaced as `task-{task}_run-XX` so that different tasks sharing
+#' the same run number (a valid BIDS pattern, e.g. `task-study_run-01` and
+#' `task-test_run-01`) do not collide. When `task` is `NULL`, the legacy
+#' `run-XX` form is returned for backwards compatibility.
+#'
+#' This is the single source of truth for run-directory naming: every writer
+#' builds the directory and its contained filenames from it, and every reader
+#' either globs with `run_dir_pattern()` (then parses the numeric run via
+#' `run-(\\d+)`) or derives filenames from `basename(run_dir)`.
+#'
+#' @param run_num Run number (numeric or character coercible to numeric)
+#' @param task Optional BIDS task name. Defaults to `NULL`
+#'
+#' @return A character string, e.g. `"task-study_run-01"` or `"run-01"`
+#'
+#' @keywords internal
+make_run_dir_name <- function(run_num, task = NULL) {
+  base <- sprintf("run-%02d", as.numeric(run_num))
+  if (!is.null(task) && nzchar(task)) {
+    base <- paste0("task-", task, "_", base)
+  }
+  base
+}
+
+#' Regex matching run-directory basenames
+#'
+#' Matches both the task-namespaced form (`task-study_run-01`) and the legacy
+#' form (`run-01`). The numeric run can subsequently be extracted with
+#' `sub(".*run-(\\d+)$", "\\1", x)`.
+#'
+#' @return A character string containing the regular expression
+#'
+#' @keywords internal
+run_dir_pattern <- function() {
+  "^(task-.+_)?run-\\d+$"
+}
+
+#' Filter run-directory basenames to a single task
+#'
+#' Given a vector of directory basenames (as returned by `list.dirs(...,
+#' full.names = FALSE)`), keep only the valid run directories that belong to
+#' `task`. When `task` is `NULL` (or empty), only legacy task-less `run-XX`
+#' directories are kept. Comparison of the task component is done by exact
+#' string equality (not regex), so task names containing regex metacharacters
+#' or underscores are handled correctly.
+#'
+#' @param dirs Character vector of directory basenames
+#' @param task Optional BIDS task name. Defaults to `NULL`
+#'
+#' @return The subset of `dirs` belonging to `task`
+#'
+#' @keywords internal
+filter_task_run_dirs <- function(dirs, task = NULL) {
+  dirs <- dirs[grepl(run_dir_pattern(), dirs)]
+  if (length(dirs) == 0) {
+    return(dirs)
+  }
+  # extract the task component; legacy run-XX dirs yield "" (no task- prefix)
+  dir_task <- sub("^task-(.+)_run-\\d+$", "\\1", dirs)
+  dir_task[dir_task == dirs] <- ""
+  if (!is.null(task) && nzchar(task)) {
+    dirs[dir_task == task]
+  } else {
+    dirs[dir_task == ""]
+  }
+}
+
 #' Create eyeris report
 #'
 #' Generates a comprehensive HTML report for `eyeris` preprocessing results.
@@ -28,11 +99,16 @@ render_report <- function(rmd_f) {
 make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   # get extra subject params from bidsify.R
   params <- list(...)
+  task <- params$task
 
   has_multiple_runs <- length(grep("run-\\d+", plots)) > 0
 
-  # temp file - include eye_suffix in filename if provided
+  # temp file - include task and eye_suffix in filename if provided so that
+  # different tasks sharing a run number do not overwrite each other (#293)
   report_filename <- paste0("sub-", params$sub)
+  if (!is.null(task) && nzchar(task)) {
+    report_filename <- paste0(report_filename, "_task-", task)
+  }
   if (!is.null(eye_suffix)) {
     report_filename <- paste0(report_filename, "_", eye_suffix)
   }
@@ -48,16 +124,15 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
   sticker_path <- system.file("figures", "sticker.png", package = "eyeris")
 
-  run_ids <- list.dirs(
+  all_run_dirs <- list.dirs(
     file.path(out, "source", "figures"),
     recursive = FALSE,
     full.names = FALSE
   )
-  run_ids <- sort(as.integer(gsub(
-    "run-",
-    "",
-    grep("^run-\\d+$", run_ids, value = TRUE)
-  )))
+  # restrict to THIS task's run directories so a report does not enumerate
+  # another task's runs that share the same source/figures/ parent (#293)
+  task_run_dirs <- filter_task_run_dirs(all_run_dirs, task)
+  run_ids <- sort(as.integer(sub(".*run-(\\d+)$", "\\1", task_run_dirs)))
 
   run_info <- paste(
     " - Runs: ",
@@ -80,11 +155,12 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   # eyeris report markdown content
   block_heatmaps_md <- "\n## Gaze Heatmaps\n\n"
   for (run_id in run_ids) {
+    rd <- make_run_dir_name(run_id, task)
     heatmap_path <- file.path(
       "source",
       "figures",
-      sprintf("run-%02d", run_id),
-      sprintf("run-%02d_gaze_heatmap", run_id)
+      rd,
+      sprintf("%s_gaze_heatmap", rd)
     )
     if (!is.null(eye_suffix)) {
       heatmap_path <- paste0(heatmap_path, "_", eye_suffix)
@@ -107,11 +183,12 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   # add binocular correlation plots to the report
   binocular_correlations_md <- "\n## Binocular Correlations\n\n"
   for (run_id in run_ids) {
+    rd <- make_run_dir_name(run_id, task)
     correlation_path <- file.path(
       "source",
       "figures",
-      sprintf("run-%02d", run_id),
-      sprintf("run-%02d_binocular_correlation.png", run_id)
+      rd,
+      sprintf("%s_binocular_correlation.png", rd)
     )
     if (file.exists(file.path(out, correlation_path))) {
       binocular_correlations_md <- paste0(
@@ -143,7 +220,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 
     meta_path <- file.path(
       metadata_dir,
-      sprintf("run-%02d_metadata.json", run_id)
+      sprintf("%s_metadata.json", make_run_dir_name(run_id, task))
     )
 
     # Always regenerate metadata to ensure it uses the latest sanitization
@@ -271,6 +348,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       eyeris = eyeris,
       out_dir = out,
       eye_suffix = eye_suffix,
+      task = task,
       verbose = params$verbose
     ),
     "\n\n## Preprocessed Data Previews\n\n",
@@ -278,9 +356,10 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       eyeris = eyeris,
       out_dir = out,
       eye_suffix = eye_suffix,
+      task = task,
       verbose = params$verbose
     ),
-    print_plots(plots, eye_suffix = eye_suffix, eyeris = eyeris),
+    print_plots(plots, eye_suffix = eye_suffix, task = task, eyeris = eyeris),
     "\n",
     block_heatmaps_md,
     if (should_plot_binoc_cors(eyeris)) binocular_correlations_md else "",
@@ -532,13 +611,14 @@ compute_run_data_loss <- function(eyeris, run_num, eye_suffix = NULL) {
 #'
 #' @param plots Vector of plot file paths
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param task Optional BIDS task name used to scope run directories (#293)
 #' @param eyeris Optional `eyeris` object used to annotate each run with the
 #'   percent of data lost in its timeseries
 #'
 #' @return A character string containing markdown plot references
 #'
 #' @keywords internal
-print_plots <- function(plots, eye_suffix = NULL, eyeris = NULL) {
+print_plots <- function(plots, eye_suffix = NULL, task = NULL, eyeris = NULL) {
   md_plots <- ""
 
   make_relative_path <- function(path) {
@@ -553,6 +633,12 @@ print_plots <- function(plots, eye_suffix = NULL, eyeris = NULL) {
     unique() |>
     list.dirs(full.names = TRUE, recursive = FALSE) |>
     unique()
+
+  # restrict to THIS task's run directories so plots from another task sharing
+  # the same source/figures/ parent are not mixed into this report (#293)
+  run_dirs <- run_dirs[
+    basename(run_dirs) %in% filter_task_run_dirs(basename(run_dirs), task)
+  ]
 
   if (length(run_dirs) > 0) {
     for (run_dir in run_dirs) {
@@ -629,17 +715,17 @@ print_plots <- function(plots, eye_suffix = NULL, eyeris = NULL) {
           md_plots <- paste0(md_plots, "![](", relative_fig_path, ")\n\n")
         }
 
-        # detrend diagnostics - check for eye_suffix version first
-        detrend_plot_path <- file.path(
-          run_dir,
-          paste0("run-", run_num, "_detrend.png")
-        )
+        # detrend diagnostics - check for eye_suffix version first.
+        # derive the filename prefix from the (task-namespaced) directory name
+        # so reads always match what save_detrend_plots() wrote (#293)
+        rd <- basename(run_dir)
+        detrend_plot_path <- file.path(run_dir, paste0(rd, "_detrend.png"))
 
         # if eye_suffix is provided, look for the suffixed version
         if (!is.null(eye_suffix)) {
           detrend_plot_path <- file.path(
             run_dir,
-            paste0("run-", run_num, "_detrend_", eye_suffix, ".png")
+            paste0(rd, "_detrend_", eye_suffix, ".png")
           )
         }
         detrend_exists <- file.exists(detrend_plot_path)
@@ -668,6 +754,7 @@ print_plots <- function(plots, eye_suffix = NULL, eyeris = NULL) {
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param task Optional BIDS task name used to namespace run directories (#293)
 #' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return No return value; saves detrend plots to the specified directory
@@ -679,6 +766,7 @@ save_detrend_plots <- function(
   preview_n = 3,
   plot_params = list(),
   eye_suffix = NULL,
+  task = NULL,
   verbose = TRUE
 ) {
   blocks <- names(eyeris$timeseries)
@@ -686,8 +774,9 @@ save_detrend_plots <- function(
   for (block in blocks) {
     block_number <- sub("block_", "", block)
     run_id <- sprintf("run-%02d", as.numeric(block_number))
-    run_dir <- file.path(out_dir, "source", "figures", run_id)
-    detrend_filename <- paste0(run_id, "_detrend")
+    rd <- make_run_dir_name(block_number, task)
+    run_dir <- file.path(out_dir, "source", "figures", rd)
+    detrend_filename <- paste0(rd, "_detrend")
     if (!is.null(eye_suffix)) {
       detrend_filename <- paste0(detrend_filename, "_", eye_suffix)
     }
@@ -892,6 +981,7 @@ make_prog_summary_plot <- function(
 #' @param preview_n Number of preview samples for plotting
 #' @param plot_params Additional plotting parameters
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param task Optional BIDS task name used to namespace run directories (#293)
 #' @param verbose Logical. Whether to print verbose output (default TRUE).
 #'
 #' @return A character string containing markdown references to the saved plots
@@ -903,6 +993,7 @@ save_progressive_summary_plots <- function(
   preview_n = 3,
   plot_params = list(),
   eye_suffix = NULL,
+  task = NULL,
   verbose = TRUE
 ) {
   run_dirs <- list.dirs(
@@ -910,10 +1001,11 @@ save_progressive_summary_plots <- function(
     recursive = FALSE,
     full.names = FALSE
   )
-  run_ids <- sort(as.integer(gsub(
-    "run-",
-    "",
-    grep("^run-\\d+$", run_dirs, value = TRUE)
+  # restrict to THIS task's run directories before parsing run numbers (#293)
+  run_ids <- sort(as.integer(sub(
+    ".*run-(\\d+)$",
+    "\\1",
+    filter_task_run_dirs(run_dirs, task)
   )))
 
   md_content <- paste(
@@ -927,9 +1019,10 @@ save_progressive_summary_plots <- function(
 
   for (run_id in run_ids) {
     block <- paste0("block_", run_id)
+    rd <- make_run_dir_name(run_id, task)
     run_id <- sprintf("run-%02d", run_id)
-    run_dir <- file.path(out_dir, "source", "figures", run_id)
-    progressive_filename <- paste0(run_id, "_desc-progressive_summary")
+    run_dir <- file.path(out_dir, "source", "figures", rd)
+    progressive_filename <- paste0(rd, "_desc-progressive_summary")
     if (!is.null(eye_suffix)) {
       progressive_filename <- paste0(progressive_filename, "_", eye_suffix)
     }
