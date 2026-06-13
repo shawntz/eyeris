@@ -1,8 +1,12 @@
-# eyeris (development version)
+# eyeris 3.1.0.9000 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 ## 🐛 Bugs fixed
 
 - **FF (#294)**: Fixed misleading diagnostic plots for pipeline steps that precede downsampling/binning. When `downsample` (or `bin`) was enabled, the working time series retained only the decimated samples, so diagnostic plots for earlier steps (e.g., `deblink`) were rendered at the decimated rate — making intact data appear largely absent. The full-resolution (pre-decimation) time series is now preserved in `eyeris$timeseries_pre_decimation` when a `downsample()`/`bin()` step runs, and `plot.eyeris()` (plus the progressive-summary report plot) now renders each step at the appropriate resolution: steps preceding decimation use the original full-resolution data, while the decimation step and any subsequent steps use the decimated data, by @shawntz and @alicexue in #294.
+
+## ✨ New features
+
+- **ENH (#296)**: Added a "percent data lost" annotation to the timeseries visualizations in the HTML report. Each run in the *Preprocessed Data Previews* section now displays the percent of samples in the raw pupil timeseries that are invalid (missing/during a blink, or off-screen), surfacing data loss directly in the report to reinforce workflow transparency. The metric reuses the canonical `prop_invalid` value from `summarize_confounds()` when available and falls back to computing missingness directly from the raw timeseries otherwise, by @shawntz in #296.
 
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 

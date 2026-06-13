@@ -253,7 +253,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
       eye_suffix = eye_suffix,
       verbose = params$verbose
     ),
-    print_plots(plots, eye_suffix = eye_suffix),
+    print_plots(plots, eye_suffix = eye_suffix, eyeris = eyeris),
     "\n",
     block_heatmaps_md,
     if (should_plot_binoc_cors(eyeris)) binocular_correlations_md else "",
@@ -411,17 +411,107 @@ sanitize_call_stack <- function(x, parent_name = NULL, in_parameters = FALSE) {
   }
 }
 
+#' Compute percent data lost for a given run/block
+#'
+#' Calculates the proportion of samples in the raw pupil timeseries that are
+#' invalid (i.e., missing/during a blink, or off-screen) and expresses it as a
+#' percentage. This surfaces data loss directly in the report to reinforce
+#' workflow transparency.
+#'
+#' Prefers the canonical `prop_invalid` metric stored in
+#' `eyeris$confounds$unepoched_timeseries` (computed by
+#' [eyeris::summarize_confounds()]). Falls back to computing the proportion of
+#' missing samples directly from the raw timeseries when confounds are
+#' unavailable.
+#'
+#' @param eyeris An `eyeris` object containing preprocessing results
+#' @param run_num Run identifier (numeric or character, e.g. `1` or `"01"`)
+#' @param eye_suffix Optional eye suffix (e.g., "eye-L", "eye-R") used to select
+#'   the correct eye from a binocular object
+#'
+#' @return A numeric percentage in `[0, 100]`, or `NA_real_` when it cannot be
+#'   determined
+#'
+#' @keywords internal
+compute_run_data_loss <- function(eyeris, run_num, eye_suffix = NULL) {
+  if (is.null(eyeris)) {
+    return(NA_real_)
+  }
+
+  # resolve the correct eye sub-object for binocular data
+  obj <- eyeris
+  if (is_binocular_object(eyeris)) {
+    obj <- if (!is.null(eye_suffix) && eye_suffix == "eye-R") {
+      eyeris$right
+    } else {
+      eyeris$left
+    }
+  }
+
+  block <- paste0("block_", as.integer(run_num))
+
+  is_valid_prop <- function(x) {
+    !is.null(x) && length(x) == 1 && is.numeric(x) && !is.na(x)
+  }
+
+  # prefer the canonical confounds metric on the raw signal
+  prop_invalid <- tryCatch(
+    {
+      block_confounds <- obj$confounds$unepoched_timeseries[[block]]
+      if (is.null(block_confounds) || length(block_confounds) == 0) {
+        NA_real_
+      } else {
+        raw_step <- if ("pupil_raw" %in% names(block_confounds)) {
+          "pupil_raw"
+        } else {
+          names(block_confounds)[1]
+        }
+        block_confounds[[raw_step]]$prop_invalid
+      }
+    },
+    error = function(e) NA_real_
+  )
+
+  # fall back to direct computation from the raw timeseries
+  if (!is_valid_prop(prop_invalid)) {
+    prop_invalid <- tryCatch(
+      {
+        ts <- obj$timeseries[[block]]
+        if (is.null(ts)) {
+          NA_real_
+        } else {
+          raw_col <- if ("pupil_raw" %in% names(ts)) {
+            "pupil_raw"
+          } else {
+            grep("^pupil_", names(ts), value = TRUE)[1]
+          }
+          if (is.na(raw_col)) NA_real_ else mean(is.na(ts[[raw_col]]))
+        }
+      },
+      error = function(e) NA_real_
+    )
+  }
+
+  if (!is_valid_prop(prop_invalid)) {
+    return(NA_real_)
+  }
+
+  prop_invalid * 100
+}
+
 #' Print plots in markdown format
 #'
 #' Generates markdown code to display plots in the report.
 #'
 #' @param plots Vector of plot file paths
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param eyeris Optional `eyeris` object used to annotate each run with the
+#'   percent of data lost in its timeseries
 #'
 #' @return A character string containing markdown plot references
 #'
 #' @keywords internal
-print_plots <- function(plots, eye_suffix = NULL) {
+print_plots <- function(plots, eye_suffix = NULL, eyeris = NULL) {
   md_plots <- ""
 
   make_relative_path <- function(path) {
@@ -449,6 +539,23 @@ print_plots <- function(plots, eye_suffix = NULL) {
         run_num <- sub(".*run-(\\d+).*$", "\\1", run_dir)
 
         md_plots <- paste0(md_plots, "### run-", run_num, "\n\n")
+
+        # annotate the timeseries with percent data lost for transparency
+        pct_data_lost <- compute_run_data_loss(
+          eyeris = eyeris,
+          run_num = run_num,
+          eye_suffix = eye_suffix
+        )
+        if (!is.na(pct_data_lost)) {
+          md_plots <- paste0(
+            md_plots,
+            "- **Percent data lost:** ",
+            sprintf("%.2f", pct_data_lost),
+            "% ",
+            "_(missing/blink or off-screen samples in the raw pupil ",
+            "timeseries)_\n\n"
+          )
+        }
 
         # sort by fig number if possible
         plot_fig_ids <- suppressWarnings(as.numeric(sub(
