@@ -6,6 +6,7 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Calculate confounds for a single pupil data step — get_confounds_for_step"><meta name="description" content="Computes various metrics from pupil data including:
+Missing data (count and proportion of NA samples)
 Blink detection
 Gaze on/off screen detection
 Gap analysis
@@ -16,6 +17,7 @@ Blink duration
 Blink time
 
 "><meta property="og:description" content="Computes various metrics from pupil data including:
+Missing data (count and proportion of NA samples)
 Blink detection
 Gaze on/off screen detection
 Gap analysis
@@ -99,7 +101,8 @@ Blink time
     </div>
 
     <div class="ref-description section level2">
-    <p>Computes various metrics from pupil data including:</p><ul><li><p>Blink detection</p></li>
+    <p>Computes various metrics from pupil data including:</p><ul><li><p>Missing data (count and proportion of <code>NA</code> samples)</p></li>
+<li><p>Blink detection</p></li>
 <li><p>Gaze on/off screen detection</p></li>
 <li><p>Gap analysis</p></li>
 <li><p>Gaze distance from screen center</p></li>
@@ -140,7 +143,18 @@ Blink time
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame containing confounds metrics for the current step</p>
+    <p>A data frame containing confounds metrics for the current step,
+including <code>n_missing</code> and <code>prop_missing</code> (the count and proportion of
+missing/<code>NA</code> samples)</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Missing data is reported as both a raw count (<code>n_missing</code>) and a proportion
+(<code>prop_missing</code>, ranging from <code>0</code> to <code>1</code>) of samples in the window for which
+the pupil signal is <code>NA</code> (e.g., blinks and signal dropout prior to
+interpolation). Multiply <code>prop_missing</code> by <code>100</code> to obtain a percentage. This
+is distinct from <code>prop_invalid</code>, which additionally folds in samples flagged
+as blinks or off-screen gaze.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

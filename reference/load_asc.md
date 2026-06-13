@@ -119,21 +119,21 @@ demo_data <- eyelink_asc_demo_dataset()
 
 demo_data |>
   eyeris::glassbox(load_asc = list(block = 1))
-#> ✔ [2026-06-13 06:46:41] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 06:46:42] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 06:55:41] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 06:55:42] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-13 06:46:42] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 06:46:42] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-13 06:46:42] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 06:46:42] [INFO] Block processing summary:
-#> ℹ [2026-06-13 06:46:42] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-13 06:55:42] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 06:55:42] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 06:55:42] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 06:55:42] [INFO] Block processing summary:
+#> ℹ [2026-06-13 06:55:42] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-13 06:46:42] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-13 06:55:42] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
 #> 
@@ -287,14 +287,14 @@ demo_data |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -303,14 +303,14 @@ demo_data |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -319,14 +319,14 @@ demo_data |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -335,14 +335,14 @@ demo_data |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -351,14 +351,14 @@ demo_data |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -367,14 +367,14 @@ demo_data |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms

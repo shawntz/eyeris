@@ -82,6 +82,37 @@ subject/session.
   [@shawntz](https://github.com/shawntz) in
   [\#296](https://github.com/shawntz/eyeris/issues/296).
 
+- **NF ([\#297](https://github.com/shawntz/eyeris/issues/297))**:
+  Exposed a missing-data column for user-defined filtering.
+  [`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
+  (and the
+  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  pipeline that calls it) now reports the proportion of missing (`NA`)
+  pupil samples as `prop_missing` (ranging `0`–`1`; multiply by `100`
+  for a percentage), alongside its raw count `n_missing`. These are
+  computed at two levels so you can choose the granularity appropriate
+  to your design: per recording **block**
+  (`confounds$unepoched_timeseries`, exported as `run_confounds`) and
+  per epoched event/**trial** (`confounds$epoched_timeseries`, exported
+  as `confounds_events`). `eyeris` intentionally does not enforce a
+  fixed missing-data exclusion cutoff; instead, `prop_missing` is
+  surfaced so users can define their own exclusion thresholds at
+  whichever level (trial, epoch, or block) suits their study. Unlike
+  `prop_invalid`, `prop_missing` reflects only `NA`/dropout samples and
+  does not fold in blink or off-screen flags. The database guide
+  vignette was updated with block- and trial-level filtering examples,
+  by [@shawntz](https://github.com/shawntz) in
+  [\#297](https://github.com/shawntz/eyeris/issues/297).
+
+  > **Upgrade note**: because this adds columns to the `run_confounds`
+  > and `confounds_events` tables, a project `DuckDB` that already
+  > contains confounds tables written by eyeris `<= 3.1.0` should be
+  > regenerated before collecting it (e.g., via
+  > [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md))
+  > alongside data written by this version. Mixing the old and new
+  > confounds schemas in the same database is not currently supported by
+  > [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md).
+
 ## eyeris 3.1.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 CRAN release: 2026-06-05

@@ -541,35 +541,61 @@ queries:</p>
 <div class="section level3">
 <h3 id="example-2-quality-control-and-confounds-analysis">Example 2: Quality Control and Confounds Analysis<a class="anchor" aria-label="anchor" href="#example-2-quality-control-and-confounds-analysis"></a>
 </h3>
+<p><code>eyeris</code> reports the proportion of missing
+(<code>NA</code>) pupil samples as a <code>prop_missing</code> column
+(and its raw count, <code>n_missing</code>) at two levels: per recording
+block (in <code>run_confounds</code>) and per epoched event/trial (in
+<code>confounds_events</code>). <code>eyeris</code> does
+<strong>not</strong> apply a fixed missing-data exclusion cutoff for
+you. Instead, these columns are exposed so you can define your own
+exclusion thresholds at whichever level (block, epoch, or trial) is
+appropriate for your design.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># extract confounds data for quality control</span></span>
 <span><span class="va">confounds_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eyeris_db_collect.html">eyeris_db_collect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"~/processed_study_data"</span>,</span>
-<span>  data_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"run_confounds"</span>, <span class="st">"confounds_summary"</span><span class="op">)</span></span>
+<span>  data_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"run_confounds"</span>, <span class="st">"confounds_events"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># identify subjects with poor data quality</span></span>
+<span><span class="co"># block-level QC: identify subjects with poor data quality</span></span>
+<span><span class="co"># (all thresholds below are illustrative -- choose values appropriate for your</span></span>
+<span><span class="co"># study; nothing here is enforced by eyeris)</span></span>
 <span><span class="va">quality_control</span> <span class="op">&lt;-</span> <span class="va">confounds_data</span><span class="op">$</span><span class="va">run_confounds</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">subject_id</span>, <span class="va">session_id</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    mean_blink_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">blink_rate_hz</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>    mean_prop_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">prop_invalid</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, </span>
+<span>    mean_prop_missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">prop_missing</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    mean_prop_invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">prop_invalid</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>    mean_gaze_variance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">gaze_x_var_px</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>    .groups <span class="op">=</span> <span class="st">'drop'</span></span>
 <span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
-<span>    high_blink_rate <span class="op">=</span> <span class="va">mean_blink_rate</span> <span class="op">&gt;</span> <span class="fl">0.5</span>,  <span class="co"># arbitrary thresholds</span></span>
+<span>    high_blink_rate <span class="op">=</span> <span class="va">mean_blink_rate</span> <span class="op">&gt;</span> <span class="fl">0.5</span>,  <span class="co"># user-defined thresholds</span></span>
+<span>    high_missing_data <span class="op">=</span> <span class="va">mean_prop_missing</span> <span class="op">&gt;</span> <span class="fl">0.5</span>,</span>
 <span>    high_invalid_data <span class="op">=</span> <span class="va">mean_prop_invalid</span> <span class="op">&gt;</span> <span class="fl">0.3</span>,</span>
 <span>    high_gaze_variance <span class="op">=</span> <span class="va">mean_gaze_variance</span> <span class="op">&gt;</span> <span class="fl">10000</span>,</span>
-<span>    exclude_subject <span class="op">=</span> <span class="va">high_blink_rate</span> <span class="op">|</span> <span class="va">high_invalid_data</span> <span class="op">|</span> <span class="va">high_gaze_variance</span></span>
+<span>    exclude_subject <span class="op">=</span> <span class="va">high_blink_rate</span> <span class="op">|</span> <span class="va">high_missing_data</span> <span class="op">|</span></span>
+<span>      <span class="va">high_invalid_data</span> <span class="op">|</span> <span class="va">high_gaze_variance</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="co"># then view the subjects recommended for exclusion</span></span>
+<span><span class="co"># then view the subjects you have flagged for exclusion</span></span>
 <span><span class="va">exclude_list</span> <span class="op">&lt;-</span> <span class="va">quality_control</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exclude_subject</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">subject_id</span>, <span class="va">session_id</span>, <span class="va">exclude_subject</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exclude_list</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exclude_list</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># trial-level QC: flag individual epochs/trials to drop using your own</span></span>
+<span><span class="co"># missing-data threshold (e.g., here, &gt; 50% missing on the deblinked signal)</span></span>
+<span><span class="va">trial_exclusions</span> <span class="op">&lt;-</span> <span class="va">confounds_data</span><span class="op">$</span><span class="va">confounds_events</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"deblink"</span>, <span class="va">step</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>exclude_trial <span class="op">=</span> <span class="va">prop_missing</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">%&gt;%</span>  <span class="co"># user-defined threshold</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span></span>
+<span>    <span class="va">subject_id</span>, <span class="va">session_id</span>, <span class="va">run_number</span>, <span class="va">epoch_label</span>,</span>
+<span>    <span class="va">matched_event</span>, <span class="va">n_samples</span>, <span class="va">n_missing</span>, <span class="va">prop_missing</span>, <span class="va">exclude_trial</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">trial_exclusions</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

@@ -178,32 +178,32 @@ information for clarity.
 ``` r
 demo_data <- eyelink_asc_demo_dataset()
 eye_preproc <- eyeris::glassbox(demo_data)
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-06-13 06:45:08] [INFO] Processing block: block_1
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-06-13 06:54:13] [INFO] Processing block: block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-06-13 06:45:08] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-06-13 06:45:08] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-06-13 06:45:08] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-06-13 06:45:08] [INFO] Block processing summary:
-#> ℹ [2026-06-13 06:45:08] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-06-13 06:54:13] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-06-13 06:54:13] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-06-13 06:54:13] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-06-13 06:54:13] [INFO] Block processing summary:
+#> ℹ [2026-06-13 06:54:13] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-06-13 06:45:08] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-06-13 06:54:13] [OKAY] Running eyeris::summarize_confounds()
 
 # example 1: select 1 second before/after matched event message "PROBE*"
 eye_preproc |>
   eyeris::epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-06-13 06:45:08] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 06:45:08] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-06-13 06:45:08] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:08] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-06-13 06:54:13] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:54:13] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-06-13 06:54:13] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:13] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-06-13 06:45:08] [OKAY] Pupil epoching completed in 0.11 seconds
-#> ℹ [2026-06-13 06:45:08] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:14] [OKAY] Pupil epoching completed in 0.13 seconds
+#> ℹ [2026-06-13 06:54:14] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -393,14 +393,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -409,14 +409,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -425,14 +425,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -441,14 +441,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -457,14 +457,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -473,14 +473,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -676,6 +676,189 @@ eye_preproc |>
 #> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                    raw_deblink_detransient_interpolate
 #> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt      raw_deblink_detransient_interpolate_lpfilt
 #> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z  raw_deblink_detransient_interpolate_lpfilt_z
+#>                                                                   n_samples
+#> PROBE_START_22.pupil_raw                                               2000
+#> PROBE_START_22.pupil_raw_deblink                                       2000
+#> PROBE_START_22.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_STOP_22.pupil_raw                                                2000
+#> PROBE_STOP_22.pupil_raw_deblink                                        2000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient                            2000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                2000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt         2000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z       2000
+#> PROBE_START_23.pupil_raw                                               2000
+#> PROBE_START_23.pupil_raw_deblink                                       2000
+#> PROBE_START_23.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_STOP_23.pupil_raw                                                2000
+#> PROBE_STOP_23.pupil_raw_deblink                                        2000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient                            2000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                2000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt         2000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z       2000
+#> PROBE_START_24.pupil_raw                                               2000
+#> PROBE_START_24.pupil_raw_deblink                                       2000
+#> PROBE_START_24.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_STOP_24.pupil_raw                                                2000
+#> PROBE_STOP_24.pupil_raw_deblink                                        2000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient                            2000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                2000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt         2000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z       2000
+#> PROBE_START_25.pupil_raw                                               2000
+#> PROBE_START_25.pupil_raw_deblink                                       2000
+#> PROBE_START_25.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_STOP_25.pupil_raw                                                2000
+#> PROBE_STOP_25.pupil_raw_deblink                                        2000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient                            2000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                2000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt         2000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z       2000
+#> PROBE_START_26.pupil_raw                                               2000
+#> PROBE_START_26.pupil_raw_deblink                                       2000
+#> PROBE_START_26.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_STOP_26.pupil_raw                                                2000
+#> PROBE_STOP_26.pupil_raw_deblink                                        2000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient                            2000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                2000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt         2000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z       2000
+#>                                                                   n_missing
+#> PROBE_START_22.pupil_raw                                                  0
+#> PROBE_START_22.pupil_raw_deblink                                          0
+#> PROBE_START_22.pupil_raw_deblink_detransient                              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_STOP_22.pupil_raw                                                   0
+#> PROBE_STOP_22.pupil_raw_deblink                                           0
+#> PROBE_STOP_22.pupil_raw_deblink_detransient                               0
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                   0
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt            0
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0
+#> PROBE_START_23.pupil_raw                                                  0
+#> PROBE_START_23.pupil_raw_deblink                                          0
+#> PROBE_START_23.pupil_raw_deblink_detransient                              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_STOP_23.pupil_raw                                                   0
+#> PROBE_STOP_23.pupil_raw_deblink                                           0
+#> PROBE_STOP_23.pupil_raw_deblink_detransient                               0
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                   0
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt            0
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0
+#> PROBE_START_24.pupil_raw                                                  0
+#> PROBE_START_24.pupil_raw_deblink                                          0
+#> PROBE_START_24.pupil_raw_deblink_detransient                              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_STOP_24.pupil_raw                                                   0
+#> PROBE_STOP_24.pupil_raw_deblink                                           0
+#> PROBE_STOP_24.pupil_raw_deblink_detransient                               0
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                   0
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt            0
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0
+#> PROBE_START_25.pupil_raw                                                 56
+#> PROBE_START_25.pupil_raw_deblink                                        156
+#> PROBE_START_25.pupil_raw_deblink_detransient                            156
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_STOP_25.pupil_raw                                                   0
+#> PROBE_STOP_25.pupil_raw_deblink                                           0
+#> PROBE_STOP_25.pupil_raw_deblink_detransient                               0
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                   0
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt            0
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0
+#> PROBE_START_26.pupil_raw                                                  0
+#> PROBE_START_26.pupil_raw_deblink                                          0
+#> PROBE_START_26.pupil_raw_deblink_detransient                              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_STOP_26.pupil_raw                                                   0
+#> PROBE_STOP_26.pupil_raw_deblink                                           0
+#> PROBE_STOP_26.pupil_raw_deblink_detransient                               0
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                   0
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt            0
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z          0
+#>                                                                   prop_missing
+#> PROBE_START_22.pupil_raw                                                 0.000
+#> PROBE_START_22.pupil_raw_deblink                                         0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_STOP_22.pupil_raw                                                  0.000
+#> PROBE_STOP_22.pupil_raw_deblink                                          0.000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient                              0.000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate                  0.000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt           0.000
+#> PROBE_STOP_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.000
+#> PROBE_START_23.pupil_raw                                                 0.000
+#> PROBE_START_23.pupil_raw_deblink                                         0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_STOP_23.pupil_raw                                                  0.000
+#> PROBE_STOP_23.pupil_raw_deblink                                          0.000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient                              0.000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate                  0.000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt           0.000
+#> PROBE_STOP_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.000
+#> PROBE_START_24.pupil_raw                                                 0.000
+#> PROBE_START_24.pupil_raw_deblink                                         0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_STOP_24.pupil_raw                                                  0.000
+#> PROBE_STOP_24.pupil_raw_deblink                                          0.000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient                              0.000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate                  0.000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt           0.000
+#> PROBE_STOP_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.000
+#> PROBE_START_25.pupil_raw                                                 0.028
+#> PROBE_START_25.pupil_raw_deblink                                         0.078
+#> PROBE_START_25.pupil_raw_deblink_detransient                             0.078
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_STOP_25.pupil_raw                                                  0.000
+#> PROBE_STOP_25.pupil_raw_deblink                                          0.000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient                              0.000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate                  0.000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt           0.000
+#> PROBE_STOP_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.000
+#> PROBE_START_26.pupil_raw                                                 0.000
+#> PROBE_START_26.pupil_raw_deblink                                         0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_STOP_26.pupil_raw                                                  0.000
+#> PROBE_STOP_26.pupil_raw_deblink                                          0.000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient                              0.000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate                  0.000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt           0.000
+#> PROBE_STOP_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0.000
 #>                                                                         range
 #> PROBE_START_22.pupil_raw                                           998.000000
 #> PROBE_START_22.pupil_raw_deblink                                   998.000000
@@ -1123,14 +1306,14 @@ eye_preproc |>
 # example 2: select all samples between each trial
 eye_preproc |>
   eyeris::epoch(events = "TRIALID {trial}")
-#> ℹ [2026-06-13 06:45:09] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 06:45:09] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:54:14] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:54:14] [INFO] Block 1: found 5 matching events for
 #> TRIALIDtrial
-#> ✔ [2026-06-13 06:45:09] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:09] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:54:14] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:14] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:09] [OKAY] Pupil epoching completed in 0.06 seconds
-#> ℹ [2026-06-13 06:45:09] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:14] [OKAY] Pupil epoching completed in 0.06 seconds
+#> ℹ [2026-06-13 06:54:14] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -1319,14 +1502,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1335,14 +1518,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1351,14 +1534,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1367,14 +1550,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1383,14 +1566,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1399,14 +1582,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1512,6 +1695,99 @@ eye_preproc |>
 #> TRIALID 26.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate
 #> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt
 #> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z
+#>                                                               n_samples
+#> TRIALID 22.pupil_raw                                               4200
+#> TRIALID 22.pupil_raw_deblink                                       4200
+#> TRIALID 22.pupil_raw_deblink_detransient                           4200
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate               4200
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt        4200
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      4200
+#> TRIALID 23.pupil_raw                                               4117
+#> TRIALID 23.pupil_raw_deblink                                       4117
+#> TRIALID 23.pupil_raw_deblink_detransient                           4117
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate               4117
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt        4117
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      4117
+#> TRIALID 24.pupil_raw                                               4167
+#> TRIALID 24.pupil_raw_deblink                                       4167
+#> TRIALID 24.pupil_raw_deblink_detransient                           4167
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate               4167
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt        4167
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      4167
+#> TRIALID 25.pupil_raw                                               4083
+#> TRIALID 25.pupil_raw_deblink                                       4083
+#> TRIALID 25.pupil_raw_deblink_detransient                           4083
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate               4083
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt        4083
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      4083
+#> TRIALID 26.pupil_raw                                               4083
+#> TRIALID 26.pupil_raw_deblink                                       4083
+#> TRIALID 26.pupil_raw_deblink_detransient                           4083
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate               4083
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt        4083
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      4083
+#>                                                               n_missing
+#> TRIALID 22.pupil_raw                                                  0
+#> TRIALID 22.pupil_raw_deblink                                          0
+#> TRIALID 22.pupil_raw_deblink_detransient                              0
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate                  0
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> TRIALID 23.pupil_raw                                                  0
+#> TRIALID 23.pupil_raw_deblink                                          0
+#> TRIALID 23.pupil_raw_deblink_detransient                              0
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate                  0
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> TRIALID 24.pupil_raw                                                  0
+#> TRIALID 24.pupil_raw_deblink                                          0
+#> TRIALID 24.pupil_raw_deblink_detransient                              0
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate                  0
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> TRIALID 25.pupil_raw                                                 56
+#> TRIALID 25.pupil_raw_deblink                                        156
+#> TRIALID 25.pupil_raw_deblink_detransient                            156
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate                  0
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> TRIALID 26.pupil_raw                                                  0
+#> TRIALID 26.pupil_raw_deblink                                          0
+#> TRIALID 26.pupil_raw_deblink_detransient                              0
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate                  0
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#>                                                               prop_missing
+#> TRIALID 22.pupil_raw                                            0.00000000
+#> TRIALID 22.pupil_raw_deblink                                    0.00000000
+#> TRIALID 22.pupil_raw_deblink_detransient                        0.00000000
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate            0.00000000
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt     0.00000000
+#> TRIALID 22.pupil_raw_deblink_detransient_interpolate_lpfilt_z   0.00000000
+#> TRIALID 23.pupil_raw                                            0.00000000
+#> TRIALID 23.pupil_raw_deblink                                    0.00000000
+#> TRIALID 23.pupil_raw_deblink_detransient                        0.00000000
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate            0.00000000
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt     0.00000000
+#> TRIALID 23.pupil_raw_deblink_detransient_interpolate_lpfilt_z   0.00000000
+#> TRIALID 24.pupil_raw                                            0.00000000
+#> TRIALID 24.pupil_raw_deblink                                    0.00000000
+#> TRIALID 24.pupil_raw_deblink_detransient                        0.00000000
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate            0.00000000
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt     0.00000000
+#> TRIALID 24.pupil_raw_deblink_detransient_interpolate_lpfilt_z   0.00000000
+#> TRIALID 25.pupil_raw                                            0.01371541
+#> TRIALID 25.pupil_raw_deblink                                    0.03820720
+#> TRIALID 25.pupil_raw_deblink_detransient                        0.03820720
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate            0.00000000
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt     0.00000000
+#> TRIALID 25.pupil_raw_deblink_detransient_interpolate_lpfilt_z   0.00000000
+#> TRIALID 26.pupil_raw                                            0.00000000
+#> TRIALID 26.pupil_raw_deblink                                    0.00000000
+#> TRIALID 26.pupil_raw_deblink_detransient                        0.00000000
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate            0.00000000
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt     0.00000000
+#> TRIALID 26.pupil_raw_deblink_detransient_interpolate_lpfilt_z   0.00000000
 #>                                                                     range
 #> TRIALID 22.pupil_raw                                          1051.000000
 #> TRIALID 22.pupil_raw_deblink                                  1051.000000
@@ -1772,14 +2048,14 @@ eye_preproc |>
     events = "PROBE_START_{trial}",
     limits = c(0, 1)
   )
-#> ℹ [2026-06-13 06:45:09] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 06:45:09] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:54:14] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:54:14] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-06-13 06:45:09] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:09] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:54:14] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:14] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:09] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-06-13 06:45:09] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:14] [OKAY] Pupil epoching completed in 0.07 seconds
+#> ℹ [2026-06-13 06:54:14] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -1969,14 +2245,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -1985,14 +2261,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2001,14 +2277,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2017,14 +2293,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2033,14 +2309,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2049,14 +2325,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2162,6 +2438,99 @@ eye_preproc |>
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z
+#>                                                                   n_samples
+#> PROBE_START_22.pupil_raw                                               1000
+#> PROBE_START_22.pupil_raw_deblink                                       1000
+#> PROBE_START_22.pupil_raw_deblink_detransient                           1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate               1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt        1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      1000
+#> PROBE_START_23.pupil_raw                                               1000
+#> PROBE_START_23.pupil_raw_deblink                                       1000
+#> PROBE_START_23.pupil_raw_deblink_detransient                           1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate               1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt        1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      1000
+#> PROBE_START_24.pupil_raw                                               1000
+#> PROBE_START_24.pupil_raw_deblink                                       1000
+#> PROBE_START_24.pupil_raw_deblink_detransient                           1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate               1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt        1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      1000
+#> PROBE_START_25.pupil_raw                                               1000
+#> PROBE_START_25.pupil_raw_deblink                                       1000
+#> PROBE_START_25.pupil_raw_deblink_detransient                           1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate               1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt        1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      1000
+#> PROBE_START_26.pupil_raw                                               1000
+#> PROBE_START_26.pupil_raw_deblink                                       1000
+#> PROBE_START_26.pupil_raw_deblink_detransient                           1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate               1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt        1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      1000
+#>                                                                   n_missing
+#> PROBE_START_22.pupil_raw                                                  0
+#> PROBE_START_22.pupil_raw_deblink                                          0
+#> PROBE_START_22.pupil_raw_deblink_detransient                              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_23.pupil_raw                                                  0
+#> PROBE_START_23.pupil_raw_deblink                                          0
+#> PROBE_START_23.pupil_raw_deblink_detransient                              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_24.pupil_raw                                                  0
+#> PROBE_START_24.pupil_raw_deblink                                          0
+#> PROBE_START_24.pupil_raw_deblink_detransient                              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_25.pupil_raw                                                  0
+#> PROBE_START_25.pupil_raw_deblink                                          0
+#> PROBE_START_25.pupil_raw_deblink_detransient                              0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_26.pupil_raw                                                  0
+#> PROBE_START_26.pupil_raw_deblink                                          0
+#> PROBE_START_26.pupil_raw_deblink_detransient                              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#>                                                                   prop_missing
+#> PROBE_START_22.pupil_raw                                                     0
+#> PROBE_START_22.pupil_raw_deblink                                             0
+#> PROBE_START_22.pupil_raw_deblink_detransient                                 0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                     0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z            0
+#> PROBE_START_23.pupil_raw                                                     0
+#> PROBE_START_23.pupil_raw_deblink                                             0
+#> PROBE_START_23.pupil_raw_deblink_detransient                                 0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                     0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z            0
+#> PROBE_START_24.pupil_raw                                                     0
+#> PROBE_START_24.pupil_raw_deblink                                             0
+#> PROBE_START_24.pupil_raw_deblink_detransient                                 0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                     0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z            0
+#> PROBE_START_25.pupil_raw                                                     0
+#> PROBE_START_25.pupil_raw_deblink                                             0
+#> PROBE_START_25.pupil_raw_deblink_detransient                                 0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                     0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt              0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z            0
+#> PROBE_START_26.pupil_raw                                                     0
+#> PROBE_START_26.pupil_raw_deblink                                             0
+#> PROBE_START_26.pupil_raw_deblink_detransient                                 0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                     0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z            0
 #>                                                                          range
 #> PROBE_START_22.pupil_raw                                           998.0000000
 #> PROBE_START_22.pupil_raw_deblink                                   998.0000000
@@ -2423,14 +2792,14 @@ eye_preproc |>
     limits = c(-1, 1),
     label = "prePostProbe" # custom epoch label name
   )
-#> ℹ [2026-06-13 06:45:09] [INFO] Epoching pupil data...
-#> ℹ [2026-06-13 06:45:09] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:54:14] [INFO] Epoching pupil data...
+#> ℹ [2026-06-13 06:54:14] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-06-13 06:45:09] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:09] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:54:15] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:15] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:09] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-06-13 06:45:09] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:15] [OKAY] Pupil epoching completed in 0.07 seconds
+#> ℹ [2026-06-13 06:54:15] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -2620,14 +2989,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2636,14 +3005,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2652,14 +3021,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2668,14 +3037,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2684,14 +3053,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2700,14 +3069,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -2813,6 +3182,99 @@ eye_preproc |>
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                   raw_deblink_detransient_interpolate
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt     raw_deblink_detransient_interpolate_lpfilt
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z raw_deblink_detransient_interpolate_lpfilt_z
+#>                                                                   n_samples
+#> PROBE_START_22.pupil_raw                                               2000
+#> PROBE_START_22.pupil_raw_deblink                                       2000
+#> PROBE_START_22.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_START_23.pupil_raw                                               2000
+#> PROBE_START_23.pupil_raw_deblink                                       2000
+#> PROBE_START_23.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_START_24.pupil_raw                                               2000
+#> PROBE_START_24.pupil_raw_deblink                                       2000
+#> PROBE_START_24.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_START_25.pupil_raw                                               2000
+#> PROBE_START_25.pupil_raw_deblink                                       2000
+#> PROBE_START_25.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#> PROBE_START_26.pupil_raw                                               2000
+#> PROBE_START_26.pupil_raw_deblink                                       2000
+#> PROBE_START_26.pupil_raw_deblink_detransient                           2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate               2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt        2000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z      2000
+#>                                                                   n_missing
+#> PROBE_START_22.pupil_raw                                                  0
+#> PROBE_START_22.pupil_raw_deblink                                          0
+#> PROBE_START_22.pupil_raw_deblink_detransient                              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_23.pupil_raw                                                  0
+#> PROBE_START_23.pupil_raw_deblink                                          0
+#> PROBE_START_23.pupil_raw_deblink_detransient                              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_24.pupil_raw                                                  0
+#> PROBE_START_24.pupil_raw_deblink                                          0
+#> PROBE_START_24.pupil_raw_deblink_detransient                              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_25.pupil_raw                                                 56
+#> PROBE_START_25.pupil_raw_deblink                                        156
+#> PROBE_START_25.pupil_raw_deblink_detransient                            156
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#> PROBE_START_26.pupil_raw                                                  0
+#> PROBE_START_26.pupil_raw_deblink                                          0
+#> PROBE_START_26.pupil_raw_deblink_detransient                              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                  0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z         0
+#>                                                                   prop_missing
+#> PROBE_START_22.pupil_raw                                                 0.000
+#> PROBE_START_22.pupil_raw_deblink                                         0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_START_23.pupil_raw                                                 0.000
+#> PROBE_START_23.pupil_raw_deblink                                         0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_START_24.pupil_raw                                                 0.000
+#> PROBE_START_24.pupil_raw_deblink                                         0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_START_25.pupil_raw                                                 0.028
+#> PROBE_START_25.pupil_raw_deblink                                         0.078
+#> PROBE_START_25.pupil_raw_deblink_detransient                             0.078
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
+#> PROBE_START_26.pupil_raw                                                 0.000
+#> PROBE_START_26.pupil_raw_deblink                                         0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient                             0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                 0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt          0.000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z        0.000
 #>                                                                         range
 #> PROBE_START_22.pupil_raw                                           998.000000
 #> PROBE_START_22.pupil_raw_deblink                                   998.000000
@@ -3078,17 +3540,17 @@ eye_preproc |>
     ),
     label = "example5"
   )
-#> ℹ [2026-06-13 06:45:09] [INFO] Epoching pupil data...
-#> ! [2026-06-13 06:45:09] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-06-13 06:54:15] [INFO] Epoching pupil data...
+#> ! [2026-06-13 06:54:15] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-06-13 06:45:09] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: pupil data from 1 unique event messages
+#> ✔ [2026-06-13 06:54:15] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:15] [OKAY] Block 1: pupil data from 1 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:10] [OKAY] Pupil epoching completed in 0.02 seconds
-#> ℹ [2026-06-13 06:45:10] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:15] [OKAY] Pupil epoching completed in 0.02 seconds
+#> ℹ [2026-06-13 06:54:15] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -3289,14 +3751,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3305,14 +3767,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3321,14 +3783,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3337,14 +3799,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3353,14 +3815,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3369,14 +3831,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3464,17 +3926,17 @@ eye_preproc |>
     ),
     label = "example6"
   )
-#> ℹ [2026-06-13 06:45:10] [INFO] Epoching pupil data...
-#> ! [2026-06-13 06:45:10] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-06-13 06:54:15] [INFO] Epoching pupil data...
+#> ! [2026-06-13 06:54:15] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-06-13 06:45:10] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: pupil data from 1 unique event messages
+#> ✔ [2026-06-13 06:54:15] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:15] [OKAY] Block 1: pupil data from 1 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:10] [OKAY] Pupil epoching completed in 0.02 seconds
-#> ℹ [2026-06-13 06:45:10] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:15] [OKAY] Pupil epoching completed in 0.02 seconds
+#> ℹ [2026-06-13 06:54:15] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -3675,14 +4137,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3691,14 +4153,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3707,14 +4169,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3723,14 +4185,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3739,14 +4201,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3755,14 +4217,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -3853,16 +4315,16 @@ eye_preproc |>
     baseline_events = "DELAY_STOP_*",
     baseline_period = c(-1, 0)
   )
-#> ℹ [2026-06-13 06:45:10] [INFO] Epoching and baselining pupil data...
-#> ℹ [2026-06-13 06:45:10] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:54:15] [INFO] Epoching and baselining pupil data...
+#> ℹ [2026-06-13 06:54:15] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-06-13 06:45:10] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:54:15] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:15] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: 9 epochs baselined
-#> ✔ [2026-06-13 06:45:10] [OKAY] Pupil epoching and baselining completed in 0.08
+#> ✔ [2026-06-13 06:54:15] [OKAY] Block 1: 9 epochs baselined
+#> ✔ [2026-06-13 06:54:15] [OKAY] Pupil epoching and baselining completed in 0.10
 #> secs
-#> ℹ [2026-06-13 06:45:10] [INFO] Recalculating epoched confounds for new
+#> ℹ [2026-06-13 06:54:15] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -4054,14 +4516,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4070,14 +4532,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4086,14 +4548,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4102,14 +4564,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4118,14 +4580,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4134,14 +4596,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -4277,6 +4739,129 @@ eye_preproc |>
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                             raw_deblink_detransient_interpolate_lpfilt_z
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_     raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z
+#>                                                                                         n_samples
+#> PROBE_START_22.pupil_raw                                                                     1000
+#> PROBE_START_22.pupil_raw_deblink                                                             1000
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                 1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                     1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                              1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                            1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_        1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z      1000
+#> PROBE_START_23.pupil_raw                                                                     1000
+#> PROBE_START_23.pupil_raw_deblink                                                             1000
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                 1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                     1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                              1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                            1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_        1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z      1000
+#> PROBE_START_24.pupil_raw                                                                     1000
+#> PROBE_START_24.pupil_raw_deblink                                                             1000
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                 1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                     1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                              1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                            1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_        1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z      1000
+#> PROBE_START_25.pupil_raw                                                                     1000
+#> PROBE_START_25.pupil_raw_deblink                                                             1000
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                 1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                     1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                              1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                            1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_        1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z      1000
+#> PROBE_START_26.pupil_raw                                                                     1000
+#> PROBE_START_26.pupil_raw_deblink                                                             1000
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                 1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                     1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                              1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                            1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_        1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z      1000
+#>                                                                                         n_missing
+#> PROBE_START_22.pupil_raw                                                                        0
+#> PROBE_START_22.pupil_raw_deblink                                                                0
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                    0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                        0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                                 0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z         0
+#> PROBE_START_23.pupil_raw                                                                        0
+#> PROBE_START_23.pupil_raw_deblink                                                                0
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                    0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                        0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                                 0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z         0
+#> PROBE_START_24.pupil_raw                                                                        0
+#> PROBE_START_24.pupil_raw_deblink                                                                0
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                    0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                        0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                                 0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z         0
+#> PROBE_START_25.pupil_raw                                                                        0
+#> PROBE_START_25.pupil_raw_deblink                                                                0
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                    0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                        0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                                 0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z         0
+#> PROBE_START_26.pupil_raw                                                                        0
+#> PROBE_START_26.pupil_raw_deblink                                                                0
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                    0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                        0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                                 0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z         0
+#>                                                                                         prop_missing
+#> PROBE_START_22.pupil_raw                                                                           0
+#> PROBE_START_22.pupil_raw_deblink                                                                   0
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z            0
+#> PROBE_START_23.pupil_raw                                                                           0
+#> PROBE_START_23.pupil_raw_deblink                                                                   0
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z            0
+#> PROBE_START_24.pupil_raw                                                                           0
+#> PROBE_START_24.pupil_raw_deblink                                                                   0
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z            0
+#> PROBE_START_25.pupil_raw                                                                           0
+#> PROBE_START_25.pupil_raw_deblink                                                                   0
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_              0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z            0
+#> PROBE_START_26.pupil_raw                                                                           0
+#> PROBE_START_26.pupil_raw_deblink                                                                   0
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP_              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_DELAY_STOP__z            0
 #>                                                                                                range
 #> PROBE_START_22.pupil_raw                                                                 998.0000000
 #> PROBE_START_22.pupil_raw_deblink                                                         998.0000000
@@ -5564,16 +6149,16 @@ eye_preproc |>
       "DELAY_STOP_*"
     )
   )
-#> ℹ [2026-06-13 06:45:10] [INFO] Epoching and baselining pupil data...
-#> ℹ [2026-06-13 06:45:10] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-06-13 06:54:15] [INFO] Epoching and baselining pupil data...
+#> ℹ [2026-06-13 06:54:15] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-06-13 06:45:10] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-06-13 06:54:16] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:16] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: 9 epochs baselined
-#> ✔ [2026-06-13 06:45:10] [OKAY] Pupil epoching and baselining completed in 0.10
+#> ✔ [2026-06-13 06:54:16] [OKAY] Block 1: 9 epochs baselined
+#> ✔ [2026-06-13 06:54:16] [OKAY] Pupil epoching and baselining completed in 0.11
 #> secs
-#> ℹ [2026-06-13 06:45:10] [INFO] Recalculating epoched confounds for new
+#> ℹ [2026-06-13 06:54:16] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -5765,14 +6350,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5781,14 +6366,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5797,14 +6382,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5813,14 +6398,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5829,14 +6414,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5845,14 +6430,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -5988,6 +6573,129 @@ eye_preproc |>
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                                   raw_deblink_detransient_interpolate_lpfilt_z
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline     raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline
 #> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z
+#>                                                                                            n_samples
+#> PROBE_START_22.pupil_raw                                                                        1000
+#> PROBE_START_22.pupil_raw_deblink                                                                1000
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                    1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                        1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                                 1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline        1000
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z      1000
+#> PROBE_START_23.pupil_raw                                                                        1000
+#> PROBE_START_23.pupil_raw_deblink                                                                1000
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                    1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                        1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                                 1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline        1000
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z      1000
+#> PROBE_START_24.pupil_raw                                                                        1000
+#> PROBE_START_24.pupil_raw_deblink                                                                1000
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                    1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                        1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                                 1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline        1000
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z      1000
+#> PROBE_START_25.pupil_raw                                                                        1000
+#> PROBE_START_25.pupil_raw_deblink                                                                1000
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                    1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                        1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                                 1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline        1000
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z      1000
+#> PROBE_START_26.pupil_raw                                                                        1000
+#> PROBE_START_26.pupil_raw_deblink                                                                1000
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                    1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                        1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                                 1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                               1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline        1000
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z      1000
+#>                                                                                            n_missing
+#> PROBE_START_22.pupil_raw                                                                           0
+#> PROBE_START_22.pupil_raw_deblink                                                                   0
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline           0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z         0
+#> PROBE_START_23.pupil_raw                                                                           0
+#> PROBE_START_23.pupil_raw_deblink                                                                   0
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline           0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z         0
+#> PROBE_START_24.pupil_raw                                                                           0
+#> PROBE_START_24.pupil_raw_deblink                                                                   0
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline           0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z         0
+#> PROBE_START_25.pupil_raw                                                                           0
+#> PROBE_START_25.pupil_raw_deblink                                                                   0
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline           0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z         0
+#> PROBE_START_26.pupil_raw                                                                           0
+#> PROBE_START_26.pupil_raw_deblink                                                                   0
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                       0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                                    0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                  0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline           0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z         0
+#>                                                                                            prop_missing
+#> PROBE_START_22.pupil_raw                                                                              0
+#> PROBE_START_22.pupil_raw_deblink                                                                      0
+#> PROBE_START_22.pupil_raw_deblink_detransient                                                          0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate                                              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt                                       0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                     0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline              0
+#> PROBE_START_22.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z            0
+#> PROBE_START_23.pupil_raw                                                                              0
+#> PROBE_START_23.pupil_raw_deblink                                                                      0
+#> PROBE_START_23.pupil_raw_deblink_detransient                                                          0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate                                              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt                                       0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                     0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline              0
+#> PROBE_START_23.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z            0
+#> PROBE_START_24.pupil_raw                                                                              0
+#> PROBE_START_24.pupil_raw_deblink                                                                      0
+#> PROBE_START_24.pupil_raw_deblink_detransient                                                          0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate                                              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt                                       0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                     0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline              0
+#> PROBE_START_24.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z            0
+#> PROBE_START_25.pupil_raw                                                                              0
+#> PROBE_START_25.pupil_raw_deblink                                                                      0
+#> PROBE_START_25.pupil_raw_deblink_detransient                                                          0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate                                              0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt                                       0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                     0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline              0
+#> PROBE_START_25.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z            0
+#> PROBE_START_26.pupil_raw                                                                              0
+#> PROBE_START_26.pupil_raw_deblink                                                                      0
+#> PROBE_START_26.pupil_raw_deblink_detransient                                                          0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate                                              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt                                       0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_z                                     0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline              0
+#> PROBE_START_26.pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_multi_baseline_z            0
 #>                                                                                                   range
 #> PROBE_START_22.pupil_raw                                                                    998.0000000
 #> PROBE_START_22.pupil_raw_deblink                                                            998.0000000
@@ -7275,17 +7983,17 @@ eye_preproc |>
     events = list(start_events, end_events, block_number),
     label  = "example9"
   )
-#> ℹ [2026-06-13 06:45:10] [INFO] Epoching pupil data...
-#> ! [2026-06-13 06:45:10] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-06-13 06:54:16] [INFO] Epoching pupil data...
+#> ! [2026-06-13 06:54:16] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-06-13 06:45:10] [OKAY] Done!
-#> ✔ [2026-06-13 06:45:10] [OKAY] Block 1: pupil data from 2 unique event messages
+#> ✔ [2026-06-13 06:54:16] [OKAY] Done!
+#> ✔ [2026-06-13 06:54:16] [OKAY] Block 1: pupil data from 2 unique event messages
 #> extracted
-#> ✔ [2026-06-13 06:45:10] [OKAY] Pupil epoching completed in 0.03 seconds
-#> ℹ [2026-06-13 06:45:10] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-06-13 06:54:16] [OKAY] Pupil epoching completed in 0.03 seconds
+#> ℹ [2026-06-13 06:54:16] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -7487,14 +8195,14 @@ eye_preproc |>
 #> $confounds$unepoched_timeseries
 #> $confounds$unepoched_timeseries$block_1
 #> $confounds$unepoched_timeseries$block_1$pupil_raw
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        74  0.003563346      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                74                  74                74                  74
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                 74                   74         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767        56  0.002696586        74
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.003563346      1                74                  74                74
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                  74                 74                   74         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172   0.00014446        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -7503,14 +8211,14 @@ eye_preproc |>
 #> 1                  56     0.002696716
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -7519,14 +8227,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767       156  0.007511918      1
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1               156                 156               156                 156
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                156                  156         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767       156  0.007511918       156
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1  0.007511918      1               156                 156               156
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                 156                156                  156         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        1    0.04815564
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -7535,14 +8243,14 @@ eye_preproc |>
 #> 1                 156      0.00751228
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -7551,14 +8259,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
@@ -7567,14 +8275,14 @@ eye_preproc |>
 #> 1                   0               0
 #> 
 #> $confounds$unepoched_timeseries$block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
-#>   sampling_rate_hz total_time_ms n_samples n_invalid prop_invalid n_gaps
-#> 1             1000         20766     20767        NA           NA      0
-#>   max_gap_n_samples max_gap_duration_ms min_gap_n_samples min_gap_duration_ms
-#> 1                 0                   0                 0                   0
-#>   mean_gap_n_samples mean_gap_duration_ms screen_width screen_height
-#> 1                  0                    0         1920          1080
-#>   gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1      197.3489      780.2944                          21.01572
+#>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
+#> 1             1000         20766     20767         0            0        NA
+#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
+#> 1           NA      0                 0                   0                 0
+#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
+#> 1                   0                  0                    0         1920
+#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
+#> 1          1080      197.3489      780.2944                          21.01572
 #>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
 #> 1                          0.02866172 9.630664e-05        0             0
 #>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms

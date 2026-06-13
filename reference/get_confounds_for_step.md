@@ -2,6 +2,8 @@
 
 Computes various metrics from pupil data including:
 
+- Missing data (count and proportion of `NA` samples)
+
 - Blink detection
 
 - Gaze on/off screen detection
@@ -48,4 +50,15 @@ get_confounds_for_step(pupil_df, pupil_vec, screen_width, screen_height, hz)
 
 ## Value
 
-A data frame containing confounds metrics for the current step
+A data frame containing confounds metrics for the current step,
+including `n_missing` and `prop_missing` (the count and proportion of
+missing/`NA` samples)
+
+## Details
+
+Missing data is reported as both a raw count (`n_missing`) and a
+proportion (`prop_missing`, ranging from `0` to `1`) of samples in the
+window for which the pupil signal is `NA` (e.g., blinks and signal
+dropout prior to interpolation). Multiply `prop_missing` by `100` to
+obtain a percentage. This is distinct from `prop_invalid`, which
+additionally folds in samples flagged as blinks or off-screen gaze.
