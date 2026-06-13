@@ -36,6 +36,25 @@ subject/session.
   [@alicexue](https://github.com/alicexue) in
   [\#293](https://github.com/shawntz/eyeris/issues/293).
 
+- **FF ([\#294](https://github.com/shawntz/eyeris/issues/294))**: Fixed
+  misleading diagnostic plots for pipeline steps that precede
+  downsampling/binning. When `downsample` (or `bin`) was enabled, the
+  working time series retained only the decimated samples, so diagnostic
+  plots for earlier steps (e.g., `deblink`) were rendered at the
+  decimated rate — making intact data appear largely absent. The
+  full-resolution (pre-decimation) time series is now preserved in
+  `eyeris$timeseries_pre_decimation` when a
+  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+  step runs, and
+  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+  (plus the progressive-summary report plot) now renders each step at
+  the appropriate resolution: steps preceding decimation use the
+  original full-resolution data, while the decimation step and any
+  subsequent steps use the decimated data, by
+  [@shawntz](https://github.com/shawntz) and
+  [@alicexue](https://github.com/alicexue) in
+  [\#294](https://github.com/shawntz/eyeris/issues/294).
+
 - **FF ([\#310](https://github.com/shawntz/eyeris/issues/310))**: Made
   [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
   (and, by extension,

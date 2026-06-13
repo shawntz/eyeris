@@ -15,7 +15,8 @@ make_prog_summary_plot(
   plot_params = list(),
   run_id = "run-01",
   cex = 2,
-  eye_suffix = NULL
+  eye_suffix = NULL,
+  full_pupil_data = NULL
 )
 ```
 
@@ -53,6 +54,17 @@ make_prog_summary_plot(
 - eye_suffix:
 
   Optional eye suffix for binocular data
+
+- full_pupil_data:
+
+  Optional data frame containing the full-resolution (pre-decimation)
+  pupil time series, with the same `pupil_*` and `time_secs` columns as
+  `pupil_data` (e.g., `eyeris$timeseries_pre_decimation$block_1`). When
+  supplied, preprocessing steps that precede a
+  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+  step are drawn from this full-resolution data instead of the decimated
+  `pupil_data`, so they are not shown at the decimated sampling rate.
+  Defaults to `NULL`
 
 ## Value
 

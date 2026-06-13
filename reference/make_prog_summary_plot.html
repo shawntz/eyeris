@@ -100,7 +100,8 @@ users to see how each step modifies the pupil signal.</p>
 <span>  plot_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  run_id <span class="op">=</span> <span class="st">"run-01"</span>,</span>
 <span>  cex <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  eye_suffix <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  eye_suffix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  full_pupil_data <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -139,6 +140,16 @@ Used for plot titles and file naming. Defaults to <code>"run-01"</code></p></dd>
 
 <dt id="arg-eye-suffix">eye_suffix<a class="anchor" aria-label="anchor" href="#arg-eye-suffix"></a></dt>
 <dd><p>Optional eye suffix for binocular data</p></dd>
+
+
+<dt id="arg-full-pupil-data">full_pupil_data<a class="anchor" aria-label="anchor" href="#arg-full-pupil-data"></a></dt>
+<dd><p>Optional data frame containing the full-resolution
+(pre-decimation) pupil time series, with the same <code>pupil_*</code> and <code>time_secs</code>
+columns as <code>pupil_data</code> (e.g.,
+<code>eyeris$timeseries_pre_decimation$block_1</code>). When supplied, preprocessing
+steps that precede a <code><a href="downsample.html">downsample()</a></code>/<code><a href="bin.html">bin()</a></code> step are drawn from this
+full-resolution data instead of the decimated <code>pupil_data</code>, so they are not
+shown at the decimated sampling rate. Defaults to <code>NULL</code></p></dd>
 
 </dl></div>
     <div class="section level2">
