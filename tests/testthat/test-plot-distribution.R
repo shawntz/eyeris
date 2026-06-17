@@ -44,9 +44,12 @@ test_that("plot_pupil_distribution renders wide-spread data without erroring", {
   tmp <- tempfile(fileext = ".png")
   grDevices::png(tmp)
   on.exit(unlink(tmp), add = TRUE)
-  expect_silent(
-    plot_pupil_distribution(d, color = "black", main = "raw", xlab = "pupil")
-  )
+  expect_silent(plot_pupil_distribution(
+    d,
+    color = "black",
+    main = "raw",
+    xlab = "pupil"
+  ))
   grDevices::dev.off()
   expect_true(file.exists(tmp) && file.info(tmp)$size > 0)
 })
