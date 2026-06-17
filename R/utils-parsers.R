@@ -192,10 +192,13 @@ get_block_numbers <- function(x) {
     return(sprintf("%02d", 1)) # default fallback instead of NULL
   }
 
-  # ensure we always return a valid number
-  if (is.na(block_nums)) {
+  # ensure we always return a valid number (block_nums may be a vector when
+  # a multi-block object is passed, so guard element-wise rather than with a
+  # length-1 `if`, which errors on R >= 4.2)
+  if (all(is.na(block_nums))) {
     return(1) # default fallback instead of NULL
   }
+  block_nums[is.na(block_nums)] <- 1
 
   block_nums
 }

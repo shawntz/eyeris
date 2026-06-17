@@ -838,14 +838,55 @@ plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
     "pupil size"
   }
 
-  hist(
-    data,
+  # keep only finite samples so the Freedman-Diaconis rule (and the plot) do not
+  # choke on the NA/NaN/Inf values that are present in the raw pupil signal
+  finite_data <- data[is.finite(data)]
+
+  if (length(finite_data) < 2) {
+    # not enough data to build a histogram -- draw an informative empty panel
+    # rather than letting hist() error out
+    plot(
+      NA,
+      xlim = c(0, 1),
+      ylim = c(0, 1),
+      type = "n",
+      xlab = new_xlab,
+      ylab = "frequency (count)",
+      main = main
+    )
+    text(
+      0.5,
+      0.5,
+      "Not enough data\nto plot distribution",
+      cex = 0.9,
+      col = "red"
+    )
+    return(invisible(NULL))
+  }
+
+  # fall back to the default (Sturges) breaks if Freedman-Diaconis fails, e.g.
+  # for a near-constant signal where the IQR is 0
+  h <- tryCatch(
+    hist(finite_data, breaks = "FD", plot = FALSE),
+    error = function(e) hist(finite_data, plot = FALSE)
+  )
+
+  # a white bar outline gives nice separation when there are only a handful of
+  # bars, but once the bars get thin the outline completely covers the fill and
+  # the histogram renders blank. the raw step has the widest spread (and thus
+  # the most Freedman-Diaconis bins), so its histogram was the one disappearing
+  # in multi-run reports. drop the outline once there are too many bars so the
+  # distribution always stays visible.
+  bar_border <- if (length(h$counts) <= 100) "white" else NA
+
+  plot(
+    h,
     main = main,
     xlab = new_xlab,
     ylab = "frequency (count)",
     col = color,
-    border = "white",
-    breaks = "FD"
+    border = bar_border,
+    freq = TRUE
   )
 }
 
