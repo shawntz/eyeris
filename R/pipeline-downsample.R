@@ -155,11 +155,29 @@ downsample_pupil <- function(
   rp,
   rs
 ) {
-  if (any(is.na(x[[prev_op]]))) {
-    log_error("NAs detected in pupil data. Need to interpolate first.")
-    return(x[[prev_op]])
-  } else {
-    prev_pupil <- x[[prev_op]]
+  prev_pupil <- x[[prev_op]]
+
+  # Gaps left as NA by interpolate(max_gap_ms) are intentional missing-data
+  # segments. The anti-aliasing filter cannot operate on NAs, so we resample
+  # *around* these gaps: fill them temporarily, then restore them to NA at the
+  # original resolution before decimation (so decimated samples falling within
+  # a gap remain NA). If interpolation was never run upstream, keep the guard.
+  na_idx <- integer(0)
+  if (anyNA(prev_pupil)) {
+    if (!grepl("interpolate", prev_op)) {
+      log_error("NAs detected in pupil data. Need to interpolate first.")
+    } else if (sum(!is.na(prev_pupil)) < 2) {
+      log_error(
+        paste0(
+          "Fewer than 2 valid pupil samples remain after interpolation; ",
+          "cannot downsample around gaps. Check upstream deblink/detransient/",
+          "interpolate settings or this block's data quality."
+        )
+      )
+    } else {
+      na_idx <- which(is.na(prev_pupil))
+      prev_pupil <- zoo::na.approx(prev_pupil, na.rm = FALSE, rule = 2)
+    }
   }
 
   decimation_factor <- current_fs / target_fs
@@ -229,6 +247,12 @@ downsample_pupil <- function(
 
   # apply anti-aliasing filter
   filtered_data <- gsignal::filtfilt(filt, prev_pupil)
+
+  # restore intentional missing-data gaps (interpolate(max_gap_ms)) at full
+  # resolution so that decimated samples within a gap remain NA
+  if (length(na_idx) > 0) {
+    filtered_data[na_idx] <- NA_real_
+  }
 
   # decimate (downsample) the data
   # use every nth sample where n is the decimation factor

@@ -95,15 +95,15 @@ detrend_pupil <- function(x, prev_op) {
   pupil <- x[[prev_op]]
   timeseries <- x[["time_secs"]]
 
-  fit <- lm(pupil ~ timeseries)
-
-  fitted_values <- fit$fitted.values
-  coefficients <- fit$coefficients
-  residuals <- fit$residuals
+  # use na.exclude so intentional missing-data gaps left by
+  # interpolate(max_gap_ms) are excluded from the linear fit but preserved (as
+  # NA) in the returned fitted values and residuals, keeping output length
+  # aligned with the input. With no NAs this is identical to the default fit.
+  fit <- lm(pupil ~ timeseries, na.action = stats::na.exclude)
 
   list(
-    fitted_values = fitted_values,
-    coefficients = coefficients,
-    residuals = residuals
+    fitted_values = stats::fitted(fit),
+    coefficients = stats::coef(fit),
+    residuals = stats::residuals(fit)
   )
 }

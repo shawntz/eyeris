@@ -1,3 +1,6 @@
+# internal, mutable per-session state (e.g., for one-time-only notices)
+.eyeris_session <- new.env(parent = emptyenv())
+
 utils::globalVariables(c(
   "time_orig",
   "time_secs",

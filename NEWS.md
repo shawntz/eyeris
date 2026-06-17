@@ -1,3 +1,13 @@
+# eyeris 3.2.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
+
+This release adds a configurable maximum-gap limit to the interpolation step so that long stretches of missing pupil data are no longer interpolated over, following established pupillometry preprocessing guidelines.
+
+## 🚨 **Breaking changes & deprecations**
+
+- **BREAKING (#295)**: `interpolate()` now enforces a maximum gap duration for linear interpolation via a new `max_gap_ms` parameter. Gaps of consecutive missing (`NA`) samples that are **longer** than `max_gap_ms` are now left as `NA` rather than interpolated over. The default of `250` ms follows the recommendation of Kret & Sjak-Shie (2018), who advise against interpolating across long gaps where linear interpolation is unlikely to reflect the true underlying pupil signal. Previously (eyeris ≤ 3.1.0), **all** gaps were interpolated regardless of duration. This is a change in default behavior and may affect downstream results; `eyeris` now prints a one-time-per-session console notice when the limit is in effect. To restore the previous behavior of interpolating across all gaps, set `interpolate = list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` when calling `interpolate()` directly). The threshold can also be customized, e.g., `glassbox(interpolate = list(max_gap_ms = 100))`. The limit is specified in milliseconds and is internally converted to a number of samples using each recording's own sampling rate, so it behaves consistently across sampling frequencies, by @shawntz in #295.
+
+- **ENH (#295)**: The downstream `glassbox()` steps that cannot operate on missing data — low-pass filtering (`lpfilt()`), downsampling (`downsample()`), binning (`bin()`), and detrending (`detrend()`) — now work *around* the gaps that `interpolate(max_gap_ms)` intentionally leaves as `NA`. They filter/resample/fit over the available data (filling temporarily where needed) and then restore the gaps as `NA`, so the long-gap `NA`s are preserved through to the final preprocessed output instead of causing these steps to be skipped. When interpolation has not been run upstream, the filter/resample steps still raise the usual "interpolate first" error, by @shawntz in #295.
+
 # eyeris 3.1.0 "Lumpy Space Princess" ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png){width="50"}
 
 This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.

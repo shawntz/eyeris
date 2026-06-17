@@ -91,7 +91,7 @@ eyeris:::speed(x, y)
 **Description**: Interpolate missing pupil data using linear interpolation.
 
 ```r
-eyeris:::interpolate_pupil(x, prev_op, verbose)
+eyeris:::interpolate_pupil(x, prev_op, verbose, max_gap_ms = 250)
 ```
 
 **Parameters**:
@@ -99,6 +99,7 @@ eyeris:::interpolate_pupil(x, prev_op, verbose)
 - `x`: A data frame containing pupil data
 - `prev_op`: The name of the previous operation's pupil column
 - `verbose`: Logical, whether to print verbose output
+- `max_gap_ms`: Maximum gap duration (ms) to interpolate; longer gaps are left as `NA` (use `Inf`/`NULL` to interpolate across all gaps)
 
 **Returns**: A vector of interpolated pupil values
 
@@ -704,7 +705,7 @@ Many internal functions are designed to work within the pipeline architecture:
 eyeris_obj |>
   eyeris:::deblink_pupil(prev_op = "pupil_raw", extend = 100) |>
   eyeris:::detransient_pupil(prev_op = "pupil_raw_deblink", n = 16) |>
-  eyeris:::interpolate_pupil(prev_op = "pupil_raw_deblink_detransient", verbose = TRUE)
+  eyeris:::interpolate_pupil(prev_op = "pupil_raw_deblink_detransient", verbose = TRUE, max_gap_ms = 250)
 ```
 
 ### Error Handling

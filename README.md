@@ -98,7 +98,7 @@ with links to their documentation and a brief description.
 | **Data Loading** | [load_asc()](https://shawnschwartz.com/eyeris/reference/load_asc.html) | Load EyeLink `.asc` files into an `eyeris` object. |
 | **Blink Artifact Removal** | [deblink()](https://shawnschwartz.com/eyeris/reference/deblink.html) | Remove blink artifacts by extending and masking missing samples. |
 | **Transient (Speed-Based) Artifact Removal** | [detransient()](https://shawnschwartz.com/eyeris/reference/detransient.html) | Remove transient spikes in the pupil signal using a moving MAD filter. |
-| **Linear Interpolation** | [interpolate()](https://shawnschwartz.com/eyeris/reference/interpolate.html) | Interpolate missing (NA) samples in the pupil signal. |
+| **Linear Interpolation** | [interpolate()](https://shawnschwartz.com/eyeris/reference/interpolate.html) | Interpolate missing (NA) samples in the pupil signal (gaps longer than `max_gap_ms`, default 250 ms, are left as NA). |
 | **Lowpass Filtering** | [lpfilt()](https://shawnschwartz.com/eyeris/reference/lpfilt.html) | Apply a Butterworth lowpass filter to the pupil signal. |
 | **Downsampling** | [downsample()](https://shawnschwartz.com/eyeris/reference/downsample.html) | Downsample the pupil signal to a lower sampling rate. |
 | **Binning** | [bin()](https://shawnschwartz.com/eyeris/reference/bin.html) | Bin pupil data into specified time bins using mean or median. |

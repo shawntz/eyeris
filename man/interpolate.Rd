@@ -4,10 +4,19 @@
 \alias{interpolate}
 \title{Interpolate missing pupil samples}
 \usage{
-interpolate(eyeris, verbose = TRUE, call_info = NULL)
+interpolate(eyeris, max_gap_ms = 250, verbose = TRUE, call_info = NULL)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
+
+\item{max_gap_ms}{The maximum duration (in milliseconds) of a gap of missing
+(\code{NA}) pupil samples that will be interpolated. Gaps longer than this
+threshold are left as \code{NA} (not interpolated). Must be greater than \code{0};
+defaults to \code{250} ms, the value recommended by Kret & Sjak-Shie (2018). Set
+to \code{Inf} (or \code{NULL}) to interpolate across all gaps regardless of duration.
+The threshold is converted to a whole number of samples (rounded down) using
+each recording's sampling rate. To skip interpolation entirely, set
+\code{interpolate = FALSE} in \code{\link[=glassbox]{glassbox()}} instead}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages.
 Defaults to \code{TRUE}. Set to \code{FALSE} to suppress messages about the current
@@ -30,6 +39,28 @@ values on either end, respectively, using the "rule = 2" argument in the
 \code{approx()} function.
 }
 \details{
+By default, only gaps shorter than or equal to \code{max_gap_ms} milliseconds are
+interpolated. Any gap longer than this threshold is left as \code{NA} rather than
+being interpolated over. This follows the recommendation of Kret &
+Sjak-Shie (2018) to avoid interpolating across long stretches of missing
+data, where linear interpolation is unlikely to reflect the true underlying
+pupil signal. The default of \code{250} ms matches the value used in that paper.
+
+Set \code{max_gap_ms = Inf} (or \code{NULL}) to disable the limit and interpolate
+across all gaps, restoring the behavior of \code{eyeris} versions <= 3.1.0.
+
+Downstream \code{glassbox()} steps that cannot operate on missing data (low-pass
+filtering, downsampling, and binning) automatically work \emph{around} these
+retained gaps -- filtering/resampling over a temporarily filled copy and
+then restoring the gaps as \code{NA} -- so the gaps are preserved through to the
+final preprocessed output. Note that, because of this temporary fill,
+samples immediately adjacent to a long retained gap may carry minor filter
+edge effects.
+
+\strong{Note:} Prior to \code{eyeris} version 3.2.0, all gaps were interpolated
+regardless of duration. Enforcing \code{max_gap_ms} is a change in default
+behavior and may affect downstream results.
+
 This function is automatically called by \code{glassbox()} by default. Use
 \code{glassbox(interpolate = FALSE)} to disable this step as needed.
 
@@ -39,7 +70,8 @@ manually.
 }
 \note{
 This function is part of the \code{glassbox()} preprocessing pipeline and is not
-intended for direct use in most cases. Use \code{glassbox(interpolate = TRUE)}.
+intended for direct use in most cases. Use \code{glassbox(interpolate = TRUE)},
+or provide parameters via \code{glassbox(interpolate = list(max_gap_ms = ...))}.
 
 Advanced users may call it directly if needed.
 }
@@ -51,6 +83,16 @@ demo_data |>
   eyeris::glassbox(interpolate = TRUE) |>
   plot(seed = 0)
 
+# only interpolate gaps up to 100 ms; leave longer gaps as NA
+demo_data |>
+  eyeris::glassbox(interpolate = list(max_gap_ms = 100)) |>
+  plot(seed = 0)
+
+}
+\references{
+Kret, M. E., & Sjak-Shie, E. E. (2018). Preprocessing pupil size data:
+Guidelines and code. \emph{Behavior Research Methods, 51}(3), 1336-1342.
+\doi{10.3758/s13428-018-1075-y}
 }
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as

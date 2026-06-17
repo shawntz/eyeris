@@ -148,10 +148,14 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
     )
   }
 
-  if (any(is.na(x[[prev_op]]))) {
+  prev_pupil <- x[[prev_op]]
+
+  # Gaps left as NA by interpolate(max_gap_ms) are intentional missing-data
+  # segments. The aggregation below uses `na.rm = TRUE`, so bins that overlap a
+  # gap average the available samples and fully-missing bins become NA. If
+  # interpolation was never run upstream, keep the original guard.
+  if (anyNA(prev_pupil) && !grepl("interpolate", prev_op)) {
     log_error("NAs detected in pupil data. Need to interpolate first.")
-  } else {
-    prev_pupil <- x[[prev_op]]
   }
 
   time_col <- "time_secs"
@@ -189,14 +193,15 @@ bin_pupil <- function(x, prev_op, bins_per_second, method, current_fs) {
     result <- numeric(length(bin_centers))
     for (i in seq_along(bin_centers)) {
       bin_indices <- which(bin_assignments == i)
-      if (length(bin_indices) > 0) {
-        if (method == "mean") {
-          result[i] <- mean(vec[bin_indices], na.rm = TRUE)
-        } else {
-          result[i] <- median(vec[bin_indices], na.rm = TRUE)
-        }
+      vals <- vec[bin_indices]
+      if (length(bin_indices) == 0 || all(is.na(vals))) {
+        # empty bin, or a bin that falls fully within a missing-data gap left
+        # by interpolate(max_gap_ms); use NA (not NaN) for a consistent sentinel
+        result[i] <- NA_real_
+      } else if (method == "mean") {
+        result[i] <- mean(vals, na.rm = TRUE)
       } else {
-        result[i] <- NA
+        result[i] <- median(vals, na.rm = TRUE)
       }
     }
     result
