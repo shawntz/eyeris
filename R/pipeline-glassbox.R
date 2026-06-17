@@ -186,6 +186,7 @@ glassbox <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
+    regularize = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
@@ -462,6 +463,33 @@ glassbox <- function(
   if (which_steps[["load_asc"]]) {
     log_success("Running eyeris::load_asc()", verbose = verbose)
     file <- pipeline[["load_asc"]](file, params, original_call)
+
+    # regularize the sampling grid before any rate-dependent step, so that
+    # dropped samples become NA gaps on a uniform grid that later steps (e.g.,
+    # interpolate) can handle consistently. Runs once on the full object, ahead
+    # of any binocular split (regularize() recurses into both eyes). For
+    # already-uniform data (e.g., EyeLink) this is a no-op.
+    if (which_steps[["regularize"]]) {
+      log_success("Running eyeris::regularize()", verbose = verbose)
+      max_inflation <- if (
+        is.list(params$regularize) &&
+          "max_inflation" %in% names(params$regularize)
+      ) {
+        params$regularize$max_inflation
+      } else {
+        2
+      }
+      call_info <- list(
+        call = original_call,
+        parameters = list(max_inflation = max_inflation, verbose = verbose)
+      )
+      file <- eyeris::regularize(
+        file,
+        max_inflation = max_inflation,
+        verbose = verbose,
+        call_info = call_info
+      )
+    }
 
     # handle binocular objects
     if (is_binocular_object(file)) {
@@ -909,6 +937,7 @@ glassbox_internal <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
+    regularize = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
