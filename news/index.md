@@ -68,6 +68,40 @@ to a complete end-to-end reference pipeline.
   [@alicexue](https://github.com/alicexue) in
   [\#294](https://github.com/shawntz/eyeris/issues/294).
 
+- **FF**: Fixed blank “raw” pupil-size histograms in multi-run
+  diagnostic reports. When `plot_distributions = TRUE`,
+  [`plot_pupil_distribution()`](https://shawnschwartz.com/eyeris/reference/plot_pupil_distribution.md)
+  outlined every histogram bar in white (`border = "white"`). For the
+  raw step — whose wide, outlier-laden spread yields the most
+  Freedman-Diaconis bins — the white outline completely covered the (now
+  very thin) bar fills, so the histogram rendered as a blank white
+  panel. Whether a given run crossed that threshold depended on its data
+  spread (i.e., its number of bins), which is why some runs in a
+  multi-run report showed a normal raw histogram while others appeared
+  empty. The bar outline is now dropped once there are too many bars so
+  the distribution always stays visible, and the helper additionally
+  guards against empty/all-`NA`/near-constant inputs (drawing an
+  informative panel or falling back to default breaks) instead of
+  raising an error, by [@shawntz](https://github.com/shawntz) and
+  [@alicexue](https://github.com/alicexue) in
+  [\#319](https://github.com/shawntz/eyeris/issues/319).
+
+- **FF**: Fixed a crash that broke *all* multi-block (multi-run)
+  diagnostic plotting and HTML report generation on R `>= 4.2`.
+  [`get_block_numbers()`](https://shawnschwartz.com/eyeris/reference/get_block_numbers.md)
+  guarded its return value with `if (is.na(block_nums))`, but for a
+  multi-block object `block_nums` is a vector (one entry per block), so
+  the condition had length `> 1` — a hard error on modern R
+  (`"the condition has length > 1"`). The fallback is now applied
+  element-wise, so multi-block objects return one number per block; this
+  path is exercised by both
+  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+  and
+  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md),
+  by [@shawntz](https://github.com/shawntz) and
+  [@alicexue](https://github.com/alicexue) in
+  [\#319](https://github.com/shawntz/eyeris/issues/319).
+
 - **FF ([\#310](https://github.com/shawntz/eyeris/issues/310))**: Made
   [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
   (and, by extension,
