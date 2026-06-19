@@ -1,6 +1,6 @@
 # Changelog
 
-## eyeris 3.2.0 (pre-release) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
+## eyeris 3.2.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 This release fixes several correctness and data-integrity bugs and adds
 new transparency and reproducibility tooling. Bug fixes resolve a

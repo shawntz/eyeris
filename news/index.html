@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.1.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,9 +43,9 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
     <li><h6 class="dropdown-header" data-toc-skip>LATEST STABLE RELEASE</h6></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-310-lumpy-space-princess-lumpy-space-princess">v3.1.0 (CRAN)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-320-lumpy-space-princess-lumpy-space-princess">v3.2.0 (CRAN)</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../news/index.html#eyeris-320-pre-release-lumpy-space-princess-lumpy-space-princess">v3.2.0 (pre-release)</a></li>
+    <li><a class="dropdown-item" href="../news/index.html#eyeris-310-lumpy-space-princess-lumpy-space-princess">v3.1.0 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-301-lumpy-space-princess-lumpy-space-princess">v3.0.1 (CRAN)</a></li>
     <li><a class="dropdown-item" href="../news/index.html#eyeris-300-lumpy-space-princess-lumpy-space-princess">v3.0.0 (CRAN)</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Previous Releases</h6></li>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="3.2.0" id="eyeris-320-pre-release-lumpy-space-princess-lumpy-space-princess">eyeris 3.2.0 (pre-release) “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-320-pre-release-lumpy-space-princess-lumpy-space-princess"></a></h2>
+<h2 class="pkg-version" data-toc-text="3.2.0" id="eyeris-320-lumpy-space-princess-lumpy-space-princess">eyeris 3.2.0 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-320-lumpy-space-princess-lumpy-space-princess"></a></h2>
 <p>This release fixes several correctness and data-integrity bugs and adds new transparency and reproducibility tooling. Bug fixes resolve a report/figure collision when different task names shared the same run number within a subject/session, misleading diagnostic plots for pipeline steps that precede downsampling/binning, and silent data loss in <code><a href="../reference/eyeris_db_read.html">eyeris_db_read()</a></code>/<code><a href="../reference/eyeris_db_collect.html">eyeris_db_collect()</a></code> when table schemas diverged across <code>eyeris</code> versions. New features add a “percent data lost” annotation to the HTML report, expose a <code>prop_missing</code>/<code>n_missing</code> missing-data column at the block and trial levels for user-defined filtering, and introduce <code><a href="../reference/boilerplate.html">boilerplate()</a></code>, an fMRIPrep-style generator that auto-writes copy-and-paste-ready methods text from the parameters captured in your pipeline. Documentation now cross-references every modular preprocessing function to a complete end-to-end reference pipeline.</p>
 <div class="section level3">
 <h3 id="bug-bugs-fixed-3-2-0">🐛 Bugs fixed<a class="anchor" aria-label="anchor" href="#bug-bugs-fixed-3-2-0"></a></h3>
