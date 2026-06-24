@@ -548,7 +548,7 @@ For single-eye recordings, data are organized in the main eye directory:
                 └── eye/
                     ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye.csv
                     ├── sub-001_ses-01_task-test_run-01_desc-confounds.csv
-                    ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil.csv
+                    ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus.csv
                     ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil.csv
                     ├── sub-001_ses-01_task-test_run-01_events.csv
                     ├── sub-001_ses-01_task-test_run-01_blinks.csv
@@ -582,7 +582,7 @@ For binocular recordings, data are organized into separate `left` and
                 ├── eye-L/
                 │   ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-L.csv
                 │   ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-L.csv
-                │   ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil_eye-L.csv
+                │   ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_eye-L.csv
                 │   ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-L.csv
                 │   ├── sub-001_ses-01_task-test_run-01_events_eye-L.csv
                 │   ├── sub-001_ses-01_task-test_run-01_blinks_eye-L.csv
@@ -596,7 +596,7 @@ For binocular recordings, data are organized into separate `left` and
                 └── eye-R/
                     ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-R.csv
                     ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-R.csv
-                    ├── sub-001_ses-01_task-test_run-01_epoch-stimulus_desc-preproc_pupil_eye-R.csv
+                    ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_eye-R.csv
                     ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-R.csv
                     ├── sub-001_ses-01_task-test_run-01_events_eye-R.csv
                     ├── sub-001_ses-01_task-test_run-01_blinks_eye-R.csv
@@ -615,7 +615,7 @@ All files follow a consistent BIDS-like naming pattern:
 - **Timeseries data**: `desc-timeseries_eye` (with `_eye-L` or `_eye-R`
   suffix for binocular data)
 - **Confounds**: `desc-confounds` (with eye suffix for binocular data)
-- **Epochs**: `epoch-{event}_desc-preproc_pupil` (with eye suffix for
+- **Epochs**: `desc-preproc_pupil_epoch-{event}` (with eye suffix for
   binocular data)
 - **Baselines**: `baseline-{event}_desc-preproc_pupil` (with eye suffix
   for binocular data)
