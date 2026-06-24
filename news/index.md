@@ -1,6 +1,39 @@
 # Changelog
 
+## eyeris 3.2.0.9000 (development version)
+
+### 🐛 Bugs fixed
+
+- **FF**: Fixed multi-run epoch CSV files
+  (`*_desc-preproc_pupil_epoch-<label>.csv`) not being written for each
+  run. When a subject’s data contained multiple blocks (runs),
+  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  built the per-epoch preprocessed output filename from the `run_num`
+  argument — which is intentionally ignored (`NULL`) for multi-block
+  objects — and packed the epoch label directly into the `desc` field
+  without the `run-` and `epoch-` BIDS entities. As a result, every run
+  wrote to the *same* filename and silently overwrote the previous one
+  (last-run-wins), so the expected
+  `..._run-NN_desc-preproc_pupil_epoch-<label>.csv` files never
+  materialized for multi-run inputs. The multi-run writer now derives
+  the run number from each block and routes the epoch label through the
+  BIDS filename builder, exactly mirroring the single-run path. The
+  DuckDB/parquet outputs were already keyed by the correct per-run
+  number and are unchanged — only the CSV filenames were affected. As
+  part of the same fix, the multi-run raw-timeseries writers now key the
+  `run-NN` token off each block’s own block number (rather than a
+  positional index, which mislabeled runs when blocks were not numbered
+  sequentially), and several internal epoch/baseline metadata helpers no
+  longer receive `verbose` in their `block_name` argument position
+  (which crashed
+  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  under `verbose = FALSE` whenever epochs were present), by
+  [@alicexue](https://github.com/alicexue) and
+  [@shawntz](https://github.com/shawntz).
+
 ## eyeris 3.2.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
+
+CRAN release: 2026-06-19
 
 This release fixes several correctness and data-integrity bugs and adds
 new transparency and reproducibility tooling. Bug fixes resolve a

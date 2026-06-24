@@ -53,7 +53,7 @@ Which will create a directory structure like this:
             └── ses-01
                 ├── eye
                 │   ├── sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv
-                │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
+                │   └── sub-001_ses-01_task-assocret_run-01_desc-preproc_pupil_epoch-prePostProbe.csv
                 ├── source
                 │   └── figures
                 │       └── task-assocret_run-01
