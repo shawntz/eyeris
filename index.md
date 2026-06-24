@@ -535,10 +535,9 @@ bids_dir/
         └── ses-01/
             ├── sub-001_task-test.html
             └── eye/
-                ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye.csv
+                ├── sub-001_ses-01_task-test_run-01_desc-timeseries.csv
                 ├── sub-001_ses-01_task-test_run-01_desc-confounds.csv
-                ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus.csv
-                ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil.csv
+                ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_bline-sub-stimulus.csv
                 ├── sub-001_ses-01_task-test_run-01_events.csv
                 ├── sub-001_ses-01_task-test_run-01_blinks.csv
                 ├── sub-001_ses-01_task-test_run-01_summary.csv
@@ -573,8 +572,7 @@ bids_dir/
             ├── eye-L/
             │   ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-L.csv
             │   ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-L.csv
-            │   ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_eye-L.csv
-            │   ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-L.csv
+            │   ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_bline-sub-stimulus_eye-L.csv
             │   ├── sub-001_ses-01_task-test_run-01_events_eye-L.csv
             │   ├── sub-001_ses-01_task-test_run-01_blinks_eye-L.csv
             │   ├── sub-001_ses-01_task-test_run-01_summary_eye-L.csv
@@ -587,8 +585,7 @@ bids_dir/
             └── eye-R/
                 ├── sub-001_ses-01_task-test_run-01_desc-timeseries_eye-R.csv
                 ├── sub-001_ses-01_task-test_run-01_desc-confounds_eye-R.csv
-                ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_eye-R.csv
-                ├── sub-001_ses-01_task-test_run-01_baseline-stimulus_desc-preproc_pupil_eye-R.csv
+                ├── sub-001_ses-01_task-test_run-01_desc-preproc_pupil_epoch-stimulus_bline-sub-stimulus_eye-R.csv
                 ├── sub-001_ses-01_task-test_run-01_events_eye-R.csv
                 ├── sub-001_ses-01_task-test_run-01_blinks_eye-R.csv
                 ├── sub-001_ses-01_task-test_run-01_summary_eye-R.csv
@@ -604,13 +601,13 @@ bids_dir/
 
 All files follow a consistent BIDS-like naming pattern:
 
-- **Timeseries data**: `desc-timeseries_eye` (with `_eye-L` or `_eye-R`
+- **Timeseries data**: `desc-timeseries` (with `_eye-L` or `_eye-R`
   suffix for binocular data)
 - **Confounds**: `desc-confounds` (with eye suffix for binocular data)
 - **Epochs**: `desc-preproc_pupil_epoch-{event}` (with eye suffix for
-  binocular data)
-- **Baselines**: `baseline-{event}_desc-preproc_pupil` (with eye suffix
-  for binocular data)
+  binocular data); when baseline correction is applied, the baseline is
+  folded into the same file as a `_bline-{type}-{event}` token (e.g.
+  `desc-preproc_pupil_epoch-{event}_bline-{type}-{event}`)
 - **Events**: `events` (with eye suffix for binocular data)
 - **Blinks**: `blinks` (with eye suffix for binocular data)
 - **Reports**: HTML files with eye suffix for binocular data
