@@ -20,10 +20,14 @@
 #     under `verbose = FALSE`).
 
 # Build a genuine two-block (two-run) eyeris object from the single-block demo
-# by deep-copying block_1 into block_2 across every block-keyed structure that
-# bidsify() touches. Setting `block = 2` on the copied data frames is what makes
-# the second block resolve to run-02 on disk.
-make_two_block <- function(obj) {
+# by deep-copying block_1 into a deliberately NON-sequential block key across
+# every block-keyed structure that bidsify() touches. The second block is
+# numbered 7 (not 2) on purpose: a positional-index regression (keying the
+# `run-NN` token off the lapply() position instead of the block's own number)
+# would still emit run-02 and pass a sequential fixture, so the second block
+# must resolve to run-07 for the test to actually exercise the fix.
+make_two_block <- function(obj, new_block = 7L) {
+  new_key <- paste0("block_", new_block)
   setb <- function(df, b) {
     if (is.data.frame(df) && "block" %in% colnames(df)) {
       df$block <- b
@@ -31,32 +35,35 @@ make_two_block <- function(obj) {
     df
   }
 
-  obj$timeseries$block_2 <- setb(obj$timeseries$block_1, 2)
-  obj$events$block_2 <- setb(obj$events$block_1, 2)
-  obj$blinks$block_2 <- setb(obj$blinks$block_1, 2)
-  obj$latest$block_2 <- obj$latest$block_1
+  obj$timeseries[[new_key]] <- setb(obj$timeseries$block_1, new_block)
+  obj$events[[new_key]] <- setb(obj$events$block_1, new_block)
+  obj$blinks[[new_key]] <- setb(obj$blinks$block_1, new_block)
+  obj$latest[[new_key]] <- obj$latest$block_1
 
   for (en in grep("^epoch_", names(obj), value = TRUE)) {
-    obj[[en]]$block_2 <- setb(obj[[en]]$block_1, 2)
+    obj[[en]][[new_key]] <- setb(obj[[en]]$block_1, new_block)
     if (!is.null(obj[[en]]$info)) {
-      obj[[en]]$info$block_2 <- obj[[en]]$info$block_1
+      obj[[en]]$info[[new_key]] <- obj[[en]]$info$block_1
     }
   }
 
   cf <- obj$confounds
   if (!is.null(cf$unepoched_timeseries)) {
-    cf$unepoched_timeseries$block_2 <- setb(cf$unepoched_timeseries$block_1, 2)
+    cf$unepoched_timeseries[[new_key]] <- setb(
+      cf$unepoched_timeseries$block_1,
+      new_block
+    )
   }
   for (en in names(cf$epoched_timeseries)) {
-    cf$epoched_timeseries[[en]]$block_2 <- setb(
+    cf$epoched_timeseries[[en]][[new_key]] <- setb(
       cf$epoched_timeseries[[en]]$block_1,
-      2
+      new_block
     )
   }
   for (en in names(cf$epoched_epoch_wide)) {
-    cf$epoched_epoch_wide[[en]]$block_2 <- setb(
+    cf$epoched_epoch_wide[[en]][[new_key]] <- setb(
       cf$epoched_epoch_wide[[en]]$block_1,
-      2
+      new_block
     )
   }
   obj$confounds <- cf
@@ -107,9 +114,10 @@ test_that("multi-run bidsify writes a distinct epoch CSV for each run", {
     value = TRUE
   )
 
-  # one file per run, and they are distinct (no silent overwrite)
+  # one file per run, keyed to each block's own number (1 and 7, not 1 and 2),
+  # and they are distinct (no silent overwrite)
   expect_true(any(grepl("run-01_desc-preproc_pupil_epoch-", epoch_csvs)))
-  expect_true(any(grepl("run-02_desc-preproc_pupil_epoch-", epoch_csvs)))
+  expect_true(any(grepl("run-07_desc-preproc_pupil_epoch-", epoch_csvs)))
   expect_length(unique(epoch_csvs), 2)
 })
 
@@ -135,8 +143,9 @@ test_that("multi-run bidsify keys raw timeseries CSVs to the true block number",
   deriv <- file.path(bids_dir, "derivatives", "sub-001", "ses-01")
   all_files <- list.files(deriv, recursive = TRUE)
 
+  # block 7 must surface as run-07 (a positional index would wrongly yield run-02)
   ts_csvs <- grep("desc-timeseries\\.csv$", all_files, value = TRUE)
   expect_true(any(grepl("run-01_desc-timeseries", ts_csvs)))
-  expect_true(any(grepl("run-02_desc-timeseries", ts_csvs)))
+  expect_true(any(grepl("run-07_desc-timeseries", ts_csvs)))
   expect_length(unique(ts_csvs), 2)
 })

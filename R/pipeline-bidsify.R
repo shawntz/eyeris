@@ -1362,26 +1362,6 @@ run_bidsify <- function(
           dir.create(epoch_folder, recursive = TRUE)
         }
 
-        ew_block <- names(eyeris$confounds$epoched_epoch_wide[[epoch_name]])[1]
-        epoch_events_info <- get_epoch_events(
-          eyeris,
-          epoch_name,
-          ew_block,
-          verbose
-        )
-        baseline_events_info <- get_baseline_events(
-          eyeris,
-          epoch_name,
-          ew_block,
-          verbose
-        )
-        baseline_type_info <- get_baseline_type(
-          eyeris,
-          epoch_name,
-          ew_block,
-          verbose
-        )
-
         for (block_name in names(eyeris$confounds$epoched_epoch_wide[[
           epoch_name
         ]])) {
@@ -1392,6 +1372,26 @@ run_bidsify <- function(
           if (nrow(block_confounds) == 0) {
             next
           }
+
+          # derive BIDS metadata from the current block (not just the first)
+          epoch_events_info <- get_epoch_events(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
+          baseline_events_info <- get_baseline_events(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
+          baseline_type_info <- get_baseline_type(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
 
           matched_events <- unique(block_confounds$matched_event)
 
