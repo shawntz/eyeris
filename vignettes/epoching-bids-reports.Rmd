@@ -196,7 +196,7 @@ eyeris
     └── sub-001
         └── ses-01
             ├── eye
-            │   ├── sub-001_ses-01_task-assocret_run-01_desc-timeseries_pupil.csv
+            │   ├── sub-001_ses-01_task-assocret_run-01_desc-timeseries.csv
             │   └── sub-001_ses-01_task-assocret_run-01_epoch-prePostProbe_desc-preproc_pupil.csv
             ├── source
             │   └── figures
