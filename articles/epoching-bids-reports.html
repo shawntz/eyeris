@@ -52,6 +52,7 @@
     <li><h6 class="dropdown-header" data-toc-skip>Start Here</h6></li>
     <li><a class="dropdown-item" href="../articles/complete-pipeline.html">Complete Pupillometry Pipeline Walkthrough</a></li>
     <li><a class="dropdown-item" href="../articles/epoching-bids-reports.html">Extracting Data Epochs and Exporting Pupil Data</a></li>
+    <li><a class="dropdown-item" href="../articles/multiple-runs-separate-files.html">Preprocessing Multiple Runs Stored in Separate Files</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Pupil Data Quality Control</h6></li>
     <li><a class="dropdown-item" href="../articles/reports.html">QC with Interactive Reports</a></li>
@@ -151,20 +152,20 @@ needing to write any additional code)!</p>
 <span><span class="co"># Load the example memory task file and run default glassbox preproc workflow</span></span>
 <span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">eye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:42] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:43] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-24 08:25:43] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-24 08:25:43] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-24 08:25:43] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:43] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:43] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:52] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:52] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:52] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:52] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-25 04:52:53] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-25 04:52:53] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-06-25 04:52:53] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:43] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="extract-data-epochs">2 Extract Data Epochs<a class="anchor" aria-label="anchor" href="#extract-data-epochs"></a>
@@ -184,13 +185,13 @@ needing to write any additional code)!</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eye_1a</span> <span class="op">&lt;-</span> <span class="va">eye</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epoch.html">epoch</a></span><span class="op">(</span>events <span class="op">=</span> <span class="st">"PROBE*"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:43] [INFO] Epoching pupil data...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:43] [INFO] Block 1: found 10 matching events for PROBE</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Done!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Block 1: pupil data from 10 unique event</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Epoching pupil data...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Block 1: found 10 matching events for PROBE</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Done!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Block 1: pupil data from 10 unique event</span></span>
 <span><span class="co">#&gt; messages extracted</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Pupil epoching completed in 0.20 seconds</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:44] [INFO] Recalculating epoched confounds for new</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Pupil epoching completed in 0.20 seconds</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Recalculating epoched confounds for new</span></span>
 <span><span class="co">#&gt; epochs...</span></span></code></pre></div>
 <p>Now, if you take a look at <code>eye</code>, you’ll notice there’s a
 new list element within this <code>eyeris</code> object:
@@ -268,14 +269,14 @@ label to the resulting epoch set.</p>
 <span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    label <span class="op">=</span> <span class="st">"probeAfter"</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:44] [INFO] Epoching pupil data...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:44] [INFO] Block 1: found 5 matching events for</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Epoching pupil data...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:53] [INFO] Block 1: found 5 matching events for</span></span>
 <span><span class="co">#&gt; PROBESTARTtrial</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Done!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Block 1: pupil data from 5 unique event messages</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:53] [OKAY] Done!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:54] [OKAY] Block 1: pupil data from 5 unique event messages</span></span>
 <span><span class="co">#&gt; extracted</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-24 08:25:44] [OKAY] Pupil epoching completed in 0.08 seconds</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-24 08:25:44] [INFO] Recalculating epoched confounds for new</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-06-25 04:52:54] [OKAY] Pupil epoching completed in 0.07 seconds</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-06-25 04:52:54] [INFO] Recalculating epoched confounds for new</span></span>
 <span><span class="co">#&gt; epochs...</span></span>
 <span></span>
 <span><span class="va">eye_1b</span> <span class="op">|&gt;</span></span>

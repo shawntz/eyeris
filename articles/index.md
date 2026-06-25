@@ -6,6 +6,8 @@
   Walkthrough](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md):
 - [Extracting Data Epochs and Exporting Pupil
   Data](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.md):
+- [Preprocessing Multiple Runs Stored in Separate
+  Files](https://shawnschwartz.com/eyeris/articles/multiple-runs-separate-files.md):
 
 ### Pupil Data Quality Control
 
