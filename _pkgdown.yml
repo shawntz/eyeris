@@ -163,6 +163,7 @@ articles:
     contents:
     - complete-pipeline
     - epoching-bids-reports
+    - multiple-runs-separate-files
   - title: Pupil Data Quality Control
     navbar: Pupil Data Quality Control
     contents:
