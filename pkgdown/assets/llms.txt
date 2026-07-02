@@ -1,0 +1,65 @@
+# eyeris — pupillometry preprocessing for R
+
+Flexible, extensible, and reproducible pupillometry preprocessing for R.
+One opinionated entry point runs an expert-vetted pipeline on raw EyeLink
+data; every step is transparent, self-documenting, and reproducible.
+
+[Get started](https://shawnschwartz.com/eyeris/articles/complete-pipeline.html) [Built for AI coding agents](https://shawnschwartz.com/eyeris/articles/agents.html) [Reference](https://shawnschwartz.com/eyeris/reference/index.html)
+
+``` r
+library(eyeris)
+
+# One opinionated call runs the full, expert-default pipeline
+# (deblink -> detransient -> interpolate -> lowpass filter -> z-score):
+output <- glassbox(eyelink_asc_demo_dataset())
+```
+
+## One obvious, correct entry point
+
+`glassbox(file)` runs the complete, expert-vetted recipe in the one order
+the field agrees on. A coding agent does not have to assemble a pipeline or
+guess the order of operations — there is a single, prescribed, obviously
+correct call.
+
+## An interface that resists hallucination
+
+Tune any step by passing a named list keyed by that step's exact function
+name, e.g. `glassbox(file, deblink = list(extend = 40))`. No non-standard
+evaluation, no positional-argument order to memorize; the call is either
+right or it errors loudly with the offending name.
+
+## Expert defaults mean fewer iterations
+
+Defaults are the opinionated starting parameters recommended by
+signal-processing experts in the Stanford Memory Lab (inspired by fMRIPrep
+and Nipype). Detrending is off by default; blink padding, transient
+thresholds, and the low-pass filter ship at values that work out of the box.
+
+## Output an agent can trust
+
+Deterministic given the same input, parameters, and seed. Every step records
+its call stack and parameters in `eyeris$params`; `summarize_confounds()`
+tabulates per-step data-quality metrics; `boilerplate()` auto-generates an
+fMRIPrep-style methods paragraph from the exact parameters that ran; and
+`bidsify()` writes machine-readable `.json` metadata sidecars.
+
+## Composable with grammars agents already know
+
+Every step is an exported function chainable with the base R pipe `|>`. An
+`eyeris` object is a list of tidy data frames with a documented structure, so
+downstream work is plain `dplyr`, `tidyr`, and `ggplot2`. Custom steps plug
+into the pipeline via `pipeline_handler()`.
+
+## Structured outputs
+
+`epoch()` extracts time-locked (optionally baseline-corrected) trial epochs.
+`bidsify()` writes a BIDS-like derivative tree with spec-driven, predictable
+file names and interactive HTML quality-control reports. Optional DuckDB
+database storage and Parquet export scale to large, collaborative studies.
+
+## Supported input
+
+SR Research EyeLink `.asc` files (from the EyeLink `edf2asc` converter).
+Format-agnostic downstream of loading: every step operates on a standardized
+internal `eyeris` object, so new tracker loaders can be added without changing
+the pipeline. Pure R; no Python required.
