@@ -118,9 +118,69 @@ What each piece is doing:
   silently ignored for objects that already contain multiple blocks.)
 </div>
 
+### The equivalent: label the run in `bidsify()` instead
+
+Setting the run number on **input** with `load_asc(block = i)` is the form we
+recommend, but it is not the only one. Because each single-run file already loads
+as one block by default, you can leave `load_asc` untouched and instead label
+each file on **output** with `bidsify(run_num = i)` -- exactly the "relabel a
+single-run object" use of `run_num` from the note above. This loop writes the
+same `run-01`, `run-02`, `run-03` derivatives as the one before it:
+
+```{r eval=FALSE}
+library(eyeris)
+
+dl <- path.expand("~/Downloads")
+asc_files <- file.path(dl, c(
+  "sub-AM22_t1_2026-03-09_20h46.11.141.asc",
+  "sub-AM22_t2_2026-03-09_21h08.15.079.asc",
+  "sub-AM22_t3_2026-03-09_21h30.00.565.asc"
+))
+stopifnot(all(file.exists(asc_files)))
+
+output_dir <- path.expand("~/Documents/eyeris")
+
+for (i in seq_along(asc_files)) {
+  glassbox(asc_files[i], verbose = TRUE) |>
+    epoch(
+      events = "TST_trial-{trial}_{item}_{associate}",
+      limits = c(0, 0.1),
+      label  = "trialEpochs"
+    ) |>
+    bidsify(
+      bids_dir       = output_dir,
+      run_num        = i,
+      participant_id = "AM22",
+      session_num    = "01",
+      task_name      = "assocmem",
+      save_raw       = TRUE,
+      html_report    = TRUE,
+      report_seed    = 0
+    )
+}
+```
+
+The only two changes from the first loop are: (1) `glassbox()` no longer receives
+`load_asc = list(block = i)`, so each file loads with its default single block;
+and (2) `bidsify()` now takes `run_num = i`, which relabels that block as
+`run-0i`. Everything else -- and every output file -- is the same.
+
+<div class="alert alert-warning" style="padding-bottom: 0;">
+  ⚠️ <strong>The two forms are equivalent only for genuinely single-run
+  files.</strong> <code>run_num</code> relabels a file that resolves to
+  <em>one</em> block; if a file happens to contain multiple embedded recording
+  segments, <code>run_num</code> is <em>silently ignored</em> and the runs are
+  numbered from the embedded blocks instead. <code>load_asc(block = i)</code>
+  also <em>forces</em> the whole file into a single run, so it doubles as a guard
+  against accidentally-multi-segment files. If you prefer the
+  <code>run_num</code> form, it is worth running the
+  <a href="#sanity-check-confirm-one-run-per-file">sanity check</a> below to
+  confirm each file really is one run.
+</div>
+
 ### What you get
 
-After the loop finishes, your derivatives look like this (per-run data files
+After either loop finishes, your derivatives look like this (per-run data files
 shown for `run-01`; `run-02` and `run-03` follow the same pattern):
 
 ```
