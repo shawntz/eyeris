@@ -16,10 +16,11 @@ plot_detrend_overlay(
 \item{pupil_data}{A single block of pupil time series data
 (e.g. \code{eyeris$timeseries$block_1})}
 
-\item{preview_n}{Number of columns for \code{par(mfrow)}. Default = 3.}
+\item{pupil_steps}{Character vector of pupil column names}
 
-\item{plot_params}{A named list of additional parameters to forward to
-\code{robust_plot()}}
+\item{preview_n}{Unused; retained for backwards compatibility.}
+
+\item{plot_params}{Unused; retained for backwards compatibility.}
 
 \item{suppress_prompt}{Logical. Whether to skip prompting. Default = TRUE.}
 }
@@ -28,7 +29,8 @@ Logical indicating whether detrend overlay was plotted successfully
 }
 \description{
 This function replicates the exact detrending visualization from the
-\code{glassbox()} interactive preview mode. It uses \code{robust_plot()} to show the
-most recent detrended pupil signal overlaid with the fitted linear trend.
+\code{glassbox()} interactive preview mode. It uses \code{reaborn} to show the most
+recent detrended pupil signal overlaid with the fitted linear trend, and
+prints the resulting \code{ggplot} to the active device.
 }
 \keyword{internal}

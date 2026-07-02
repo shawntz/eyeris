@@ -87,48 +87,34 @@ create_epoch_images_zip <- function(
 
           y_values <- group_df[[pupil_steps[pstep]]]
           if (any(is.finite(y_values))) {
-            plot(
-              group_df$timebin,
-              y_values,
-              type = "l",
-              xlab = "time (s)",
-              ylab = y_label,
-              col = colors[pstep],
-              main = paste0(
+            p <- rb_timeseries_panel(
+              x = group_df$timebin,
+              y = y_values,
+              color = colors[pstep],
+              title = paste0(
                 group,
                 "\n",
                 pupil_steps[pstep],
                 sprintf(" (Run %d)", run_dir_num)
-              )
-            )
-          } else {
-            # handle case where timebin has no finite values
-            timebin_range <- range(
-              group_df$timebin,
-              na.rm = TRUE,
-              finite = TRUE
-            )
-            if (any(!is.finite(timebin_range))) {
-              # fallback to default range if no finite values
-              timebin_range <- c(0, 1)
-            }
-
-            plot(
-              NA,
-              xlim = timebin_range,
-              ylim = c(0, 1),
-              type = "n",
+              ),
               xlab = "time (s)",
-              ylab = y_label,
-              main = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA")
+              ylab = y_label
             )
+            suppressMessages(suppressWarnings(print(p)))
+          } else {
             log_warn(
               "eyeris: no finite pupillometry data to plot for",
               "current epoch...",
               "plotting empty epoch plot.",
               verbose = verbose
             )
-            text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
+            p <- rb_blank_panel(
+              "No valid data",
+              title = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA"),
+              xlab = "time (s)",
+              ylab = y_label
+            )
+            suppressMessages(suppressWarnings(print(p)))
           }
 
           dev.off()

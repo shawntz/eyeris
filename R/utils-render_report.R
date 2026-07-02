@@ -897,92 +897,74 @@ make_prog_summary_plot <- function(
     if (sum(valid_indices) < 100) {
       next
     }
-    layer_data[[i]] <- list(
+    layer_data[[length(layer_data) + 1]] <- list(
       time = step_time[valid_indices],
       signal = step_data[valid_indices],
       step_name = plot_steps[i]
     )
   }
-  if (length(layer_data) < 2) {
-    plot(
-      NA,
-      xlim = c(0, 1),
-      ylim = c(0, 1),
-      type = "n",
-      xlab = "",
-      ylab = "",
-      main = paste("Insufficient data for", run_id)
-    )
-    text(
-      0.5,
-      0.5,
-      "Not enough preprocessing steps\nfor progressive summary",
-      cex = 1.2,
-      col = "red"
-    )
-    return()
-  }
 
-  all_signals <- unlist(lapply(layer_data, function(x) x$signal))
-  y_range <- range(all_signals, na.rm = TRUE)
-  x_range <- range(unlist(lapply(layer_data, function(x) x$time)), na.rm = TRUE)
-  y_padding <- diff(y_range) * 0.25 + 1e-6
-  x_padding <- diff(x_range) * 0.05 + 1e-6
-  y_range <- y_range + c(-y_padding, y_padding)
-  x_range <- x_range + c(-x_padding, x_padding)
+  if (length(layer_data) < 2) {
+    suppressMessages(suppressWarnings(print(rb_blank_panel(
+      "Not enough preprocessing steps\nfor progressive summary",
+      title = paste("Insufficient data for", run_id)
+    ))))
+    return(invisible(NULL))
+  }
 
   colorpal <- eyeris_color_palette()
   colors <- c("black", colorpal)
   n_layers <- length(layer_data)
   colors <- colors[seq_len(n_layers)]
 
-  layout(matrix(1:2, nrow = 2), heights = c(7, 2))
-  par(mar = c(4, 5, 4, 2))
-  plot(
-    NA,
-    xlim = x_range,
-    ylim = y_range,
-    type = "n",
-    xlab = "Time (seconds)",
-    ylab = "Pupil Size",
-    main = paste(
-      "Progressive Preprocessing Summary -",
-      run_id,
-      if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else ""
-    ),
-    cex.main = cex,
-    cex.lab = cex,
-    cex.axis = cex,
-    yaxt = "n",
-    bty = "n"
+  step_names <- vapply(
+    layer_data,
+    function(x) gsub("_", " > ", gsub("pupil_", "", x$step_name)),
+    character(1)
   )
-  axis(2, labels = FALSE)
-  for (i in seq_along(layer_data)) {
-    layer <- layer_data[[i]]
-    time_offset <- layer$time + i * 0.1
-    scale_factor <- 1 - i * 0.02
-    signal_scaled <- layer$signal * scale_factor
-    lines(time_offset, signal_scaled, col = colors[i], lwd = 4)
-  }
 
-  par(mar = c(0, 0, 0, 0))
-  plot.new()
-  step_names <- sapply(layer_data, function(x) {
-    clean_name <- gsub("pupil_", "", x$step_name)
-    clean_name <- gsub("_", " > ", clean_name)
-    clean_name
-  })
-  legend(
-    "center",
-    legend = step_names,
-    col = colors,
-    lwd = 2,
-    cex = cex - 0.5,
-    title = "Processing Steps",
-    horiz = FALSE,
-    bty = "n"
+  # assemble the offset/scaled layers into one long data frame so reaborn draws
+  # them as hue-mapped lines (earliest step at the back) with a single legend
+  long <- do.call(
+    rbind,
+    lapply(seq_along(layer_data), function(i) {
+      layer <- layer_data[[i]]
+      data.frame(
+        time = layer$time + i * 0.1,
+        signal = layer$signal * (1 - i * 0.02),
+        step = step_names[i],
+        stringsAsFactors = FALSE
+      )
+    })
   )
-  layout(1)
+
+  p <- rb_quiet(reaborn::lineplot(
+    data = long,
+    x = "time",
+    y = "signal",
+    hue = "step",
+    hue_order = step_names,
+    palette = colors,
+    estimator = NULL
+  )) +
+    ggplot2::labs(
+      title = paste0(
+        "Progressive Preprocessing Summary - ",
+        run_id,
+        if (!is.null(eye_suffix)) paste0(" (", eye_suffix, ")") else ""
+      ),
+      x = "Time (seconds)",
+      y = "Pupil Size",
+      colour = "Processing Steps"
+    ) +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
+    )
+
+  suppressMessages(suppressWarnings(print(p)))
+  invisible(NULL)
 }
 
 #' Save progressive summary plots for each block
