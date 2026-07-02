@@ -206,31 +206,47 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   logs_dir <- file.path(out, "source", "logs")
   callstack_md <- ""
 
+  # only (re)generate a run's metadata.json for the run(s) actually present in
+  # the eyeris object being processed. when separate single-run files are
+  # bidsified into a shared bids_dir (each with its own `run_num`), the
+  # figures/ dir accumulates run directories from earlier iterations, so
+  # `run_ids` (scanned from disk) enumerates those sibling runs too. without
+  # this guard, each sibling's metadata would be rewritten from the current
+  # in-memory object, clobbering its real source_file/call_stack with the
+  # latest run's.
+  current_run_ids <- tryCatch(
+    as.integer(get_block_numbers(eyeris)),
+    error = function(e) run_ids
+  )
+
   for (run_id in run_ids) {
     metadata_dir <- file.path(out, "source", "logs")
     if (!dir.exists(metadata_dir)) {
       dir.create(metadata_dir, recursive = TRUE)
     }
 
-    run_metadata <- list(
-      run = run_id,
-      source_file = eyeris$file,
-      call_stack = sanitize_call_stack(eyeris$params)
-    )
-
     meta_path <- file.path(
       metadata_dir,
       sprintf("%s_metadata.json", make_run_dir_name(run_id, task))
     )
 
-    # Always regenerate metadata to ensure it uses the latest sanitization
-    # This prevents issues with old files containing huge epoch data
-    jsonlite::write_json(
-      run_metadata,
-      meta_path,
-      pretty = TRUE,
-      auto_unbox = TRUE
-    )
+    # Regenerate metadata for the current run(s) to ensure it uses the latest
+    # sanitization (prevents old files containing huge epoch data). Sibling
+    # runs written in earlier iterations keep their already-correct metadata.
+    if (run_id %in% current_run_ids) {
+      run_metadata <- list(
+        run = run_id,
+        source_file = eyeris$file,
+        call_stack = sanitize_call_stack(eyeris$params)
+      )
+
+      jsonlite::write_json(
+        run_metadata,
+        meta_path,
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
+    }
 
     if (file.exists(meta_path)) {
       meta <- jsonlite::read_json(meta_path)
