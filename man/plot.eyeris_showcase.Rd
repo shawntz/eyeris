@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate-showcase.R
 \name{plot.eyeris_showcase}
 \alias{plot.eyeris_showcase}
-\title{Plot a preprocessing-step ordering showcase (wrong vs right)}
+\title{Plot a preprocessing-step ordering showcase (source, wrong, and right)}
 \usage{
 \method{plot}{eyeris_showcase}(x, ...)
 }
@@ -15,8 +15,17 @@
 \code{x}, invisibly
 }
 \description{
-Draws a stacked two-panel comparison of the final pupil signal produced by
-the wrong-order pipeline (top) and the right-order pipeline (bottom) over a
-shared preview window, annotated with the quantitative metric. For the
-crash-guardrail pitfall, the top panel reports the captured error instead.
+Draws a stacked three-panel comparison over a shared preview window so it is
+immediately clear how the wrong order corrupts the signal:
+\enumerate{
+\item the \strong{raw input} (the shared source signal, so the artifact that
+drives the pitfall is visible);
+\item the \strong{wrong-order} result --- marked with a red cross and outlined in
+red, with the correct result overlaid as a dashed gray reference so the
+deviation is obvious at a glance; and
+\item the \strong{correct-order} result --- marked with a green check and
+outlined in green.
+}
+The quantitative metric is shown in the overall title. For the crash-guardrail
+pitfall, the wrong panel reports the captured error instead of a trace.
 }

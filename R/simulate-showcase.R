@@ -470,6 +470,22 @@ NULL
   sprintf("%s  —  wrong = %.4g, right = %.4g", m$metric, m$wrong, m$right)
 }
 
+#' Short description of the artifact visible in a pitfall's raw input window
+#' @param name A pitfall name
+#' @return A single character string
+#' @keywords internal
+.raw_annotation <- function(name) {
+  switch(
+    name,
+    interp_before_deblink = "blink: missing core + occlusion flank spikes",
+    lpfilt_before_interp = "blink leaves missing samples (gap in the trace)",
+    lpfilt_before_detransient = "isolated transient spike",
+    naive_downsample = "signal buried in high-frequency line noise",
+    omit_detrend = "slow tonic drift across the recording",
+    "raw simulated pupil"
+  )
+}
+
 # ---- exported entrypoints ---------------------------------------------------
 
 #' Demonstrate what a single preprocessing step does to synthetic pupil data
@@ -749,13 +765,22 @@ print.eyeris_showcase <- function(x, ...) {
   invisible(x)
 }
 
-#' Plot a preprocessing-step ordering showcase (wrong vs right)
+#' Plot a preprocessing-step ordering showcase (source, wrong, and right)
 #'
 #' @description
-#' Draws a stacked two-panel comparison of the final pupil signal produced by
-#' the wrong-order pipeline (top) and the right-order pipeline (bottom) over a
-#' shared preview window, annotated with the quantitative metric. For the
-#' crash-guardrail pitfall, the top panel reports the captured error instead.
+#' Draws a stacked three-panel comparison over a shared preview window so it is
+#' immediately clear how the wrong order corrupts the signal:
+#' \enumerate{
+#'   \item the **raw input** (the shared source signal, so the artifact that
+#'     drives the pitfall is visible);
+#'   \item the **wrong-order** result --- marked with a red cross and outlined in
+#'     red, with the correct result overlaid as a dashed gray reference so the
+#'     deviation is obvious at a glance; and
+#'   \item the **correct-order** result --- marked with a green check and
+#'     outlined in green.
+#' }
+#' The quantitative metric is shown in the overall title. For the crash-guardrail
+#' pitfall, the wrong panel reports the captured error instead of a trace.
 #'
 #' @param x An object of class `eyeris_showcase`
 #' @param ... Unused; included for S3 consistency
@@ -766,45 +791,136 @@ print.eyeris_showcase <- function(x, ...) {
 plot.eyeris_showcase <- function(x, ...) {
   op <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(op))
-  graphics::par(mfrow = c(2, 1), mar = c(4, 4, 3, 1), oma = c(0, 0, 3, 0))
+  graphics::par(
+    mfrow = c(3, 1),
+    mar = c(3.2, 4, 2.4, 1),
+    oma = c(1, 0, 3.4, 0),
+    mgp = c(2.1, 0.7, 0)
+  )
 
-  panel <- function(o, main, col) {
+  red <- "#C0271F"
+  green <- "#1A7F37"
+  grey <- "grey45"
+  win <- x$window
+
+  win_series <- function(o, col = NULL) {
     d <- .blk(o)
-    sel <- d$time_secs >= x$window[1] & d$time_secs <= x$window[2]
-    v <- .latest_col(o)
+    sel <- d$time_secs >= win[1] & d$time_secs <= win[2]
     if (sum(sel, na.rm = TRUE) < 2) {
       sel <- rep(TRUE, nrow(d))
     }
-    plot(
-      d$time_secs[sel],
-      v[sel],
-      type = "l",
-      col = col,
-      lwd = 1.4,
-      xlab = "time (s)",
-      ylab = "pupil",
-      main = main
+    v <- if (is.null(col)) .latest_col(o) else d[[col]]
+    list(t = d$time_secs[sel], y = v[sel])
+  }
+  unit_lab <- function(o) {
+    if (grepl("_z$", .latest_name(o))) "pupil (z)" else "pupil (a.u.)"
+  }
+  tint_bg <- function(color) {
+    usr <- graphics::par("usr")
+    graphics::rect(
+      usr[1],
+      usr[3],
+      usr[2],
+      usr[4],
+      col = grDevices::adjustcolor(color, alpha.f = 0.07),
+      border = NA
     )
   }
 
-  wrong_lab <- paste0("WRONG: ", paste(x$wrong_steps, collapse = " → "))
-  right_lab <- paste0("RIGHT: ", paste(x$right_steps, collapse = " → "))
+  # panel 1: RAW INPUT (the shared source signal) -------------------------
+  raw <- win_series(x$sim, col = "pupil_raw")
+  plot(
+    raw$t,
+    raw$y,
+    type = "l",
+    col = grey,
+    lwd = 1.3,
+    xlab = "",
+    ylab = "pupil (a.u.)",
+    main = paste0("1) RAW INPUT  —  ", .raw_annotation(x$name))
+  )
+  graphics::box(col = "grey65")
 
+  right <- win_series(x$right)
+
+  # panel 2: WRONG order (red tint + border, correct overlaid for reference)
+  wrong_lab <- paste0(
+    "2) WRONG ORDER  —  ",
+    paste(x$wrong_steps, collapse = " → ")
+  )
   if (inherits(x$wrong, "condition")) {
-    plot(0, 0, type = "n", xlab = "", ylab = "", axes = FALSE, main = wrong_lab)
+    plot(
+      0.5,
+      0.5,
+      type = "n",
+      xlim = c(0, 1),
+      ylim = c(0, 1),
+      xlab = "",
+      ylab = "",
+      axes = FALSE,
+      main = wrong_lab,
+      col.main = red,
+      font.main = 2
+    )
+    tint_bg(red)
     graphics::text(
-      0,
-      0,
+      0.5,
+      0.5,
       labels = paste0(
-        "pipeline crashed on missing data:\n",
-        conditionMessage(x$wrong)
+        "pipeline CRASHED on missing data:\n\"",
+        conditionMessage(x$wrong),
+        "\""
       ),
-      col = "#E41A1C"
+      col = red,
+      font = 2
     )
   } else {
-    panel(x$wrong, wrong_lab, "#E41A1C")
+    wrong <- win_series(x$wrong)
+    ylim <- range(c(wrong$y, right$y), na.rm = TRUE)
+    plot(
+      wrong$t,
+      wrong$y,
+      type = "n",
+      ylim = ylim,
+      xlab = "",
+      ylab = unit_lab(x$wrong),
+      main = wrong_lab,
+      col.main = red,
+      font.main = 2
+    )
+    tint_bg(red)
+    graphics::lines(right$t, right$y, col = "grey45", lwd = 1.4, lty = 2)
+    graphics::lines(wrong$t, wrong$y, col = red, lwd = 2.4)
+    graphics::legend(
+      "topright",
+      legend = c("wrong-order result", "correct result (reference)"),
+      col = c(red, "grey45"),
+      lty = c(1, 2),
+      lwd = c(2.4, 1.4),
+      bty = "n",
+      cex = 0.8
+    )
   }
-  panel(x$right, right_lab, "#377EB8")
+  graphics::box(col = red, lwd = 3)
+
+  # panel 3: CORRECT order (green tint + border) --------------------------
+  right_lab <- paste0(
+    "3) CORRECT ORDER  —  ",
+    paste(x$right_steps, collapse = " → ")
+  )
+  plot(
+    right$t,
+    right$y,
+    type = "n",
+    xlab = "time (s)",
+    ylab = unit_lab(x$right),
+    main = right_lab,
+    col.main = green,
+    font.main = 2
+  )
+  tint_bg(green)
+  graphics::lines(right$t, right$y, col = green, lwd = 2.4)
+  graphics::box(col = green, lwd = 3)
 
   graphics::mtext(
     paste0("eyeris pitfall — ", x$name, "\n", .metric_headline(x)),

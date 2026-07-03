@@ -111,8 +111,10 @@ invisible(sim_step_showcase("deblink", seed = 1, verbose = FALSE))
 The real payoff is `sim_pitfall()`. It generates data tuned to expose a specific
 ordering mistake, then runs the pipeline **the wrong way and the right way on the
 exact same signal**, so the only difference is the order of the steps. It returns
-a quantitative metric and (by default) plots the wrong result on top of the right
-result.
+a quantitative metric and (by default) plots a three-panel comparison: the
+**raw input** on top (so you can see the artifact you started with), the
+**wrong-order** result (tinted red, with the correct result overlaid as a dashed
+reference), and the **correct-order** result (tinted green).
 
 Each metric table reports the `wrong` and `right` values and whether a `lower`
 or `higher` value is the desired outcome.
@@ -124,7 +126,7 @@ preserves the steep occlusion **flank spikes**. If you interpolate first, those
 spikes survive as large spurious deflections that deblinking can no longer
 remove.
 
-```{r pitfall-interp, fig.height = 6.5}
+```{r pitfall-interp, fig.height = 8.5}
 res <- sim_pitfall("interp_before_deblink", seed = 1, verbose = FALSE)
 res$metrics
 ```
@@ -138,7 +140,7 @@ spike; the right order leaves essentially nothing.
 is a deliberate guardrail: interpolation must come first. `sim_pitfall()`
 captures the error so you can inspect it.
 
-```{r pitfall-lpfilt-interp, fig.height = 6.5}
+```{r pitfall-lpfilt-interp, fig.height = 8.5}
 res <- sim_pitfall("lpfilt_before_interp", seed = 1, verbose = FALSE)
 conditionMessage(res$wrong)
 ```
@@ -149,7 +151,7 @@ conditionMessage(res$wrong)
 the signal has been low-pass filtered, that tell-tale speed is gone, so the
 detector can no longer flag the artifacts.
 
-```{r pitfall-lpfilt-detransient, fig.height = 6.5}
+```{r pitfall-lpfilt-detransient, fig.height = 8.5}
 res <- sim_pitfall("lpfilt_before_detransient", seed = 1, verbose = FALSE)
 res$metrics
 ```
@@ -164,7 +166,7 @@ high-frequency content back into the pupil band as a spurious low-frequency
 oscillation. `downsample()` applies an anti-alias filter first and avoids it;
 the naive alternative does not.
 
-```{r pitfall-alias, fig.height = 6.5}
+```{r pitfall-alias, fig.height = 8.5}
 res <- sim_pitfall("naive_downsample", seed = 1, verbose = FALSE)
 res$metrics
 ```
@@ -177,7 +179,7 @@ The naive decimation leaves a large aliased peak in the band; the anti-aliased
 When a slow linear **drift** is present, z-scoring alone leaves the trend
 embedded in the standardized signal. `detrend()` removes it first.
 
-```{r pitfall-detrend, fig.height = 6.5}
+```{r pitfall-detrend, fig.height = 8.5}
 res <- sim_pitfall("omit_detrend", seed = 1, verbose = FALSE)
 res$metrics
 ```
