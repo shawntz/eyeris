@@ -38,12 +38,14 @@ Imports:
   lifecycle,
   MASS,
   viridis,
-  fields,
   jsonlite,
   rmarkdown,
   DBI,
   glue,
-  base64enc
+  base64enc,
+  reaborn,
+  ggplot2,
+  patchwork
 Roxygen: list(markdown = TRUE)
 Suggests:
   arrow,
