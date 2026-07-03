@@ -52,7 +52,7 @@ to memorize, and no ambiguity about which package a symbol came from. The agent
 names a step and names a parameter; misspelled step/argument names simply won't be
 applied. To confirm what actually ran, check the recorded `eyeris$params` on the
 output object (and the summaries from `summarize_confounds()`).
-freedom means fewer places to be confidently wrong.
+Fewer degrees of freedom means fewer places to be confidently wrong.
 
 ## ⚙️ Expert defaults mean fewer iterations
 
