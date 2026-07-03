@@ -190,7 +190,7 @@ an fMRIPrep-style methods paragraph via `boilerplate()`. Pure R.
   "license": "https://opensource.org/licenses/MIT",
   "softwareRequirements": "R (>= 4.1)",
   "keywords": "pupillometry, pupil, eye-tracking, EyeLink, preprocessing, BIDS, R, psychophysiology, arousal, signal processing, reproducibility, FAIR",
-  "author": {"@type": "Person", "name": "Shawn Schwartz", "email": "shawn.t.schwartz@gmail.com"},
+  "author": {"@type": "Person", "name": "Shawn Schwartz"},
   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
 }
 </script>
