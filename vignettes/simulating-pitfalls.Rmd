@@ -1,0 +1,226 @@
+---
+title: "Learning Preprocessing Pitfalls with Simulated Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Learning Preprocessing Pitfalls with Simulated Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+img:not(.logo) {
+  background-color: white;
+}
+</style>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 5,
+  fig.dpi = 300
+)
+```
+
+```{r setup}
+library(eyeris)
+```
+
+## 🎓 Why simulate pupil data?
+
+Pupillometry preprocessing is a *pipeline*: each step assumes the steps before
+it have already run. Run them out of order and the signal can be silently
+corrupted --- no error, just wrong numbers. With **real** data you can never see
+this clearly, because you do not know the ground truth underneath the artifacts.
+
+`eyeris` ships a small, self-contained **simulator** that solves this for
+teaching and testing:
+
+- `simulate_eyeris()` generates a synthetic pupil time series whose statistical
+  and morphological characteristics resemble real EyeLink recordings, and wraps
+  it in a fully valid `eyeris` object;
+- `sim_params()` lets you dial every component of the signal up or down;
+- `sim_step_showcase()` and `sim_pitfall()` render **before/after** comparisons
+  that make the consequences of each step --- and of getting the *order* wrong
+  --- impossible to miss.
+
+Because the generator is seeded, every figure below is exactly reproducible, and
+because we build the signal ourselves we always know the ground truth.
+
+## 🧪 Generating a synthetic recording
+
+`simulate_eyeris()` returns an ordinary `eyeris` object --- the same class
+[`load_asc()`][eyeris::load_asc] produces --- so it flows through the entire
+pipeline unchanged (`glassbox()`, `plot()`, `epoch()`, and friends).
+
+```{r generate}
+sim <- simulate_eyeris(seed = 1, params = sim_params(duration_secs = 30))
+class(sim)
+```
+
+The synthetic pupil signal is composed additively from independently
+toggle-able parts (see `?sim_params` for the full list and the exact math):
+
+- a **tonic baseline** with optional slow **drift** and a slow **hippus**
+  oscillation,
+- canonical task-evoked **phasic** dilations (the Hoeks & Levelt Erlang response),
+- **blinks** --- runs of missing data flanked by the rapid partial-occlusion
+  spikes that surround real blinks,
+- isolated **transient** spikes (tracker glitches),
+- broadband measurement **noise**, and optional high-frequency **line noise**.
+
+Here is a three-second window showing a blink (the gap, with its tell-tale
+down-then-up flank spikes) sitting on the noisy tonic signal:
+
+```{r raw-signal, fig.height = 4}
+b <- sim$timeseries$block_1
+sel <- b$time_secs >= 6 & b$time_secs <= 9
+plot(b$time_secs[sel], b$pupil_raw[sel],
+  type = "l", col = "grey30",
+  xlab = "time (s)", ylab = "pupil (a.u.)",
+  main = "A window of raw simulated pupil data"
+)
+```
+
+Because it is a real `eyeris` object, the full pipeline just works:
+
+```{r pipeline, eval = FALSE}
+sim |>
+  eyeris::deblink() |>
+  eyeris::detransient() |>
+  eyeris::interpolate() |>
+  eyeris::lpfilt() |>
+  eyeris::zscore()
+```
+
+## 🔍 What a single step does
+
+`sim_step_showcase()` runs the canonical pipeline up to a step of your choice
+and plots the before/after of each step on a window bracketing the artifact that
+step targets. For example, deblinking removes the blink and its flank spikes:
+
+```{r step-showcase, fig.height = 6}
+invisible(sim_step_showcase("deblink", seed = 1, verbose = FALSE))
+```
+
+## 🔀 Ordering pitfalls
+
+The real payoff is `sim_pitfall()`. It generates data tuned to expose a specific
+ordering mistake, then runs the pipeline **the wrong way and the right way on the
+exact same signal**, so the only difference is the order of the steps. It returns
+a quantitative metric and (by default) plots the wrong result on top of the right
+result.
+
+Each metric table reports the `wrong` and `right` values and whether a `lower`
+or `higher` value is the desired outcome.
+
+### 1. Interpolating before deblinking
+
+Interpolation can only bridge the *missing core* of a blink; it faithfully
+preserves the steep occlusion **flank spikes**. If you interpolate first, those
+spikes survive as large spurious deflections that deblinking can no longer
+remove.
+
+```{r pitfall-interp, fig.height = 6.5}
+res <- sim_pitfall("interp_before_deblink", seed = 1, verbose = FALSE)
+res$metrics
+```
+
+The wrong order leaves a residual deflection roughly the size of the occlusion
+spike; the right order leaves essentially nothing.
+
+### 2. Filtering before interpolating (a guardrail)
+
+`lpfilt()` requires a gap-free signal and **errors** on any missing sample. This
+is a deliberate guardrail: interpolation must come first. `sim_pitfall()`
+captures the error so you can inspect it.
+
+```{r pitfall-lpfilt-interp, fig.height = 6.5}
+res <- sim_pitfall("lpfilt_before_interp", seed = 1, verbose = FALSE)
+conditionMessage(res$wrong)
+```
+
+### 3. Filtering before removing transients
+
+`detransient()` identifies spikes by their high sample-to-sample **speed**. Once
+the signal has been low-pass filtered, that tell-tale speed is gone, so the
+detector can no longer flag the artifacts.
+
+```{r pitfall-lpfilt-detransient, fig.height = 6.5}
+res <- sim_pitfall("lpfilt_before_detransient", seed = 1, verbose = FALSE)
+res$metrics
+```
+
+Run on the raw signal, `detransient()` flags every transient; run after
+filtering, it flags essentially none.
+
+### 4. Decimating without an anti-alias filter
+
+Downsampling by simply keeping one sample out of every *k* folds
+high-frequency content back into the pupil band as a spurious low-frequency
+oscillation. `downsample()` applies an anti-alias filter first and avoids it;
+the naive alternative does not.
+
+```{r pitfall-alias, fig.height = 6.5}
+res <- sim_pitfall("naive_downsample", seed = 1, verbose = FALSE)
+res$metrics
+```
+
+The naive decimation leaves a large aliased peak in the band; the anti-aliased
+`downsample()` removes it.
+
+### 5. Standardizing without detrending
+
+When a slow linear **drift** is present, z-scoring alone leaves the trend
+embedded in the standardized signal. `detrend()` removes it first.
+
+```{r pitfall-detrend, fig.height = 6.5}
+res <- sim_pitfall("omit_detrend", seed = 1, verbose = FALSE)
+res$metrics
+```
+
+The residual slope of the final signal is clearly nonzero without detrending and
+approximately zero with it.
+
+## 🎨 Customizing for your own lessons
+
+Every pitfall accepts your own `sim_params()`, so you can exaggerate or soften an
+effect for a specific audience. For example, make the drift steeper for a more
+dramatic detrend demo:
+
+```{r custom-params}
+steep <- sim_params(duration_secs = 40, drift = TRUE, drift_slope = 20)
+showcase_metric("omit_detrend", seed = 1, params = steep)
+```
+
+Or compute a metric without plotting at all --- handy for exercises and
+automated problem sets:
+
+```{r metric-only}
+showcase_metric("interp_before_deblink", seed = 1)
+```
+
+## 📋 Recap
+
+| Pitfall | Lesson |
+|---|---|
+| `interp_before_deblink` | Deblink before interpolating, or blink flank spikes survive. |
+| `lpfilt_before_interp` | Interpolate before filtering (filtering errors on missing data). |
+| `lpfilt_before_detransient` | Remove transients before filtering, or the detector is defeated. |
+| `naive_downsample` | Decimate only *with* an anti-alias filter (use `downsample()`). |
+| `omit_detrend` | Detrend a drifting signal before z-scoring. |
+
+The canonical `eyeris` order --- the one `glassbox()` enforces for you --- is
+`deblink → detransient → interpolate → lpfilt → (downsample) → (detrend) →
+zscore`. When in doubt, let `glassbox()` handle the ordering; these simulations
+are here to show you *why* that order exists.
+
+<div class="alert alert-light">
+💡 <strong>Note on realism.</strong> The exaggerated single-sample flank spikes
+and the optional line-noise tone are synthetic teaching devices chosen to make
+each lesson unmistakable, not claims about the precise physiology of EyeLink
+pupil diameter recordings.
+</div>

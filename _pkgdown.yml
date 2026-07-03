@@ -172,6 +172,7 @@ articles:
     navbar: Advanced Topics
     contents:
     - anatomy
+    - simulating-pitfalls
     - custom-extensions
     - database-guide
     - chunked-database-export
