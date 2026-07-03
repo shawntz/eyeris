@@ -115,10 +115,75 @@ would be redundant. (`run_num` exists to *relabel* a single-run object –
 e.g. force a lone file to be saved as `run-03` – and it is silently
 ignored for objects that already contain multiple blocks.)
 
+### The equivalent: label the run in `bidsify()` instead
+
+Setting the run number on **input** with `load_asc(block = i)` is the
+form we recommend, but it is not the only one. Because each single-run
+file already loads as one block by default, you can leave `load_asc`
+untouched and instead label each file on **output** with
+`bidsify(run_num = i)` – exactly the “relabel a single-run object” use
+of `run_num` from the note above. This loop writes the same `run-01`,
+`run-02`, `run-03` derivatives as the one before it:
+
+``` r
+
+library(eyeris)
+
+dl <- path.expand("~/Downloads")
+asc_files <- file.path(dl, c(
+  "sub-AB01_t1_2024-01-15_10h00.00.000.asc",
+  "sub-AB01_t2_2024-01-15_10h30.00.000.asc",
+  "sub-AB01_t3_2024-01-15_11h00.00.000.asc"
+))
+stopifnot(all(file.exists(asc_files)))
+
+output_dir <- path.expand("~/Documents/eyeris")
+
+for (i in seq_along(asc_files)) {
+  glassbox(asc_files[i], verbose = TRUE) |>
+    epoch(
+      events = "TST_trial-{trial}_{item}_{associate}",
+      limits = c(0, 0.1),
+      label  = "trialEpochs"
+    ) |>
+    bidsify(
+      bids_dir       = output_dir,
+      run_num        = i,
+      participant_id = "AB01",
+      session_num    = "01",
+      task_name      = "assocmem",
+      save_raw       = TRUE,
+      html_report    = TRUE,
+      report_seed    = 0
+    )
+}
+```
+
+The only two changes from the first loop are: (1)
+[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+no longer receives `load_asc = list(block = i)`, so each file loads with
+its default single block; and (2)
+[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md) now
+takes `run_num = i`, which relabels that block as `run-01`, `run-02`,
+etc. Everything else – and every output file – is the same.
+
+⚠️ **The two forms are equivalent only for genuinely single-run files.**
+`run_num` relabels a file that resolves to *one* block; if a file
+happens to contain multiple embedded recording segments, `run_num` is
+ignored (and
+[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+will emit a warning when `verbose = TRUE`) and the runs are numbered
+from the embedded blocks instead. `load_asc(block = i)` also *forces*
+the whole file into a single run, so it doubles as a guard against
+accidentally-multi-segment files. If you prefer the `run_num` form, it
+is worth running the [sanity
+check](#sanity-check-confirm-one-run-per-file) below to confirm each
+file really is one run.
+
 ### What you get
 
-After the loop finishes, your derivatives look like this (per-run data
-files shown for `run-01`; `run-02` and `run-03` follow the same
+After either loop finishes, your derivatives look like this (per-run
+data files shown for `run-01`; `run-02` and `run-03` follow the same
 pattern):
 
     eyeris

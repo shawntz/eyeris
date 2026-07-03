@@ -241,9 +241,74 @@ e.g. force a lone file to be saved as <code>run-03</code> – and it is
 silently ignored for objects that already contain multiple blocks.)</p>
 </div>
 <div class="section level3">
+<h3 id="the-equivalent-label-the-run-in-bidsify-instead">The equivalent: label the run in <code>bidsify()</code> instead<a class="anchor" aria-label="anchor" href="#the-equivalent-label-the-run-in-bidsify-instead"></a>
+</h3>
+<p>Setting the run number on <strong>input</strong> with
+<code>load_asc(block = i)</code> is the form we recommend, but it is not
+the only one. Because each single-run file already loads as one block by
+default, you can leave <code>load_asc</code> untouched and instead label
+each file on <strong>output</strong> with
+<code>bidsify(run_num = i)</code> – exactly the “relabel a single-run
+object” use of <code>run_num</code> from the note above. This loop
+writes the same <code>run-01</code>, <code>run-02</code>,
+<code>run-03</code> derivatives as the one before it:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/path.expand.html" class="external-link">path.expand</a></span><span class="op">(</span><span class="st">"~/Downloads"</span><span class="op">)</span></span>
+<span><span class="va">asc_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"sub-AB01_t1_2024-01-15_10h00.00.000.asc"</span>,</span>
+<span>  <span class="st">"sub-AB01_t2_2024-01-15_10h30.00.000.asc"</span>,</span>
+<span>  <span class="st">"sub-AB01_t3_2024-01-15_11h00.00.000.asc"</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">asc_files</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">output_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/path.expand.html" class="external-link">path.expand</a></span><span class="op">(</span><span class="st">"~/Documents/eyeris"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">asc_files</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">asc_files</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/epoch.html">epoch</a></span><span class="op">(</span></span>
+<span>      events <span class="op">=</span> <span class="st">"TST_trial-{trial}_{item}_{associate}"</span>,</span>
+<span>      limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>      label  <span class="op">=</span> <span class="st">"trialEpochs"</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
+<span>      bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
+<span>      run_num        <span class="op">=</span> <span class="va">i</span>,</span>
+<span>      participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
+<span>      session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
+<span>      task_name      <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
+<span>      save_raw       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      html_report    <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      report_seed    <span class="op">=</span> <span class="fl">0</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The only two changes from the first loop are: (1)
+<code><a href="../reference/glassbox.html">glassbox()</a></code> no longer receives
+<code>load_asc = list(block = i)</code>, so each file loads with its
+default single block; and (2) <code><a href="../reference/bidsify.html">bidsify()</a></code> now takes
+<code>run_num = i</code>, which relabels that block as
+<code>run-01</code>, <code>run-02</code>, etc. Everything else – and
+every output file – is the same.</p>
+<div class="alert alert-warning" style="padding-bottom: 0;">
+<p>⚠️ <strong>The two forms are equivalent only for genuinely single-run
+files.</strong> <code>run_num</code> relabels a file that resolves to
+<em>one</em> block; if a file happens to contain multiple embedded
+recording segments, <code>run_num</code> is ignored (and
+<code><a href="../reference/bidsify.html">bidsify()</a></code> will emit a warning when <code>verbose =
+TRUE</code>) and the runs are numbered from the embedded blocks instead.
+<code>load_asc(block = i)</code> also <em>forces</em> the whole file
+into a single run, so it doubles as a guard against
+accidentally-multi-segment files. If you prefer the <code>run_num</code>
+form, it is worth running the
+<a href="#sanity-check-confirm-one-run-per-file">sanity check</a> below
+to confirm each file really is one run.</p>
+</div>
+</div>
+<div class="section level3">
 <h3 id="what-you-get">What you get<a class="anchor" aria-label="anchor" href="#what-you-get"></a>
 </h3>
-<p>After the loop finishes, your derivatives look like this (per-run
+<p>After either loop finishes, your derivatives look like this (per-run
 data files shown for <code>run-01</code>; <code>run-02</code> and
 <code>run-03</code> follow the same pattern):</p>
 <pre><code>eyeris
@@ -316,7 +381,7 @@ run-3 file) the index <code>2</code> and mislabel it as
 identity</strong>, not the loop position. Two robust options:</p>
 <p><strong>Option A – an explicit vector of run numbers</strong>, paired
 with your files:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asc_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"sub-AB01_t1_2024-01-15_10h00.00.000.asc"</span>, <span class="co"># run 1</span></span>
 <span>  <span class="st">"sub-AB01_t3_2024-01-15_11h00.00.000.asc"</span>  <span class="co"># run 3 (run 2 not collected)</span></span>
@@ -344,7 +409,7 @@ with your files:</p>
 Here the run is encoded as <code>_t1_</code>, <code>_t2_</code>,
 <code>_t3_</code>, so a small regex recovers it (and naturally handles
 gaps, since a missing run simply has no file):</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">f</span> <span class="kw">in</span> <span class="va">asc_files</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">run_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*_t(\\d+)_.*"</span>, <span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -383,7 +448,7 @@ gap.</p>
 without touching the others – which is the main practical advantage of
 the separate-file workflow. For example, if you tweak a preprocessing
 parameter for run 2:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">asc_files</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>block <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epoch.html">epoch</a></span><span class="op">(</span></span>
 <span>    events <span class="op">=</span> <span class="st">"TST_trial-{trial}_{item}_{associate}"</span>,</span>
@@ -419,7 +484,7 @@ instead of from your <code>block = i</code>.</p>
 <strong>forces the whole file into one run</strong>, which is what you
 want for one-file-per-run data. You can confirm a file resolves to
 exactly one run by checking the length of <code>$timeseries</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">eyeris</span> v3.2.0.9000 - <span style="color: #FF55FF;">Lumpy Space Princess</span> <span style="color: #FF55FF;">꒰•ᴗ•｡꒱۶</span></span></span>
@@ -447,7 +512,7 @@ collapses it back into one run.</p>
 single continuous <code>.asc</code> file, you don’t loop – you let
 <code>eyeris</code> split the embedded segments for you and write them
 in one <code><a href="../reference/bidsify.html">bidsify()</a></code> call:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">one_file_with_all_runs</span>, load_asc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>block <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epoch.html">epoch</a></span><span class="op">(</span></span>
 <span>    events <span class="op">=</span> <span class="st">"TST_trial-{trial}_{item}_{associate}"</span>,</span>
@@ -498,7 +563,7 @@ to a single run; pass a numeric <code>block</code> to force it.</li>
 cite it!</p>
 <p>Run the following in R to get the citation:</p>
 </div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
