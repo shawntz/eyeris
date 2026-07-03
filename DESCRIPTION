@@ -54,6 +54,6 @@ Suggests:
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
-URL: https://shawnschwartz.com/eyeris/, https://github.com/shawntz/eyeris/
+URL: https://eyeris.shawnschwartz.com/, https://github.com/shawntz/eyeris/
 BugReports: https://github.com/shawntz/eyeris/issues
 Config/roxygen2/version: 8.0.0
