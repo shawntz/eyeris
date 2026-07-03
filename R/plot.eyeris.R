@@ -967,9 +967,7 @@ plot_gaze_heatmap <- function(
     main <- paste0(main, " - ", eye_suffix)
   }
 
-  # reaborn's kdeplot fill does not honour a matplotlib `cmap`, so map the
-  # requested palette to a viridis option and apply the colour scale explicitly
-  # to preserve eyeris's heatmap aesthetic
+  # map the requested palette to a viridis colormap option
   vir_option <- switch(
     col_palette,
     viridis = "viridis",
@@ -982,15 +980,10 @@ plot_gaze_heatmap <- function(
   df_xy <- data.frame(.x = x_coords, .y = y_coords)
 
   # screen coordinates have their origin at the top-left, so the y axis is
-  # reversed with scale_y_reverse (which flips the axis, unlike a reversed
-  # coord_cartesian ylim); benign scale-replacement messages are suppressed
+  # reversed (scale_y_reverse actually flips the axis, unlike a reversed
+  # coord_cartesian ylim); the centre fixation cross is drawn on top
   screen_frame <- function(p) {
     p +
-      ggplot2::scale_x_continuous(
-        limits = c(0, screen_width),
-        expand = c(0, 0)
-      ) +
-      ggplot2::scale_y_reverse(limits = c(screen_height, 0), expand = c(0, 0)) +
       ggplot2::annotate(
         "point",
         x = screen_width / 2,
@@ -1000,23 +993,43 @@ plot_gaze_heatmap <- function(
         size = 3,
         stroke = 1
       ) +
+      ggplot2::scale_x_continuous(
+        limits = c(0, screen_width),
+        expand = c(0, 0)
+      ) +
+      ggplot2::scale_y_reverse(limits = c(screen_height, 0), expand = c(0, 0)) +
       ggplot2::labs(title = main, x = xlab, y = ylab) +
       ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
   }
 
   p <- tryCatch(
-    suppressMessages(suppressWarnings(screen_frame(
-      rb_quiet(reaborn::kdeplot(
-        data = df_xy,
-        x = ".x",
-        y = ".y",
-        fill = TRUE,
-        thresh = 0,
-        levels = 10
-      )) +
-        viridis::scale_fill_viridis(option = vir_option, discrete = TRUE) +
-        ggplot2::guides(fill = "none")
-    ))),
+    {
+      # estimate a smooth 2D kernel density over the full screen and render it
+      # as a viridis raster so the colour gradient reflects where gaze samples
+      # concentrated. reaborn's kdeplot only draws discrete filled contour
+      # bands, which collapse to a single colour on tightly clustered gaze data
+      dens <- MASS::kde2d(
+        x_coords,
+        y_coords,
+        n = n_bins,
+        lims = c(0, screen_width, 0, screen_height)
+      )
+      grid <- expand.grid(gx = dens$x, gy = dens$y)
+      grid$gz <- as.vector(dens$z) / max(dens$z, na.rm = TRUE)
+
+      suppressMessages(suppressWarnings(screen_frame(
+        ggplot2::ggplot(
+          grid,
+          ggplot2::aes(x = .data$gx, y = .data$gy, fill = .data$gz)
+        ) +
+          ggplot2::geom_raster(interpolate = TRUE) +
+          viridis::scale_fill_viridis(
+            option = vir_option,
+            name = "normalized\ndensity",
+            limits = c(0, 1)
+          )
+      )))
+    },
     error = function(e) {
       # fall back to a simple scatter of the raw gaze coordinates
       suppressMessages(suppressWarnings(screen_frame(rb_quiet(reaborn::scatterplot(

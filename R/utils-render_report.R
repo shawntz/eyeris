@@ -960,7 +960,10 @@ make_prog_summary_plot <- function(
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
       axis.text.y = ggplot2::element_blank(),
-      axis.ticks.y = ggplot2::element_blank()
+      axis.ticks.y = ggplot2::element_blank(),
+      # reaborn/seaborn places the legend inside the axes, where it overlaps the
+      # layered traces; move it outside to the right so the plot stays clear
+      legend.position = "right"
     )
 
   suppressMessages(suppressWarnings(print(p)))
