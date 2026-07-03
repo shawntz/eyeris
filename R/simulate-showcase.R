@@ -231,7 +231,7 @@ NULL
       extra = list(
         wrong_errored = inherits(wrong, "condition"),
         error_message = if (inherits(wrong, "condition")) {
-          conditionMessage(wrong)
+          .clean_error_message(conditionMessage(wrong))
         } else {
           NA_character_
         }
@@ -468,6 +468,24 @@ NULL
 .metric_headline <- function(x) {
   m <- x$metrics[1, ]
   sprintf("%s  —  wrong = %.4g, right = %.4g", m$metric, m$wrong, m$right)
+}
+
+#' Clean an eyeris error message for human-friendly display
+#'
+#' Strips ANSI styling codes (added by `cli`/`rlang` in color-capable contexts
+#' such as RStudio) and the leading `[timestamp] [EXIT]` log prefix that
+#' `eyeris`'s logger prepends, leaving just the message text.
+#'
+#' @param msg A condition message string
+#'
+#' @return A cleaned single-line-friendly message string
+#'
+#' @keywords internal
+.clean_error_message <- function(msg) {
+  msg <- cli::ansi_strip(msg)
+  msg <- sub(".*\\[EXIT\\][[:space:]]*", "", msg)
+  msg <- gsub("[[:space:]]+", " ", msg)
+  trimws(msg)
 }
 
 #' Short description of the artifact visible in a pitfall's raw input window
@@ -867,9 +885,9 @@ plot.eyeris_showcase <- function(x, ...) {
       0.5,
       0.5,
       labels = paste0(
-        "pipeline CRASHED on missing data:\n\"",
-        conditionMessage(x$wrong),
-        "\""
+        "the pipeline stopped here — this guardrail is working as intended:\n\n\"",
+        .clean_error_message(conditionMessage(x$wrong)),
+        "\"\n\n(interpolate() must run before lpfilt())"
       ),
       col = red,
       font = 2
