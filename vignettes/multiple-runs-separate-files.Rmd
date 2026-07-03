@@ -162,8 +162,7 @@ for (i in seq_along(asc_files)) {
 
 The only two changes from the first loop are: (1) `glassbox()` no longer receives
 `load_asc = list(block = i)`, so each file loads with its default single block;
-and (2) `bidsify()` now takes `run_num = i`, which relabels that block as
-`run-0i`. Everything else -- and every output file -- is the same.
+and (2) `bidsify()` now takes `run_num = i`, which relabels that block as `run-01`, `run-02`, etc. Everything else -- and every output file -- is the same.
 
 <div class="alert alert-warning" style="padding-bottom: 0;">
   ⚠️ <strong>The two forms are equivalent only for genuinely single-run
