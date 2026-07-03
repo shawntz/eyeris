@@ -3,7 +3,7 @@
 Internal worker that assembles the full Markdown boilerplate body (note,
 methods prose, reproducibility/sidecar reference, citation, and
 license). Used both by the exported
-[`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md)
+[`boilerplate()`](https://eyeris.shawnschwartz.com/reference/boilerplate.md)
 function and by the HTML report generator.
 
 ## Usage

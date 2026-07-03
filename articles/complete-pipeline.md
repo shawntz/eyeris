@@ -8,7 +8,7 @@ start to finish. Here, we’ll walk through loading in the raw data,
 preprocessing, and quality control in a step-by-step manner.
 
 We will specifically focus on demonstrating the
-[`eyeris::glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`eyeris::glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 function, which we built to streamline, in part, the process of
 collecting and preprocessing any freshly collected **raw** pupillometry
 dataset within minutes to assess the quality of those data while
@@ -115,7 +115,7 @@ my_data <- eyeris::glassbox(my_data_path)
 - **Block Handling**: Use `block = "auto"` (default) to automatically
   detect multiple recording segments within the same file. This is
   recommended for most use cases. See
-  [`?eyeris::load_asc`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`?eyeris::load_asc`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   for other options.
 
 - **Binocular Data**: If you have binocular recordings, you can specify
@@ -162,24 +162,24 @@ parameters and pipeline recipe:
 
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-07-03 01:48:31] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:48:32] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:11:08] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::lpfilt() for block_1
 ```
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-1.png)
 
-    #> ! [2026-07-03 01:48:32] [WARN] Skipping eyeris::downsample() for block_1
-    #> ! [2026-07-03 01:48:32] [WARN] Skipping eyeris::bin() for block_1
-    #> ! [2026-07-03 01:48:32] [WARN] Skipping eyeris::detrend() for block_1
-    #> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::zscore() for block_1
-    #> ℹ [2026-07-03 01:48:32] [INFO] Block processing summary:
-    #> ℹ [2026-07-03 01:48:32] [INFO] block_1: OK (steps: 6, latest:
+    #> ! [2026-07-03 02:11:08] [WARN] Skipping eyeris::downsample() for block_1
+    #> ! [2026-07-03 02:11:08] [WARN] Skipping eyeris::bin() for block_1
+    #> ! [2026-07-03 02:11:08] [WARN] Skipping eyeris::detrend() for block_1
+    #> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::zscore() for block_1
+    #> ℹ [2026-07-03 02:11:08] [INFO] Block processing summary:
+    #> ℹ [2026-07-03 02:11:08] [INFO] block_1: OK (steps: 6, latest:
     #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-    #> ✔ [2026-07-03 01:48:32] [OKAY] Running eyeris::summarize_confounds()
+    #> ✔ [2026-07-03 02:11:08] [OKAY] Running eyeris::summarize_confounds()
 
     # Preview first and second steps of the pipeline
     plot(
@@ -188,7 +188,7 @@ output <- eyeris::glassbox(demo_data)
       preview_window = c(0, max(output$timeseries$block_1$time_secs)),
       seed = 0
     )
-    #> ℹ [2026-07-03 01:48:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+    #> ℹ [2026-07-03 02:11:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from
     #> possible blocks: 1
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-2.png)![](complete-pipeline_files/figure-html/unnamed-chunk-3-3.png)
@@ -203,10 +203,10 @@ output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
 ### Overriding the Default Parameters
 
 To override the default `glassbox` parameters directly within the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 function call, you need to pass in the appropriate parameter(s) for each
 pipeline step to
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
 
 #### Example
 
@@ -218,47 +218,47 @@ output <- eyeris::glassbox(
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:48:36] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-03 01:48:36] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 01:48:36] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 01:48:36] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:48:36] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:48:36] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:11:12] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-03 02:11:12] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:11:12] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:11:12] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:11:12] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:11:12] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 01:48:36] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:11:12] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ##### Pipeline Steps with Overridable Parameters
 
-1.  [`eyeris::load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md):
+1.  [`eyeris::load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md):
     \> `block`
 
-2.  [`eyeris::deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md):
+2.  [`eyeris::deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md):
     \> `extend`
 
-3.  [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md):
+3.  [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md):
     \> `n`, `mad_thresh`
 
-4.  [`eyeris::lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md):
+4.  [`eyeris::lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md):
     \> `wp`, `ws`, `rp`, `rs`, `plot_freqz`
 
 ### Advanced: Building the Pipeline Manually
 
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 is the recommended entry point, but every preprocessing function it
 wraps is also exported and can be chained together directly as a
 “building block.” For a **complete, deconstructed reference pipeline** —
 each `eyeris` preprocessing function called in sequence, mapped
 one-to-one to the default
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 recipe — see the [**Building Blocks Under the
-Hood**](https://shawnschwartz.com/eyeris/articles/anatomy.html#building-blocks-under-the-hood)
+Hood**](https://eyeris.shawnschwartz.com/articles/anatomy.html#building-blocks-under-the-hood)
 section of the *Anatomy of an `eyeris` Object* vignette.
 
 ## 💬 Caveats
@@ -268,7 +268,7 @@ section of the *Anatomy of an `eyeris` Object* vignette.
 Detrending is turned off by default.
 
 > To enable detrending in the pipeline, pass `detrend = TRUE` to
-> [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+> [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
 
 **Note: Detrending your pupil timeseries can have unintended
 consequences;** **we thus recommend that users understand the
@@ -319,7 +319,7 @@ in EDF files. You **do not** want these filters because
 
 1.  it’s unclear what are their low-pass filter specifications, and
 2.  it conflicts with an assumption in
-    [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md)
+    [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md)
     to use one-step difference to compute a threshold for detecting
     large jumps in pupil data (suggesting blinking or other artifacts).
 
@@ -330,12 +330,12 @@ in EDF files. You **do not** want these filters because
 `eyeris` without the `detransient` step.**
 
 > To skip the `detransient` step, pass `detransient = FALSE` into your
-> [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+> [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 > call.
 
 To skip the `detransient` step within the `glassbox` pipeline, pass
 `detrend = TRUE` to
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
 
 #### Some additional notes about preventing live filtering in future recordings…
 
@@ -354,7 +354,7 @@ make the initial connect request.
 
 Therefore, unfortunately all users for all future experiments need to be
 cognizant of this setting. This is why
-[`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md)
+[`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md)
 will yell the long warning message at you (as a reminder to turn off
 hardware filters).
 

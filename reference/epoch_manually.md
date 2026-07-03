@@ -14,7 +14,7 @@ epoch_manually(eyeris, ts_list, hz, verbose)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - ts_list:
 
@@ -35,5 +35,5 @@ A list containing epoch results
 ## Details
 
 This function is called by the internal
-[`process_epoch_and_baselines()`](https://shawnschwartz.com/eyeris/reference/process_epoch_and_baselines.md)
+[`process_epoch_and_baselines()`](https://eyeris.shawnschwartz.com/reference/process_epoch_and_baselines.md)
 function.

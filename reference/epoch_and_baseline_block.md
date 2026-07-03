@@ -30,7 +30,7 @@ epoch_and_baseline_block(
 - x:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - blk:
 
@@ -91,5 +91,5 @@ A list containing epoch and baseline results
 ## Details
 
 This function is called by the internal
-[`epoch_pupil()`](https://shawnschwartz.com/eyeris/reference/epoch_pupil.md)
+[`epoch_pupil()`](https://eyeris.shawnschwartz.com/reference/epoch_pupil.md)
 function.

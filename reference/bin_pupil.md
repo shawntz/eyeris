@@ -43,4 +43,4 @@ A data frame with binned pupil data containing columns:
 ## Details
 
 This function is called by the exposed wrapper
-[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md).
+[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md).

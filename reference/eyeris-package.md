@@ -32,7 +32,7 @@ American Brain Foundation, and the American Academy of Neurology.
 
 Useful links:
 
-- <https://shawnschwartz.com/eyeris/>
+- <https://eyeris.shawnschwartz.com/>
 
 - <https://github.com/shawntz/eyeris/>
 

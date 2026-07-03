@@ -1,9 +1,9 @@
 # Internal helper to plot detrending overlay
 
 This function replicates the exact detrending visualization from the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 interactive preview mode. It uses
-[`robust_plot()`](https://shawnschwartz.com/eyeris/reference/robust_plot.md)
+[`robust_plot()`](https://eyeris.shawnschwartz.com/reference/robust_plot.md)
 to show the most recent detrended pupil signal overlaid with the fitted
 linear trend.
 
@@ -33,7 +33,7 @@ plot_detrend_overlay(
 - plot_params:
 
   A named list of additional parameters to forward to
-  [`robust_plot()`](https://shawnschwartz.com/eyeris/reference/robust_plot.md)
+  [`robust_plot()`](https://eyeris.shawnschwartz.com/reference/robust_plot.md)
 
 - suppress_prompt:
 

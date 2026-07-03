@@ -21,9 +21,9 @@ eye <- eye |>
 
 (for more details on extracting pupil data epochs, see the [Extracting
 Data Epochs and Exporting Pupil Data
-vignette](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.md);
+vignette](https://eyeris.shawnschwartz.com/articles/epoching-bids-reports.md);
 for more details on this specific example code shown above, [click
-here](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html#example-c-epoch-with-subtractive-baselining)).
+here](https://eyeris.shawnschwartz.com/articles/epoching-bids-reports.html#example-c-epoch-with-subtractive-baselining)).
 
 ## 2 Generating the Interactive HTML Reports
 
@@ -120,7 +120,7 @@ generated in the BIDS reports and can also be created manually.
 ### Standalone Gaze Heatmaps
 
 When you run
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 with `html_report = TRUE`, `eyeris` automatically creates standalone
 gaze heatmaps for each block of data. These heatmaps show:
 
@@ -134,7 +134,7 @@ gaze heatmaps for each block of data. These heatmaps show:
 ### Manual Gaze Heatmap Creation
 
 You can also create gaze heatmaps manually using the
-[`plot_gaze_heatmap()`](https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.md)
+[`plot_gaze_heatmap()`](https://eyeris.shawnschwartz.com/reference/plot_gaze_heatmap.md)
 function:
 
 ``` r

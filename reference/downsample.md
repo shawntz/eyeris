@@ -22,7 +22,7 @@ downsample(
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md).
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md).
 
 - target_fs:
 
@@ -53,7 +53,7 @@ An `eyeris` object with downsampled data and updated sampling rate.
 
 Downsampling reduces the sampling frequency by decimating data points.
 The function automatically designs an anti-aliasing filter using the
-[`lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md)
+[`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md)
 function with carefully chosen parameters:
 
 - `ws` (stopband frequency) = Fs_new / 2 (Nyquist freq of new sampling
@@ -69,7 +69,7 @@ is the new sampling frequency.
 ## Note
 
 This function is part of the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 preprocessing pipeline and is not intended for direct use in most cases.
 Provide parameters via `downsample = list(...)`.
 
@@ -77,19 +77,19 @@ Advanced users may call it directly if needed.
 
 ## See also
 
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 for the recommended way to run this step as part of the full `eyeris`
 glassbox preprocessing pipeline.
-[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) for binning
+[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) for binning
 functionality.
 
 For a complete, end-to-end reference pipeline that demonstrates how all
 `eyeris` preprocessing functions are chained together in practice, see
 the "Building Blocks Under the Hood" section of the *Anatomy of an
 `eyeris` Object* vignette —
-[`vignette("anatomy", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+[`vignette("anatomy", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/anatomy.md)
 — as well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
-[`vignette("complete-pipeline", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md).
+[`vignette("complete-pipeline", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md).
 
 ## Examples
 
@@ -100,25 +100,25 @@ demo_data <- eyelink_asc_demo_dataset()
 demo_data |>
   eyeris::glassbox(downsample = list(target_fs = 100)) |>
   plot(seed = 0)
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:46:39] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:09:16] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::downsample() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::downsample() for block_1
 
-#> ✔ [2026-07-03 01:46:39] [OKAY] Decimating sampling rate from 1000 Hz --> 100
+#> ✔ [2026-07-03 02:09:16] [OKAY] Decimating sampling rate from 1000 Hz --> 100
 #> Hz...
-#> ! [2026-07-03 01:46:39] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 01:46:39] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:46:39] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:46:39] [INFO] block_1: OK (steps: 7, latest:
+#> ! [2026-07-03 02:09:16] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:09:16] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:09:16] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:09:16] [INFO] block_1: OK (steps: 7, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_downsample_z)
-#> ✔ [2026-07-03 01:46:39] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-07-03 01:46:39] [INFO] Plotting block 1 with sampling rate 100 Hz from
+#> ✔ [2026-07-03 02:09:16] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-07-03 02:09:16] [INFO] Plotting block 1 with sampling rate 100 Hz from
 #> possible blocks: 1
 
 

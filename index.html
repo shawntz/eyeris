@@ -27,7 +27,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Flexible, Extensible, &amp; Reproducible Pupillometry Preprocessing">
 <meta name="description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states [Clewett et al. (2020) &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie (2018) &lt;doi:10.3758/s13428-018-1075-y&gt;; Strauch (2024) &lt;doi:10.1016/j.tins.2024.06.002&gt;]. Yet, despite decades of pupillometry research, many established packages and workflows to date lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles [see Wilkinson et al. (2016) &lt;doi:10.1038/sdata.2016.18&gt;]. eyeris provides a modular, performant, and extensible preprocessing framework for pupillometry data with BIDS-like organization and interactive output reports [Esteban et al. (2019) &lt;doi:10.1038/s41592-018-0235-4&gt;; Gorgolewski et al. (2016) &lt;doi:10.1038/sdata.2016.44&gt;]. Development was supported, in part, by the Stanford Wu Tsai Human Performance Alliance, Stanford Ric Weiland Graduate Fellowship, Stanford Center for Mind, Brain, Computation and Technology, NIH National Institute on Aging Grants (R01-AG065255, R01-AG079345), NSF GRFP (DGE-2146755), McKnight Brain Research Foundation Clinical Translational Research Scholarship in Cognitive Aging and Age-Related Memory Loss, American Brain Foundation, and the American Academy of Neurology.">
 <meta property="og:description" content="Pupillometry offers a non-invasive window into the mind and has been used extensively as a psychophysiological readout of arousal signals linked with cognitive processes like attention, stress, and emotional states [Clewett et al. (2020) &lt;doi:10.1038/s41467-020-17851-9&gt;; Kret &amp; Sjak-Shie (2018) &lt;doi:10.3758/s13428-018-1075-y&gt;; Strauch (2024) &lt;doi:10.1016/j.tins.2024.06.002&gt;]. Yet, despite decades of pupillometry research, many established packages and workflows to date lack design patterns based on Findability, Accessibility, Interoperability, and Reusability (FAIR) principles [see Wilkinson et al. (2016) &lt;doi:10.1038/sdata.2016.18&gt;]. eyeris provides a modular, performant, and extensible preprocessing framework for pupillometry data with BIDS-like organization and interactive output reports [Esteban et al. (2019) &lt;doi:10.1038/s41592-018-0235-4&gt;; Gorgolewski et al. (2016) &lt;doi:10.1038/sdata.2016.44&gt;]. Development was supported, in part, by the Stanford Wu Tsai Human Performance Alliance, Stanford Ric Weiland Graduate Fellowship, Stanford Center for Mind, Brain, Computation and Technology, NIH National Institute on Aging Grants (R01-AG065255, R01-AG079345), NSF GRFP (DGE-2146755), McKnight Brain Research Foundation Clinical Translational Research Scholarship in Cognitive Aging and Age-Related Memory Loss, American Brain Foundation, and the American Academy of Neurology.">
-<meta property="og:image" content="https://shawnschwartz.com/eyeris/logo.png">
+<meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png">
 <script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script>
 </head>
 <body>
@@ -136,7 +136,7 @@
 </h3>
 <p>The current version of <code>eyeris</code> reads data recorded with <strong>SR Research EyeLink</strong> eye-trackers (via the <code>.asc</code> files produced by the EyeLink <code>edf2asc</code> converter). EyeLink remains the most widely used research-grade system in the pupillometry community, so we focused our initial efforts there to ensure a robust, well-tested foundation.</p>
 <p>That said, <code>eyeris</code> is designed from the ground up to be <strong>format-agnostic downstream of data loading</strong>: every preprocessing step operates on a standardized internal <code>eyeris</code> object rather than on raw EyeLink files. This means support for additional open-source and vendor eye-tracker formats (e.g., Pupil Labs, Tobii, GazePoint, and the emerging <a href="https://bids.neuroimaging.io/" class="external-link">BIDS Eye Tracking</a> specification) can be added by writing a new data-loading function that maps raw samples and event messages onto the same internal representation — no changes to the preprocessing pipeline are required.</p>
-<p><strong>Roadmap &amp; community contributions.</strong> Broadening native support for other tracker formats is on our roadmap, and we actively welcome community contributions of new loaders. If you would like to help add support for your tracker of choice, please open an issue or pull request — see the <a href="https://shawnschwartz.com/eyeris/CONTRIBUTING.html">contribution guidelines</a> to get started.</p>
+<p><strong>Roadmap &amp; community contributions.</strong> Broadening native support for other tracker formats is on our roadmap, and we actively welcome community contributions of new loaders. If you would like to help add support for your tracker of choice, please open an issue or pull request — see the <a href="https://eyeris.shawnschwartz.com/CONTRIBUTING.html">contribution guidelines</a> to get started.</p>
 </div>
 </div>
 <div class="section level2">
@@ -176,153 +176,153 @@
 <tbody>
 <tr>
 <td><strong>Pipeline Orchestration</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/glassbox.html">glassbox()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/glassbox.html">glassbox()</a></td>
 <td>Run the full recommended preprocessing pipeline with a single function call.</td>
 </tr>
 <tr>
 <td><strong>BIDSify</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/bidsify.html">bidsify()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/bidsify.html">bidsify()</a></td>
 <td>Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance.</td>
 </tr>
 <tr>
 <td><strong>Data Loading</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/load_asc.html">load_asc()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/load_asc.html">load_asc()</a></td>
 <td>Load EyeLink <code>.asc</code> files into an <code>eyeris</code> object.</td>
 </tr>
 <tr>
 <td><strong>Blink Artifact Removal</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/deblink.html">deblink()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/deblink.html">deblink()</a></td>
 <td>Remove blink artifacts by extending and masking missing samples.</td>
 </tr>
 <tr>
 <td><strong>Transient (Speed-Based) Artifact Removal</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/detransient.html">detransient()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/detransient.html">detransient()</a></td>
 <td>Remove transient spikes in the pupil signal using a moving MAD filter.</td>
 </tr>
 <tr>
 <td><strong>Linear Interpolation</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/interpolate.html">interpolate()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/interpolate.html">interpolate()</a></td>
 <td>Interpolate missing (NA) samples in the pupil signal.</td>
 </tr>
 <tr>
 <td><strong>Lowpass Filtering</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/lpfilt.html">lpfilt()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/lpfilt.html">lpfilt()</a></td>
 <td>Apply a Butterworth lowpass filter to the pupil signal.</td>
 </tr>
 <tr>
 <td><strong>Downsampling</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/downsample.html">downsample()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/downsample.html">downsample()</a></td>
 <td>Downsample the pupil signal to a lower sampling rate.</td>
 </tr>
 <tr>
 <td><strong>Binning</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/bin.html">bin()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/bin.html">bin()</a></td>
 <td>Bin pupil data into specified time bins using mean or median.</td>
 </tr>
 <tr>
 <td><strong>Detrending</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/detrend.html">detrend()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/detrend.html">detrend()</a></td>
 <td>Remove slow drifts from the pupil signal by linear detrending.</td>
 </tr>
 <tr>
 <td><strong>Z-scoring</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/zscore.html">zscore()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/zscore.html">zscore()</a></td>
 <td>Z-score the pupil signal within each block.</td>
 </tr>
 <tr>
 <td><strong>Confound Summary</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/summarize_confounds.html">summarize_confounds()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/summarize_confounds.html">summarize_confounds()</a></td>
 <td>Summarize and visualize confounding variables for each preprocessing step.</td>
 </tr>
 <tr>
 <td><strong>Epoching &amp; Baselining</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/epoch.html">epoch()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/epoch.html">epoch()</a></td>
 <td>Extract time-locked epochs from the continuous pupil signal.</td>
 </tr>
 <tr>
 <td><strong>Plotting</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/plot.eyeris.html">plot()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/plot.eyeris.html">plot()</a></td>
 <td>Plot the pupil signal and preprocessing steps.</td>
 </tr>
 <tr>
 <td><strong>Gaze Heatmaps</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.html">plot_gaze_heatmap()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/plot_gaze_heatmap.html">plot_gaze_heatmap()</a></td>
 <td>Generate heatmaps of gaze position across the screen.</td>
 </tr>
 <tr>
 <td><strong>Binocular Correlation</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.html">plot_binocular_correlation()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/plot_binocular_correlation.html">plot_binocular_correlation()</a></td>
 <td>Compute correlation between left and right eye pupil signals.</td>
 </tr>
 <tr>
 <td><strong>Demo (Monocular) Dataset</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset()</a></td>
 <td>Load a demo monocular recording EyeLink dataset for testing and examples.</td>
 </tr>
 <tr>
 <td><strong>Demo (Binocular) Dataset</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyelink_asc_binocular_demo_dataset.html">eyelink_asc_binocular_demo_dataset()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyelink_asc_binocular_demo_dataset.html">eyelink_asc_binocular_demo_dataset()</a></td>
 <td>Load a demo binocular recording EyeLink dataset for testing and examples.</td>
 </tr>
 <tr>
 <td><strong>Logging Commands</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyelogger.html">eyelogger()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyelogger.html">eyelogger()</a></td>
 <td>Automatically capture all console output and errors to timestamped log files.</td>
 </tr>
 <tr>
 <td><strong>Database Storage</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.html">eyeris_db_collect()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.html">eyeris_db_collect()</a></td>
 <td>High-performance database storage and querying alternative to CSV files.</td>
 </tr>
 <tr>
 <td><strong>Database Summary</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.html">eyeris_db_summary()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_summary.html">eyeris_db_summary()</a></td>
 <td>Get comprehensive overview of database contents and metadata.</td>
 </tr>
 <tr>
 <td><strong>Database Connection</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.html">eyeris_db_connect()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_connect.html">eyeris_db_connect()</a></td>
 <td>Connect to eyeris databases for custom queries and operations.</td>
 </tr>
 <tr>
 <td><strong>Database Export (Chunked)</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.html">eyeris_db_to_chunked_files()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.html">eyeris_db_to_chunked_files()</a></td>
 <td>Export large databases in configurable chunks with automatic file size limits.</td>
 </tr>
 <tr>
 <td><strong>Database Export (Parquet)</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.html">eyeris_db_to_parquet()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_to_parquet.html">eyeris_db_to_parquet()</a></td>
 <td>Export database to high-performance Parquet format files.</td>
 </tr>
 <tr>
 <td><strong>Read Parquet Files</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/read_eyeris_parquet.html">read_eyeris_parquet()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/read_eyeris_parquet.html">read_eyeris_parquet()</a></td>
 <td>Read and combine eyeris Parquet files with schema-aligned binding.</td>
 </tr>
 <tr>
 <td><strong>Database Sharing (Split)</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.html">eyeris_db_split_for_sharing()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_split_for_sharing.html">eyeris_db_split_for_sharing()</a></td>
 <td>Split databases into chunks for easier sharing and collaboration.</td>
 </tr>
 <tr>
 <td><strong>Database Sharing (Reconstruct)</strong></td>
-<td><a href="https://shawnschwartz.com/eyeris/reference/eyeris_db_reconstruct_from_chunks.html">eyeris_db_reconstruct_from_chunks()</a></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/eyeris_db_reconstruct_from_chunks.html">eyeris_db_reconstruct_from_chunks()</a></td>
 <td>Reconstruct complete databases from shared chunks.</td>
 </tr>
 <tr>
 <td><strong>Custom Extensions</strong></td>
-<td><em>See vignette: <a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">Custom Extensions</a></em></td>
+<td><em>See vignette: <a href="https://eyeris.shawnschwartz.com/articles/custom-extensions.html">Custom Extensions</a></em></td>
 <td>Learn how to write your own pipeline steps and integrate them with <code>eyeris</code>.</td>
 </tr>
 <tr>
 <td><strong>Internal API Reference</strong></td>
-<td><em>See vignette: <a href="https://shawnschwartz.com/eyeris/articles/internal-api.html">Internal API Reference</a></em></td>
+<td><em>See vignette: <a href="https://eyeris.shawnschwartz.com/articles/internal-api.html">Internal API Reference</a></em></td>
 <td>Comprehensive documentation of all internal functions for advanced users and developers.</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>For a full list of all functions, see the <a href="https://shawnschwartz.com/eyeris/reference/index.html">eyeris reference index</a>.</p>
+<p>For a full list of all functions, see the <a href="https://eyeris.shawnschwartz.com/reference/index.html">eyeris reference index</a>.</p>
 </blockquote>
 </div>
 <div class="section level2">
@@ -332,24 +332,24 @@
 <h3 id="star2-start-here">🌟 Start Here<a class="anchor" aria-label="anchor" href="#star2-start-here"></a>
 </h3>
 <ul>
-<li><a href="https://shawnschwartz.com/eyeris/articles/complete-pipeline.html">✈ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough</a></li>
-<li><a href="https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.html">📁 Extracting Data Epochs and Exporting Pupil Data</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/complete-pipeline.html">✈ Getting Started: Complete (Opinionated) Pupillometry Pipeline Walkthrough</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/epoching-bids-reports.html">📁 Extracting Data Epochs and Exporting Pupil Data</a></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="eyes-pupil-data-quality-control">👀 Pupil Data Quality Control<a class="anchor" aria-label="anchor" href="#eyes-pupil-data-quality-control"></a>
 </h3>
 <ul>
-<li><a href="https://shawnschwartz.com/eyeris/articles/reports.html">🔎 QC with Interactive Reports</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/reports.html">🔎 QC with Interactive Reports</a></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="id_100-advanced-topics">💯 Advanced Topics<a class="anchor" aria-label="anchor" href="#id_100-advanced-topics"></a>
 </h3>
 <ul>
-<li><a href="https://shawnschwartz.com/eyeris/articles/anatomy.html">🫀 Anatomy of an <code>eyeris</code> Object</a></li>
-<li><a href="https://shawnschwartz.com/eyeris/articles/custom-extensions.html">🛠 Building Your Own Custom Pipeline Extensions</a></li>
-<li><a href="https://shawnschwartz.com/eyeris/articles/database-guide.html">🗄 Database Storage Guide: Scalable Alternative to CSV Files</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/anatomy.html">🫀 Anatomy of an <code>eyeris</code> Object</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/custom-extensions.html">🛠 Building Your Own Custom Pipeline Extensions</a></li>
+<li><a href="https://eyeris.shawnschwartz.com/articles/database-guide.html">🗄 Database Storage Guide: Scalable Alternative to CSV Files</a></li>
 </ul>
 </div>
 </div>
@@ -458,7 +458,7 @@
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">32</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://eyeris.shawnschwartz.com/">eyeris</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; eyeris v3.1.0 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶</span></span>
 <span><span class="co">#&gt; Welcome! Type ?`eyeris` to get started.</span></span>
@@ -636,7 +636,7 @@
 <p><strong>💡 Pro Tip</strong>: Use <code>csv_enabled = FALSE, db_enabled = TRUE</code> for cloud computing to maximize efficiency and minimize costs.</p>
 </blockquote>
 <blockquote>
-<p><strong>📖 Complete Guide</strong>: See the <a href="https://shawnschwartz.com/eyeris/articles/database-guide.html">Database Storage Guide</a> for comprehensive tutorials, advanced usage, and real-world examples.</p>
+<p><strong>📖 Complete Guide</strong>: See the <a href="https://eyeris.shawnschwartz.com/articles/database-guide.html">Database Storage Guide</a> for comprehensive tutorials, advanced usage, and real-world examples.</p>
 </blockquote>
 </div>
 </div>
@@ -799,7 +799,7 @@
 </h3>
 <p>You can wrap any <code>eyeris</code> command or block of code in <code>eyelogger({ ... })</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://eyeris.shawnschwartz.com/">eyeris</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># log a simple code block with messages, warnings, and prints</span></span>
 <span><span class="fu"><a href="reference/eyelogger.html">eyelogger</a></span><span class="op">(</span><span class="op">{</span></span>
@@ -848,12 +848,12 @@
 <a class="anchor" aria-label="anchor" href="#handshake-contributing-to-eyeris"></a>
 </h2>
 <p>Thank you for considering contributing to the open-source <code>eyeris</code> R package; there are many ways one could contribute to <code>eyeris</code>.</p>
-<p>We believe the best preprocessing practices emerge from collective expertise and rigorous discussion. Please see the <a href="https://shawnschwartz.com/eyeris/CONTRIBUTING.html">contribution guidelines</a> for more information on how to get started..</p>
+<p>We believe the best preprocessing practices emerge from collective expertise and rigorous discussion. Please see the <a href="https://eyeris.shawnschwartz.com/CONTRIBUTING.html">contribution guidelines</a> for more information on how to get started..</p>
 </div>
 <div class="section level2">
 <h2 id="scroll-code-of-conduct">📜 Code of Conduct<a class="anchor" aria-label="anchor" href="#scroll-code-of-conduct"></a>
 </h2>
-<p>Please note that the eyeris project is released with a <a href="https://shawnschwartz.com/eyeris/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Please note that the eyeris project is released with a <a href="https://eyeris.shawnschwartz.com/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 <div class="section level2">
 <h2 id="speech_balloon-suggestions-questions-issues">💬 Suggestions, questions, issues?<a class="anchor" aria-label="anchor" href="#speech_balloon-suggestions-questions-issues"></a>

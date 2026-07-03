@@ -85,19 +85,19 @@ containing:
 ## Details
 
 This function is automatically called by
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 by default. If needed, customize the parameters for `load_asc` by
 providing a parameter list.
 
 Users should prefer using
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 rather than invoking this function directly unless they have a specific
 reason to customize the pipeline manually.
 
 ## Note
 
 This function is part of the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 preprocessing pipeline and is not intended for direct use in most cases.
 Provide parameters via `load_asc = list(...)`.
 
@@ -108,7 +108,7 @@ Advanced users may call it directly if needed.
 [`eyelinker::read.asc()`](https://rdrr.io/pkg/eyelinker/man/read_asc.html)
 which this function wraps.
 
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 for the recommended way to run this step as part of the full `eyeris`
 glassbox preprocessing pipeline.
 
@@ -116,9 +116,9 @@ For a complete, end-to-end reference pipeline that demonstrates how all
 `eyeris` preprocessing functions are chained together in practice, see
 the "Building Blocks Under the Hood" section of the *Anatomy of an
 `eyeris` Object* vignette —
-[`vignette("anatomy", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+[`vignette("anatomy", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/anatomy.md)
 — as well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
-[`vignette("complete-pipeline", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md).
+[`vignette("complete-pipeline", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md).
 
 ## Examples
 
@@ -127,21 +127,21 @@ demo_data <- eyelink_asc_demo_dataset()
 
 demo_data |>
   eyeris::glassbox(load_asc = list(block = 1))
-#> ✔ [2026-07-03 01:48:04] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:48:04] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:48:04] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:48:05] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:48:05] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:48:05] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:10:42] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 01:48:05] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 01:48:05] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 01:48:05] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:48:05] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:48:05] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:48:05] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-03 02:10:42] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:10:42] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:10:42] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:10:42] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:10:42] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 01:48:05] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:10:42] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
 #> 

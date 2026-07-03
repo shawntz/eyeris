@@ -29,7 +29,7 @@ epoch_pupil(
 - x:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - prev_op:
 
@@ -82,4 +82,4 @@ A list containing epoch and baseline results
 ## Details
 
 This function is called by the exposed wrapper
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md).
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md).

@@ -13,25 +13,25 @@ multiple runs can show up, and they are handled differently:
 
 - **This vignette:** multiple runs, each in its own separate `.asc`
   file. You process each file with its own
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
-  → [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) →
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  → [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) →
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   call.
 - **The other case:** several recording segments embedded inside a
   *single* `.asc` file. That is handled automatically by
   `load_asc(block = “auto”)` and a single
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   call – see the [Complete
-  Pipeline](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md)
+  Pipeline](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md)
   and [Anatomy of an `eyeris`
-  Object](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+  Object](https://eyeris.shawnschwartz.com/articles/anatomy.md)
   vignettes. We contrast it briefly at the end.
 
 ## The one concept to know: `block` *is* `run`
 
 In `eyeris`, the **input** knob is called `block` (the `block` argument
 to
-[`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)),
+[`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)),
 and the **output** BIDS entity is called `run` (the `run-<index>` token
 in your derivative filenames). They map one-to-one:
 
@@ -44,7 +44,7 @@ acquisition entity. (There is no `block` entity in BIDS – a
 separately-acquired repetition of a task is a `run`.) This is why, in
 the workflow below, you set the run number once via
 `load_asc(block = ...)` and **do not** need to pass `run_num` to
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md).
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md).
 
 ## The pattern
 
@@ -92,25 +92,25 @@ What each piece is doing:
   entire file into one run*, which is exactly what you want when one
   file = one run (more on this in [Sanity
   check](#sanity-check-confirm-one-run-per-file) below).
-- **[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md)**
+- **[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md)**
   extracts your trials. Here `TST_trial-{trial}_{item}_{associate}`
   matches each trial event and parses `trial`, `item`, and `associate`
   into columns of the epoched data frame.
-- **[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)**
+- **[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)**
   writes that run’s derivatives. `participant_id`, `session_num`, and
   `task_name` are the same on every iteration, so all three runs land in
   the same subject/session tree, distinguished only by their
   `run-<index>`.
 
 ℹ️ **Why is there no `run_num` in the
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 call?** Because
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 inherits the run number from the `eyeris` object – i.e., from the
 `block` you set in
-[`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md).
+[`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md).
 Setting it again in
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 would be redundant. (`run_num` exists to *relabel* a single-run object –
 e.g. force a lone file to be saved as `run-03` – and it is silently
 ignored for objects that already contain multiple blocks.)
@@ -160,10 +160,10 @@ for (i in seq_along(asc_files)) {
 ```
 
 The only two changes from the first loop are: (1)
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 no longer receives `load_asc = list(block = i)`, so each file loads with
 its default single block; and (2)
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md) now
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md) now
 takes `run_num = i`, which relabels that block as `run-01`, `run-02`,
 etc. Everything else – and every output file – is the same.
 
@@ -171,7 +171,7 @@ etc. Everything else – and every output file – is the same.
 `run_num` relabels a file that resolves to *one* block; if a file
 happens to contain multiple embedded recording segments, `run_num` is
 ignored (and
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 will emit a warning when `verbose = TRUE`) and the runs are numbered
 from the embedded blocks instead. `load_asc(block = i)` also *forces*
 the whole file into a single run, so it doubles as a guard against
@@ -223,7 +223,7 @@ Every data file carries its `run-<index>`, and the top-level
 `sub-AB01_task-assocmem.html` report aggregates all three runs. For a
 full breakdown of what each derivative file contains, see the
 [Extracting Data Epochs and Exporting Pupil
-Data](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.md)
+Data](https://eyeris.shawnschwartz.com/articles/epoching-bids-reports.md)
 vignette.
 
 💡 **Note on the epoch label in filenames.** Epoch labels are sanitized
@@ -323,7 +323,7 @@ to fill a gap.
 ## Fixing or re-running a single run
 
 Because every run is preprocessed by its **own**
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 call, you can fix or re-run just one run later without touching the
 others – which is the main practical advantage of the separate-file
 workflow. For example, if you tweak a preprocessing parameter for run 2:
@@ -347,7 +347,7 @@ glassbox(asc_files[2], load_asc = list(block = 2), verbose = TRUE) |>
   )
 ```
 
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 cleans out the existing derivatives for that specific subject +
 session + task + **run** before writing, so re-running `run-02` replaces
 only `run-02`’s files and leaves `run-01` and `run-03` untouched.
@@ -394,7 +394,7 @@ collapses it back into one run.
 If instead **all** of your runs were recorded into a single continuous
 `.asc` file, you don’t loop – you let `eyeris` split the embedded
 segments for you and write them in one
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 call:
 
 ``` r
@@ -416,22 +416,22 @@ glassbox(one_file_with_all_runs, load_asc = list(block = "auto")) |>
 Here `block = "auto"` (the default) detects each recording segment and
 numbers them `run-01`, `run-02`, … from their embedded block numbers.
 See the [Complete
-Pipeline](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md)
+Pipeline](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md)
 and [Anatomy of an `eyeris`
-Object](https://shawnschwartz.com/eyeris/articles/anatomy.md) vignettes
+Object](https://eyeris.shawnschwartz.com/articles/anatomy.md) vignettes
 for more on that path.
 
 ## ✨ Summary
 
 - When each run lives in its **own** `.asc` file, **loop** over the
   files and give each one its own
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
-  → [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) →
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  → [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) →
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   call.
 - In `eyeris`, **`block` is `run`**: set the run number once via
   `load_asc(block = ...)`;
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   inherits it, so you don’t pass `run_num`.
 - `eyeris` **never renumbers runs** – drive the block number from the
   *true* run identity (an explicit vector or a filename parse), not the

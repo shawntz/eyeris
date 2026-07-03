@@ -3,7 +3,7 @@
 This function lowpass filters pupil data using a Butterworth filter.
 
 This function is called by the exposed wrapper
-[`lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md)
+[`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md)
 
 ## Usage
 

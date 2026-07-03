@@ -35,6 +35,6 @@ determined
 
 Prefers the canonical `prop_invalid` metric stored in
 `eyeris$confounds$unepoched_timeseries` (computed by
-[`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)).
+[`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)).
 Falls back to computing the proportion of missing samples directly from
 the raw timeseries when confounds are unavailable.

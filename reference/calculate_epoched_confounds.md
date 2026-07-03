@@ -2,8 +2,8 @@
 
 Helper function to calculate confounds for epoched time series data.
 This function is used internally by both
-[`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
-and [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md).
+[`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
+and [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md).
 
 ## Usage
 
@@ -16,7 +16,7 @@ calculate_epoched_confounds(eyeris, epoch_names, hz, verbose = TRUE)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - epoch_names:
 

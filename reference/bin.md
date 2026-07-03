@@ -15,7 +15,7 @@ bin(eyeris, bins_per_second, method = "mean", call_info = NULL)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - bins_per_second:
 
@@ -49,7 +49,7 @@ dynamics).
 ## Note
 
 This function is part of the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 preprocessing pipeline and is not intended for direct use in most cases.
 Provide parameters via `bin = list(...)`.
 
@@ -57,19 +57,19 @@ Advanced users may call it directly if needed.
 
 ## See also
 
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 for the recommended way to run this step as part of the full eyeris
 glassbox preprocessing pipeline
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)
 for downsampling functionality
 
 For a complete, end-to-end reference pipeline that demonstrates how all
 `eyeris` preprocessing functions are chained together in practice, see
 the "Building Blocks Under the Hood" section of the *Anatomy of an
 `eyeris` Object* vignette —
-[`vignette("anatomy", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+[`vignette("anatomy", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/anatomy.md)
 — as well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
-[`vignette("complete-pipeline", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/complete-pipeline.md).
+[`vignette("complete-pipeline", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md).
 
 ## Examples
 
@@ -80,24 +80,24 @@ demo_data <- eyelink_asc_demo_dataset()
 demo_data |>
   eyeris::glassbox(bin = list(bins_per_second = 10, method = "mean")) |>
   plot(seed = 0)
-#> ✔ [2026-07-03 01:46:27] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:46:28] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:09:04] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 01:46:28] [WARN] Skipping eyeris::downsample() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::bin() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Decimating sampling rate from 1000 Hz --> 10
+#> ! [2026-07-03 02:09:04] [WARN] Skipping eyeris::downsample() for block_1
+#> ✔ [2026-07-03 02:09:04] [OKAY] Running eyeris::bin() for block_1
+#> ✔ [2026-07-03 02:09:05] [OKAY] Decimating sampling rate from 1000 Hz --> 10
 #> Hz...
-#> ! [2026-07-03 01:46:28] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:46:28] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:46:28] [INFO] block_1: OK (steps: 7, latest:
+#> ! [2026-07-03 02:09:05] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:09:05] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:09:05] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:09:05] [INFO] block_1: OK (steps: 7, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_bin_z)
-#> ✔ [2026-07-03 01:46:28] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-07-03 01:46:28] [INFO] Plotting block 1 with sampling rate 10 Hz from
+#> ✔ [2026-07-03 02:09:05] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-07-03 02:09:05] [INFO] Plotting block 1 with sampling rate 10 Hz from
 #> possible blocks: 1
 
 

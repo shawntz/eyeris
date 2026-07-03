@@ -7,7 +7,7 @@ deflections in pupil size that occur due to eyelid movements during and
 around actual blink periods.
 
 This function is called by the exposed wrapper
-[`deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md).
+[`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md).
 
 ## Usage
 

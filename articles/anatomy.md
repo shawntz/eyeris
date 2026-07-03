@@ -44,7 +44,7 @@ where each subsequent step is appended to the previous columns name
 
 - `confounds`: a list of data frames containing confounding variables
   for each preprocessing step (see: 📊
-  [`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md))
+  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md))
 
 - `params`: detailed list of steps run and parameters passed to each
   step
@@ -68,9 +68,9 @@ as returned by the main preprocessing pipeline.
 
 Now that we’ve explained what you can expect to see after running the
 `eyeris`
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 function, we’ll demonstrate what the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 wrapper is generally comprised of in terms of the steps and defaults
 that are implemented.
 
@@ -78,7 +78,7 @@ that are implemented.
 
 While we strongly recommend against manually constructing the pipeline
 as will be shown below (given that using the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 will provide maximum opportunities for reproducibility and reduction of
 accidental errors), more advanced users may want to see how the
 individual steps can be used like building blocks to iteratively test
@@ -90,7 +90,7 @@ doing***), etc.
 
 The chunk below is the **complete, end-to-end reference pipeline**. It
 reproduces the default
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 recipe step-by-step, with every `eyeris` preprocessing function chained
 together exactly as the wrapper calls them internally. Use it as a
 copy-paste template whenever you need to inspect, reorder, or swap out
@@ -117,34 +117,34 @@ parameters and a worked example:
 
 | Step | Function | What it does |
 |----|----|----|
-| 1\. Load | [`eyeris::load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md) | Parse the raw `.asc` file into an `eyeris` object |
-| 2\. Deblink | [`eyeris::deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md) | NA-pad samples surrounding blink artifacts |
-| 3\. Detransient | [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md) | Remove physiologically implausible jumps |
-| 4\. Interpolate | [`eyeris::interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md) | Linearly fill in missing samples |
-| 5\. Lowpass filter | [`eyeris::lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md) | Smooth the pupil time series |
-| *(optional)* Downsample | [`eyeris::downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md) | Decimate to a lower sampling rate (anti-aliased) |
-| *(optional)* Bin | [`eyeris::bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) | Average samples within fixed time bins |
-| *(optional)* Detrend | [`eyeris::detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md) | Remove a linear trend from the time series |
-| 6\. Z-score | [`eyeris::zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md) | Standardize to mean 0 and SD 1 |
-| *(summary)* Confounds | [`eyeris::summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md) | Tabulate per-step data-quality metrics |
+| 1\. Load | [`eyeris::load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md) | Parse the raw `.asc` file into an `eyeris` object |
+| 2\. Deblink | [`eyeris::deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) | NA-pad samples surrounding blink artifacts |
+| 3\. Detransient | [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md) | Remove physiologically implausible jumps |
+| 4\. Interpolate | [`eyeris::interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md) | Linearly fill in missing samples |
+| 5\. Lowpass filter | [`eyeris::lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) | Smooth the pupil time series |
+| *(optional)* Downsample | [`eyeris::downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md) | Decimate to a lower sampling rate (anti-aliased) |
+| *(optional)* Bin | [`eyeris::bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) | Average samples within fixed time bins |
+| *(optional)* Detrend | [`eyeris::detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md) | Remove a linear trend from the time series |
+| 6\. Z-score | [`eyeris::zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md) | Standardize to mean 0 and SD 1 |
+| *(summary)* Confounds | [`eyeris::summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md) | Tabulate per-step data-quality metrics |
 
 💡 **Note:**
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)
-and [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) are
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)
+and [`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) are
 mutually exclusive (enable at most one), and
-[`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md) is
+[`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md) is
 disabled in the default
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 recipe. See each function’s help page for guidance before enabling these
 optional steps.
 
 💡 **For more detailed information on the implementation of functions
 within** **the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 and thus how to create your own custom pipeline** **extensions that
 conform to the `eyeris` protocol, see the:** [🧩 Building your own
 Custom Pipeline Extensions
-vignette](https://shawnschwartz.com/eyeris/articles/custom-extensions.md).
+vignette](https://eyeris.shawnschwartz.com/articles/custom-extensions.md).
 
 ------------------------------------------------------------------------
 

@@ -14,7 +14,7 @@ find_baseline_structure(eyeris, epoch_label, verbose = TRUE)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - epoch_label:
 

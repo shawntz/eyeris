@@ -61,7 +61,7 @@ make_prog_summary_plot(
   pupil time series, with the same `pupil_*` and `time_secs` columns as
   `pupil_data` (e.g., `eyeris$timeseries_pre_decimation$block_1`). When
   supplied, preprocessing steps that precede a
-  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)/[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)
   step are drawn from this full-resolution data instead of the decimated
   `pupil_data`, so they are not shown at the decimated sampling rate.
   Defaults to `NULL`
@@ -87,4 +87,4 @@ see how the signal changes through the pipeline.
 
 ## See also
 
-[`plot.eyeris`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+[`plot.eyeris`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md)

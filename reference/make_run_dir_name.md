@@ -33,6 +33,6 @@ A character string, e.g. `"task-study_run-01"` or `"run-01"`
 This is the single source of truth for run-directory naming: every
 writer builds the directory and its contained filenames from it, and
 every reader either globs with
-[`run_dir_pattern()`](https://shawnschwartz.com/eyeris/reference/run_dir_pattern.md)
+[`run_dir_pattern()`](https://eyeris.shawnschwartz.com/reference/run_dir_pattern.md)
 (then parses the numeric run via `run-(\\d+)`) or derives filenames from
 `basename(run_dir)`.

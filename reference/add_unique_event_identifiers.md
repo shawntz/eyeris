@@ -24,4 +24,4 @@ Updated events list with `text_unique` column added to each data frame
 ## Details
 
 This function is called by the exposed wrapper
-[`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+[`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)

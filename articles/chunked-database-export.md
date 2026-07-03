@@ -32,7 +32,7 @@ Before using the chunked export functions, you need:
 ### Simple Export with Default Settings
 
 The easiest way to export your entire database is with
-[`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md):
+[`eyeris_db_to_chunked_files()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md):
 
 ``` r
 
@@ -46,7 +46,7 @@ print(result)
 ```
 
 Using the
-[`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md)
+[`eyeris_db_to_chunked_files()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md)
 function defaults, this will: - Process `1 million rows` at a time
 (i.e., the default chunk size) - Create files up to `500MB` each (i.e.,
 the default max file size) - Export all data types found in your
@@ -305,7 +305,7 @@ If files are locked or in use:
 For additional help:
 
 - Check function documentation:
-  [`?eyeris_db_to_chunked_files`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md)
+  [`?eyeris_db_to_chunked_files`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md)
 - View database contents: `eyeris_db_summary(bids_dir, db_path)`
 - List available tables: `eyeris_db_list_tables(con)`
 - Monitor progress with `verbose = TRUE`

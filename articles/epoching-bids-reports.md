@@ -33,25 +33,25 @@ library(eyeris)
 # Load the example memory task file and run default glassbox preproc workflow
 demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
-#> ✔ [2026-07-03 01:48:46] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:48:47] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-03 01:48:47] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 01:48:47] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 01:48:47] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:48:47] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:48:47] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-07-03 02:11:22] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:11:23] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-03 02:11:23] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:11:23] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:11:23] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:11:23] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:11:23] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 01:48:47] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:11:23] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ## 2 Extract Data Epochs
 
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) enables
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) enables
 flexible extraction of trials using:
 
 - start/stop events,
@@ -66,13 +66,13 @@ flexible extraction of trials using:
 
 eye_1a <- eye |>
   epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-07-03 01:48:47] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 01:48:47] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-07-03 01:48:47] [OKAY] Done!
-#> ✔ [2026-07-03 01:48:47] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-07-03 02:11:23] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 02:11:23] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-07-03 02:11:23] [OKAY] Done!
+#> ✔ [2026-07-03 02:11:23] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-07-03 01:48:47] [OKAY] Pupil epoching completed in 0.19 seconds
-#> ℹ [2026-07-03 01:48:47] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 02:11:23] [OKAY] Pupil epoching completed in 0.23 seconds
+#> ℹ [2026-07-03 02:11:23] [INFO] Recalculating epoched confounds for new
 #> epochs...
 ```
 
@@ -129,7 +129,7 @@ the pattern matching procedure.
 
 However, you have the ability to customize this label, by passing a
 value to the `label` argument within
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md).
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md).
 
 ⚠️ Warning: if no label is specified and there are no event message
 strings provided for sanitization, then you may obtain a strange-looking
@@ -138,7 +138,7 @@ perhaps even `$epoch_nana`, etc.). The extracted data epochs should
 still be accessible here, however, to avoid ambiguous list objects, **we
 highly recommend you explicitly** **supply sensible epoch labels here
 within your
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) calls
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) calls
 to be safe.**
 
 ### Example B: Metadata Parsing with Custom Labels
@@ -154,14 +154,14 @@ eye_1b <- eye |>
     limits = c(0, 1),
     label = "probeAfter"
   )
-#> ℹ [2026-07-03 01:48:48] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 01:48:48] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 02:11:24] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 02:11:24] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-07-03 01:48:48] [OKAY] Done!
-#> ✔ [2026-07-03 01:48:48] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 02:11:24] [OKAY] Done!
+#> ✔ [2026-07-03 02:11:24] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 01:48:48] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-07-03 01:48:48] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 02:11:24] [OKAY] Pupil epoching completed in 0.07 seconds
+#> ℹ [2026-07-03 02:11:24] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 eye_1b |>
@@ -208,7 +208,7 @@ eye_1b |>
 ```
 
 💡 **Note:** You can customize
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) with
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) with
 trial-level metadata!
 
 For instance, here, `{trial}` will not only extract data but also add a
@@ -282,7 +282,7 @@ eye_1d <- eye |>
 ## 3 Export to a BIDS-like Format
 
 Once epoched, your data is ready to be exported with
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md),
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md),
 which saves the raw and epoched data in a structured, `BIDS`-inspired
 format.
 
@@ -337,7 +337,7 @@ Which will create a directory structure like this:
 ## 💡 Data Previews and QC with Interactive Reports
 
 See the [🔎 QC with Interactive Reports
-vignette](https://shawnschwartz.com/eyeris/articles/reports.md) for more
+vignette](https://eyeris.shawnschwartz.com/articles/reports.md) for more
 details.
 
 ## ✨ Summary
@@ -353,8 +353,8 @@ This vignette demonstrated how to:
   structure.
 
 Check out the function documentation for
-[`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) and
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md) to
+[`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) and
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md) to
 learn more about other customization options that may be useful for your
 specific workflow.
 

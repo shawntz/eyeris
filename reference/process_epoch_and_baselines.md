@@ -15,7 +15,7 @@ process_epoch_and_baselines(eyeris, timestamps, evs, lims, hz, verbose)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - timestamps:
 
@@ -44,5 +44,5 @@ A list containing epoch and baseline results
 ## Details
 
 This function is called by the internal
-[`epoch_and_baseline_block()`](https://shawnschwartz.com/eyeris/reference/epoch_and_baseline_block.md)
+[`epoch_and_baseline_block()`](https://eyeris.shawnschwartz.com/reference/epoch_and_baseline_block.md)
 function.

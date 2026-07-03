@@ -32,4 +32,4 @@ A vector of interpolated pupil values with the same length as the input
 ## Details
 
 This function is called by the exposed wrapper
-[`interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md).
+[`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md).

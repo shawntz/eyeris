@@ -27,7 +27,7 @@ plot_gaze_heatmap(
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - block:
 
@@ -78,21 +78,21 @@ No return value; creates a heatmap plot
 ``` r
 demo_data <- eyelink_asc_demo_dataset()
 eyeris_preproc <- glassbox(demo_data)
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 01:48:14] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:10:51] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 01:48:14] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 01:48:14] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 01:48:14] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 01:48:14] [INFO] Block processing summary:
-#> ℹ [2026-07-03 01:48:14] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-03 02:10:51] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:10:51] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:10:51] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:10:51] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:10:51] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 01:48:14] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:10:51] [OKAY] Running eyeris::summarize_confounds()
 plot_gaze_heatmap(eyeris = eyeris_preproc, block = 1)
 
 ```

@@ -2,7 +2,7 @@
 
 Merges multiple chunked eyerisdb files back into a single database file.
 Uses the reconstruction metadata file created by
-[`eyeris_db_split_for_sharing()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.md)
+[`eyeris_db_split_for_sharing()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_split_for_sharing.md)
 to ensure proper reconstruction.
 
 ## Usage

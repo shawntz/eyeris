@@ -4,7 +4,7 @@ One key strength of the preprocessing framework within `eyeris` is its
 modularity.
 
 While we encourage most users to use the
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 function for simplicity and reproducibility, advanced users can create
 custom preprocessing steps that seamlessly integrate into the pipeline.
 
@@ -16,7 +16,7 @@ This vignette walks you through the structure required to write your own
 Under the hood, each preprocessing function in `eyeris` is a wrapper
 around a core operation that gets tracked, versioned, and stored using
 the
-[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md).
+[`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md).
 
 Custom pipeline steps must conform to the `eyeris` protocol for maximum
 compatibility with the downstream functions we provide.
@@ -31,7 +31,7 @@ For instance:
 
 If you’re unfamiliar with how these columns are structured and tracked,
 first check out the companion vignette: [📦 Anatomy of an `eyeris`
-Object](https://shawnschwartz.com/eyeris/articles/anatomy.md).
+Object](https://eyeris.shawnschwartz.com/articles/anatomy.md).
 
 ## 🛠 Creating a Custom Extension for `eyeris`
 
@@ -61,7 +61,7 @@ winsorize_pupil <- function(x, prev_op, lower = 0.01, upper = 0.99) {
 ### 2) Create the wrapper using the `eyeris::pipeline_handler()`
 
 The
-[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+[`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md)
 enables your function to automatically:
 
 - track your function within the `eyeris` list object’s `params` field,
@@ -160,7 +160,7 @@ parameter in your function signature - Use
 [`match.call()`](https://rdrr.io/r/base/match.call.html) to capture the
 function call - Pass all your function parameters in the `parameters`
 list - Always pass `call_info = call_info` as the last argument to
-[`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+[`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md)
 
 ### 4) Function Structure Breakdown
 
@@ -201,7 +201,7 @@ system.file("extdata", "memory.asc", package = "eyeris") |>
   `prev_op`, not on ***any hardcoded column names***!
 - **Return the expected data type:** Be sure that you private function
   always returns a modified vector type, as the underlying
-  [`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+  [`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md)
   is looking out for a vector it can transpose into the new column that
   will be added to the `timeseries` data frame within the resulting
   `eyeris` object.

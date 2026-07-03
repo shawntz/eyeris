@@ -1,7 +1,7 @@
 # Identify decimated (downsample/bin) pupil columns
 
 A pupil column is considered "decimated" if it was produced by the
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)/[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)
 step or by any step that follows it. Such columns are stored at the
 decimated sampling rate, whereas earlier columns should be plotted from
 the preserved full-resolution data (see issue \#294).

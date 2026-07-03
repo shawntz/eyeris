@@ -5,7 +5,7 @@ This function detrends pupil data by fitting a linear model of
 (`pupil_data - fitted_values`).
 
 This function is called by the exposed wrapper
-[`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md).
+[`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md).
 
 ## Usage
 

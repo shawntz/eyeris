@@ -2,7 +2,7 @@
 
 Returns the full-resolution (pre-decimation) time series for the
 requested block, if it was preserved when a
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)/[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)
 step ran. Used so that diagnostic plots of earlier pipeline steps can be
 rendered at their original sampling rate rather than the decimated rate
 (see issue \#294).

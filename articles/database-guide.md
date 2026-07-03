@@ -72,7 +72,7 @@ database storage over traditional CSV files.
 
 The simplest way to create an `eyeris` database is by enabling database
 output during the
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 process:
 
 ``` r
@@ -208,7 +208,7 @@ subject_001_tables <- eyeris_db_list_tables(con, subject = "001")
 ### Simple Data Extraction
 
 The
-[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+[`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md)
 function provides easy one-liner access to your data:
 
 ``` r
@@ -719,7 +719,7 @@ advantages include:
 Whether you’re running a small pilot study or a large-scale
 multi-session experiment, `eyeris` databases can streamline your
 workflow and improve analysis efficiency. Start with the simple
-[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+[`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md)
 function for most use cases, and leverage direct `SQL` queries when you
 need maximum flexibility.
 

@@ -5,7 +5,7 @@ before decimation. Unlike binning, downsampling preserves the original
 temporal dynamics without averaging within bins.
 
 This function is called by the exposed wrapper
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md).
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md).
 
 ## Usage
 

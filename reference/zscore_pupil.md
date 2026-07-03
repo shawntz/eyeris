@@ -4,7 +4,7 @@ This function z-scores pupil data by subtracting the mean and dividing
 by the standard deviation.
 
 This function is called by the exposed wrapper
-[`zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md)
+[`zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md)
 
 ## Usage
 

@@ -15,7 +15,7 @@ print(x, ...)
 - x:
 
   An `eyeris_boilerplate` object returned by
-  [`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md)
+  [`boilerplate()`](https://eyeris.shawnschwartz.com/reference/boilerplate.md)
 
 - ...:
 

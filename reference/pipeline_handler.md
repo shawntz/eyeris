@@ -64,11 +64,11 @@ For more details, please check out the following vignettes:
 
 - Anatomy of an eyeris Object
 
-[`vignette("anatomy", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/anatomy.md)
+[`vignette("anatomy", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/anatomy.md)
 
 - Building Your Own Custom Pipeline Extensions
 
-[`vignette("custom-extensions", package = "eyeris")`](https://shawnschwartz.com/eyeris/articles/custom-extensions.md)
+[`vignette("custom-extensions", package = "eyeris")`](https://eyeris.shawnschwartz.com/articles/custom-extensions.md)
 
 ## Examples
 
@@ -147,7 +147,7 @@ custom_eye <- system.file("extdata", "memory.asc", package = "eyeris") |>
   winsorize()
 
 plot(custom_eye, seed = 1)
-#> ℹ [2026-07-03 01:48:10] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-03 02:10:47] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 

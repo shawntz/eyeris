@@ -28,7 +28,7 @@ boilerplate(
 - eyeris:
 
   An object of class `eyeris` (e.g., the output of
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)).
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)).
   Binocular objects are supported.
 
 - version:
@@ -85,16 +85,16 @@ requirement. This mirrors the approach taken by fMRIPrep and other
 reproducible-pipeline tools.
 
 When you run
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md) (or
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md) (or
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 with reporting enabled), this same boilerplate is embedded in the
 diagnostic HTML report and written to `derivatives/.../source/logs/` as
 a standalone Markdown file.
 
 ## See also
 
-[`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md),
-[`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md),
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
 
 ## Examples
 

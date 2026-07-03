@@ -3,7 +3,7 @@
 Subsets a block of time series data down to the timing columns and pupil
 signal columns. This trimmed, full-resolution copy is stashed in
 `eyeris$timeseries_pre_decimation` before a
-[`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)/[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)
 step replaces the working time series with its decimated counterpart, so
 that diagnostic plots of earlier steps can be shown at the original
 sampling rate rather than the decimated rate (see issue \#294).

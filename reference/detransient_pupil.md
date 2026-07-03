@@ -5,7 +5,7 @@ removing samples that exceed a speed-based threshold. The threshold is
 computed based on the constant `n`, which defaults to the value `16`.
 
 This function is called by the exposed wrapper
-[`detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md).
+[`detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md).
 
 ## Usage
 

@@ -14,7 +14,7 @@ epoch_start_end_msg(eyeris, start, end, hz, verbose)
 - eyeris:
 
   An object of class `eyeris` derived from
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
 
 - start:
 

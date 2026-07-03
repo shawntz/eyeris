@@ -7,7 +7,7 @@
 - **FF**: Fixed multi-run epoch CSV files
   (`*_desc-preproc_pupil_epoch-<label>.csv`) not being written for each
   run. When a subject’s data contained multiple blocks (runs),
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   built the per-epoch preprocessed output filename from the `run_num`
   argument — which is intentionally ignored (`NULL`) for multi-block
   objects — and packed the epoch label directly into the `desc` field
@@ -26,7 +26,7 @@
   sequentially), and several internal epoch/baseline metadata helpers no
   longer receive `verbose` in their `block_name` argument position
   (which crashed
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   under `verbose = FALSE` whenever epochs were present), by
   [@alicexue](https://github.com/alicexue) and
   [@shawntz](https://github.com/shawntz).
@@ -41,12 +41,12 @@ report/figure collision when different task names shared the same run
 number within a subject/session, misleading diagnostic plots for
 pipeline steps that precede downsampling/binning, and silent data loss
 in
-[`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)/[`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+[`eyeris_db_read()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_read.md)/[`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md)
 when table schemas diverged across `eyeris` versions. New features add a
 “percent data lost” annotation to the HTML report, expose a
 `prop_missing`/`n_missing` missing-data column at the block and trial
 levels for user-defined filtering, and introduce
-[`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md),
+[`boilerplate()`](https://eyeris.shawnschwartz.com/reference/boilerplate.md),
 an fMRIPrep-style generator that auto-writes copy-and-paste-ready
 methods text from the parameters captured in your pipeline.
 Documentation now cross-references every modular preprocessing function
@@ -56,7 +56,7 @@ to a complete end-to-end reference pipeline.
 
 - **FF ([\#293](https://github.com/shawntz/eyeris/issues/293))**: Fixed
   a conflict where running
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   for two different tasks that share the same run number (e.g.,
   `task-study_run-01` and `task-test_run-01`) under the same
   subject/session caused the second task to silently overwrite the first
@@ -70,7 +70,7 @@ to a complete end-to-end reference pipeline.
   `task-{task}_run-XX[...]`, the preprocessing report is named
   `sub-{sub}_task-{task}[...].html`, and the epoch gallery report and
   zip files are likewise task-namespaced. A new internal
-  [`make_run_dir_name()`](https://shawnschwartz.com/eyeris/reference/make_run_dir_name.md)
+  [`make_run_dir_name()`](https://eyeris.shawnschwartz.com/reference/make_run_dir_name.md)
   helper is the single source of truth shared by every writer and
   reader. The underlying data files (CSV/parquet/database) already
   included the task entity and are unchanged. As a side effect this also
@@ -90,9 +90,9 @@ to a complete end-to-end reference pipeline.
   decimated rate — making intact data appear largely absent. The
   full-resolution (pre-decimation) time series is now preserved in
   `eyeris$timeseries_pre_decimation` when a
-  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)/[`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md)
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)/[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)
   step runs, and
-  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+  [`plot.eyeris()`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md)
   (plus the progressive-summary report plot) now renders each step at
   the appropriate resolution: steps preceding decimation use the
   original full-resolution data, while the decimation step and any
@@ -103,7 +103,7 @@ to a complete end-to-end reference pipeline.
 
 - **FF**: Fixed blank “raw” pupil-size histograms in multi-run
   diagnostic reports. When `plot_distributions = TRUE`,
-  [`plot_pupil_distribution()`](https://shawnschwartz.com/eyeris/reference/plot_pupil_distribution.md)
+  [`plot_pupil_distribution()`](https://eyeris.shawnschwartz.com/reference/plot_pupil_distribution.md)
   outlined every histogram bar in white (`border = "white"`). For the
   raw step — whose wide, outlier-laden spread yields the most
   Freedman-Diaconis bins — the white outline completely covered the (now
@@ -121,24 +121,24 @@ to a complete end-to-end reference pipeline.
 
 - **FF**: Fixed a crash that broke *all* multi-block (multi-run)
   diagnostic plotting and HTML report generation on R `>= 4.2`.
-  [`get_block_numbers()`](https://shawnschwartz.com/eyeris/reference/get_block_numbers.md)
+  [`get_block_numbers()`](https://eyeris.shawnschwartz.com/reference/get_block_numbers.md)
   guarded its return value with `if (is.na(block_nums))`, but for a
   multi-block object `block_nums` is a vector (one entry per block), so
   the condition had length `> 1` — a hard error on modern R
   (`"the condition has length > 1"`). The fallback is now applied
   element-wise, so multi-block objects return one number per block; this
   path is exercised by both
-  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+  [`plot.eyeris()`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md)
   and
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md),
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md),
   by [@shawntz](https://github.com/shawntz) and
   [@alicexue](https://github.com/alicexue) in
   [\#319](https://github.com/shawntz/eyeris/issues/319).
 
 - **FF ([\#310](https://github.com/shawntz/eyeris/issues/310))**: Made
-  [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
+  [`eyeris_db_read()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_read.md)
   (and, by extension,
-  [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md))
+  [`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md))
   tolerant of tables whose column schemas diverge across `eyeris`
   versions. Previously, the function built a naive
   `SELECT * FROM t1 UNION ALL SELECT * FROM t2 ...` across every table
@@ -154,11 +154,11 @@ to a complete end-to-end reference pipeline.
   as a warning and an empty
   [`data.frame()`](https://rdrr.io/r/base/data.frame.html),
   i.e. **silent data loss**.
-  [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md)
+  [`eyeris_db_read()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_read.md)
   now computes the union of columns across all matching tables and
   projects each table onto a consistent, ordered column list (filling
   absent columns with `NULL`/`NA`) before the union, and
-  [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md)
+  [`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md)
   reconciles epoch-label results with a fill-aware bind. Identifiers are
   SQL-escaped before quoting so column or table names are handled
   safely, and an informational message is logged whenever divergent
@@ -175,7 +175,7 @@ to a complete end-to-end reference pipeline.
   are invalid (missing/during a blink, or off-screen), surfacing data
   loss directly in the report to reinforce workflow transparency. The
   metric reuses the canonical `prop_invalid` value from
-  [`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
+  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
   when available and falls back to computing missingness directly from
   the raw timeseries otherwise, by
   [@shawntz](https://github.com/shawntz) in
@@ -183,9 +183,9 @@ to a complete end-to-end reference pipeline.
 
 - **NF ([\#297](https://github.com/shawntz/eyeris/issues/297))**:
   Exposed a missing-data column for user-defined filtering.
-  [`summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
+  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
   (and the
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   pipeline that calls it) now reports the proportion of missing (`NA`)
   pupil samples as `prop_missing` (ranging `0`–`1`; multiply by `100`
   for a percentage), alongside its raw count `n_missing`. These are
@@ -207,13 +207,13 @@ to a complete end-to-end reference pipeline.
   > and `confounds_events` tables, a project `DuckDB` that already
   > contains confounds tables written by eyeris `<= 3.1.0` should be
   > regenerated before collecting it (e.g., via
-  > [`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md))
+  > [`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md))
   > alongside data written by this version. Mixing the old and new
   > confounds schemas in the same database is not currently supported by
-  > [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md).
+  > [`eyeris_db_read()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_read.md).
 
 - **NEW ([\#302](https://github.com/shawntz/eyeris/issues/302))**: Added
-  [`boilerplate()`](https://shawnschwartz.com/eyeris/reference/boilerplate.md),
+  [`boilerplate()`](https://eyeris.shawnschwartz.com/reference/boilerplate.md),
   an fMRIPrep-style methods-text generator that auto-writes a
   reproducible, copy-and-paste-ready Markdown description of the exact
   preprocessing workflow that was run, generated directly from the
@@ -239,23 +239,23 @@ to a complete end-to-end reference pipeline.
 
 - **DOC ([\#298](https://github.com/shawntz/eyeris/issues/298))**: Added
   cross-references from every modular preprocessing function
-  ([`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md),
-  [`deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md),
-  [`detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md),
-  [`interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md),
-  [`lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md),
-  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md),
-  [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md),
-  [`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md),
+  ([`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md),
+  [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md),
+  [`detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md),
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md),
+  [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md),
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md),
+  [`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md),
+  [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md),
   and
-  [`zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md)) to
+  [`zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md)) to
   a complete, end-to-end reference pipeline that demonstrates how all
   functions are chained together in practice. Each function’s help page
   now points readers to the “Building Blocks Under the Hood” section of
   the *Anatomy of an `eyeris` Object* vignette, which was expanded into
   an explicit, fully-annotated reference that maps each step one-to-one
   to the default
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   recipe. The *Complete Pupillometry Pipeline Walkthrough* vignette now
   links to that reference from a new “Advanced: Building the Pipeline
   Manually” section, by [@shawntz](https://github.com/shawntz).
@@ -288,11 +288,11 @@ documentation accuracy.
 - **FF ([\#278](https://github.com/shawntz/eyeris/issues/278))**: Fixed
   pandoc out-of-memory (`exit 137`) errors when rendering HTML reports
   with large epoch event data.
-  [`format_call_stack()`](https://shawnschwartz.com/eyeris/reference/format_call_stack.md)
+  [`format_call_stack()`](https://eyeris.shawnschwartz.com/reference/format_call_stack.md)
   was calling [`deparse()`](https://rdrr.io/r/base/deparse.html) on all
   parameters including large epoch event lists (thousands of rows),
   generating strings that consumed gigabytes of memory. Added
-  [`should_omit_parameter()`](https://shawnschwartz.com/eyeris/reference/should_omit_parameter.md)
+  [`should_omit_parameter()`](https://eyeris.shawnschwartz.com/reference/should_omit_parameter.md)
   helper to detect and filter epoch-related parameters containing
   complex objects (lists/data.frames) before deparsing. Large parameters
   are now displayed as `<omitted>` in the call stack while scalar values
@@ -306,12 +306,12 @@ documentation accuracy.
   downsampling was applied in the Glassbox pipeline, epoch plots showed
   5-second windows compressed to ~0.5 seconds (a 10x compression). The
   root cause was that
-  [`epoch_pupil()`](https://shawnschwartz.com/eyeris/reference/epoch_pupil.md)
+  [`epoch_pupil()`](https://eyeris.shawnschwartz.com/reference/epoch_pupil.md)
   used the original sampling rate (`info$sample.rate`) instead of the
   decimated rate (`decimated.sample.rate`) when calculating epoch
   timebins, causing sample counts to be divided by the wrong Hz value.
   Updated
-  [`epoch_pupil()`](https://shawnschwartz.com/eyeris/reference/epoch_pupil.md)
+  [`epoch_pupil()`](https://eyeris.shawnschwartz.com/reference/epoch_pupil.md)
   to check for `decimated.sample.rate` first before falling back to the
   original rate. X-axis labels and CSV output were already correct; this
   fix applies the same logic to the plot rendering, by
@@ -323,18 +323,18 @@ documentation accuracy.
 
 - **FF ([\#287](https://github.com/shawntz/eyeris/issues/287))**: Fixed
   misleading
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   usage pattern in the database guide documentation, where examples
   incorrectly instructed users to call
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   and pipe the result into
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
   This caused errors because `eyeris` expects a file path string to be
   passed directly into the pipeline;
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   is handled internally. Updated examples to show the correct usage
   pattern and added a runtime error in
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   that detects when a user passes an `eyeris` object instead of a file
   path, with a helpful message explaining the correct approach, by
   [@shawntz](https://github.com/shawntz) and
@@ -364,13 +364,13 @@ to prevent installation issues on macOS and other platforms.
   source. eyeris now gracefully falls back to DuckDB for parquet
   operations when arrow is not available, with informative installation
   instructions provided via
-  [`check_arrow()`](https://shawnschwartz.com/eyeris/reference/check_arrow.md)
+  [`check_arrow()`](https://eyeris.shawnschwartz.com/reference/check_arrow.md)
   helper function, by [@shawntz](https://github.com/shawntz) in
   [\#273](https://github.com/shawntz/eyeris/issues/273).
 
 - **ENH**: Added comprehensive installation guidance for Arrow and
   DuckDB dependencies. New
-  [`check_arrow()`](https://shawnschwartz.com/eyeris/reference/check_arrow.md)
+  [`check_arrow()`](https://eyeris.shawnschwartz.com/reference/check_arrow.md)
   helper function provides platform-specific installation instructions
   (macOS, Linux, Windows) with detailed steps for installing required
   system dependencies. Startup messages now inform users about missing
@@ -398,7 +398,7 @@ efficiency across the pipeline.
 ### 🚨 **Breaking changes & deprecations**
 
 - **DEPRECATED: `merge_runs` and `merge_epochs` parameters in
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)**:
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)**:
   Both `merge_runs` and `merge_epochs` parameters are now deprecated.
   All runs and epochs are now saved as separate files following proper
   BIDS conventions, which is the recommended approach for neuroimaging
@@ -410,7 +410,7 @@ efficiency across the pipeline.
 
 - **NF**: **Zip-based epoch gallery system**: Replaced individual epoch
   image files with zip-based storage and loading system. The
-  [`make_gallery()`](https://shawnschwartz.com/eyeris/reference/make_gallery.md)
+  [`make_gallery()`](https://eyeris.shawnschwartz.com/reference/make_gallery.md)
   function now creates epoch images in zip files instead of individual
   PNG files, and uses `zip.js` to dynamically load images in the HTML
   gallery. This reduces file count, improves organization, and provides
@@ -433,16 +433,16 @@ efficiency across the pipeline.
 
 - **NF - DuckDB database integration**: Added optional `DuckDB` database
   functionality to
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   as an alternative to CSV files for large-scale analyses. When
   `db_enabled = TRUE`, all `eyeris` data (timeseries, epochs, events,
   blinks, confounds) are written to a centralized database for efficient
   querying and analysis. Features include seamless out-of-the-box
   configuration, user-friendly database functions
-  ([`eyeris_db_collect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_collect.md),
-  [`eyeris_db_connect()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_connect.md),
-  [`eyeris_db_read()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_read.md),
-  [`eyeris_db_list_tables()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_list_tables.md)),
+  ([`eyeris_db_collect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_collect.md),
+  [`eyeris_db_connect()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_connect.md),
+  [`eyeris_db_read()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_read.md),
+  [`eyeris_db_list_tables()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_list_tables.md)),
   and `dplyr`-style data access. CSV file generation can be optionally
   disabled with `csv_enabled = FALSE` for cloud compute environments, by
   [@shawntz](https://github.com/shawntz) in
@@ -488,9 +488,9 @@ efficiency across the pipeline.
 > ```
 
 - **NF**: **Large-scale database export functionality**. Added
-  [`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md)
+  [`eyeris_db_to_chunked_files()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md)
   and
-  [`process_chunked_query()`](https://shawnschwartz.com/eyeris/reference/process_chunked_query.md)
+  [`process_chunked_query()`](https://eyeris.shawnschwartz.com/reference/process_chunked_query.md)
   functions to handle really large `eyerisdb` databases by processing
   data in configurable chunks (default `1M rows`) with automatic file
   size limits (default `500MB`) and numbered file splitting (`_01-of-N`
@@ -500,9 +500,9 @@ efficiency across the pipeline.
   [\#266](https://github.com/shawntz/eyeris/issues/266).
 
 - **NF**: **Robust parquet export/read for `eyerisdb` mixed schemas**.
-  [`eyeris_db_to_parquet()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_parquet.md)
+  [`eyeris_db_to_parquet()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_parquet.md)
   and
-  [`read_eyeris_parquet()`](https://shawnschwartz.com/eyeris/reference/read_eyeris_parquet.md)
+  [`read_eyeris_parquet()`](https://eyeris.shawnschwartz.com/reference/read_eyeris_parquet.md)
   now combine tables/files using schema-aligned binding (by column name;
   fill missing) via
   `data.table::rbindlist(use.names = TRUE, fill = TRUE)`. Fixes “numbers
@@ -525,9 +525,9 @@ efficiency across the pipeline.
   >   examples and troubleshooting
 
 - **NF**: **Database sharing and distribution functionality**. Added
-  [`eyeris_db_split_for_sharing()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_split_for_sharing.md)
+  [`eyeris_db_split_for_sharing()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_split_for_sharing.md)
   and
-  [`eyeris_db_reconstruct_from_chunks()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_reconstruct_from_chunks.md)
+  [`eyeris_db_reconstruct_from_chunks()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_reconstruct_from_chunks.md)
   functions to facilitate sharing of large eyeris databases via
   platforms with file size limits (GitHub, OSF, data repositories).
   Supports chunking strategies by data type, count, or size limits with
@@ -539,7 +539,7 @@ efficiency across the pipeline.
 ### 🔧 Major code improvements
 
 - **Simplified
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   function**: Significantly refactored and streamlined the
   `pipeline-bidsify.R` file to improve maintainability and reduce code
   complexity:
@@ -620,7 +620,7 @@ efficiency across the pipeline.
   [\#264](https://github.com/shawntz/eyeris/issues/264).
 
 - **ENH**: **Improved database summary performance**.
-  [`eyeris_db_summary()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_summary.md)
+  [`eyeris_db_summary()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_summary.md)
   now extracts subject/session/task information directly from table
   names instead of sampling database contents, providing complete
   coverage of all subjects and much faster execution, by
@@ -635,7 +635,7 @@ efficiency across the pipeline.
   [\#266](https://github.com/shawntz/eyeris/issues/266).
 
 - **ENH**: **Optimized database export performance and reliability**.
-  [`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md)
+  [`eyeris_db_to_chunked_files()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md)
   now uses a hybrid approach: database-level export via DuckDB’s `COPY`
   command for large file size limits (≥500MB) for maximum performance,
   and chunked processing for smaller limits (\<500MB) to ensure proper
@@ -648,7 +648,7 @@ efficiency across the pipeline.
 
 - **ENH**: **Enhanced chunked database export with epoch label
   grouping**.
-  [`eyeris_db_to_chunked_files()`](https://shawnschwartz.com/eyeris/reference/eyeris_db_to_chunked_files.md)
+  [`eyeris_db_to_chunked_files()`](https://eyeris.shawnschwartz.com/reference/eyeris_db_to_chunked_files.md)
   now supports `group_by_epoch_label` parameter (default: TRUE) that
   processes epoch-related data types separately by epoch label, reducing
   memory footprint and creating label-specific output files. Added
@@ -665,7 +665,7 @@ efficiency across the pipeline.
   ‘matched_event’ in epoched data. Resolved an issue with inconsistent
   variable naming introduced in \#a8df0c0, and fixed time and duration
   calculations in
-  [`epoch_start_end_msg()`](https://shawnschwartz.com/eyeris/reference/epoch_start_end_msg.md)
+  [`epoch_start_end_msg()`](https://eyeris.shawnschwartz.com/reference/epoch_start_end_msg.md)
   to use correct units and sample counts, by
   [@shawntz](https://github.com/shawntz) in
   [\#251](https://github.com/shawntz/eyeris/issues/251).
@@ -692,7 +692,7 @@ efficiency across the pipeline.
   [\#257](https://github.com/shawntz/eyeris/issues/257).
 
 - **FF**: Updated the
-  [`log_message()`](https://shawnschwartz.com/eyeris/reference/log_message.md)
+  [`log_message()`](https://eyeris.shawnschwartz.com/reference/log_message.md)
   function to use `tryCatch` when applying `glue` interpolation,
   ensuring that errors (e.g., from malformed braces or embedded `JSON`)
   do not interrupt logging; now, the original message is used if
@@ -705,7 +705,7 @@ efficiency across the pipeline.
   [\#259](https://github.com/shawntz/eyeris/issues/259).
 
 - **RF - post-render cleanup to remove figures directory**: The
-  [`cleanup_source_figures_post_render()`](https://shawnschwartz.com/eyeris/reference/cleanup_source_figures_post_render.md)
+  [`cleanup_source_figures_post_render()`](https://eyeris.shawnschwartz.com/reference/cleanup_source_figures_post_render.md)
   function now removes the entire `source/figures` directory after
   report generation, as images are embedded in the `HTML`. Documentation
   and comments updated to reflect this change, and unused parameters are
@@ -714,7 +714,7 @@ efficiency across the pipeline.
 
 - **RF - increase zip file embed size limit to 1GB**: Raised the maximum
   allowed zip file size for data `URL` embedding from `10MB` to `1GB` in
-  [`print_lightbox_img_html()`](https://shawnschwartz.com/eyeris/reference/print_lightbox_img_html.md).
+  [`print_lightbox_img_html()`](https://eyeris.shawnschwartz.com/reference/print_lightbox_img_html.md).
   Updated warning message to reflect the new limit, by
   [@shawntz](https://github.com/shawntz) in
   [\#261](https://github.com/shawntz/eyeris/issues/261).
@@ -740,7 +740,7 @@ efficiency across the pipeline.
   [\#265](https://github.com/shawntz/eyeris/issues/265).
 
 - **FF**: Improved handling of mismatched start/end events in
-  [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md). When
+  [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md). When
   using start/end event pairs (e.g.,
   `c("PROBE_S {STIM}", "PROBE_E {STIM}")`), the function now
   automatically matches events by extracting identifiers from event
@@ -768,7 +768,7 @@ minor release.
 
 - BF ([\#237](https://github.com/shawntz/eyeris/issues/237)): Ensure
   full raw timeseries `.csv` file is written by
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   for single-run (monocular) data, including cases with or without
   epoching and with run number override. Previously, the file was only
   written for multi-run data by [@shawntz](https://github.com/shawntz)
@@ -788,7 +788,7 @@ minor release.
 
 - CHORE ([\#239](https://github.com/shawntz/eyeris/issues/239)): Remove
   duplicate logging events for “Created gaze heatmap” in
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   pipeline. The log message now appears only once per run and uses the
   `[OKAY]` log level for both run-level and epoch-level heatmap
   creation, improving clarity and consistency in logs, by
@@ -848,24 +848,24 @@ elevating `eyeris'` functionality, robustness, and user experience.
   All downstream operations are now designed to treat `L` and/or `R` as
   separate entities, which ensures no cross-contamination between data
   from the two eyes during processing. Additionally, the
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   function now appends `_eye-L` and/or `_eye-R` to all derivatives and
   output HTML reports for binocular data for clear naming conventions.
   Pipeline functions such as
-  [`deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md),
-  [`interpolate()`](https://shawnschwartz.com/eyeris/reference/interpolate.md),
-  [`lpfilt()`](https://shawnschwartz.com/eyeris/reference/lpfilt.md),
-  [`detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md),
-  [`zscore()`](https://shawnschwartz.com/eyeris/reference/zscore.md),
-  [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md),
-  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md),
-  [`detrend()`](https://shawnschwartz.com/eyeris/reference/detrend.md),
-  and [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) have
+  [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md),
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md),
+  [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md),
+  [`detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md),
+  [`zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md),
+  [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md),
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md),
+  [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md),
+  and [`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) have
   been updated to handle binocular objects. A new
-  [`plot_binocular_correlation()`](https://shawnschwartz.com/eyeris/reference/plot_binocular_correlation.md)
+  [`plot_binocular_correlation()`](https://eyeris.shawnschwartz.com/reference/plot_binocular_correlation.md)
   function has also been added, and vignettes were updated to explain
   binocular data structures and usage with
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md);
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md);
   by [@shawntz](https://github.com/shawntz) in
   [\#228](https://github.com/shawntz/eyeris/issues/228).
 
@@ -896,9 +896,9 @@ elevating `eyeris'` functionality, robustness, and user experience.
   accurately reflect all detected runs, including their metadata and
   call stack. This addresses a previous issue where only the latest run
   was shown, by modifying
-  [`make_report()`](https://shawnschwartz.com/eyeris/reference/make_report.md)
+  [`make_report()`](https://eyeris.shawnschwartz.com/reference/make_report.md)
   to detect all `run-xx` folders in `source/figures/` and updating
-  [`save_progressive_summary_plots()`](https://shawnschwartz.com/eyeris/reference/save_progressive_summary_plots.md)
+  [`save_progressive_summary_plots()`](https://eyeris.shawnschwartz.com/reference/save_progressive_summary_plots.md)
   to use the folder structure rather than `eyeris$timeseries` names. The
   metadata section now shows one line per run for the `.asc` file source
   and a formatted call stack for each run; by
@@ -978,7 +978,7 @@ functionality, robustness, and user experience
   saved, visualizing the effects of each preprocessing step on pupil
   data and updating report structures to include these visualizations.
   The
-  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md)
+  [`plot.eyeris()`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md)
   function now includes an `add_progressive_summary` parameter to
   optionally generate these plots by
   [@shawntz](https://github.com/shawntz) in
@@ -986,11 +986,11 @@ functionality, robustness, and user experience
 
 - **Gaze heatmap generation** is added for both runs and epoch groups
   within
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md),
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md),
   enabling visualizations of eye coordinate distributions, data quality,
   and participant attention when eye tracking and screen dimension data
   are available. A new
-  [`plot_gaze_heatmap()`](https://shawnschwartz.com/eyeris/reference/plot_gaze_heatmap.md)
+  [`plot_gaze_heatmap()`](https://eyeris.shawnschwartz.com/reference/plot_gaze_heatmap.md)
   function is introduced for this purpose by
   [@gustxsr](https://github.com/gustxsr) and
   [@shawntz](https://github.com/shawntz) in
@@ -1002,38 +1002,38 @@ functionality, robustness, and user experience
   [\#182](https://github.com/shawntz/eyeris/issues/182).
 
 - The `html_report` parameter in
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   now **defaults to `TRUE`** by [@shawntz](https://github.com/shawntz)
   in [\#212](https://github.com/shawntz/eyeris/issues/212).
 
 #### Core data processing functions:
 
-- New [`bin()`](https://shawnschwartz.com/eyeris/reference/bin.md) and
-  [`downsample()`](https://shawnschwartz.com/eyeris/reference/downsample.md)
+- New [`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) and
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)
   functions are introduced for **pupil time series data processing**,
   including anti-aliasing filtering for downsampling and averaging for
   binning. Both functions are integrated into the
-  [`eyeris::glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`eyeris::glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   pipeline by [@shawntz](https://github.com/shawntz) and
   [@mh105](https://github.com/mh105) in
   [\#204](https://github.com/shawntz/eyeris/issues/204).
 
 - **Unique identifiers (`text_unique`)** are now added to event messages
   in
-  [`eyeris::load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`eyeris::load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   to prevent duplicate event merges, and the
-  [`merge_events_with_timeseries()`](https://shawnschwartz.com/eyeris/reference/merge_events_with_timeseries.md)
+  [`merge_events_with_timeseries()`](https://eyeris.shawnschwartz.com/reference/merge_events_with_timeseries.md)
   function is updated to utilize these for correct event matching and
   merging by [@shawntz](https://github.com/shawntz) in
   [\#181](https://github.com/shawntz/eyeris/issues/181).
 
 - **Confounds calculation and export** are integrated into the
   processing pipelines, with
-  [`eyeris::summarize_confounds()`](https://shawnschwartz.com/eyeris/reference/summarize_confounds.md)
+  [`eyeris::summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
   now included in
-  [`eyeris::glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`eyeris::glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   and
-  [`eyeris::epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md)
+  [`eyeris::epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md)
   pipelines by [@shawntz](https://github.com/shawntz) in
   [\#182](https://github.com/shawntz/eyeris/issues/182).
 
@@ -1047,7 +1047,7 @@ functionality, robustness, and user experience
   [\#209](https://github.com/shawntz/eyeris/issues/209).
 
 - The
-  [`eyelogger()`](https://shawnschwartz.com/eyeris/reference/eyelogger.md)
+  [`eyelogger()`](https://eyeris.shawnschwartz.com/reference/eyelogger.md)
   utility documentation has been **updated with a new section in the
   README**, detailing its purpose, usage examples, parameters, and
   generated log files for improved reproducibility and debugging by
@@ -1068,7 +1068,7 @@ functionality, robustness, and user experience
 
 - **Handling of missing valid samples** in random epoch plotting has
   been improved in
-  [`plot.eyeris()`](https://shawnschwartz.com/eyeris/reference/plot.eyeris.md),
+  [`plot.eyeris()`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md),
   adding warning messages and placeholder plots when no valid samples
   are found by [@shawntz](https://github.com/shawntz) in
   [\#181](https://github.com/shawntz/eyeris/issues/181),
@@ -1076,14 +1076,14 @@ functionality, robustness, and user experience
 
 - **Stricter validation checks** are added for the `prev_op` argument in
   the
-  [`eyeris::zscore_pupil()`](https://shawnschwartz.com/eyeris/reference/zscore_pupil.md)
+  [`eyeris::zscore_pupil()`](https://eyeris.shawnschwartz.com/reference/zscore_pupil.md)
   internal function to catch missing, non-existent, or corrupted column
   names early, improving error handling by
   [@shawntz](https://github.com/shawntz) in
   [\#207](https://github.com/shawntz/eyeris/issues/207).
 
 - **Validation for pupil data** in the
-  [`eyeris::lpfilt_pupil()`](https://shawnschwartz.com/eyeris/reference/lpfilt_pupil.md)
+  [`eyeris::lpfilt_pupil()`](https://eyeris.shawnschwartz.com/reference/lpfilt_pupil.md)
   internal function ensures data is numeric, non-empty, and contains
   only finite values before filtering, preventing errors related to
   invalid matrix extents by [@shawntz](https://github.com/shawntz) in
@@ -1091,14 +1091,14 @@ functionality, robustness, and user experience
 
 - **Stricter checks for corrupted or empty `latest` pointers and output
   column names** are added in
-  [`eyeris::pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md),
+  [`eyeris::pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md),
   improving error handling and transitioning operation calls to use
   `do.call` for flexible argument passing by
   [@shawntz](https://github.com/shawntz) in
   [\#211](https://github.com/shawntz/eyeris/issues/211).
 
 - The
-  [`eyeris::load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`eyeris::load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   function now **correctly sets the `latest` pointer** as a named list
   for *multi-block structures* and as a single value for *single block
   data*, enhancing multi-block support by
@@ -1106,7 +1106,7 @@ functionality, robustness, and user experience
   [\#211](https://github.com/shawntz/eyeris/issues/211).
 
 - Fixes an **edge case** where `mad_val` is `NA` in the
-  [`eyeris::detransient_pupil()`](https://shawnschwartz.com/eyeris/reference/detransient_pupil.md)
+  [`eyeris::detransient_pupil()`](https://eyeris.shawnschwartz.com/reference/detransient_pupil.md)
   internal function (occurring when all pupil data is `NA`), ensuring
   the original pupil data is returned unchanged and preventing
   comparison to `zero` when `mad_val` is `NA` by
@@ -1114,7 +1114,7 @@ functionality, robustness, and user experience
   [\#193](https://github.com/shawntz/eyeris/issues/193).
 
 - **Baseline handling in
-  [`eyeris::epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md)**
+  [`eyeris::epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md)**
   is simplified by ***deprecating*** `calc_baseline` and
   `apply_baseline` in favor of a single `baseline` parameter, also
   resolving bugs related to baseline computation and event mismatches by
@@ -1124,7 +1124,7 @@ functionality, robustness, and user experience
 #### Pipeline and data logic:
 
 - The
-  [`eyeris::glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`eyeris::glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   function has been **refactored to process each block** in the time
   series *individually* (except `load_asc`), improving modularity and
   ensuring correct error handling of multi-block data by
@@ -1138,7 +1138,7 @@ functionality, robustness, and user experience
   [\#199](https://github.com/shawntz/eyeris/issues/199).
 
 - The
-  [`eyeris::bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`eyeris::bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   function is **refactored to handle cases where no epochs are
   present**, preventing errors and unnecessary processing for users who
   want summary reports of the entire pupil time series without prior
@@ -1146,7 +1146,7 @@ functionality, robustness, and user experience
   [\#201](https://github.com/shawntz/eyeris/issues/201).
 
 - The
-  [`eyeris::bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`eyeris::bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   function now **properly allows manual specification of the `run_num`**
   for single-block data, while still auto-numbering multi-block files
   for improved naming consistency by
@@ -1167,16 +1167,16 @@ functionality, robustness, and user experience
   [\#214](https://github.com/shawntz/eyeris/issues/214).
 
 - The `pdf_report` parameter is
-  [`eyeris::bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`eyeris::bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   has been ***deprecated*** in favor of `html_report = TRUE`, with
   associated removal of PDF rendering logic from the
-  [`render_report()`](https://shawnschwartz.com/eyeris/reference/render_report.md)
+  [`render_report()`](https://eyeris.shawnschwartz.com/reference/render_report.md)
   internal function by [@shawntz](https://github.com/shawntz) in
   [\#197](https://github.com/shawntz/eyeris/issues/197).
 
 - Updates to `_pkgdown.yml`, `README`, `NAMESPACE`, and `R/zzz.R` to
   support new features and functionality, including exposing the
-  [`eyeris_color_palette()`](https://shawnschwartz.com/eyeris/reference/eyeris_color_palette.md)
+  [`eyeris_color_palette()`](https://eyeris.shawnschwartz.com/reference/eyeris_color_palette.md)
   and other global variables by [@shawntz](https://github.com/shawntz)
   in [\#214](https://github.com/shawntz/eyeris/issues/214).
 
@@ -1199,7 +1199,7 @@ CRAN release: 2025-06-13
 
 ### ✨ New features
 
-- [`eyelogger()`](https://shawnschwartz.com/eyeris/reference/eyelogger.md):
+- [`eyelogger()`](https://eyeris.shawnschwartz.com/reference/eyelogger.md):
   a new utility function to automatically capture and record R console
   output, errors, and the evaluated `eyeris` command into timestamped
   log files (`.out`, `.err`, and `.cmd`) for improved reproducibility,
@@ -1210,7 +1210,7 @@ CRAN release: 2025-06-13
   #### `eyelogger()` usage example
 
   Logging your `eyeris` commands with
-  [`eyelogger()`](https://shawnschwartz.com/eyeris/reference/eyelogger.md)
+  [`eyelogger()`](https://eyeris.shawnschwartz.com/reference/eyelogger.md)
   is as simple as wrapping your command like this:
 
   ``` r
@@ -1276,11 +1276,11 @@ CRAN release: 2025-06-07
   x-axis text label in plots
   ([\#162](https://github.com/shawntz/eyeris/issues/162))
 - BF: minor issue where a manually specified block number in
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   wasn’t being translated to the column `block` in the resulting list of
   time series data frames
 - BF: minor issue where setting `block = NULL` in
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   didn’t actually omit the block column values from the resulting data
   frames within the returned `eyeris` list object
 
@@ -1294,12 +1294,12 @@ CRAN release: 2025-06-07
 - DOC: manually update citation file to include all authors + bioRxiv
   preprint DOI ([\#152](https://github.com/shawntz/eyeris/issues/152))
 - DOC: incorrect URIs in `eyeris` documentation for
-  [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   function ([\#160](https://github.com/shawntz/eyeris/issues/160))
 - DOC: standardize default values for
-  [`deblink()`](https://shawnschwartz.com/eyeris/reference/deblink.md)
+  [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md)
   standalone \[previously `40ms`\] vs. in
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   \[now all `50ms`\]
   ([\#163](https://github.com/shawntz/eyeris/issues/163))
 - DOC: updates to `pkgdown` documentation website:
@@ -1316,7 +1316,7 @@ CRAN release: 2025-04-24
 ### ✨ New features
 
 - NF: Simplify
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   caller with redesigned parameters that enhance continuity across all
   pipeline steps ([\#148](https://github.com/shawntz/eyeris/issues/148))
 
@@ -1331,13 +1331,13 @@ CRAN release: 2025-04-24
 - ENH: Make histograms disabled by default when plotting an `eyeris`
   object ([\#156](https://github.com/shawntz/eyeris/issues/156)).
 - RF: Deprecated the `confirm` parameter in
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
   - Please use `interactive_preview` instead.
 - RF: Deprecated the `num_previews` parameter in
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md).
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md).
   - Please use `preview_n` instead.
 - BF: Random seed assignment was not behaving as expected within the
-  [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   pipeline.
 - RF: Modify paths to documentation assets to fix broken links at build.
 
@@ -1390,13 +1390,13 @@ This version marks the official launch of the `eyeris` package on CRAN.
 
 - Added example vignettes to demonstrate core functionality:
   - Preprocessing pipelines with
-    [`glassbox()`](https://shawnschwartz.com/eyeris/reference/glassbox.md)
+    [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
   - Event-based epoching with
-    [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md)
+    [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md)
   - BIDS-style export with
-    [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+    [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   - Custom pipeline extensions using
-    [`pipeline_handler()`](https://shawnschwartz.com/eyeris/reference/pipeline_handler.md)
+    [`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md)
 
 ### 📚 Documentation ([\#125](https://github.com/shawntz/eyeris/issues/125))
 
@@ -1415,7 +1415,7 @@ Thanks for checking out `eyeris`! 🧠
 
 - FF ([\#115](https://github.com/shawntz/eyeris/issues/115)): add more
   aggressive handling of edge cases in
-  [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md)
+  [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md)
   ([\#121](https://github.com/shawntz/eyeris/issues/121))
   - Specifically, situations where pupil data appear to have already
     undergone some type of online filtering directly from the EyeLink
@@ -1423,7 +1423,7 @@ Thanks for checking out `eyeris`! 🧠
   - There is now detailed instructions on what to do if this exception
     is raised.
   - Furthermore, a new `mad_thresh` override parameter has been added to
-    [`eyeris::detransient()`](https://shawnschwartz.com/eyeris/reference/detransient.md)
+    [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md)
     for advanced users to override the `mad_thresh` computed property.
     *Note:* this new `mad_thresh` parameter defaults to `NULL` (and
     should pretty much always stay as such).
@@ -1439,7 +1439,7 @@ Thanks for checking out `eyeris`! 🧠
   for `.asc` files containing multiple recording segments within the
   same file ([\#120](https://github.com/shawntz/eyeris/issues/120))
   - There is a new `block` argument added to the
-    [`load_asc()`](https://shawnschwartz.com/eyeris/reference/load_asc.md)
+    [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
     function
   - The default setting is “auto”, which aims to automatically handle
     multiple recording segments within the same `.asc` file. We
@@ -1453,8 +1453,8 @@ Thanks for checking out `eyeris`! 🧠
     instead of “auto”, which can be helpful for multi-block experiments
     where each block/run was recorded to a separate `.asc` file. This is
     especially important to consider when running the downstream
-    [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md) and
-    [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+    [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md) and
+    [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
     functions so that derived files and summary reports are properly
     labeled with the correction block/run number
   - Currently, there is also a `NULL` option; however, this is likely
@@ -1465,11 +1465,11 @@ Thanks for checking out `eyeris`! 🧠
 ### ✨ New features
 
 - NF: robust HTML and PDF output summary sidecar reports within
-  [`bidsify()`](https://shawnschwartz.com/eyeris/reference/bidsify.md)
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   ([\#120](https://github.com/shawntz/eyeris/issues/120))
   - Here, reports are well-organized both by block/run and any specific
     event message epochs that have been processed using the
-    [`epoch()`](https://shawnschwartz.com/eyeris/reference/epoch.md)
+    [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md)
     function
   - For epoched data, we now provide a useful *interactive utility*
     within the epoch-specific HTML reports: you can now use your mouse
