@@ -5,9 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Robust plotting function with error handling — robust_plot"><meta name="description" content="A wrapper around base plotting functions that handles errors and missing
-data gracefully."><meta property="og:description" content="A wrapper around base plotting functions that handles errors and missing
-data gracefully."><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Robust plotting function with error handling — robust_plot"><meta name="description" content="Builds a single-series pupil time series panel with reaborn, handling
+errors and missing data gracefully. Returns a ggplot object (rather than
+drawing directly) so callers can combine several panels into a single
+patchwork row before printing to the active device."><meta property="og:description" content="Builds a single-series pupil time series panel with reaborn, handling
+errors and missing data gracefully. Returns a ggplot object (rather than
+drawing directly) so callers can combine several panels into a single
+patchwork row before printing to the active device."><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -87,8 +91,10 @@ data gracefully."><meta property="og:image" content="https://eyeris.shawnschwart
     </div>
 
     <div class="ref-description section level2">
-    <p>A wrapper around base plotting functions that handles errors and missing
-data gracefully.</p>
+    <p>Builds a single-series pupil time series panel with <code>reaborn</code>, handling
+errors and missing data gracefully. Returns a <code>ggplot</code> object (rather than
+drawing directly) so callers can combine several panels into a single
+<code>patchwork</code> row before printing to the active device.</p>
     </div>
 
     <div class="section level2">
@@ -109,12 +115,14 @@ data gracefully.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to plot()</p></dd>
+<dd><p>Additional arguments; <code>col</code>, <code>main</code>, <code>xlab</code>, and <code>ylab</code> control
+the line colour, title, and axis labels (any base-graphics style arguments
+such as <code>type</code>/<code>lwd</code> are accepted and ignored)</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>No return value; creates a plot or displays warning messages</p>
+    <p>A <code>ggplot</code> object</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

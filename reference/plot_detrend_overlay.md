@@ -2,10 +2,9 @@
 
 This function replicates the exact detrending visualization from the
 [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
-interactive preview mode. It uses
-[`robust_plot()`](https://eyeris.shawnschwartz.com/reference/robust_plot.md)
-to show the most recent detrended pupil signal overlaid with the fitted
-linear trend.
+interactive preview mode. It uses `reaborn` to show the most recent
+detrended pupil signal overlaid with the fitted linear trend, and prints
+the resulting `ggplot` to the active device.
 
 ## Usage
 
@@ -26,14 +25,17 @@ plot_detrend_overlay(
   A single block of pupil time series data (e.g.
   `eyeris$timeseries$block_1`)
 
+- pupil_steps:
+
+  Character vector of pupil column names
+
 - preview_n:
 
-  Number of columns for `par(mfrow)`. Default = 3.
+  Unused; retained for backwards compatibility.
 
 - plot_params:
 
-  A named list of additional parameters to forward to
-  [`robust_plot()`](https://eyeris.shawnschwartz.com/reference/robust_plot.md)
+  Unused; retained for backwards compatibility.
 
 - suppress_prompt:
 

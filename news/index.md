@@ -31,6 +31,38 @@
   [@alicexue](https://github.com/alicexue) and
   [@shawntz](https://github.com/shawntz).
 
+### 🔧 Under the hood
+
+- **ENH**: Migrated all diagnostic plotting from base graphics to
+  [`reaborn`](https://reaborn.org) — an R port of the ‘Python’ ‘seaborn’
+  library built on ‘ggplot2’.
+  [`plot.eyeris()`](https://eyeris.shawnschwartz.com/reference/plot.eyeris.md),
+  the gaze heatmap
+  ([`plot_gaze_heatmap()`](https://eyeris.shawnschwartz.com/reference/plot_gaze_heatmap.md)),
+  the binocular-correlation panels
+  ([`plot_binocular_correlation()`](https://eyeris.shawnschwartz.com/reference/plot_binocular_correlation.md)),
+  the detrend overlay, the pupil-size distribution histograms, the
+  progressive-summary report plot, and the per-epoch gallery figures are
+  now rendered with `reaborn` and composited with `patchwork`, giving
+  the interactive HTML reports a consistent, publication-quality seaborn
+  aesthetic while preserving eyeris’s colour palette and axis labels.
+  Each plotting function now builds `ggplot` objects and prints them to
+  the active graphics device, so the existing report/gallery capture
+  flow
+  ([`png()`](https://rdrr.io/r/grDevices/png.html)/[`jpeg()`](https://rdrr.io/r/grDevices/png.html)
+  → draw → [`dev.off()`](https://rdrr.io/r/grDevices/dev.html)) is
+  unchanged and every public plotting API keeps its signature.
+  Multi-panel time series previews are composited with `patchwork`
+  (replacing base `par(mfrow)` layouts), missing-sample gaps are shaded
+  as contiguous regions, and the binocular scatter panels overlay a
+  dashed identity line. Signal-processing frequency-response (Bode)
+  plots for
+  [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md)/[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)
+  intentionally remain on `gsignal`, as they fall outside the
+  statistical-visualization scope of `reaborn`. Adds `reaborn`,
+  `ggplot2`, and `patchwork` to `Imports` and drops the now-unused
+  `fields`, by [@shawntz](https://github.com/shawntz).
+
 ## eyeris 3.2.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 CRAN release: 2026-06-19

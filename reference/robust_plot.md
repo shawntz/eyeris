@@ -1,7 +1,9 @@
 # Robust plotting function with error handling
 
-A wrapper around base plotting functions that handles errors and missing
-data gracefully.
+Builds a single-series pupil time series panel with `reaborn`, handling
+errors and missing data gracefully. Returns a `ggplot` object (rather
+than drawing directly) so callers can combine several panels into a
+single `patchwork` row before printing to the active device.
 
 ## Usage
 
@@ -21,8 +23,10 @@ robust_plot(y, x = NULL, ...)
 
 - ...:
 
-  Additional arguments passed to plot()
+  Additional arguments; `col`, `main`, `xlab`, and `ylab` control the
+  line colour, title, and axis labels (any base-graphics style arguments
+  such as `type`/`lwd` are accepted and ignored)
 
 ## Value
 
-No return value; creates a plot or displays warning messages
+A `ggplot` object

@@ -6,10 +6,12 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Internal helper to plot detrending overlay — plot_detrend_overlay"><meta name="description" content="This function replicates the exact detrending visualization from the
-glassbox() interactive preview mode. It uses robust_plot() to show the
-most recent detrended pupil signal overlaid with the fitted linear trend."><meta property="og:description" content="This function replicates the exact detrending visualization from the
-glassbox() interactive preview mode. It uses robust_plot() to show the
-most recent detrended pupil signal overlaid with the fitted linear trend."><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
+glassbox() interactive preview mode. It uses reaborn to show the most
+recent detrended pupil signal overlaid with the fitted linear trend, and
+prints the resulting ggplot to the active device."><meta property="og:description" content="This function replicates the exact detrending visualization from the
+glassbox() interactive preview mode. It uses reaborn to show the most
+recent detrended pupil signal overlaid with the fitted linear trend, and
+prints the resulting ggplot to the active device."><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -90,8 +92,9 @@ most recent detrended pupil signal overlaid with the fitted linear trend."><meta
 
     <div class="ref-description section level2">
     <p>This function replicates the exact detrending visualization from the
-<code><a href="glassbox.html">glassbox()</a></code> interactive preview mode. It uses <code><a href="robust_plot.html">robust_plot()</a></code> to show the
-most recent detrended pupil signal overlaid with the fitted linear trend.</p>
+<code><a href="glassbox.html">glassbox()</a></code> interactive preview mode. It uses <code>reaborn</code> to show the most
+recent detrended pupil signal overlaid with the fitted linear trend, and
+prints the resulting <code>ggplot</code> to the active device.</p>
     </div>
 
     <div class="section level2">
@@ -114,13 +117,16 @@ most recent detrended pupil signal overlaid with the fitted linear trend.</p>
 (e.g. <code>eyeris$timeseries$block_1</code>)</p></dd>
 
 
+<dt id="arg-pupil-steps">pupil_steps<a class="anchor" aria-label="anchor" href="#arg-pupil-steps"></a></dt>
+<dd><p>Character vector of pupil column names</p></dd>
+
+
 <dt id="arg-preview-n">preview_n<a class="anchor" aria-label="anchor" href="#arg-preview-n"></a></dt>
-<dd><p>Number of columns for <code>par(mfrow)</code>. Default = 3.</p></dd>
+<dd><p>Unused; retained for backwards compatibility.</p></dd>
 
 
 <dt id="arg-plot-params">plot_params<a class="anchor" aria-label="anchor" href="#arg-plot-params"></a></dt>
-<dd><p>A named list of additional parameters to forward to
-<code><a href="robust_plot.html">robust_plot()</a></code></p></dd>
+<dd><p>Unused; retained for backwards compatibility.</p></dd>
 
 
 <dt id="arg-suppress-prompt">suppress_prompt<a class="anchor" aria-label="anchor" href="#arg-suppress-prompt"></a></dt>

@@ -178,32 +178,32 @@ information for clarity.
 ``` r
 demo_data <- eyelink_asc_demo_dataset()
 eye_preproc <- eyeris::glassbox(demo_data)
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 02:21:47] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 03:48:19] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 03:48:19] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 03:48:19] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 03:48:20] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 03:48:20] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 03:48:20] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 02:21:47] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 02:21:47] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 02:21:47] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 02:21:47] [INFO] Block processing summary:
-#> ℹ [2026-07-03 02:21:47] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-03 03:48:20] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 03:48:20] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 03:48:20] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 03:48:20] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 03:48:20] [INFO] Block processing summary:
+#> ℹ [2026-07-03 03:48:20] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 02:21:47] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 03:48:20] [OKAY] Running eyeris::summarize_confounds()
 
 # example 1: select 1 second before/after matched event message "PROBE*"
 eye_preproc |>
   eyeris::epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-07-03 02:21:47] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 02:21:47] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-07-03 02:21:47] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:47] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-07-03 03:48:20] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 03:48:20] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-07-03 03:48:20] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:20] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-07-03 02:21:47] [OKAY] Pupil epoching completed in 0.11 seconds
-#> ℹ [2026-07-03 02:21:47] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:20] [OKAY] Pupil epoching completed in 0.11 seconds
+#> ℹ [2026-07-03 03:48:20] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -1306,14 +1306,14 @@ eye_preproc |>
 # example 2: select all samples between each trial
 eye_preproc |>
   eyeris::epoch(events = "TRIALID {trial}")
-#> ℹ [2026-07-03 02:21:48] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 02:21:48] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 03:48:20] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 03:48:20] [INFO] Block 1: found 5 matching events for
 #> TRIALIDtrial
-#> ✔ [2026-07-03 02:21:48] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:48] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 03:48:20] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:20] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:48] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-07-03 02:21:48] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:20] [OKAY] Pupil epoching completed in 0.05 seconds
+#> ℹ [2026-07-03 03:48:20] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -2048,14 +2048,14 @@ eye_preproc |>
     events = "PROBE_START_{trial}",
     limits = c(0, 1)
   )
-#> ℹ [2026-07-03 02:21:48] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 02:21:48] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 03:48:20] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 03:48:20] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-07-03 02:21:48] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:48] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 03:48:20] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:20] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:48] [OKAY] Pupil epoching completed in 0.06 seconds
-#> ℹ [2026-07-03 02:21:48] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:20] [OKAY] Pupil epoching completed in 0.07 seconds
+#> ℹ [2026-07-03 03:48:20] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -2792,14 +2792,14 @@ eye_preproc |>
     limits = c(-1, 1),
     label = "prePostProbe" # custom epoch label name
   )
-#> ℹ [2026-07-03 02:21:48] [INFO] Epoching pupil data...
-#> ℹ [2026-07-03 02:21:48] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 03:48:21] [INFO] Epoching pupil data...
+#> ℹ [2026-07-03 03:48:21] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-07-03 02:21:48] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:48] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 03:48:21] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:21] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:48] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-07-03 02:21:48] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:21] [OKAY] Pupil epoching completed in 0.06 seconds
+#> ℹ [2026-07-03 03:48:21] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -3540,17 +3540,17 @@ eye_preproc |>
     ),
     label = "example5"
   )
-#> ℹ [2026-07-03 02:21:48] [INFO] Epoching pupil data...
-#> ! [2026-07-03 02:21:48] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-07-03 03:48:21] [INFO] Epoching pupil data...
+#> ! [2026-07-03 03:48:21] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-07-03 02:21:48] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:48] [OKAY] Block 1: pupil data from 1 unique event messages
+#> ✔ [2026-07-03 03:48:21] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:21] [OKAY] Block 1: pupil data from 1 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:48] [OKAY] Pupil epoching completed in 0.02 seconds
-#> ℹ [2026-07-03 02:21:48] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:21] [OKAY] Pupil epoching completed in 0.02 seconds
+#> ℹ [2026-07-03 03:48:21] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -3926,17 +3926,17 @@ eye_preproc |>
     ),
     label = "example6"
   )
-#> ℹ [2026-07-03 02:21:49] [INFO] Epoching pupil data...
-#> ! [2026-07-03 02:21:49] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-07-03 03:48:21] [INFO] Epoching pupil data...
+#> ! [2026-07-03 03:48:21] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-07-03 02:21:49] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: pupil data from 1 unique event messages
+#> ✔ [2026-07-03 03:48:21] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:21] [OKAY] Block 1: pupil data from 1 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:49] [OKAY] Pupil epoching completed in 0.03 seconds
-#> ℹ [2026-07-03 02:21:49] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:21] [OKAY] Pupil epoching completed in 0.02 seconds
+#> ℹ [2026-07-03 03:48:21] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -4315,16 +4315,16 @@ eye_preproc |>
     baseline_events = "DELAY_STOP_*",
     baseline_period = c(-1, 0)
   )
-#> ℹ [2026-07-03 02:21:49] [INFO] Epoching and baselining pupil data...
-#> ℹ [2026-07-03 02:21:49] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 03:48:21] [INFO] Epoching and baselining pupil data...
+#> ℹ [2026-07-03 03:48:21] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-07-03 02:21:49] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 03:48:21] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:21] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: 9 epochs baselined
-#> ✔ [2026-07-03 02:21:49] [OKAY] Pupil epoching and baselining completed in 0.09
+#> ✔ [2026-07-03 03:48:21] [OKAY] Block 1: 9 epochs baselined
+#> ✔ [2026-07-03 03:48:21] [OKAY] Pupil epoching and baselining completed in 0.09
 #> secs
-#> ℹ [2026-07-03 02:21:49] [INFO] Recalculating epoched confounds for new
+#> ℹ [2026-07-03 03:48:21] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -6149,16 +6149,16 @@ eye_preproc |>
       "DELAY_STOP_*"
     )
   )
-#> ℹ [2026-07-03 02:21:49] [INFO] Epoching and baselining pupil data...
-#> ℹ [2026-07-03 02:21:49] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-07-03 03:48:22] [INFO] Epoching and baselining pupil data...
+#> ℹ [2026-07-03 03:48:22] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-07-03 02:21:49] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-07-03 03:48:22] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:22] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: 9 epochs baselined
-#> ✔ [2026-07-03 02:21:49] [OKAY] Pupil epoching and baselining completed in 0.09
+#> ✔ [2026-07-03 03:48:22] [OKAY] Block 1: 9 epochs baselined
+#> ✔ [2026-07-03 03:48:22] [OKAY] Pupil epoching and baselining completed in 0.10
 #> secs
-#> ℹ [2026-07-03 02:21:49] [INFO] Recalculating epoched confounds for new
+#> ℹ [2026-07-03 03:48:22] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
@@ -7983,17 +7983,17 @@ eye_preproc |>
     events = list(start_events, end_events, block_number),
     label  = "example9"
   )
-#> ℹ [2026-07-03 02:21:49] [INFO] Epoching pupil data...
-#> ! [2026-07-03 02:21:49] [WARN] Manual epoching only works with 1 block at a
+#> ℹ [2026-07-03 03:48:22] [INFO] Epoching pupil data...
+#> ! [2026-07-03 03:48:22] [WARN] Manual epoching only works with 1 block at a
 #> time. Manual epoch input must be a list of 2 data frames and 1 numeric:
 #> `start_events` (df), `end_events` (df), and `block` (numeric). Please be sure
 #> to explicitly indicate the block number in your input list! (see example #9 in
 #> the documentation for more details).
-#> ✔ [2026-07-03 02:21:49] [OKAY] Done!
-#> ✔ [2026-07-03 02:21:49] [OKAY] Block 1: pupil data from 2 unique event messages
+#> ✔ [2026-07-03 03:48:22] [OKAY] Done!
+#> ✔ [2026-07-03 03:48:22] [OKAY] Block 1: pupil data from 2 unique event messages
 #> extracted
-#> ✔ [2026-07-03 02:21:49] [OKAY] Pupil epoching completed in 0.02 seconds
-#> ℹ [2026-07-03 02:21:49] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-03 03:48:22] [OKAY] Pupil epoching completed in 0.03 seconds
+#> ℹ [2026-07-03 03:48:22] [INFO] Recalculating epoched confounds for new
 #> epochs...
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
