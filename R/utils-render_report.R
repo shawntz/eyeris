@@ -962,8 +962,13 @@ make_prog_summary_plot <- function(
       axis.text.y = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank(),
       # reaborn/seaborn places the legend inside the axes, where it overlaps the
-      # layered traces; move it outside to the right so the plot stays clear
-      legend.position = "right"
+      # layered traces; drop it below the plot instead (a single stacked column,
+      # since the cumulative step labels are long) so the plot keeps full width,
+      # mirroring the original two-panel base-graphics layout
+      legend.position = "bottom"
+    ) +
+    ggplot2::guides(
+      colour = ggplot2::guide_legend(ncol = 1, title = "processing step")
     )
 
   suppressMessages(suppressWarnings(print(p)))
