@@ -420,6 +420,13 @@ run_bidsify <- function(
           current_block_names[
             current_block_names == original_block_name
           ] <- new_block_name
+          # write the renamed block key back onto the epoch list. without this
+          # the rename lived only in the local `current_block_names` copy, so
+          # the epoch element stayed keyed to the original block (e.g.
+          # "block_1"), the `eyeris[[epoch_name]][[new_block_name]]` update
+          # below silently no-op'd, and every single-run `run_num` override
+          # collapsed its epoch CSV onto run-01 (last-run-wins overwrite).
+          names(eyeris[[epoch_name]]) <- current_block_names
 
           if (!is.null(epoch_info)) {
             names(epoch_info)[
