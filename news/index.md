@@ -1,6 +1,6 @@
 # Changelog
 
-## eyeris 3.2.0.9000 (development version)
+## eyeris 3.2.0.9001 (development version)
 
 ### 🐛 Bugs fixed
 

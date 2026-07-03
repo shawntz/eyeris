@@ -370,7 +370,7 @@ length of `$timeseries`:
 
 library(eyeris)
 #> 
-#> eyeris v3.2.0.9000 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
+#> eyeris v3.2.0.9001 - Lumpy Space Princess ꒰•ᴗ•｡꒱۶
 #> Welcome! Type ?`eyeris` to get started.
 
 # the bundled demo file stands in for one of your per-run .asc files
