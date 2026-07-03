@@ -41,6 +41,9 @@ back into a single data frame or list of data frames by data type."><meta proper
     <li><a class="dropdown-item" href="../articles/database-guide.html">Working with eyeris Databases: A Complete Guide</a></li>
     <li><a class="dropdown-item" href="../articles/chunked-database-export.html">Chunked eyerisdb Database Export for Large Datasets</a></li>
     <li><a class="dropdown-item" href="../articles/internal-api.html">Internal API Reference</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>For AI Coding Agents</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents.html">Built for the Age of AI Coding Agents</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -168,27 +171,27 @@ back into a single data frame or list of data frames by data type.</p>
 <span class="r-in"><span>  <span class="co"># read specific data type only</span></span></span>
 <span class="r-in"><span>  <span class="va">timeseries_data</span> <span class="op">&lt;-</span> <span class="fu">read_eyeris_parquet</span><span class="op">(</span><span class="va">base_dir</span>, db_name <span class="op">=</span> <span class="va">db_name</span>, data_type <span class="op">=</span> <span class="st">"timeseries"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Found 2 parquet files</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Found 2 parquet files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-01-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-02-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Combining 2 files...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-03 02:19:11] [OKAY] Successfully read 10 total rows from parquet</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Combining 2 files...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-03 02:23:22] [OKAY] Successfully read 10 total rows from parquet</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> files</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Found 2 parquet files</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Found 2 parquet files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-01-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-02-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Combined timeseries: 10 total rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Found 2 parquet files</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Combined timeseries: 10 total rows</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Found 2 parquet files</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-01-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Read</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Read</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> example-db_timeseries_part-02-of-02.parquet: 5 rows</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:19:11] [INFO] Combining 2 files...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-03 02:19:11] [OKAY] Successfully read 10 total rows from parquet</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-03 02:23:22] [INFO] Combining 2 files...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-03 02:23:22] [OKAY] Successfully read 10 total rows from parquet</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> files</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

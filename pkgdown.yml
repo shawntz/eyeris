@@ -2,6 +2,7 @@ pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  agents: agents.html
   anatomy: anatomy.html
   chunked-database-export: chunked-database-export.html
   complete-pipeline: complete-pipeline.html
@@ -11,7 +12,7 @@ articles:
   internal-api: internal-api.html
   multiple-runs-separate-files: multiple-runs-separate-files.html
   reports: reports.html
-last_built: 2026-07-03T02:16Z
+last_built: 2026-07-03T02:20Z
 urls:
   reference: https://eyeris.shawnschwartz.com/reference
   article: https://eyeris.shawnschwartz.com/articles

@@ -26,3 +26,8 @@
   Datasets](https://eyeris.shawnschwartz.com/articles/chunked-database-export.md):
 - [Internal API
   Reference](https://eyeris.shawnschwartz.com/articles/internal-api.md):
+
+### For AI Coding Agents
+
+- [Built for the Age of AI Coding
+  Agents](https://eyeris.shawnschwartz.com/articles/agents.md):
