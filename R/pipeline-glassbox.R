@@ -30,9 +30,10 @@
 #' In plain language, `glassbox()` runs the following `eyeris` steps in order on
 #' your pupil time series. Steps marked **(default: on)** run automatically;
 #' steps marked **(default: off)** are skipped unless you explicitly enable
-#' them. Any step can be turned off by passing `<step> = FALSE`, or customized
-#' by passing `<step> = list(...)` with the parameter values you want to
-#' override (for example, `deblink = list(extend = 40)`).
+#' them. Most preprocessing steps can be turned off by passing `<step> = FALSE`
+#' (except `load_asc`, which always runs). Steps that accept parameters can be
+#' customized by passing `<step> = list(...)` with values you want to override
+#' (for example, `deblink = list(extend = 40)`).
 #'
 #' 1. **Load the data** (`load_asc`, default: on) -- Reads and parses the
 #' EyeLink `.asc` file into an `eyeris` object, automatically splitting the
