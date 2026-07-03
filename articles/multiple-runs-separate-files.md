@@ -414,8 +414,8 @@ glassbox(one_file_with_all_runs, load_asc = list(block = "auto")) |>
 ```
 
 Here `block = "auto"` (the default) detects each recording segment and
-numbers them `run-01`, `run-02`, … from their embedded block numbers.
-See the [Complete
+numbers them `run-01`, `run-02`, … from their embedded block
+numbers.[^1] See the [Complete
 Pipeline](https://eyeris.shawnschwartz.com/articles/complete-pipeline.md)
 and [Anatomy of an `eyeris`
 Object](https://eyeris.shawnschwartz.com/articles/anatomy.md) vignettes
@@ -471,3 +471,11 @@ citation("eyeris")
 #>     doi = {10.1101/2025.06.01.657312},
 #>   }
 ```
+
+[^1]: If a user supplies multi-block data that is not automatically
+    separated by common start/stop recording indicators, we recommend
+    the user to manually cut the data into multiple files (by block).
+    `eyeris` supplies a bridge function that enables users to pass
+    generic tabular eye-tracking data in case of situations like this
+    and/or for trackers that are not natively supported by `eyeris` at
+    the time of processing.

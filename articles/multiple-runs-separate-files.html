@@ -527,7 +527,13 @@ in one <code><a href="../reference/bidsify.html">bidsify()</a></code> call:</p>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Here <code>block = "auto"</code> (the default) detects each recording
 segment and numbers them <code>run-01</code>, <code>run-02</code>, …
-from their embedded block numbers. See the <a href="complete-pipeline.html">Complete Pipeline</a> and <a href="anatomy.html">Anatomy of an <code>eyeris</code> Object</a>
+from their embedded block numbers.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;If a user supplies multi-block data that is not
+automatically separated by common start/stop recording indicators, we
+recommend the user to manually cut the data into multiple files (by
+block). &lt;code&gt;eyeris&lt;/code&gt; supplies a bridge function that enables
+users to pass generic tabular eye-tracking data in case of situations
+like this and/or for trackers that are not natively supported by
+&lt;code&gt;eyeris&lt;/code&gt; at the time of processing.&lt;/p&gt;"><sup>1</sup></a> See the <a href="complete-pipeline.html">Complete Pipeline</a> and <a href="anatomy.html">Anatomy of an <code>eyeris</code> Object</a>
 vignettes for more on that path.</p>
 </div>
 <div class="section level2">
@@ -583,6 +589,7 @@ cite it!</p>
 <span><span class="co">#&gt;     doi = {10.1101/2025.06.01.657312},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

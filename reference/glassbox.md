@@ -204,21 +204,21 @@ demo_data <- eyelink_asc_demo_dataset()
 
 ## (a) run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-07-03 02:14:51] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 02:14:52] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:18:54] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 02:14:52] [INFO] Block processing summary:
-#> ℹ [2026-07-03 02:14:52] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-03 02:18:54] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:18:54] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:18:54] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:18:54] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:18:54] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::summarize_confounds()
 
 start_time <- min(output$timeseries$block_1$time_secs)
 end_time <- max(output$timeseries$block_1$time_secs)
@@ -230,7 +230,7 @@ plot(
   preview_window = c(start_time, end_time),
   seed = 0
 )
-#> ℹ [2026-07-03 02:14:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-03 02:18:54] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -238,12 +238,12 @@ plot(
 ## (b) run a interactive workflow (with confirmation prompts after each step)
 # \donttest{
 output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 02:14:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:18:54] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 #> Continue? [Yes/No]: 
-#> ℹ [2026-07-03 02:14:52] [INFO] Process cancelled after loading data. Adjust
+#> ℹ [2026-07-03 02:18:54] [INFO] Process cancelled after loading data. Adjust
 #> your parameters and re-run!
 # }
 
@@ -254,21 +254,21 @@ output <- eyeris::glassbox(
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 )
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 02:14:52] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:18:54] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-03 02:18:54] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-03 02:14:52] [INFO] Block processing summary:
-#> ℹ [2026-07-03 02:14:52] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:18:55] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:18:55] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::summarize_confounds()
 
 # to suppress messages, set verbose = FALSE in plot():
 plot(output, seed = 0, verbose = FALSE)
@@ -286,24 +286,24 @@ output <- eyeris::glassbox(
   detrend = FALSE,
   zscore = FALSE
 )
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-03 02:14:52] [INFO] Processing block: block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::deblink() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::detransient() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-03 02:18:55] [INFO] Processing block: block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::deblink() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::detransient() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::detrend() for block_1
-#> ! [2026-07-03 02:14:52] [WARN] Skipping eyeris::zscore() for block_1
-#> ℹ [2026-07-03 02:14:52] [INFO] Block processing summary:
-#> ℹ [2026-07-03 02:14:52] [INFO] block_1: OK (steps: 4, latest:
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::detrend() for block_1
+#> ! [2026-07-03 02:18:55] [WARN] Skipping eyeris::zscore() for block_1
+#> ℹ [2026-07-03 02:18:55] [INFO] Block processing summary:
+#> ℹ [2026-07-03 02:18:55] [INFO] block_1: OK (steps: 4, latest:
 #> pupil_raw_deblink_interpolate_lpfilt)
-#> ✔ [2026-07-03 02:14:52] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-03 02:18:55] [OKAY] Running eyeris::summarize_confounds()
 
 plot(output, seed = 0)
-#> ℹ [2026-07-03 02:14:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-03 02:18:55] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
