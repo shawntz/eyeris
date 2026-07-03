@@ -156,7 +156,7 @@ boilerplate(output)
 ## 🗂 For LLM indexers
 
 A machine-readable summary is published at
-[`/llms.txt`](https://shawnschwartz.com/eyeris/llms.txt). In short:
+[`/assets/llms.txt`](https://shawnschwartz.com/eyeris/assets/llms.txt). In short:
 
 <div class="alert alert-light">
 `eyeris` --- flexible, extensible, and reproducible pupillometry preprocessing
