@@ -13,7 +13,7 @@ Pupillometry offers a non-invasive window into the mind and has been used extens
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://shawnschwartz.com/eyeris/}
+  \item \url{https://eyeris.shawnschwartz.com/}
   \item \url{https://github.com/shawntz/eyeris/}
   \item Report bugs at \url{https://github.com/shawntz/eyeris/issues}
 }
