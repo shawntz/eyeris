@@ -168,7 +168,7 @@ and (2) `bidsify()` now takes `run_num = i`, which relabels that block as `run-0
   ⚠️ <strong>The two forms are equivalent only for genuinely single-run
   files.</strong> <code>run_num</code> relabels a file that resolves to
   <em>one</em> block; if a file happens to contain multiple embedded recording
-  segments, <code>run_num</code> is <em>silently ignored</em> and the runs are
+  segments, <code>run_num</code> is ignored (and <code>bidsify()</code> will emit a warning when <code>verbose = TRUE</code>) and the runs are
   numbered from the embedded blocks instead. <code>load_asc(block = i)</code>
   also <em>forces</em> the whole file into a single run, so it doubles as a guard
   against accidentally-multi-segment files. If you prefer the
