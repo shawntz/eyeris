@@ -68,6 +68,10 @@
 #' mean of `0` and a standard deviation of `1`, making values comparable across
 #' participants and recordings. See [eyeris::zscore()].
 #'
+#' After preprocessing, `glassbox()` calls [eyeris::summarize_confounds()] to compute
+#' per-step confound metrics (e.g., missingness and gaze statistics) and store them
+#' in `$confounds`.
+#'
 #' Crucially, each step *adds a new column* to the time series rather than
 #' overwriting the previous one, so every intermediate stage is preserved inside
 #' the returned `eyeris` object. This is what makes the pipeline a "glass box":
