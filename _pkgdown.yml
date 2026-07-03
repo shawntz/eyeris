@@ -1,4 +1,4 @@
-url: https://shawnschwartz.com/eyeris/
+url: https://eyeris.shawnschwartz.com/
 
 news:
     cran_dates: true
@@ -176,3 +176,7 @@ articles:
     - database-guide
     - chunked-database-export
     - internal-api
+  - title: For AI Coding Agents
+    navbar: For AI Coding Agents
+    contents:
+    - agents
