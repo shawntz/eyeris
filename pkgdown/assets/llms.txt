@@ -25,8 +25,7 @@ correct call.
 
 Tune any step by passing a named list keyed by that step's exact function
 name, e.g. `glassbox(file, deblink = list(extend = 40))`. No non-standard
-evaluation, no positional-argument order to memorize; the call is either
-right or it errors loudly with the offending name.
+evaluation, no positional-argument order to memorize; misspelled step/argument names simply won't be applied, so check the recorded `eyeris$params` to confirm what ran.
 
 ## Expert defaults mean fewer iterations
 
