@@ -54,7 +54,7 @@ applied. To confirm what actually ran, check the recorded `eyeris$params` on the
 output object (and the summaries from `summarize_confounds()`).
 Fewer degrees of freedom means fewer places to be confidently wrong.
 
-## ⚙️ Expert defaults mean fewer iterations
+## 🔧 Expert defaults mean fewer iterations
 
 The defaults are not placeholders --- they are the opinionated starting
 parameters that computational neuroscientists and signal-processing experts in
@@ -184,7 +184,7 @@ an fMRIPrep-style methods paragraph via `boilerplate()`. Pure R.
   "description": "eyeris is a flexible, extensible, and reproducible pupillometry preprocessing framework for R. It provides a single opinionated entry point, glassbox(), that runs an expert-vetted pipeline (deblink, detransient, interpolate, lowpass filter, z-score) on SR Research EyeLink .asc files. Every step is an exported, namespaced function chainable with the base R pipe, tuned via named lists keyed by the step's function name. Outputs are tidy data frames in a documented S3 object, exported to a BIDS-like derivative tree with interactive HTML quality-control reports via bidsify(), and self-documented as an fMRIPrep-style methods paragraph via boilerplate().",
   "url": "https://eyeris.shawnschwartz.com/",
   "codeRepository": "https://github.com/shawntz/eyeris",
-  "softwareVersion": "`r as.character(utils::packageVersion(\"eyeris\"))`", 
+  "softwareVersion": "`r as.character(utils::packageVersion("eyeris"))`", 
   "programmingLanguage": "R",
   "runtimePlatform": "R",
   "license": "https://opensource.org/licenses/MIT",
