@@ -150,6 +150,20 @@ reference:
     contents:
       - pipeline_handler
 
+  - title: "🎓 Simulate & Teach"
+    desc: >
+      Generate synthetic, pipeline-compatible pupil data with known ground truth and render reproducible before/after demonstrations of preprocessing-step ordering pitfalls for teaching and testing.
+    contents:
+      - simulate_eyeris
+      - sim_params
+      - sim_pitfall
+      - sim_step_showcase
+      - showcase_metric
+      - eyeris-showcase
+      - print.eyeris_sim_params
+      - print.eyeris_showcase
+      - plot.eyeris_showcase
+
   - title: "📈 Demo Datasets"
     desc: >
       Example eye-tracking / pupil datasets for testing and demonstrating pipeline functionality.
