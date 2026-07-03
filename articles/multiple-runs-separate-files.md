@@ -48,7 +48,7 @@ the workflow below, you set the run number once via
 
 ## The pattern
 
-Suppose participant `AM22` completed three runs of an associative-memory
+Suppose participant `AB01` completed three runs of an associative-memory
 task, each saved to its own file:
 
 ``` r
@@ -57,9 +57,9 @@ library(eyeris)
 
 dl <- path.expand("~/Downloads")
 asc_files <- file.path(dl, c(
-  "sub-AM22_t1_2026-03-09_20h46.11.141.asc",
-  "sub-AM22_t2_2026-03-09_21h08.15.079.asc",
-  "sub-AM22_t3_2026-03-09_21h30.00.565.asc"
+  "sub-AB01_t1_2024-01-15_10h00.00.000.asc",
+  "sub-AB01_t2_2024-01-15_10h30.00.000.asc",
+  "sub-AB01_t3_2024-01-15_11h00.00.000.asc"
 ))
 stopifnot(all(file.exists(asc_files)))
 
@@ -74,7 +74,7 @@ for (i in seq_along(asc_files)) {
     ) |>
     bidsify(
       bids_dir       = output_dir,
-      participant_id = "AM22",
+      participant_id = "AB01",
       session_num    = "01",
       task_name      = "assocmem",
       save_raw       = TRUE,
@@ -123,19 +123,19 @@ pattern):
 
     eyeris
     └── derivatives
-        └── sub-AM22
+        └── sub-AB01
             └── ses-01
                 ├── eye
-                │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-timeseries.csv
-                │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-blinks.csv
-                │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-events.csv
-                │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-epoch_summary.csv
-                │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-preproc_pupil_epoch-trialepochs.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-timeseries.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-blinks.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-events.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-epoch_summary.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-preproc_pupil_epoch-trialepochs.csv
                 │   ├── epoch_trialEpochs/   # per-trial confounds CSVs for run-01
                 │   │   └── ...
-                │   ├── sub-AM22_ses-01_task-assocmem_run-02_desc-timeseries.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-02_desc-timeseries.csv
                 │   ├── ...
-                │   ├── sub-AM22_ses-01_task-assocmem_run-03_desc-timeseries.csv
+                │   ├── sub-AB01_ses-01_task-assocmem_run-03_desc-timeseries.csv
                 │   └── ...
                 ├── source
                 │   ├── figures
@@ -149,13 +149,13 @@ pattern):
                 │       ├── task-assocmem_run-01_metadata.json
                 │       ├── task-assocmem_run-02_metadata.json
                 │       └── task-assocmem_run-03_metadata.json
-                ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-01.html
-                ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-02.html
-                ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-03.html
-                └── sub-AM22_task-assocmem.html
+                ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-01.html
+                ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-02.html
+                ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-03.html
+                └── sub-AB01_task-assocmem.html
 
 Every data file carries its `run-<index>`, and the top-level
-`sub-AM22_task-assocmem.html` report aggregates all three runs. For a
+`sub-AB01_task-assocmem.html` report aggregates all three runs. For a
 full breakdown of what each derivative file contains, see the
 [Extracting Data Epochs and Exporting Pupil
 Data](https://shawnschwartz.com/eyeris/articles/epoching-bids-reports.md)
@@ -195,8 +195,8 @@ files:
 ``` r
 
 asc_files <- file.path(dl, c(
-  "sub-AM22_t1_2026-03-09_20h46.11.141.asc", # run 1
-  "sub-AM22_t3_2026-03-09_21h30.00.565.asc"  # run 3 (run 2 not collected)
+  "sub-AB01_t1_2024-01-15_10h00.00.000.asc", # run 1
+  "sub-AB01_t3_2024-01-15_11h00.00.000.asc"  # run 3 (run 2 not collected)
 ))
 run_nums <- c(1, 3) # the TRUE run numbers, in the same order as `asc_files`
 
@@ -209,7 +209,7 @@ for (i in seq_along(asc_files)) {
     ) |>
     bidsify(
       bids_dir       = output_dir,
-      participant_id = "AM22",
+      participant_id = "AB01",
       session_num    = "01",
       task_name      = "assocmem",
       save_raw       = TRUE,
@@ -236,7 +236,7 @@ for (f in asc_files) {
     ) |>
     bidsify(
       bids_dir       = output_dir,
-      participant_id = "AM22",
+      participant_id = "AB01",
       session_num    = "01",
       task_name      = "assocmem",
       save_raw       = TRUE,
@@ -273,7 +273,7 @@ glassbox(asc_files[2], load_asc = list(block = 2), verbose = TRUE) |>
   ) |>
   bidsify(
     bids_dir       = output_dir,
-    participant_id = "AM22",
+    participant_id = "AB01",
     session_num    = "01",
     task_name      = "assocmem",
     save_raw       = TRUE,
@@ -342,7 +342,7 @@ glassbox(one_file_with_all_runs, load_asc = list(block = "auto")) |>
   ) |>
   bidsify(
     bids_dir       = output_dir,
-    participant_id = "AM22",
+    participant_id = "AB01",
     session_num    = "01",
     task_name      = "assocmem"
   )

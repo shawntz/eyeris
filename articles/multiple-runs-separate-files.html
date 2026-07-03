@@ -175,16 +175,16 @@ pass <code>run_num</code> to <code><a href="../reference/bidsify.html">bidsify()
 <div class="section level2">
 <h2 id="the-pattern">The pattern<a class="anchor" aria-label="anchor" href="#the-pattern"></a>
 </h2>
-<p>Suppose participant <code>AM22</code> completed three runs of an
+<p>Suppose participant <code>AB01</code> completed three runs of an
 associative-memory task, each saved to its own file:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shawnschwartz.com/eyeris/">eyeris</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/path.expand.html" class="external-link">path.expand</a></span><span class="op">(</span><span class="st">"~/Downloads"</span><span class="op">)</span></span>
 <span><span class="va">asc_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"sub-AM22_t1_2026-03-09_20h46.11.141.asc"</span>,</span>
-<span>  <span class="st">"sub-AM22_t2_2026-03-09_21h08.15.079.asc"</span>,</span>
-<span>  <span class="st">"sub-AM22_t3_2026-03-09_21h30.00.565.asc"</span></span>
+<span>  <span class="st">"sub-AB01_t1_2024-01-15_10h00.00.000.asc"</span>,</span>
+<span>  <span class="st">"sub-AB01_t2_2024-01-15_10h30.00.000.asc"</span>,</span>
+<span>  <span class="st">"sub-AB01_t3_2024-01-15_11h00.00.000.asc"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">asc_files</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -199,7 +199,7 @@ associative-memory task, each saved to its own file:</p>
 <span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>      bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
-<span>      participant_id <span class="op">=</span> <span class="st">"AM22"</span>,</span>
+<span>      participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
 <span>      session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>      task_name      <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
 <span>      save_raw       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -248,19 +248,19 @@ data files shown for <code>run-01</code>; <code>run-02</code> and
 <code>run-03</code> follow the same pattern):</p>
 <pre><code>eyeris
 └── derivatives
-    └── sub-AM22
+    └── sub-AB01
         └── ses-01
             ├── eye
-            │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-timeseries.csv
-            │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-blinks.csv
-            │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-events.csv
-            │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-epoch_summary.csv
-            │   ├── sub-AM22_ses-01_task-assocmem_run-01_desc-preproc_pupil_epoch-trialepochs.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-timeseries.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-blinks.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-events.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-epoch_summary.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-01_desc-preproc_pupil_epoch-trialepochs.csv
             │   ├── epoch_trialEpochs/   # per-trial confounds CSVs for run-01
             │   │   └── ...
-            │   ├── sub-AM22_ses-01_task-assocmem_run-02_desc-timeseries.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-02_desc-timeseries.csv
             │   ├── ...
-            │   ├── sub-AM22_ses-01_task-assocmem_run-03_desc-timeseries.csv
+            │   ├── sub-AB01_ses-01_task-assocmem_run-03_desc-timeseries.csv
             │   └── ...
             ├── source
             │   ├── figures
@@ -274,12 +274,12 @@ data files shown for <code>run-01</code>; <code>run-02</code> and
             │       ├── task-assocmem_run-01_metadata.json
             │       ├── task-assocmem_run-02_metadata.json
             │       └── task-assocmem_run-03_metadata.json
-            ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-01.html
-            ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-02.html
-            ├── sub-AM22_task-assocmem_epoch-trialEpochs_run-03.html
-            └── sub-AM22_task-assocmem.html</code></pre>
+            ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-01.html
+            ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-02.html
+            ├── sub-AB01_task-assocmem_epoch-trialEpochs_run-03.html
+            └── sub-AB01_task-assocmem.html</code></pre>
 <p>Every data file carries its <code>run-&lt;index&gt;</code>, and the
-top-level <code>sub-AM22_task-assocmem.html</code> report aggregates all
+top-level <code>sub-AB01_task-assocmem.html</code> report aggregates all
 three runs. For a full breakdown of what each derivative file contains,
 see the <a href="epoching-bids-reports.html">Extracting Data Epochs and
 Exporting Pupil Data</a> vignette.</p>
@@ -318,8 +318,8 @@ identity</strong>, not the loop position. Two robust options:</p>
 with your files:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asc_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dl</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"sub-AM22_t1_2026-03-09_20h46.11.141.asc"</span>, <span class="co"># run 1</span></span>
-<span>  <span class="st">"sub-AM22_t3_2026-03-09_21h30.00.565.asc"</span>  <span class="co"># run 3 (run 2 not collected)</span></span>
+<span>  <span class="st">"sub-AB01_t1_2024-01-15_10h00.00.000.asc"</span>, <span class="co"># run 1</span></span>
+<span>  <span class="st">"sub-AB01_t3_2024-01-15_11h00.00.000.asc"</span>  <span class="co"># run 3 (run 2 not collected)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">run_nums</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span> <span class="co"># the TRUE run numbers, in the same order as `asc_files`</span></span>
 <span></span>
@@ -332,7 +332,7 @@ with your files:</p>
 <span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>      bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
-<span>      participant_id <span class="op">=</span> <span class="st">"AM22"</span>,</span>
+<span>      participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
 <span>      session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>      task_name      <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
 <span>      save_raw       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -356,7 +356,7 @@ gaps, since a missing run simply has no file):</p>
 <span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>      bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
-<span>      participant_id <span class="op">=</span> <span class="st">"AM22"</span>,</span>
+<span>      participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
 <span>      session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>      task_name      <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
 <span>      save_raw       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -392,7 +392,7 @@ parameter for run 2:</p>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>    bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
-<span>    participant_id <span class="op">=</span> <span class="st">"AM22"</span>,</span>
+<span>    participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
 <span>    session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>    task_name      <span class="op">=</span> <span class="st">"assocmem"</span>,</span>
 <span>    save_raw       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -456,7 +456,7 @@ in one <code><a href="../reference/bidsify.html">bidsify()</a></code> call:</p>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/bidsify.html">bidsify</a></span><span class="op">(</span></span>
 <span>    bids_dir       <span class="op">=</span> <span class="va">output_dir</span>,</span>
-<span>    participant_id <span class="op">=</span> <span class="st">"AM22"</span>,</span>
+<span>    participant_id <span class="op">=</span> <span class="st">"AB01"</span>,</span>
 <span>    session_num    <span class="op">=</span> <span class="st">"01"</span>,</span>
 <span>    task_name      <span class="op">=</span> <span class="st">"assocmem"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
