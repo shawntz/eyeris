@@ -4,7 +4,7 @@ Flexible, extensible, and reproducible pupillometry preprocessing for R.
 One opinionated entry point runs an expert-vetted pipeline on raw EyeLink
 data; every step is transparent, self-documenting, and reproducible.
 
-[Get started](https://shawnschwartz.com/eyeris/articles/complete-pipeline.html) [Built for AI coding agents](https://shawnschwartz.com/eyeris/articles/agents.html) [Reference](https://shawnschwartz.com/eyeris/reference/index.html)
+[Get started](https://eyeris.shawnschwartz.com/articles/complete-pipeline.html) [Built for AI coding agents](https://eyeris.shawnschwartz.com/articles/agents.html) [Reference](https://eyeris.shawnschwartz.com/reference/index.html)
 
 ``` r
 library(eyeris)
