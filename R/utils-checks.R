@@ -426,8 +426,13 @@ check_uniform_sampling_intervals <- function(
         largest_gap <- round(max(long_intervals), 4)
         largest_gap_ratio <- round(max(long_intervals) / expected, 1)
         paste0(
-          " Estimated ", n_missing, " dropped sample(s); largest long ",
-          "interval is ", largest_gap, " ms (~", largest_gap_ratio,
+          " Estimated ",
+          n_missing,
+          " dropped sample(s); largest long ",
+          "interval is ",
+          largest_gap,
+          " ms (~",
+          largest_gap_ratio,
           "x expected)."
         )
       } else {
