@@ -402,9 +402,17 @@ check_uniform_sampling_intervals <- function(
   expected_ms <- round(expected, 4)
 
   if (n_irregular > 0) {
-    # estimate dropped samples from how many expected intervals each gap spans
-    gap_intervals <- intervals[irregular]
-    n_missing <- sum(pmax(round(gap_intervals / expected) - 1, 0))
+    long_intervals <- intervals[irregular & intervals > expected]
+    short_intervals <- intervals[irregular & intervals < expected]
+    n_long <- length(long_intervals)
+    n_short <- length(short_intervals)
+
+    # Estimate dropped samples only from intervals longer than expected.
+    n_missing <- if (n_long > 0) {
+      sum(pmax(round(long_intervals / expected) - 1, 0))
+    } else {
+      0
+    }
     result$n_missing_samples <- as.integer(n_missing)
 
     if (verbose) {
@@ -414,19 +422,28 @@ check_uniform_sampling_intervals <- function(
         "inferred from data"
       }
       pct <- round(100 * result$prop_irregular, 2)
-      largest_gap <- round(max(gap_intervals), 4)
-      largest_gap_ratio <- round(max(gap_intervals) / expected, 1)
-      first_gap_sample <- which(irregular)[1] + 1
+      first_irregular_sample <- which(irregular)[1] + 1
+      long_gap_summary <- if (n_long > 0) {
+        largest_gap <- round(max(long_intervals), 4)
+        largest_gap_ratio <- round(max(long_intervals) / expected, 1)
+        paste0(
+          " Estimated ", n_missing, " dropped sample(s); largest long ",
+          "interval is ", largest_gap, " ms (~", largest_gap_ratio,
+          "x expected)."
+        )
+      } else {
+        ""
+      }
 
       msg <- paste0(
         "Non-uniform sampling intervals detected{segment}: {n_irregular} of ",
-        "{n_total} intervals ({pct}%) exceed the expected {expected_ms} ms ",
-        "spacing (nominal rate: {nominal}). Estimated {n_missing} dropped ",
-        "sample(s); largest gap is {largest_gap} ms (~{largest_gap_ratio}x ",
-        "expected) before sample {first_gap_sample}. Some eye trackers drop ",
-        "samples instead of zero-filling missing pupil data, which violates ",
-        "the uniform-sampling assumption of the eyeris pipeline. Consider ",
-        "resampling onto a regular time grid before preprocessing."
+        "{n_total} intervals ({pct}%) differ from the expected ",
+        "{expected_ms} ms spacing (nominal rate: {nominal}); ",
+        "{n_long} longer and {n_short} shorter.{long_gap_summary} ",
+        "First irregular interval occurs before sample ",
+        "{first_irregular_sample}. This violates the uniform-sampling ",
+        "assumption of the eyeris pipeline. Consider resampling onto a ",
+        "regular time grid before preprocessing."
       )
       log_warn(msg, verbose = verbose)
     }
