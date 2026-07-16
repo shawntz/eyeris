@@ -10,6 +10,7 @@ save_progressive_summary_plots(
   preview_n = 3,
   plot_params = list(),
   eye_suffix = NULL,
+  task = NULL,
   verbose = TRUE
 )
 }
@@ -23,6 +24,8 @@ save_progressive_summary_plots(
 \item{plot_params}{Additional plotting parameters}
 
 \item{eye_suffix}{Optional eye suffix for binocular data}
+
+\item{task}{Optional BIDS task name used to namespace run directories (#293)}
 
 \item{verbose}{Logical. Whether to print verbose output (default TRUE).}
 }

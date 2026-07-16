@@ -1,8 +1,8 @@
 Package: eyeris
 Type: Package
 Title: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
-Version: 3.1.0
-Date: 2026-06-05
+Version: 3.2.0.9001
+Date: 2026-06-24
 Language: en-US
 Authors@R: 
   c(
@@ -38,12 +38,14 @@ Imports:
   lifecycle,
   MASS,
   viridis,
-  fields,
   jsonlite,
   rmarkdown,
   DBI,
   glue,
-  base64enc
+  base64enc,
+  reaborn,
+  ggplot2,
+  patchwork
 Roxygen: list(markdown = TRUE)
 Suggests:
   arrow,
@@ -54,6 +56,6 @@ Suggests:
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Config/testthat/edition: 3
-URL: https://shawnschwartz.com/eyeris/, https://github.com/shawntz/eyeris/
+URL: https://eyeris.shawnschwartz.com/, https://github.com/shawntz/eyeris/
 BugReports: https://github.com/shawntz/eyeris/issues
 Config/roxygen2/version: 8.0.0

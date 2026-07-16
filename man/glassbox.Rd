@@ -98,6 +98,57 @@ each step so you can adjust parameters and re-run the pipeline until you are
 satisfied with the choices of your parameters and their consequences on your
 pupil time series data.
 }
+\section{What \code{glassbox()} does, step by step}{
+
+In plain language, \code{glassbox()} runs the following \code{eyeris} steps in order on
+your pupil time series. Steps marked \strong{(default: on)} run automatically;
+steps marked \strong{(default: off)} are skipped unless you explicitly enable
+them. Any step can be turned off by passing \verb{<step> = FALSE}, or customized
+by passing \verb{<step> = list(...)} with the parameter values you want to
+override (for example, \code{deblink = list(extend = 40)}).
+\enumerate{
+\item \strong{Load the data} (\code{load_asc}, default: on) -- Reads and parses the
+EyeLink \code{.asc} file into an \code{eyeris} object, automatically splitting the
+recording into blocks and, for binocular recordings, handling each eye
+separately. See \code{\link[=load_asc]{load_asc()}}.
+\item \strong{Remove blinks} (\code{deblink}, default: on) -- Replaces the missing data
+around blinks with \code{NA}s, extending each gap by \code{50} ms on either side so
+that the rapid dips and spikes that surround a blink are removed too. See
+\code{\link[=deblink]{deblink()}}.
+\item \strong{Remove transient artifacts} (\code{detransient}, default: on) -- Rejects
+pupil samples that change faster than is physiologically plausible, using a
+speed-based median absolute deviation (MAD) threshold. See
+\code{\link[=detransient]{detransient()}}.
+\item \strong{Interpolate missing samples} (\code{interpolate}, default: on) -- Fills the
+\code{NA} gaps left by the deblink and detransient steps using linear
+interpolation, producing a continuous, gap-free time series. See
+\code{\link[=interpolate]{interpolate()}}.
+\item \strong{Smooth the signal} (\code{lpfilt}, default: on) -- Applies a low-pass
+filter (default \code{4} Hz passband) to remove high-frequency noise while
+preserving the slower pupil dynamics of interest. See \code{\link[=lpfilt]{lpfilt()}}.
+\item \strong{Downsample} (\code{downsample}, default: off) -- Optionally lowers the
+sampling rate using an anti-aliasing filter, which preserves the temporal
+dynamics of the signal. Cannot be combined with \code{bin}. See
+\code{\link[=downsample]{downsample()}}.
+\item \strong{Bin} (\code{bin}, default: off) -- Optionally lowers the sampling rate by
+averaging samples within equal-width time bins. Cannot be combined with
+\code{downsample}. See \code{\link[=bin]{bin()}}.
+\item \strong{Detrend} (\code{detrend}, default: off) -- Optionally fits a linear model
+of \code{pupil ~ time} and returns the residuals (along with the fitted slope and
+intercept) to remove slow linear drift. Use with care -- see
+\code{\link[=detrend]{detrend()}} for when this is appropriate.
+\item \strong{Z-score} (\code{zscore}, default: on) -- Rescales the pupil time series to a
+mean of \code{0} and a standard deviation of \code{1}, making values comparable across
+participants and recordings. See \code{\link[=zscore]{zscore()}}.
+}
+
+Crucially, each step \emph{adds a new column} to the time series rather than
+overwriting the previous one, so every intermediate stage is preserved inside
+the returned \code{eyeris} object. This is what makes the pipeline a "glass box":
+you can inspect, plot, and compare the data before and after each
+transformation (for example, \code{plot(output, steps = c(1, 5))}).
+}
+
 \examples{
 demo_data <- eyelink_asc_demo_dataset()
 

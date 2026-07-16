@@ -387,6 +387,26 @@ run_bidsify <- function(
       }
 
       names(eyeris$latest)[1] <- new_block_name
+
+      # keep the preserved full-resolution data keyed to the renamed block so
+      # diagnostic plots can still find it for pre-decimation steps (issue #294)
+      if (
+        !is.null(eyeris$timeseries_pre_decimation) &&
+          is.list(eyeris$timeseries_pre_decimation) &&
+          original_block_name %in% names(eyeris$timeseries_pre_decimation)
+      ) {
+        names(eyeris$timeseries_pre_decimation)[
+          names(eyeris$timeseries_pre_decimation) == original_block_name
+        ] <- new_block_name
+        if (
+          "block" %in%
+            colnames(eyeris$timeseries_pre_decimation[[new_block_name]])
+        ) {
+          eyeris$timeseries_pre_decimation[[
+            new_block_name
+          ]]$block <- as.numeric(run_num)
+        }
+      }
     }
 
     epoch_names <- names(eyeris)[grep("^epoch_", names(eyeris))]
@@ -400,6 +420,13 @@ run_bidsify <- function(
           current_block_names[
             current_block_names == original_block_name
           ] <- new_block_name
+          # write the renamed block key back onto the epoch list. without this
+          # the rename lived only in the local `current_block_names` copy, so
+          # the epoch element stayed keyed to the original block (e.g.
+          # "block_1"), the `eyeris[[epoch_name]][[new_block_name]]` update
+          # below silently no-op'd, and every single-run `run_num` override
+          # collapsed its epoch CSV onto run-01 (last-run-wins overwrite).
+          names(eyeris[[epoch_name]]) <- current_block_names
 
           if (!is.null(epoch_info)) {
             names(epoch_info)[
@@ -898,17 +925,21 @@ run_bidsify <- function(
             verbose = verbose
           )
 
-          evs <- get_epoch_events(eyeris, epoch_id, verbose)
+          evs <- get_epoch_events(eyeris, epoch_id, i, verbose)
           c_bline <- has_baseline(eyeris, current_label, verbose)
-          bline_evs <- get_baseline_events(eyeris, epoch_id, verbose)
-          bline_type <- get_baseline_type(eyeris, epoch_id, verbose)
+          bline_evs <- get_baseline_events(eyeris, epoch_id, i, verbose)
+          bline_type <- get_baseline_type(eyeris, epoch_id, i, verbose)
 
           f <- make_bids_fname(
             sub_id = sub,
             ses_id = ses,
             task_name = task,
-            run_num = run_num,
-            desc = paste0("preproc_pupil_", current_label),
+            run_num = sprintf("%02d", get_block_numbers(i)),
+            desc = "preproc_pupil",
+            epoch_name = current_label,
+            epoch_events = evs,
+            baseline_events = bline_evs,
+            baseline_type = bline_type,
             eye_suffix = eye_suffix
           )
 
@@ -959,7 +990,7 @@ run_bidsify <- function(
             verbose = verbose
           )
 
-          evs <- get_epoch_events(eyeris, epoch_id, verbose)
+          evs <- get_epoch_events(eyeris, epoch_id, block_name, verbose)
           c_bline <- has_baseline(eyeris, current_label, verbose)
           bline_evs <- get_baseline_events(
             eyeris,
@@ -1035,7 +1066,7 @@ run_bidsify <- function(
           sub_id = sub,
           ses_id = ses,
           task_name = task,
-          run_num = sprintf("%02d", i),
+          run_num = sprintf("%02d", run_data$block[1]),
           desc = "timeseries",
           eye_suffix = eye_suffix
         )
@@ -1049,7 +1080,7 @@ run_bidsify <- function(
           sub = sub,
           ses = ses,
           task = task,
-          run = sprintf("%02d", i),
+          run = sprintf("%02d", run_data$block[1]),
           eye_suffix = eye_suffix,
           verbose = verbose
         )
@@ -1119,7 +1150,7 @@ run_bidsify <- function(
           sub_id = sub,
           ses_id = ses,
           task_name = task,
-          run_num = sprintf("%02d", i),
+          run_num = sprintf("%02d", run_data$block[1]),
           desc = "timeseries",
           eye_suffix = eye_suffix
         )
@@ -1133,7 +1164,7 @@ run_bidsify <- function(
           sub = sub,
           ses = ses,
           task = task,
-          run = sprintf("%02d", i),
+          run = sprintf("%02d", run_data$block[1]),
           eye_suffix = eye_suffix,
           verbose = verbose
         )
@@ -1338,10 +1369,6 @@ run_bidsify <- function(
           dir.create(epoch_folder, recursive = TRUE)
         }
 
-        epoch_events_info <- get_epoch_events(eyeris, epoch_name, verbose)
-        baseline_events_info <- get_baseline_events(eyeris, epoch_name, verbose)
-        baseline_type_info <- get_baseline_type(eyeris, epoch_name, verbose)
-
         for (block_name in names(eyeris$confounds$epoched_epoch_wide[[
           epoch_name
         ]])) {
@@ -1352,6 +1379,26 @@ run_bidsify <- function(
           if (nrow(block_confounds) == 0) {
             next
           }
+
+          # derive BIDS metadata from the current block (not just the first)
+          epoch_events_info <- get_epoch_events(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
+          baseline_events_info <- get_baseline_events(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
+          baseline_type_info <- get_baseline_type(
+            eyeris,
+            epoch_name,
+            block_name,
+            verbose
+          )
 
           matched_events <- unique(block_confounds$matched_event)
 
@@ -1619,7 +1666,7 @@ run_bidsify <- function(
       } else {
         i_run
       }
-      run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+      run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
       check_and_create_dir(run_dir, verbose = verbose)
 
       # make step-by-step plots
@@ -1628,8 +1675,8 @@ run_bidsify <- function(
       for (i in seq_along(pupil_steps)) {
         for (p in seq_along(plot_types)) {
           fig_name <- sprintf(
-            "run-%02d_fig-%d_desc-%s",
-            run_dir_num,
+            "%s_fig-%d_desc-%s",
+            make_run_dir_name(run_dir_num, task),
             i,
             plot_types[p]
           )
@@ -1694,8 +1741,8 @@ run_bidsify <- function(
           fig_filename <- file.path(
             run_dir,
             sprintf(
-              "run-%02d_fig-full-%d_desc-%s",
-              run_dir_num,
+              "%s_fig-full-%d_desc-%s",
+              make_run_dir_name(run_dir_num, task),
               i_step,
               plot_types[p]
             )
@@ -1774,12 +1821,12 @@ run_bidsify <- function(
         ) &&
           all(c("screen.x", "screen.y") %in% colnames(eyeris$info))
       ) {
-        run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+        run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
         check_and_create_dir(run_dir, verbose = verbose)
 
         heatmap_filename <- file.path(
           run_dir,
-          sprintf("run-%02d_gaze_heatmap", i_run)
+          sprintf("%s_gaze_heatmap", make_run_dir_name(run_dir_num, task))
         )
 
         if (!is.null(eye_suffix)) {
@@ -1838,12 +1885,15 @@ run_bidsify <- function(
       has_binocular <- !is.null(raw_binocular_object)
 
       if (has_binocular) {
-        run_dir <- file.path(figs_out, sprintf("run-%02d", i_run))
+        run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
         check_and_create_dir(run_dir, verbose = verbose)
 
         correlation_filename <- file.path(
           run_dir,
-          sprintf("run-%02d_binocular_correlation", i_run)
+          sprintf(
+            "%s_binocular_correlation",
+            make_run_dir_name(run_dir_num, task)
+          )
         )
 
         correlation_filename <- paste0(correlation_filename, ".png")
@@ -1957,7 +2007,7 @@ run_bidsify <- function(
             get_block_numbers(bn)
           }
 
-          run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+          run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
           check_and_create_dir(run_dir, verbose = verbose)
           epochs_out <- file.path(run_dir, names(epochs_to_save)[i])
           check_and_create_dir(epochs_out, verbose = verbose)
@@ -1972,6 +2022,7 @@ run_bidsify <- function(
             pupil_steps = pupil_steps,
             eyeris_object = eyeris,
             eye_suffix = eye_suffix,
+            task = task,
             report_epoch_grouping_var_col = actual_grouping_col,
             verbose = verbose
           )
@@ -1981,7 +2032,7 @@ run_bidsify <- function(
             zip_relative_path <- file.path(
               "source",
               "figures",
-              sprintf("run-%02d", run_dir_num),
+              make_run_dir_name(run_dir_num, task),
               names(epochs_to_save)[i],
               basename(epoch_zip_path)
             )
@@ -2018,7 +2069,7 @@ run_bidsify <- function(
             get_block_numbers(bn)
           }
 
-          run_dir <- file.path(figs_out, sprintf("run-%02d", run_dir_num))
+          run_dir <- file.path(figs_out, make_run_dir_name(run_dir_num, task))
           plain_epoch_dir <- file.path(run_dir, names(epochs_to_save)[i])
 
           if (dir.exists(plain_epoch_dir)) {
