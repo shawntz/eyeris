@@ -15,11 +15,27 @@ An \code{eyeris} object with a new nested list of data frames:
 The confounds are organized hierarchically by block and preprocessing step.
 Each step contains metrics such as:
 \itemize{
+\item Missing data (\code{n_missing} and \code{prop_missing})
 \item Blink rate and duration statistics
 \item Gaze position (x,y) mean and standard deviation
 \item Pupil size mean, standard deviation, and range
-\item Missing data percentage
 }
+
+Missing data is reported as both a count (\code{n_missing}) and a proportion
+(\code{prop_missing}, \code{0} to \code{1}; multiply by \code{100} for a percentage) of \code{NA}
+samples. It is computed at two levels so you can choose the granularity
+appropriate to your design:
+\itemize{
+\item \strong{Block level}: \code{confounds$unepoched_timeseries[[block]][[step]]}
+reports \code{prop_missing} across the entire recording block.
+\item \strong{Epoch/trial level}: \code{confounds$epoched_timeseries[[epoch]][[block]]}
+reports \code{prop_missing} for each epoched event (e.g., per trial).
+}
+
+\code{eyeris} intentionally does not enforce a fixed missing-data exclusion
+cutoff. Instead, \code{prop_missing} is exposed so you can define your own
+exclusion thresholds at whichever level (trial, epoch, or block) is
+appropriate for your study.
 }
 \description{
 Calculates various confounding variables for pupil data, including blink

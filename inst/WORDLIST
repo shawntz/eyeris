@@ -15,6 +15,7 @@ ccessbility
 al
 asc
 ASC
+assocret
 bandpass
 baselining
 Baselining
@@ -28,6 +29,7 @@ changelog
 Clewett
 cli
 codebase
+coercible
 Creating
 customizable
 deblink
@@ -60,6 +62,7 @@ Epoching
 et
 extensibility
 eyelink
+fMRIPrep
 EyeLink
 eyelinker
 eyelinkio
@@ -98,6 +101,7 @@ modularity
 monotonicity
 msg
 na
+namespaced
 nq
 nteroperability
 nav
@@ -128,6 +132,7 @@ Pupillometry
 Purdon
 RColorBrewer
 README
+recalibration
 reimplementing
 repo
 reproducibility
@@ -216,3 +221,17 @@ edf2asc
 loaders
 roadmap
 Roadmap
+Diaconis
+AI
+LLM
+quickstart
+composable
+indexers
+vetted
+natively
+Rescales
+colour
+Colour
+ggplot
+reaborn's
+seaborn
