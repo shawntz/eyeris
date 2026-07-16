@@ -20,7 +20,6 @@
 <url><loc>https://eyeris.shawnschwartz.com/news/index.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/add_unique_event_identifiers.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/add_unique_identifiers_to_df.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/assemble_generic_blocks.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/bidsify.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/bin.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/bin_pupil.html</loc></url>
@@ -73,7 +72,6 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/downsample.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/downsample_pupil.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/draw_random_epochs.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/ensure_block_col.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/epoch.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/epoch_and_baseline_block.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/epoch_manually.html</loc></url>
@@ -120,7 +118,6 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/is_binocular_object.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/is_decimated_col.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/load_asc.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/load_generic.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/log_error.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/log_info.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/log_message.html</loc></url>
@@ -168,8 +165,6 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/rb_timeseries_panel.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/read_eyeris_parquet.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/render_report.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/require_col.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/resolve_sample_rate.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/robust_plot.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/run_bidsify.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/run_dir_pattern.html</loc></url>
@@ -183,14 +178,11 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/slice_epochs_no_limits.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/slice_epochs_with_limits.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/speed.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/standardize_blinks.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/standardize_events.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/summarize_confounds.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/tag_blinks.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/tag_gaze_coords.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/tick.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/trim_pre_decimation_cols.html</loc></url>
-<url><loc>https://eyeris.shawnschwartz.com/reference/warn_irregular_sampling.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/write_csv_and_db.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/write_eyeris_data_to_db.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/zip_and_cleanup_source_figures.html</loc></url>

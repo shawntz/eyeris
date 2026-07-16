@@ -1,54 +1,8 @@
 # Changelog
 
-## eyeris (development version)
+## eyeris 3.2.0.9002 (dev version) “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 ### 🚀 New features
-
-- **NF ([\#299](https://github.com/shawntz/eyeris/issues/299))**:
-  **Added
-  [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md),
-  a tracker-agnostic data loader for non-EyeLink eye trackers.** Until
-  now,
-  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
-  (for SR Research EyeLink `.asc` files) was the only implemented
-  loader, which prevented researchers using other eye trackers from
-  running their data through `eyeris`.
-  [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)
-  accepts three standardized data frames — `pupil` (raw samples:
-  timestamp + pupil size, optionally gaze `eye_x`/`eye_y`), `events`
-  (timestamp + message text), and `blinks` (blink start/end intervals) —
-  plus an optional fourth `gaze` data frame for the less common case
-  where gaze is exported separately from pupil size (joined onto `pupil`
-  by timestamp). These are assembled into the exact same `eyeris` S3
-  object that
-  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
-  produces, making the result a drop-in input to
-  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md),
-  [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md),
-  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md),
-  and the plotting methods. Column names are configurable via the
-  `mapping` argument; sampling rate is inferred from the timestamps when
-  not supplied; timestamps may be provided in milliseconds (default) or
-  seconds (`time_unit = "s"`); and
-  `block`/`eye`/`pupil_type`/screen-dimension metadata mirror
-  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md).
-  Native readers for specific tracker formats can now be layered on top
-  of this function incrementally, by
-  [@shawntz](https://github.com/shawntz) in
-  [\#299](https://github.com/shawntz/eyeris/issues/299).
-
-- **NF**:
-  **[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
-  now accepts a pre-loaded `eyeris` object** (e.g., from
-  [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)),
-  automatically skipping the file-loading step and running the remaining
-  pipeline on the object directly. This makes
-  `load_generic(...) |> glassbox()` work as expected, and also means an
-  already-loaded
-  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
-  object piped into
-  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
-  now processes correctly instead of raising an error.
 
 - **ENH ([\#300](https://github.com/shawntz/eyeris/issues/300))**: Added
   a hardware-quirk guardrail that detects non-uniform sampling intervals
@@ -77,16 +31,6 @@
   [\#308](https://github.com/shawntz/eyeris/issues/308).
 
 ### 🐛 Bugs fixed
-
-- **FF**: Fixed an error in
-  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
-  (via
-  [`get_block_numbers()`](https://eyeris.shawnschwartz.com/reference/get_block_numbers.md))
-  that aborted with `the condition has length > 1` when processing
-  multi-block data on R ≥ 4.2. The internal
-  [`is.na()`](https://rdrr.io/r/base/NA.html) guard now handles vectors
-  of block numbers, so multi-block recordings flow through the confound
-  summary step correctly.
 
 - **FF**: Fixed multi-run epoch CSV files
   (`*_desc-preproc_pupil_epoch-<label>.csv`) not being written for each

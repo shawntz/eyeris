@@ -95,9 +95,6 @@ transforming pupil data.
 
   Load and parse SR Research EyeLink `.asc` files
 
-- [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)
-  : Load pupillometry data from a non-EyeLink eye tracker
-
 - [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) :
   NA-pad blink events / missing data
 

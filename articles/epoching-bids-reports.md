@@ -33,20 +33,20 @@ library(eyeris)
 # Load the example memory task file and run default glassbox preproc workflow
 demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
-#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-16 23:59:24] [OKAY] Running eyeris::load_asc()
 #> ℹ [2026-07-16 23:59:25] [INFO] Processing block: block_1
 #> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-16 23:59:26] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-16 23:59:26] [OKAY] Running eyeris::interpolate() for block_1
-#> ✔ [2026-07-16 23:59:26] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-16 23:59:26] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-16 23:59:26] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-16 23:59:26] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-16 23:59:26] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-16 23:59:26] [INFO] Block processing summary:
-#> ℹ [2026-07-16 23:59:26] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::interpolate() for block_1
+#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-16 23:59:25] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-16 23:59:25] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-16 23:59:25] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-16 23:59:25] [INFO] Block processing summary:
+#> ℹ [2026-07-16 23:59:25] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-16 23:59:26] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-16 23:59:25] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ## 2 Extract Data Epochs
@@ -66,13 +66,13 @@ flexible extraction of trials using:
 
 eye_1a <- eye |>
   epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-07-16 23:59:26] [INFO] Epoching pupil data...
-#> ℹ [2026-07-16 23:59:26] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-07-16 23:59:26] [OKAY] Done!
-#> ✔ [2026-07-16 23:59:26] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-07-16 23:59:25] [INFO] Epoching pupil data...
+#> ℹ [2026-07-16 23:59:25] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-07-16 23:59:25] [OKAY] Done!
+#> ✔ [2026-07-16 23:59:25] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-07-16 23:59:26] [OKAY] Pupil epoching completed in 0.18 seconds
-#> ℹ [2026-07-16 23:59:26] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-16 23:59:25] [OKAY] Pupil epoching completed in 0.19 seconds
+#> ℹ [2026-07-16 23:59:25] [INFO] Recalculating epoched confounds for new
 #> epochs...
 ```
 
@@ -160,7 +160,7 @@ eye_1b <- eye |>
 #> ✔ [2026-07-16 23:59:26] [OKAY] Done!
 #> ✔ [2026-07-16 23:59:26] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-07-16 23:59:26] [OKAY] Pupil epoching completed in 0.06 seconds
+#> ✔ [2026-07-16 23:59:26] [OKAY] Pupil epoching completed in 0.07 seconds
 #> ℹ [2026-07-16 23:59:26] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
