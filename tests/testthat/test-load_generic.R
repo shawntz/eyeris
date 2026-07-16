@@ -136,6 +136,37 @@ test_that("load_generic object runs through the full glassbox pipeline", {
   expect_true(any(is.na(res$timeseries$block_1$pupil_raw_deblink)))
 })
 
+test_that("preloaded eyeris object never loads a file, even with load_asc = TRUE", {
+  set.seed(21)
+  eye <- load_generic(
+    pupil = make_samples(n = 1000),
+    events = make_events(),
+    sample_rate = 1000,
+    verbose = FALSE
+  )
+
+  called <- FALSE
+  testthat::local_mocked_bindings(
+    load_asc = function(...) {
+      called <<- TRUE
+      stop("load_asc() must not run for a preloaded eyeris object")
+    },
+    .package = "eyeris"
+  )
+
+  # a caller-supplied `load_asc = TRUE` must not restore file loading
+  res <- glassbox(
+    eye,
+    load_asc = TRUE,
+    lpfilt = list(plot_freqz = FALSE),
+    verbose = FALSE
+  )
+
+  expect_false(called)
+  expect_s3_class(res, "eyeris")
+  expect_true("block_1" %in% names(res$timeseries))
+})
+
 # gaze handling ---------------------------------------------------------------
 
 test_that("pupil-only data (no gaze) still produces eye_x / eye_y columns", {

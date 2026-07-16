@@ -277,7 +277,13 @@ glassbox <- function(
   }
 
   # guard params that accept lists in the event a boolean is supplied
-  if ("load_asc" %in% names(list(...)) && isTRUE(list(...)$load_asc)) {
+  # (skipped for a pre-loaded eyeris object, where load_asc stays disabled so a
+  # caller-supplied `load_asc = TRUE` cannot restore file loading on an object)
+  if (
+    !preloaded_eyeris &&
+      "load_asc" %in% names(list(...)) &&
+      isTRUE(list(...)$load_asc)
+  ) {
     log_warn(
       "`load_asc` expects a list of args (not a boolean)... using default: `list(block = 'auto')`",
       verbose = TRUE
