@@ -180,6 +180,13 @@ test_that("check_uniform_sampling_intervals handles degenerate inputs", {
   expect_length(msgs, 0)
 })
 
+test_that("check_uniform_sampling_intervals errors when interval cannot be inferred", {
+  expect_error(
+    eyeris:::check_uniform_sampling_intervals(c(0, Inf), hz = 1000),
+    "Unable to infer expected sampling interval"
+  )
+})
+
 test_that("check_uniform_sampling_intervals tolerates sub-millisecond rounding", {
   # high-rate trackers may report integer-ms timestamps for sub-ms samples,
   # producing alternating 0/1 ms intervals; these must not be flagged as drops
