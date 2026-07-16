@@ -135,6 +135,7 @@ reference:
       Modular functions used by the `glassbox` pipeline for cleaning and transforming pupil data.
     contents:
       - load_asc
+      - load_generic
       - deblink
       - detransient
       - interpolate
