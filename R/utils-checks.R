@@ -262,9 +262,11 @@ modal_value <- function(x) {
 #' The expected inter-sample interval is inferred from the data as the modal
 #' (most frequent) positive interval, which is robust both to a minority of
 #' irregular intervals and to sub-millisecond timestamp rounding at high
-#' sampling rates. Any interval not exactly equal to this modal interval is
-#' marked irregular; intervals longer than the mode are additionally used to
-#' estimate the number of dropped samples.
+#' sampling rates. Any nonzero interval not exactly equal to this modal
+#' interval is marked irregular; zero-length intervals (the tell-tale of
+#' integer-millisecond rounding of sub-millisecond samples) are exempt.
+#' Intervals longer than the mode are additionally used to estimate the number
+#' of dropped samples.
 #' When the timeseries spans multiple recording segments (`blocks`), each
 #' segment is checked independently so that the expected gap *between* segments
 #' is not mistaken for a dropped sample.
@@ -367,8 +369,11 @@ check_uniform_sampling_intervals <- function(
   result$n_intervals <- n_total
 
   # (A) uniform-grid validation: any interval that differs from the expected
-  # spacing indicates an irregular sample grid.
-  irregular <- intervals != expected
+  # spacing indicates an irregular sample grid. Zero-length intervals are the
+  # accepted tell-tale of integer-millisecond rounding of sub-millisecond
+  # samples (see (B) below), so they are exempt here; genuinely inconsistent
+  # nonzero intervals (including time-reversals) remain irregular.
+  irregular <- intervals != expected & intervals != 0
   n_irregular <- sum(irregular, na.rm = TRUE)
 
   # (B) systematic-dropout cross-check against the device's nominal rate.

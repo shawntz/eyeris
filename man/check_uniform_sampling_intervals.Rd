@@ -58,9 +58,11 @@ informative warning so it can be addressed before preprocessing.
 The expected inter-sample interval is inferred from the data as the modal
 (most frequent) positive interval, which is robust both to a minority of
 irregular intervals and to sub-millisecond timestamp rounding at high
-sampling rates. Any interval not exactly equal to this modal interval is
-marked irregular; intervals longer than the mode are additionally used to
-estimate the number of dropped samples.
+sampling rates. Any nonzero interval not exactly equal to this modal
+interval is marked irregular; zero-length intervals (the tell-tale of
+integer-millisecond rounding of sub-millisecond samples) are exempt.
+Intervals longer than the mode are additionally used to estimate the number
+of dropped samples.
 When the timeseries spans multiple recording segments (\code{blocks}), each
 segment is checked independently so that the expected gap \emph{between} segments
 is not mistaken for a dropped sample.
