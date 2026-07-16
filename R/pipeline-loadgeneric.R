@@ -236,6 +236,14 @@ load_generic <- function(
     pupil_raw = as.numeric(pupil[[mapping$pupil]])
   )
 
+  # carry over a block column from `pupil` if present -- assigned before the
+  # gaze join so a separately-exported gaze table can be routed per block
+  if (mapping$block %in% names(pupil)) {
+    samples$block <- as.numeric(pupil[[mapping$block]])
+  } else {
+    samples$block <- 1
+  }
+
   # gaze: prefer columns within `pupil`, else a separate `gaze` df, else NA ----
   if (mapping$eye_x %in% names(pupil) && mapping$eye_y %in% names(pupil)) {
     samples$eye_x <- as.numeric(pupil[[mapping$eye_x]])
@@ -250,18 +258,32 @@ load_generic <- function(
       eye_x = as.numeric(gaze[[mapping$eye_x]]),
       eye_y = as.numeric(gaze[[mapping$eye_y]])
     )
-    samples <- dplyr::left_join(samples, gaze_std, by = "time_orig")
+    # preserve gaze block identity: join on block + time when gaze carries a
+    # block column, else fall back to timestamp -- but reject the timestamp-only
+    # join when the pupil data spans multiple blocks, since routing is ambiguous
+    if (mapping$block %in% names(gaze)) {
+      gaze_std$block <- as.numeric(gaze[[mapping$block]])
+      join_by <- c("block", "time_orig")
+    } else {
+      if (length(unique(samples$block)) > 1) {
+        log_error(paste0(
+          "`gaze` has no block column but `pupil` spans multiple blocks, so ",
+          "joining gaze by timestamp alone is ambiguous. Add a block column to ",
+          "`gaze` (see `mapping`) so gaze samples can be routed per block."
+        ))
+      }
+      join_by <- "time_orig"
+    }
+    samples <- dplyr::left_join(
+      samples,
+      gaze_std,
+      by = join_by,
+      relationship = "many-to-one"
+    )
   } else {
     # gaze not available: keep columns present (all-NA) for downstream safety
     samples$eye_x <- NA_real_
     samples$eye_y <- NA_real_
-  }
-
-  # carry over a block column from `pupil` if present
-  if (mapping$block %in% names(pupil)) {
-    samples$block <- as.numeric(pupil[[mapping$block]])
-  } else {
-    samples$block <- 1
   }
 
   # guarantee monotonic, non-decreasing time per block (required downstream) --
@@ -402,11 +424,19 @@ standardize_events <- function(events, mapping, ms_scale) {
   require_col(events, mapping$time, "events", "timestamp")
   require_col(events, mapping$text, "events", "message-text")
 
-  data.frame(
+  out <- data.frame(
     time = as.numeric(events[[mapping$time]]) * ms_scale,
     text = as.character(events[[mapping$text]]),
     stringsAsFactors = FALSE
   )
+
+  # retain an explicit block assignment when supplied, so events are routed by
+  # block identity rather than re-derived from timestamp ranges
+  if (mapping$block %in% names(events)) {
+    out$block <- as.numeric(events[[mapping$block]])
+  }
+
+  out
 }
 
 #' Standardize a user-supplied blinks data frame
@@ -431,10 +461,18 @@ standardize_blinks <- function(blinks, mapping, ms_scale) {
   require_col(blinks, mapping$stime, "blinks", "blink-start")
   require_col(blinks, mapping$etime, "blinks", "blink-end")
 
-  data.frame(
+  out <- data.frame(
     stime = as.numeric(blinks[[mapping$stime]]) * ms_scale,
     etime = as.numeric(blinks[[mapping$etime]]) * ms_scale
   )
+
+  # retain an explicit block assignment when supplied, so blinks are routed by
+  # block identity rather than re-derived from timestamp ranges
+  if (mapping$block %in% names(blinks)) {
+    out$block <- as.numeric(blinks[[mapping$block]])
+  }
+
+  out
 }
 
 #' Ensure an events/blinks data frame carries a block column
@@ -442,8 +480,10 @@ standardize_blinks <- function(blinks, mapping, ms_scale) {
 #' Adds a `block` column to an events or blinks data frame so that it can be
 #' split into the same per-block structure as the time series. If the data
 #' span a single block, every row is assigned to that block; otherwise rows are
-#' assigned to whichever block's timestamp range contains them (falling back to
-#' the first block).
+#' assigned to whichever block's timestamp range contains them. Routing fails
+#' (with an informative error) when a timestamp matches no block or falls within
+#' more than one overlapping block range -- supply an explicit `block` column to
+#' resolve the ambiguity.
 #'
 #' @param df An events or blinks data frame.
 #' @param time_col Name of the timestamp column to match against block ranges.
@@ -476,14 +516,30 @@ ensure_block_col <- function(df, time_col, raw_df) {
   df$block <- vapply(
     df[[time_col]],
     function(t) {
-      if (!is.na(t)) {
-        for (i in seq_along(blocks)) {
-          if (t >= ranges[[i]][1] && t <= ranges[[i]][2]) {
-            return(blocks[i])
-          }
-        }
+      matches <- if (is.na(t)) {
+        integer(0)
+      } else {
+        which(vapply(ranges, function(r) t >= r[1] && t <= r[2], logical(1)))
       }
-      blocks[1] # fallback: assign to the first block
+      if (length(matches) == 1L) {
+        return(blocks[matches])
+      }
+      if (length(matches) == 0L) {
+        log_error(paste0(
+          "An events/blinks timestamp (",
+          t,
+          ") falls outside every block's time range, so it cannot be routed ",
+          "to a block. Supply an explicit `block` column (see `mapping`) to ",
+          "assign rows to blocks."
+        ))
+      }
+      log_error(paste0(
+        "An events/blinks timestamp (",
+        t,
+        ") falls within multiple overlapping block time ranges, so block ",
+        "routing is ambiguous. Supply an explicit `block` column (see ",
+        "`mapping`) to assign rows to blocks."
+      ))
     },
     numeric(1)
   )

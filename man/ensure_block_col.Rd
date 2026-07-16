@@ -20,7 +20,9 @@ ensure_block_col(df, time_col, raw_df)
 Adds a \code{block} column to an events or blinks data frame so that it can be
 split into the same per-block structure as the time series. If the data
 span a single block, every row is assigned to that block; otherwise rows are
-assigned to whichever block's timestamp range contains them (falling back to
-the first block).
+assigned to whichever block's timestamp range contains them. Routing fails
+(with an informative error) when a timestamp matches no block or falls within
+more than one overlapping block range -- supply an explicit \code{block} column to
+resolve the ambiguity.
 }
 \keyword{internal}

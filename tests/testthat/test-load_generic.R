@@ -290,6 +290,109 @@ test_that("block = 'auto' splits multi-block data and assigns events by time", {
   expect_equal(sort(names(res$timeseries)), c("block_1", "block_2"))
 })
 
+test_that("explicit block column on events overrides timestamp routing", {
+  set.seed(15)
+  s1 <- make_samples(n = 300)
+  s2 <- make_samples(n = 300)
+  s2$time <- s2$time + 1e6
+  s1$block <- 1
+  s2$block <- 2
+  samples <- rbind(s1, s2)
+
+  # both timestamps sit inside block 1's range, but the explicit block column
+  # says otherwise -- block identity must win over timestamp routing
+  events <- data.frame(
+    time = c(50, 60),
+    text = c("A", "B"),
+    block = c(2, 1),
+    stringsAsFactors = FALSE
+  )
+
+  eye <- load_generic(
+    pupil = samples,
+    events = events,
+    sample_rate = 1000,
+    verbose = FALSE
+  )
+
+  expect_equal(eye$events$block_1$text, "B")
+  expect_equal(eye$events$block_2$text, "A")
+})
+
+test_that("separate gaze without a block column is rejected on multi-block data", {
+  set.seed(16)
+  s1 <- make_samples(n = 300, with_gaze = FALSE)
+  s2 <- make_samples(n = 300, with_gaze = FALSE)
+  s2$time <- s2$time + 1e6
+  s1$block <- 1
+  s2$block <- 2
+  samples <- rbind(s1, s2)
+
+  gaze <- data.frame(time = c(0, 1e6), eye_x = c(1, 2), eye_y = c(3, 4))
+
+  expect_error(
+    load_generic(
+      pupil = samples,
+      gaze = gaze,
+      sample_rate = 1000,
+      verbose = FALSE
+    ),
+    "block"
+  )
+})
+
+test_that("separate gaze with a block column joins on block + timestamp", {
+  set.seed(17)
+  s1 <- make_samples(n = 300, with_gaze = FALSE)
+  s2 <- make_samples(n = 300, with_gaze = FALSE)
+  s2$time <- s2$time + 1e6
+  s1$block <- 1
+  s2$block <- 2
+  samples <- rbind(s1, s2)
+
+  gaze <- rbind(
+    data.frame(time = s1$time, eye_x = 100, eye_y = 200, block = 1),
+    data.frame(time = s2$time, eye_x = 300, eye_y = 400, block = 2)
+  )
+
+  eye <- load_generic(
+    pupil = samples,
+    gaze = gaze,
+    sample_rate = 1000,
+    verbose = FALSE
+  )
+
+  expect_equal(unique(eye$timeseries$block_1$eye_x), 100)
+  expect_equal(unique(eye$timeseries$block_2$eye_x), 300)
+})
+
+test_that("event timestamp matching no block range raises an error", {
+  set.seed(18)
+  s1 <- make_samples(n = 300)
+  s2 <- make_samples(n = 300)
+  s2$time <- s2$time + 1e6
+  s1$block <- 1
+  s2$block <- 2
+  samples <- rbind(s1, s2)
+
+  # 5e5 sits in the gap between block 1 and block 2 -- matches no range
+  events <- data.frame(
+    time = c(50, 5e5),
+    text = c("A", "B"),
+    stringsAsFactors = FALSE
+  )
+
+  expect_error(
+    load_generic(
+      pupil = samples,
+      events = events,
+      sample_rate = 1000,
+      verbose = FALSE
+    ),
+    "outside every block"
+  )
+})
+
 # time units & sample rate ----------------------------------------------------
 
 test_that("time_unit = 's' is converted to milliseconds internally", {
