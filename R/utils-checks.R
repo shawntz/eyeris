@@ -360,7 +360,6 @@ check_uniform_sampling_intervals <- function(
       "Check that sample timestamps are finite and increasing."
     )
   }
-  }
 
   result$expected_interval <- expected
   n_total <- length(intervals)
