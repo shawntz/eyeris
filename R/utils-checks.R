@@ -366,9 +366,9 @@ check_uniform_sampling_intervals <- function(
   n_total <- length(intervals)
   result$n_intervals <- n_total
 
-  # (A) gap detection: intervals materially larger than the expected spacing
-  # (i.e., sporadic dropped samples, leaving holes in the time grid)
-  irregular <- intervals > expected * (1 + tolerance)
+  # (A) uniform-grid validation: any interval that differs from the expected
+  # spacing indicates an irregular sample grid.
+  irregular <- intervals != expected
   n_irregular <- sum(irregular, na.rm = TRUE)
 
   # (B) systematic-dropout cross-check against the device's nominal rate.
