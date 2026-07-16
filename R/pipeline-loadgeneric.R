@@ -578,6 +578,9 @@ assemble_generic_blocks <- function(raw_df, events_df, blinks_df, block) {
         out$blinks <- list("block_1" = blinks_df)
       }
     } else if (is.numeric(block)) {
+      if (length(block) != 1 || !is.finite(block)) {
+        log_error("`block` must be one finite numeric value.")
+      }
       bn <- paste0("block_", as.character(block))
       out$timeseries <- setNames(
         list(raw_df |> dplyr::mutate(block = !!as.numeric(block))),
