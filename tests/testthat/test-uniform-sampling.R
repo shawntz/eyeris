@@ -66,6 +66,26 @@ test_that("check_uniform_sampling_intervals counts multiple dropped samples", {
   expect_equal(res$n_missing_samples, 5L)
 })
 
+test_that("check_uniform_sampling_intervals detects short irregular intervals", {
+  # 250 Hz: expected spacing is 4 ms. Shorter intervals still violate the
+  # uniform sampling grid, even though they are not dropped-sample gaps.
+  short_intervals <- c(0, 4, 7, 11, 13, 17)
+
+  res <- eyeris:::check_uniform_sampling_intervals(short_intervals, hz = 250)
+  expect_false(res$uniform)
+  expect_equal(res$expected_interval, 4)
+  expect_equal(res$n_irregular, 2L)
+  expect_equal(res$n_missing_samples, 0L)
+
+  warning_text <- captured_warning(eyeris:::check_uniform_sampling_intervals(
+    short_intervals,
+    hz = 250
+  ))
+  expect_match(warning_text, "Non-uniform sampling intervals detected")
+  expect_match(warning_text, "0 longer")
+  expect_match(warning_text, "2 shorter")
+})
+
 test_that("check_uniform_sampling_intervals infers interval without hz", {
   # no hz supplied: expected interval is inferred from the modal interval
   dropped <- c(0, 1, 2, 5, 6)
