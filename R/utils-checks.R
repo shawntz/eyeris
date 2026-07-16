@@ -262,8 +262,9 @@ modal_value <- function(x) {
 #' The expected inter-sample interval is inferred from the data as the modal
 #' (most frequent) positive interval, which is robust both to a minority of
 #' irregular intervals and to sub-millisecond timestamp rounding at high
-#' sampling rates. Intervals that exceed the expected interval by more than
-#' `tolerance` (relative) are treated as gaps indicative of dropped samples.
+#' sampling rates. Any interval not exactly equal to this modal interval is
+#' marked irregular; intervals longer than the mode are additionally used to
+#' estimate the number of dropped samples.
 #' When the timeseries spans multiple recording segments (`blocks`), each
 #' segment is checked independently so that the expected gap *between* segments
 #' is not mistaken for a dropped sample.
@@ -277,14 +278,14 @@ modal_value <- function(x) {
 #'
 #' @param time_vector Numeric vector of sample timestamps (in milliseconds).
 #' @param hz Optional known sampling rate in Hz (e.g., from the file header).
-#'   Used to annotate the warning with the nominal rate, to cross-check for
-#'   systematic dropout, and as a fallback expected interval when it cannot be
-#'   inferred from the data.
+#'   Used to annotate the warning with the nominal rate and to cross-check for
+#'   systematic dropout.
 #' @param blocks Optional vector (same length as `time_vector`) identifying the
 #'   recording segment each sample belongs to. When supplied, intervals are
 #'   only compared *within* each segment.
-#' @param tolerance Relative tolerance for flagging a gap (default `0.5`). An
-#'   interval is flagged when it exceeds `expected_interval * (1 + tolerance)`.
+#' @param tolerance Relative tolerance for the systematic-dropout cross-check
+#'   (default `0.5`). A rate mismatch is flagged when the data-derived interval
+#'   exceeds the nominal interval (`1000 / hz`) by more than this fraction.
 #' @param block_label Optional character label used in the warning to identify
 #'   the segment being checked (e.g., `"block_1"`).
 #' @param verbose Logical. Whether to emit the warning message (default `TRUE`).
