@@ -355,14 +355,11 @@ check_uniform_sampling_intervals <- function(
   # fall back to the nominal rate only if the data cannot supply one
   expected <- modal_value(positive_intervals)
   if (!is.finite(expected) || expected <= 0) {
-    expected <- if (!is.null(hz) && is.finite(hz) && hz > 0) {
-      1000 / hz
-    } else {
-      NA_real_
-    }
+    log_error(
+      "Unable to infer expected sampling interval from timestamp differences. ",
+      "Check that sample timestamps are finite and increasing."
+    )
   }
-  if (!is.finite(expected) || expected <= 0) {
-    return(invisible(result))
   }
 
   result$expected_interval <- expected
