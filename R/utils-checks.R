@@ -399,7 +399,7 @@ check_uniform_sampling_intervals <- function(
   result$prop_irregular <- n_irregular / n_total
 
   segment <- if (!is.null(block_label)) paste0(" in ", block_label) else ""
-  expected_ms <- round(expected, 4)
+  expected_ms <- round(expected, 1)
 
   if (n_irregular > 0) {
     long_intervals <- intervals[irregular & intervals > expected]
