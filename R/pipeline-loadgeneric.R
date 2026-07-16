@@ -626,7 +626,10 @@ assemble_generic_blocks <- function(raw_df, events_df, blinks_df, block) {
 resolve_sample_rate <- function(sample_rate, time_ms, verbose) {
   if (!is.null(sample_rate)) {
     if (
-      !is.numeric(sample_rate) || length(sample_rate) != 1 || sample_rate <= 0
+      !is.numeric(sample_rate) ||
+        length(sample_rate) != 1 ||
+        !is.finite(sample_rate) ||
+        sample_rate <= 0
     ) {
       log_error("`sample_rate` must be a single positive number (in Hz).")
     }
