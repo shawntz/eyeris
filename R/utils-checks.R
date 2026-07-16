@@ -225,6 +225,258 @@ check_column <- function(df, col_name) {
   }
 }
 
+#' Find the modal (most frequent) value in a numeric vector
+#'
+#' Returns the most common value in a vector. Used to infer the expected
+#' inter-sample interval directly from the data in a way that is robust to a
+#' minority of irregular intervals (e.g., dropped samples).
+#'
+#' @param x A numeric vector.
+#'
+#' @return The most frequently occurring (finite) value in `x`, or `NA_real_`
+#'   if `x` contains no finite values.
+#'
+#' @keywords internal
+modal_value <- function(x) {
+  x <- x[is.finite(x)]
+  if (length(x) == 0) {
+    return(NA_real_)
+  }
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+#' Check for uniform (consecutive, equal) sampling intervals
+#'
+#' Validates that consecutive samples in a timeseries are uniformly spaced.
+#' Different eye trackers have hardware-specific quirks that violate the
+#' uniform-sampling assumption baked into the `eyeris` pipeline. The most
+#' relevant here is that some hardware *drops* samples when pupil data is
+#' missing, rather than zero-filling the gap (as EyeLink does). Dropped samples
+#' leave holes in the otherwise evenly spaced time vector, and because
+#' downstream steps (e.g., [eyeris::detransient()], [eyeris::lpfilt()],
+#' [eyeris::downsample()]) assume a fixed sampling rate, those holes silently
+#' distort the results. This guardrail surfaces the quirk early with an
+#' informative warning so it can be addressed before preprocessing.
+#'
+#' The expected inter-sample interval is inferred from the data as the modal
+#' (most frequent) positive interval, which is robust both to a minority of
+#' irregular intervals and to sub-millisecond timestamp rounding at high
+#' sampling rates. Any nonzero interval not exactly equal to this modal
+#' interval is marked irregular; zero-length intervals (the tell-tale of
+#' integer-millisecond rounding of sub-millisecond samples) are exempt.
+#' Intervals longer than the mode are additionally used to estimate the number
+#' of dropped samples.
+#' When the timeseries spans multiple recording segments (`blocks`), each
+#' segment is checked independently so that the expected gap *between* segments
+#' is not mistaken for a dropped sample.
+#'
+#' Sporadic dropout leaves visible gaps, but *systematic* dropout (e.g., every
+#' Nth sample missing) leaves a uniform but coarser grid that the gap check
+#' alone cannot see. When the nominal sampling rate (`hz`) is known, it is
+#' cross-checked against the data-derived interval to surface this case too,
+#' while avoiding false positives from high-rate trackers that report
+#' integer-millisecond timestamps for sub-millisecond samples.
+#'
+#' @param time_vector Numeric vector of sample timestamps (in milliseconds).
+#' @param hz Optional known sampling rate in Hz (e.g., from the file header).
+#'   Used to annotate the warning with the nominal rate and to cross-check for
+#'   systematic dropout.
+#' @param blocks Optional vector (same length as `time_vector`) identifying the
+#'   recording segment each sample belongs to. When supplied, intervals are
+#'   only compared *within* each segment.
+#' @param tolerance Relative tolerance for the systematic-dropout cross-check
+#'   (default `0.5`). A rate mismatch is flagged when the data-derived interval
+#'   exceeds the nominal interval (`1000 / hz`) by more than this fraction.
+#' @param block_label Optional character label used in the warning to identify
+#'   the segment being checked (e.g., `"block_1"`).
+#' @param verbose Logical. Whether to emit the warning message (default `TRUE`).
+#'
+#' @return Invisibly, a list (or, when `blocks` is supplied, a list of such
+#'   lists, one per segment) summarizing the check with elements: `uniform`
+#'   (logical), `rate_mismatch` (logical; TRUE when the effective rate is lower
+#'   than the nominal `hz`), `expected_interval` (ms), `n_intervals`,
+#'   `n_irregular`, `n_missing_samples` (estimated number of dropped samples),
+#'   and `prop_irregular`. A warning is emitted via [log_warn()] when irregular
+#'   intervals or a rate mismatch are detected.
+#'
+#' @keywords internal
+check_uniform_sampling_intervals <- function(
+  time_vector,
+  hz = NULL,
+  blocks = NULL,
+  tolerance = 0.5,
+  block_label = NULL,
+  verbose = TRUE
+) {
+  # when recording segments are supplied, validate each independently so that
+  # the (expected) gap between segments is not flagged as a dropped sample
+  if (!is.null(blocks)) {
+    if (length(blocks) != length(time_vector)) {
+      log_error(
+        "`blocks` must be the same length as `time_vector`",
+        "({length(blocks)} vs {length(time_vector)})."
+      )
+    }
+    results <- lapply(unique(blocks), function(b) {
+      check_uniform_sampling_intervals(
+        time_vector = time_vector[blocks == b],
+        hz = hz,
+        blocks = NULL,
+        tolerance = tolerance,
+        block_label = paste0("block_", b),
+        verbose = verbose
+      )
+    })
+    return(invisible(results))
+  }
+
+  result <- list(
+    uniform = TRUE,
+    rate_mismatch = FALSE,
+    expected_interval = NA_real_,
+    n_intervals = 0L,
+    n_irregular = 0L,
+    n_missing_samples = 0L,
+    prop_irregular = 0
+  )
+
+  # need at least two non-NA timestamps to form a single interval
+  time_clean <- time_vector[!is.na(time_vector)]
+  if (length(time_clean) < 2) {
+    return(invisible(result))
+  }
+
+  intervals <- diff(time_clean)
+  positive_intervals <- intervals[intervals > 0]
+  if (length(positive_intervals) == 0) {
+    # non-increasing time is a monotonicity problem, handled elsewhere
+    return(invisible(result))
+  }
+
+  # infer the expected interval from the data (robust to dropped samples);
+  # fall back to the nominal rate only if the data cannot supply one
+  expected <- modal_value(positive_intervals)
+  if (!is.finite(expected) || expected <= 0) {
+    log_error(
+      "Unable to infer expected sampling interval from timestamp differences. ",
+      "Check that sample timestamps are finite and increasing."
+    )
+  }
+
+  result$expected_interval <- expected
+  n_total <- length(intervals)
+  result$n_intervals <- n_total
+
+  # (A) uniform-grid validation: any interval that differs from the expected
+  # spacing indicates an irregular sample grid. Zero-length intervals are the
+  # accepted tell-tale of integer-millisecond rounding of sub-millisecond
+  # samples (see (B) below), so they are exempt here; genuinely inconsistent
+  # nonzero intervals (including time-reversals) remain irregular.
+  irregular <- intervals != expected & intervals != 0
+  n_irregular <- sum(irregular, na.rm = TRUE)
+
+  # (B) systematic-dropout cross-check against the device's nominal rate.
+  # When a tracker drops every Nth sample, the survivors still form a uniform
+  # (but coarser) grid, so the gap check in (A) sees nothing wrong; only the
+  # known sampling rate reveals that the effective rate is too low. High-rate
+  # trackers that report integer-ms timestamps for sub-ms samples also inflate
+  # the observed spacing above the nominal interval, but they leave zero-length
+  # intervals (duplicate timestamps) as a tell-tale, so only flag a mismatch
+  # when no such finer-than-reported resolution is present.
+  nominal_interval <- if (!is.null(hz) && is.finite(hz) && hz > 0) {
+    1000 / hz
+  } else {
+    NA_real_
+  }
+  has_subinterval_resolution <- any(intervals <= 0)
+  rate_mismatch <- is.finite(nominal_interval) &&
+    !has_subinterval_resolution &&
+    expected > nominal_interval * (1 + tolerance)
+
+  if (n_irregular == 0 && !rate_mismatch) {
+    return(invisible(result))
+  }
+
+  result$uniform <- FALSE
+  result$rate_mismatch <- rate_mismatch
+  result$n_irregular <- as.integer(n_irregular)
+  result$prop_irregular <- n_irregular / n_total
+
+  segment <- if (!is.null(block_label)) paste0(" in ", block_label) else ""
+  expected_ms <- round(expected, 1)
+
+  if (n_irregular > 0) {
+    long_intervals <- intervals[irregular & intervals > expected]
+    short_intervals <- intervals[irregular & intervals < expected]
+    n_long <- length(long_intervals)
+    n_short <- length(short_intervals)
+
+    # Estimate dropped samples only from intervals longer than expected.
+    n_missing <- if (n_long > 0) {
+      sum(pmax(round(long_intervals / expected) - 1, 0))
+    } else {
+      0
+    }
+    result$n_missing_samples <- as.integer(n_missing)
+
+    if (verbose) {
+      nominal <- if (is.finite(nominal_interval)) {
+        paste0(hz, " Hz")
+      } else {
+        "inferred from data"
+      }
+      pct <- round(100 * result$prop_irregular, 2)
+      first_irregular_sample <- which(irregular)[1] + 1
+      long_gap_summary <- if (n_long > 0) {
+        largest_gap <- round(max(long_intervals), 4)
+        largest_gap_ratio <- round(max(long_intervals) / expected, 1)
+        paste0(
+          " Estimated ",
+          n_missing,
+          " dropped sample(s); largest long ",
+          "interval is ",
+          largest_gap,
+          " ms (~",
+          largest_gap_ratio,
+          "x expected)."
+        )
+      } else {
+        ""
+      }
+
+      msg <- paste0(
+        "Non-uniform sampling intervals detected{segment}: {n_irregular} of ",
+        "{n_total} intervals ({pct}%) differ from the expected ",
+        "{expected_ms} ms spacing (nominal rate: {nominal}); ",
+        "{n_long} longer and {n_short} shorter.{long_gap_summary} ",
+        "First irregular interval occurs before sample ",
+        "{first_irregular_sample}. This violates the uniform-sampling ",
+        "assumption of the eyeris pipeline. Consider resampling onto a ",
+        "regular time grid before preprocessing."
+      )
+      log_warn(msg, verbose = verbose)
+    }
+  }
+
+  if (rate_mismatch && verbose) {
+    effective_hz <- round(1000 / expected, 2)
+    nominal_ms <- round(nominal_interval, 4)
+
+    msg <- paste0(
+      "Effective sampling rate (~{effective_hz} Hz, {expected_ms} ms spacing) ",
+      "is lower than the device's reported {hz} Hz ({nominal_ms} ms){segment}. ",
+      "This can indicate systematic sample dropout (e.g., every Nth sample ",
+      "missing), which leaves a uniform but coarser time grid that the eyeris ",
+      "pipeline would otherwise treat as the true sampling rate. Verify the ",
+      "recording against the tracker's configured sampling rate."
+    )
+    log_warn(msg, verbose = verbose)
+  }
+
+  invisible(result)
+}
+
 #' Check if object is of class eyeris
 #'
 #' Validates that an object is of class `eyeris`.
