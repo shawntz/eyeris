@@ -131,6 +131,10 @@ glassbox <- function(
 ) {
   original_call <- match.call()
 
+  # reset per-run data-quality notices so the filter-over-gaps warning fires at
+  # most once per glassbox() run (not once per R session)
+  reset_filter_gap_warnings()
+
   # handle deprecated parameters
   if (is_present(confirm)) {
     deprecate_warn(

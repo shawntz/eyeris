@@ -288,7 +288,7 @@ test_that("lpfilt still guards against NAs when interpolation was not run", {
   expect_error(eyeris::lpfilt(out, plot_freqz = FALSE), "interpolate")
 })
 
-test_that("lpfilt/downsample warn (once per session) when filtering over gaps", {
+test_that("lpfilt/downsample warn when filtering over gaps > max_gap_ms", {
   withr::local_pdf(tempfile()) # absorb lpfilt's par() restore device calls
   sess <- eyeris:::.eyeris_session
   sess$lpfilt_gap_warned <- NULL
@@ -308,9 +308,69 @@ test_that("lpfilt/downsample warn (once per session) when filtering over gaps", 
   invisible(eyeris::downsample(base, target_fs = 100, plot_freqz = FALSE))
   expect_true(isTRUE(sess$downsample_gap_warned))
 
-  # cleanup so the notices can fire again in other sessions / tests
+  # cleanup so the notices can fire again in other runs / tests
   sess$lpfilt_gap_warned <- NULL
   sess$downsample_gap_warned <- NULL
+})
+
+test_that("reset_filter_gap_warnings() and glassbox() dedup warnings per run", {
+  sess <- eyeris:::.eyeris_session
+
+  # reset clears both flags
+  sess$lpfilt_gap_warned <- TRUE
+  sess$downsample_gap_warned <- TRUE
+  eyeris:::reset_filter_gap_warnings()
+  expect_null(sess$lpfilt_gap_warned)
+  expect_null(sess$downsample_gap_warned)
+
+  # glassbox() resets the flags at the start of each run (so the warning fires
+  # at most once per run, not once per session)
+  withr::local_pdf(tempfile())
+  sess$lpfilt_gap_warned <- TRUE
+  invisible(suppressMessages(eyeris::glassbox(
+    eyeris::eyelink_asc_demo_dataset(),
+    verbose = FALSE,
+    lpfilt = list(plot_freqz = FALSE)
+  )))
+  # demo has no > 250 ms gaps, so glassbox reset the flag and did not re-set it
+  expect_null(sess$lpfilt_gap_warned)
+})
+
+test_that("make_gap_filter_provenance_note() flags filtering over long gaps", {
+  withr::local_pdf(tempfile())
+  gap <- 6000:6399
+  # suppressWarnings absorbs lpfilt's cosmetic par() restore warning only; the
+  # filter-over-gaps notice is a cli message (not a warning condition)
+  out <- suppressWarnings(
+    load_demo_with_gap(gap) |>
+      eyeris::deblink(extend = 50) |>
+      eyeris::detransient() |>
+      eyeris::interpolate(verbose = FALSE) |>
+      eyeris::lpfilt(plot_freqz = FALSE)
+  )
+
+  note <- eyeris:::make_gap_filter_provenance_note(out)
+  expect_gt(nchar(note), 0)
+  expect_match(note, "Data Quality Notes")
+  expect_match(note, "lpfilt")
+  expect_match(note, "250 ms")
+
+  # no long gaps -> no note
+  out2 <- suppressWarnings(
+    eyeris::load_asc(eyeris::eyelink_asc_demo_dataset()) |>
+      eyeris::deblink(extend = 50) |>
+      eyeris::detransient() |>
+      eyeris::interpolate(verbose = FALSE) |>
+      eyeris::lpfilt(plot_freqz = FALSE)
+  )
+  expect_equal(nchar(eyeris:::make_gap_filter_provenance_note(out2)), 0)
+
+  # no filtering steps run -> no note even if gaps are present
+  out3 <- load_demo_with_gap(gap) |>
+    eyeris::deblink(extend = 50) |>
+    eyeris::detransient() |>
+    eyeris::interpolate(verbose = FALSE)
+  expect_equal(nchar(eyeris:::make_gap_filter_provenance_note(out3)), 0)
 })
 
 test_that("lpfilt does not warn when there are no gaps beyond max_gap_ms", {

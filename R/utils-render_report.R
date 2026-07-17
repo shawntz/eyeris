@@ -239,6 +239,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
     "bootstrap.min.css');\n",
     "@import url('https://cdn.jsdelivr.net/npm/lightbox2/dist/css/",
     "lightbox.min.css');\n</style>\n",
+    make_gap_filter_provenance_note(eyeris),
     "\n## Preprocessing Summaries\n\n",
     save_progressive_summary_plots(
       eyeris = eyeris,
@@ -275,6 +276,92 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
   writeLines(content, con = rmd_f)
 
   rmd_f
+}
+
+#' Build a data-provenance note when filtering ran over long interpolation gaps
+#'
+#' If `lpfilt()` and/or `downsample()` were run on data that still contained
+#' gaps left as `NA` by `interpolate(max_gap_ms)`, those steps filtered over the
+#' gaps (temporarily filling and then re-masking them), which can slightly bias
+#' the valid samples adjacent to each gap. This records that fact as a
+#' "Data Quality Notes" section in the HTML report so it is part of the
+#' preprocessing provenance.
+#'
+#' @param eyeris An `eyeris` object
+#'
+#' @return A markdown string for the report (empty string if no such filtering
+#' over gaps occurred)
+#'
+#' @keywords internal
+make_gap_filter_provenance_note <- function(eyeris) {
+  params <- eyeris$params
+  if (!is.list(params)) {
+    return("")
+  }
+
+  ran_lpfilt <- "lpfilt" %in% names(params)
+  ran_downsample <- "downsample" %in% names(params)
+  if (!ran_lpfilt && !ran_downsample) {
+    return("")
+  }
+
+  ts <- eyeris$timeseries
+  if (is.null(ts)) {
+    return("")
+  }
+  blocks <- if (is.data.frame(ts)) list(ts) else ts
+
+  # a filter step operated over gaps if its output column retains any NA
+  col_has_na <- function(suffix) {
+    for (b in blocks) {
+      if (!is.data.frame(b)) {
+        next
+      }
+      cols <- grep(paste0(suffix, "$"), colnames(b), value = TRUE)
+      for (cc in cols) {
+        if (anyNA(b[[cc]])) {
+          return(TRUE)
+        }
+      }
+    }
+    FALSE
+  }
+
+  affected <- c()
+  if (ran_lpfilt && col_has_na("_lpfilt")) {
+    affected <- c(affected, "`lpfilt()`")
+  }
+  if (ran_downsample && col_has_na("_downsample")) {
+    affected <- c(affected, "`downsample()`")
+  }
+  if (length(affected) == 0) {
+    return("")
+  }
+
+  max_gap <- tryCatch(
+    params$interpolate$parameters$max_gap_ms,
+    error = function(e) NULL
+  )
+  limit_txt <- if (!is.null(max_gap) && is.numeric(max_gap) && is.finite(max_gap)) {
+    paste0(max_gap, " ms")
+  } else {
+    "the interpolation limit"
+  }
+
+  paste0(
+    "\n\n---\n\n## Data Quality Notes\n\n",
+    "> **Filtering applied over long data gaps.** ",
+    "This recording contains gaps longer than ",
+    limit_txt,
+    " (`max_gap_ms`) that `interpolate()` left as `NA`. ",
+    paste(affected, collapse = " and "),
+    " temporarily filled these gaps in order to run and then masked them back ",
+    "to `NA`, which can slightly bias the valid pupil samples immediately ",
+    "adjacent to each gap toward the interpolated values (analogous to filter ",
+    "edge artifacts, repeated at every long gap). If this bias is a concern ",
+    "for your analysis, re-run with filtering and/or downsampling disabled ",
+    "(`lpfilt = FALSE` and/or `downsample = FALSE` in `glassbox()`).\n\n"
+  )
 }
 
 #' Create markdown table from data frame

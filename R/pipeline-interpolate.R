@@ -366,3 +366,19 @@ warn_filter_over_gaps <- function(step) {
 
   invisible(NULL)
 }
+
+#' Reset the per-run filter-over-gaps warning flags
+#'
+#' Clears the session flags used by [warn_filter_over_gaps()] so that the
+#' filter-over-gaps warning fires at most once per `glassbox()` run (rather than
+#' once per R session). `glassbox()` calls this at the start of each run.
+#'
+#' @return Invisibly returns `NULL`
+#'
+#' @keywords internal
+reset_filter_gap_warnings <- function() {
+  .eyeris_session$lpfilt_gap_warned <- NULL
+  .eyeris_session$downsample_gap_warned <- NULL
+
+  invisible(NULL)
+}
