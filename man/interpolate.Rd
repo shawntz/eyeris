@@ -53,9 +53,13 @@ Downstream \code{glassbox()} steps that cannot operate on missing data (low-pass
 filtering, downsampling, and binning) automatically work \emph{around} these
 retained gaps -- filtering/resampling over a temporarily filled copy and
 then restoring the gaps as \code{NA} -- so the gaps are preserved through to the
-final preprocessed output. Note that, because of this temporary fill,
-samples immediately adjacent to a long retained gap may carry minor filter
-edge effects.
+final preprocessed output. Because of this temporary fill, the filtering
+steps (\code{lpfilt()} and the anti-aliasing filter in \code{downsample()}) can
+slightly bias the valid samples immediately adjacent to a long retained gap
+toward the interpolated values. These steps therefore emit a warning when
+they operate over such gaps, so you can choose to disable them (e.g.
+\code{lpfilt = FALSE} and/or \code{downsample = FALSE} in \code{glassbox()}) if this bias is
+a concern for your analysis.
 
 \strong{Note:} Prior to \code{eyeris} version 3.2.0, all gaps were interpolated
 regardless of duration. Enforcing \code{max_gap_ms} is a change in default

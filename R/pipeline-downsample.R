@@ -23,6 +23,14 @@
 #' The resulting time points will be: 0, 1/X, 2/X, 3/X, ..., etc. where X is
 #' the new sampling frequency.
 #'
+#' When the input contains gaps longer than the interpolation limit (see
+#' [eyeris::interpolate()]'s `max_gap_ms`) that were left as `NA`, those gaps
+#' are temporarily filled so the anti-aliasing filter can run and then masked
+#' back to `NA`. This can slightly bias the valid samples immediately adjacent
+#' to each gap toward the interpolated values, so a warning is emitted in this
+#' case. If that bias is a concern, consider disabling this step
+#' (`glassbox(downsample = FALSE)`).
+#'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()].
 #' @param target_fs The target sampling frequency in Hz after downsampling.
 #' @param plot_freqz Boolean flag for displaying filter frequency response
@@ -175,6 +183,10 @@ downsample_pupil <- function(
         )
       )
     } else {
+      # warn that the anti-aliasing filter applied over these long gaps can
+      # slightly bias the neighboring valid samples (see Kret & Sjak-Shie,
+      # 2018); the user may prefer to disable lpfilt/downsample
+      warn_filter_over_gaps("downsample")
       na_idx <- which(is.na(prev_pupil))
       prev_pupil <- zoo::na.approx(prev_pupil, na.rm = FALSE, rule = 2)
     }

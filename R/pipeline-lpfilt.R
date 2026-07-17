@@ -20,6 +20,14 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
+#' When the input contains gaps longer than the interpolation limit (see
+#' [eyeris::interpolate()]'s `max_gap_ms`) that were left as `NA`, those gaps
+#' are temporarily filled so the Butterworth filter can run and then masked back
+#' to `NA`. This can slightly bias the valid samples immediately adjacent to
+#' each gap toward the interpolated values, so a warning is emitted in this
+#' case. If that bias is a concern, consider disabling this step
+#' (`glassbox(lpfilt = FALSE)`).
+#'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param wp The end of passband frequency in Hz (desired lowpass cutoff).
 #' Defaults to `4`
@@ -182,6 +190,10 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
         )
       )
     } else {
+      # warn that filtering over these long gaps can slightly bias the
+      # neighboring valid samples (see Kret & Sjak-Shie, 2018); the user may
+      # prefer to disable lpfilt/downsample
+      warn_filter_over_gaps("lpfilt")
       na_idx <- which(is.na(prev_pupil))
       prev_pupil <- zoo::na.approx(prev_pupil, na.rm = FALSE, rule = 2)
     }

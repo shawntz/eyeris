@@ -23,9 +23,13 @@
 #' filtering, downsampling, and binning) automatically work *around* these
 #' retained gaps -- filtering/resampling over a temporarily filled copy and
 #' then restoring the gaps as `NA` -- so the gaps are preserved through to the
-#' final preprocessed output. Note that, because of this temporary fill,
-#' samples immediately adjacent to a long retained gap may carry minor filter
-#' edge effects.
+#' final preprocessed output. Because of this temporary fill, the filtering
+#' steps (`lpfilt()` and the anti-aliasing filter in `downsample()`) can
+#' slightly bias the valid samples immediately adjacent to a long retained gap
+#' toward the interpolated values. These steps therefore emit a warning when
+#' they operate over such gaps, so you can choose to disable them (e.g.
+#' `lpfilt = FALSE` and/or `downsample = FALSE` in `glassbox()`) if this bias is
+#' a concern for your analysis.
 #'
 #' \strong{Note:} Prior to `eyeris` version 3.2.0, all gaps were interpolated
 #' regardless of duration. Enforcing `max_gap_ms` is a change in default
@@ -316,6 +320,49 @@ notify_max_gap_behavior_change <- function(max_gap_ms, verbose = TRUE) {
   )
 
   .eyeris_session$max_gap_notified <- TRUE
+
+  invisible(NULL)
+}
+
+#' Warn (once per session) that a filter/resampling step is operating over gaps
+#'
+#' Emits a one-time-per-session warning explaining that a step which relies on
+#' filtering (e.g. `lpfilt()` or the anti-aliasing filter in `downsample()`) is
+#' operating over long gaps that `interpolate(max_gap_ms)` left as `NA`. Because
+#' those gaps are temporarily filled to let the filter run and then masked back
+#' to `NA`, the filter can slightly bias the valid samples immediately adjacent
+#' to each gap toward the interpolated values. Users may prefer to disable
+#' filtering and/or downsampling.
+#'
+#' @param step Character label of the calling step (e.g. `"lpfilt"`,
+#' `"downsample"`), used both in the message and to fire the notice only once
+#' per session per step
+#'
+#' @return Invisibly returns `NULL`
+#'
+#' @keywords internal
+warn_filter_over_gaps <- function(step) {
+  flag_name <- paste0(step, "_gap_warned")
+
+  if (isTRUE(.eyeris_session[[flag_name]])) {
+    return(invisible(NULL))
+  }
+
+  log_warn(
+    paste0(
+      "`", step, "()` is operating on data that contains gaps longer than the ",
+      "interpolation limit (`max_gap_ms`), which were left as `NA`. These gaps ",
+      "are temporarily filled so the filter can run and then masked back to ",
+      "`NA`; this can slightly bias the valid pupil samples immediately ",
+      "adjacent to each gap toward the interpolated values. If this bias is a ",
+      "concern for your analysis, consider disabling filtering and/or ",
+      "downsampling (e.g. `lpfilt = FALSE` and/or `downsample = FALSE` in ",
+      "`glassbox()`), or increasing `max_gap_ms`."
+    ),
+    verbose = TRUE
+  )
+
+  .eyeris_session[[flag_name]] <- TRUE
 
   invisible(NULL)
 }

@@ -288,6 +288,48 @@ test_that("lpfilt still guards against NAs when interpolation was not run", {
   expect_error(eyeris::lpfilt(out, plot_freqz = FALSE), "interpolate")
 })
 
+test_that("lpfilt/downsample warn (once per session) when filtering over gaps", {
+  withr::local_pdf(tempfile()) # absorb lpfilt's par() restore device calls
+  sess <- eyeris:::.eyeris_session
+  sess$lpfilt_gap_warned <- NULL
+  sess$downsample_gap_warned <- NULL
+
+  gap <- 6000:6399 # 400 ms gap (> 250 ms) -> retained as NA after interpolate
+  base <- load_demo_with_gap(gap) |>
+    eyeris::deblink(extend = 50) |>
+    eyeris::detransient() |>
+    eyeris::interpolate(verbose = FALSE)
+
+  # lpfilt filtering over the retained gaps sets its warning flag
+  invisible(eyeris::lpfilt(base, plot_freqz = FALSE))
+  expect_true(isTRUE(sess$lpfilt_gap_warned))
+
+  # downsample's anti-aliasing filter over the retained gaps sets its own flag
+  invisible(eyeris::downsample(base, target_fs = 100, plot_freqz = FALSE))
+  expect_true(isTRUE(sess$downsample_gap_warned))
+
+  # cleanup so the notices can fire again in other sessions / tests
+  sess$lpfilt_gap_warned <- NULL
+  sess$downsample_gap_warned <- NULL
+})
+
+test_that("lpfilt does not warn when there are no gaps beyond max_gap_ms", {
+  withr::local_pdf(tempfile()) # absorb lpfilt's par() restore device calls
+  sess <- eyeris:::.eyeris_session
+  sess$lpfilt_gap_warned <- NULL
+
+  # demo data has no > 250 ms gaps after the default pipeline, so interpolate
+  # fills everything and lpfilt has no retained gaps to filter over
+  base <- eyeris::load_asc(eyeris::eyelink_asc_demo_dataset()) |>
+    eyeris::deblink(extend = 50) |>
+    eyeris::detransient() |>
+    eyeris::interpolate(verbose = FALSE)
+  invisible(eyeris::lpfilt(base, plot_freqz = FALSE))
+  expect_null(sess$lpfilt_gap_warned)
+
+  sess$lpfilt_gap_warned <- NULL
+})
+
 test_that("glassbox interpolate=list(max_gap_ms=NULL) disables the limit", {
   demo_data <- eyeris::eyelink_asc_demo_dataset()
   g_null <- eyeris::glassbox(

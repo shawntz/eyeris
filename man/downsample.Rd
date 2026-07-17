@@ -48,6 +48,14 @@ The function automatically designs an anti-aliasing filter using the
 
 The resulting time points will be: 0, 1/X, 2/X, 3/X, ..., etc. where X is
 the new sampling frequency.
+
+When the input contains gaps longer than the interpolation limit (see
+\code{\link[=interpolate]{interpolate()}}'s \code{max_gap_ms}) that were left as \code{NA}, those gaps
+are temporarily filled so the anti-aliasing filter can run and then masked
+back to \code{NA}. This can slightly bias the valid samples immediately adjacent
+to each gap toward the interpolated values, so a warning is emitted in this
+case. If that bias is a concern, consider disabling this step
+(\code{glassbox(downsample = FALSE)}).
 }
 \note{
 This function is part of the \code{glassbox()} preprocessing pipeline and is not
