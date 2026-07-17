@@ -357,7 +357,7 @@ warn_filter_over_gaps <- function(step) {
       "adjacent to each gap toward the interpolated values. If this bias is a ",
       "concern for your analysis, consider disabling filtering and/or ",
       "downsampling (e.g. `lpfilt = FALSE` and/or `downsample = FALSE` in ",
-      "`glassbox()`), or increasing `max_gap_ms`."
+      "`glassbox()`)."
     ),
     verbose = TRUE
   )
