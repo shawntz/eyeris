@@ -103,7 +103,7 @@ interpolate <- function(eyeris, max_gap_ms = 250, verbose = TRUE,
     call_info
   }
 
-  # one-time-per-session heads-up about the change in default behavior
+  # one-time-per-run heads-up about the change in default behavior
   if (is.finite(max_gap_ms)) {
     notify_max_gap_behavior_change(max_gap_ms, verbose = verbose)
   }
@@ -286,11 +286,12 @@ validate_max_gap_ms <- function(max_gap_ms) {
   max_gap_ms
 }
 
-#' Notify the user (once per session) about the max-gap behavior change
+#' Notify the user (once per run) about the max-gap behavior change
 #'
-#' Emits a one-time-per-session warning explaining that interpolation now
-#' leaves gaps longer than `max_gap_ms` as `NA`, a change in default behavior
-#' from `eyeris` versions <= 3.1.0.
+#' Emits a one-time-per-run warning explaining that interpolation now leaves
+#' gaps longer than `max_gap_ms` as `NA`, a change in default behavior from
+#' `eyeris` versions <= 3.1.0. The flag is cleared by [reset_gap_notices()],
+#' which `glassbox()` calls at the start of each run.
 #'
 #' @param max_gap_ms The active maximum gap duration in milliseconds
 #' @param verbose A flag to indicate whether to print the message
@@ -324,19 +325,20 @@ notify_max_gap_behavior_change <- function(max_gap_ms, verbose = TRUE) {
   invisible(NULL)
 }
 
-#' Warn (once per session) that a filter/resampling step is operating over gaps
+#' Warn (once per run) that a filter/resampling step is operating over gaps
 #'
-#' Emits a one-time-per-session warning explaining that a step which relies on
+#' Emits a one-time-per-run warning explaining that a step which relies on
 #' filtering (e.g. `lpfilt()` or the anti-aliasing filter in `downsample()`) is
 #' operating over long gaps that `interpolate(max_gap_ms)` left as `NA`. Because
 #' those gaps are temporarily filled to let the filter run and then masked back
 #' to `NA`, the filter can slightly bias the valid samples immediately adjacent
 #' to each gap toward the interpolated values. Users may prefer to disable
-#' filtering and/or downsampling.
+#' filtering and/or downsampling. The flag is cleared by [reset_gap_notices()],
+#' which `glassbox()` calls at the start of each run.
 #'
 #' @param step Character label of the calling step (e.g. `"lpfilt"`,
 #' `"downsample"`), used both in the message and to fire the notice only once
-#' per session per step
+#' per run per step
 #'
 #' @return Invisibly returns `NULL`
 #'
@@ -367,16 +369,18 @@ warn_filter_over_gaps <- function(step) {
   invisible(NULL)
 }
 
-#' Reset the per-run filter-over-gaps warning flags
+#' Reset the per-run gap-related notice flags
 #'
-#' Clears the session flags used by [warn_filter_over_gaps()] so that the
-#' filter-over-gaps warning fires at most once per `glassbox()` run (rather than
-#' once per R session). `glassbox()` calls this at the start of each run.
+#' Clears the session flags used by [notify_max_gap_behavior_change()] and
+#' [warn_filter_over_gaps()] so that those notices fire at most once per
+#' `glassbox()` run (rather than once per R session). `glassbox()` calls this at
+#' the start of each run.
 #'
 #' @return Invisibly returns `NULL`
 #'
 #' @keywords internal
-reset_filter_gap_warnings <- function() {
+reset_gap_notices <- function() {
+  .eyeris_session$max_gap_notified <- NULL
   .eyeris_session$lpfilt_gap_warned <- NULL
   .eyeris_session$downsample_gap_warned <- NULL
 

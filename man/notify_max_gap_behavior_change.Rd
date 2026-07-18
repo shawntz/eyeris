@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline-interpolate.R
 \name{notify_max_gap_behavior_change}
 \alias{notify_max_gap_behavior_change}
-\title{Notify the user (once per session) about the max-gap behavior change}
+\title{Notify the user (once per run) about the max-gap behavior change}
 \usage{
 notify_max_gap_behavior_change(max_gap_ms, verbose = TRUE)
 }
@@ -15,8 +15,9 @@ notify_max_gap_behavior_change(max_gap_ms, verbose = TRUE)
 Invisibly returns \code{NULL}
 }
 \description{
-Emits a one-time-per-session warning explaining that interpolation now
-leaves gaps longer than \code{max_gap_ms} as \code{NA}, a change in default behavior
-from \code{eyeris} versions <= 3.1.0.
+Emits a one-time-per-run warning explaining that interpolation now leaves
+gaps longer than \code{max_gap_ms} as \code{NA}, a change in default behavior from
+\code{eyeris} versions <= 3.1.0. The flag is cleared by \code{\link[=reset_gap_notices]{reset_gap_notices()}},
+which \code{glassbox()} calls at the start of each run.
 }
 \keyword{internal}

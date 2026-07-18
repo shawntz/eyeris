@@ -313,26 +313,31 @@ test_that("lpfilt/downsample warn when filtering over gaps > max_gap_ms", {
   sess$downsample_gap_warned <- NULL
 })
 
-test_that("reset_filter_gap_warnings() and glassbox() dedup warnings per run", {
+test_that("reset_gap_notices() and glassbox() dedup notices per run", {
   sess <- eyeris:::.eyeris_session
 
-  # reset clears both flags
+  # reset clears all gap-related notice flags (behavior-change + filter warnings)
+  sess$max_gap_notified <- TRUE
   sess$lpfilt_gap_warned <- TRUE
   sess$downsample_gap_warned <- TRUE
-  eyeris:::reset_filter_gap_warnings()
+  eyeris:::reset_gap_notices()
+  expect_null(sess$max_gap_notified)
   expect_null(sess$lpfilt_gap_warned)
   expect_null(sess$downsample_gap_warned)
 
-  # glassbox() resets the flags at the start of each run (so the warning fires
+  # glassbox() resets the flags at the start of each run (so the notices fire
   # at most once per run, not once per session)
   withr::local_pdf(tempfile())
+  sess$max_gap_notified <- TRUE
   sess$lpfilt_gap_warned <- TRUE
   invisible(suppressMessages(eyeris::glassbox(
     eyeris::eyelink_asc_demo_dataset(),
     verbose = FALSE,
     lpfilt = list(plot_freqz = FALSE)
   )))
-  # demo has no > 250 ms gaps, so glassbox reset the flag and did not re-set it
+  # glassbox reset the flags at the start of the run; demo has no > 250 ms gaps
+  # and verbose = FALSE, so neither notice re-set its flag
+  expect_null(sess$max_gap_notified)
   expect_null(sess$lpfilt_gap_warned)
 })
 
@@ -403,7 +408,9 @@ test_that("glassbox interpolate=list(max_gap_ms=NULL) disables the limit", {
   expect_equal(g_null$params$interpolate$parameters$max_gap_ms, Inf)
 })
 
-test_that("behavior-change notice is emitted only once per session", {
+test_that("behavior-change notice fires once (deduped) and respects verbose", {
+  # the notice fires at most once per run (glassbox resets the flag per run;
+  # see reset_gap_notices). here we test the flag/verbose gating directly.
   # the session state lives in an internal package environment (mutated by
   # reference); bind it locally to avoid assigning into a namespaced object
   sess <- eyeris:::.eyeris_session
@@ -416,7 +423,7 @@ test_that("behavior-change notice is emitted only once per session", {
   invisible(eyeris::interpolate(data, verbose = FALSE))
   expect_null(sess$max_gap_notified)
 
-  # first verbose call sets the flag (notice shown once)
+  # first verbose call sets the flag (notice shown once until reset)
   invisible(eyeris::interpolate(data, verbose = TRUE))
   expect_true(isTRUE(sess$max_gap_notified))
 
