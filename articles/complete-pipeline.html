@@ -282,27 +282,28 @@ parameters and pipeline recipe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run an automated pipeline with no real-time inspection of parameters</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:25:57] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:25:57] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:18] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::resample()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:19] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:19] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
 <span><span class="co">#&gt; as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span></span>
 <span><span class="co">#&gt; 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span></span>
 <span><span class="co">#&gt; your results. To restore the previous behavior, set `interpolate =</span></span>
 <span><span class="co">#&gt; list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span></span>
 <span><span class="co">#&gt; `interpolate()`).</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::lpfilt() for block_1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::lpfilt() for block_1</span></span></code></pre></div>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:25:57] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:25:57] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:25:57] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:25:57] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:25:57] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:19] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:19] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:19] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:19] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:19] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:25:57] [OKAY] Running eyeris::summarize_confounds()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:19] [OKAY] Running eyeris::summarize_confounds()</span></span>
 <span></span>
 <span><span class="co"># Preview first and second steps of the pipeline</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
@@ -311,9 +312,34 @@ parameters and pipeline recipe:</p>
 <span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:25:57] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:19] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span></span>
 <span><span class="co">#&gt; possible blocks: 1</span></span></code></pre>
 <p><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-2.png" class="r-plt" alt="" width="100%"><img src="complete-pipeline_files/figure-html/unnamed-chunk-3-3.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="automatic-sampling-grid-repair">Automatic Sampling-Grid Repair<a class="anchor" aria-label="anchor" href="#automatic-sampling-grid-repair"></a>
+</h3>
+<p>Before any rate-dependent step runs, <code><a href="../reference/glassbox.html">glassbox()</a></code> places
+each recording block onto the expected <strong>uniform sampling
+grid</strong> via <code><a href="../reference/resample.html">eyeris::resample()</a></code>. Most trackers (e.g.,
+EyeLink) zero-fill missing pupil samples, so their time vector is
+already evenly spaced and this step is a guaranteed
+<strong>no-op</strong>. Some hardware instead <em>drops</em> samples
+when pupil data is missing, leaving holes that would silently distort
+filtering, downsampling, and any other step that assumes a fixed
+sampling rate.</p>
+<p>When irregular sampling is detected, <code><a href="../reference/resample.html">resample()</a></code> repairs
+the time axis in two stages: it anchors a uniform grid on the first
+<em>reliable</em> regular interval (so early timing jitter doesn’t
+offset the whole grid), interpolates local sub-period jitter onto that
+grid, and inserts <code>NA</code> rows at any longer-than-expected gaps
+(the dropped samples). Those <code>NA</code> gaps are then filled by the
+<code><a href="../reference/interpolate.html">interpolate()</a></code> step later in the pipeline, and the inserted
+rows are flagged in an <code>is_resampled</code> column (also surfaced
+by <code><a href="../reference/summarize_confounds.html">summarize_confounds()</a></code> as <code>n_resampled</code> /
+<code>prop_resampled</code>).</p>
+<p>This step runs automatically by default. To disable it, pass
+<code>resample = FALSE</code> to <code><a href="../reference/glassbox.html">glassbox()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="running-the-pipeline-interactively">Running the Pipeline Interactively<a class="anchor" aria-label="anchor" href="#running-the-pipeline-interactively"></a>
@@ -338,26 +364,27 @@ the appropriate parameter(s) for each pipeline step to
 <span>  deblink <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>extend <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:02] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:26:02] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:02] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:02] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:03] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:26:03] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::resample()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:24] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:24] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
 <span><span class="co">#&gt; as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span></span>
 <span><span class="co">#&gt; 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span></span>
 <span><span class="co">#&gt; your results. To restore the previous behavior, set `interpolate =</span></span>
 <span><span class="co">#&gt; list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span></span>
 <span><span class="co">#&gt; `interpolate()`).</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:03] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:26:03] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:26:03] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 21:26:03] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:03] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:26:03] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 21:26:03] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:24] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:24] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-07-18 23:38:24] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:24] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-07-18 23:38:24] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 21:26:03] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-07-18 23:38:24] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 <div class="section level5">
 <h5 id="pipeline-steps-with-overridable-parameters">Pipeline Steps with Overridable Parameters<a class="anchor" aria-label="anchor" href="#pipeline-steps-with-overridable-parameters"></a>
 </h5>

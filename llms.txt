@@ -89,6 +89,7 @@ with links to their documentation and a brief description.
 | **Pipeline Orchestration** | [glassbox()](https://eyeris.shawnschwartz.com/reference/glassbox.html) | Run the full recommended preprocessing pipeline with a single function call. |
 | **BIDSify** | [bidsify()](https://eyeris.shawnschwartz.com/reference/bidsify.html) | Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance. |
 | **Data Loading** | [load_asc()](https://eyeris.shawnschwartz.com/reference/load_asc.html) | Load EyeLink `.asc` files into an `eyeris` object. |
+| **Sampling-Grid Resampling** | [resample()](https://eyeris.shawnschwartz.com/reference/resample.html) | Place each block onto the expected uniform sampling grid, repairing dropped-sample gaps for hardware that drops (rather than zero-fills) missing pupil data. |
 | **Blink Artifact Removal** | [deblink()](https://eyeris.shawnschwartz.com/reference/deblink.html) | Remove blink artifacts by extending and masking missing samples. |
 | **Transient (Speed-Based) Artifact Removal** | [detransient()](https://eyeris.shawnschwartz.com/reference/detransient.html) | Remove transient spikes in the pupil signal using a moving MAD filter. |
 | **Linear Interpolation** | [interpolate()](https://eyeris.shawnschwartz.com/reference/interpolate.html) | Interpolate missing (NA) samples in the pupil signal. |
@@ -317,6 +318,7 @@ eyeris_preproc <- glassbox(
   lpfilt = list(plot_freqz = FALSE)
 )
 #> ✔ [2026-07-02 20:14:27] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::resample()
 #> ℹ [2026-07-02 20:14:28] [INFO] Processing block: block_1
 #> ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::deblink() for block_1
 #> ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::detransient() for block_1
@@ -822,6 +824,9 @@ transforming pupil data.
 
 - [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)
   : Load pupillometry data from a non-EyeLink eye tracker
+
+- [`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md)
+  : Resample an irregularly-sampled pupil timeseries onto a uniform grid
 
 - [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) :
   NA-pad blink events / missing data

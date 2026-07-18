@@ -193,6 +193,11 @@
 <td>Load EyeLink <code>.asc</code> files into an <code>eyeris</code> object.</td>
 </tr>
 <tr>
+<td><strong>Sampling-Grid Resampling</strong></td>
+<td><a href="https://eyeris.shawnschwartz.com/reference/resample.html">resample()</a></td>
+<td>Place each block onto the expected uniform sampling grid, repairing dropped-sample gaps for hardware that drops (rather than zero-fills) missing pupil data.</td>
+</tr>
+<tr>
 <td><strong>Blink Artifact Removal</strong></td>
 <td><a href="https://eyeris.shawnschwartz.com/reference/deblink.html">deblink()</a></td>
 <td>Remove blink artifacts by extending and masking missing samples.</td>
@@ -473,6 +478,7 @@
 <span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [2026-07-02 20:14:27] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::resample()</span></span>
 <span><span class="co">#&gt; ℹ [2026-07-02 20:14:28] [INFO] Processing block: block_1</span></span>
 <span><span class="co">#&gt; ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::deblink() for block_1</span></span>
 <span><span class="co">#&gt; ✔ [2026-07-02 20:14:28] [OKAY] Running eyeris::detransient() for block_1</span></span>

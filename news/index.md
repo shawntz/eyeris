@@ -153,6 +153,45 @@ guidelines.
   [@shawntz](https://github.com/shawntz) in
   [\#308](https://github.com/shawntz/eyeris/issues/308).
 
+- **ENH ([\#320](https://github.com/shawntz/eyeris/issues/320))**: Added
+  an automatic
+  [`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md)
+  step that repairs the **time axis** of recordings whose hardware
+  *drops* samples (instead of zero-filling) when pupil data is missing —
+  the dropped-sample quirk surfaced by the
+  [\#300](https://github.com/shawntz/eyeris/issues/300) guardrail. When
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  detects irregular sampling intervals (gated on the robust
+  [`check_uniform_sampling_intervals()`](https://eyeris.shawnschwartz.com/reference/check_uniform_sampling_intervals.md)
+  detector from [\#300](https://github.com/shawntz/eyeris/issues/300)),
+  it places each block onto the expected uniform sampling grid in two
+  stages: (1) it anchors the grid on the first *reliable* regular
+  interval (rather than the first timestamp), so early sub-period timing
+  jitter doesn’t offset the whole grid, and back-extends the grid to
+  cover any earlier samples; then (2) it resamples the observed data
+  onto that grid — linearly interpolating across short/jittered
+  intervals, and inserting `NA` rows for any interval longer than the
+  expected period (dropped samples), flagged in a new logical
+  `is_resampled` column and left for the existing
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)
+  step to fill. Because a gap is now represented as explicit missing
+  data (never fabricated values),
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)
+  decides how much of a missing span to fill according to its own policy
+  (see the [\#295](https://github.com/shawntz/eyeris/issues/295)
+  `max_gap_ms` limit). This turns the “dropped-sample” problem into the
+  ordinary “missing-value” problem the rest of the pipeline already
+  handles. It runs **automatically and by default**, but only when
+  needed: it is a guaranteed no-op for already-uniform data (e.g.,
+  EyeLink) and deliberately leaves high-rate recordings that report
+  integer-millisecond timestamps untouched (so it never collapses
+  genuine sub-millisecond samples). Opt out with
+  `glassbox(resample = FALSE)`.
+  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
+  now also reports `n_resampled`/`prop_resampled` per block, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#320](https://github.com/shawntz/eyeris/issues/320).
+
 ### 🐛 Bugs fixed
 
 - **FF**: Fixed an error in

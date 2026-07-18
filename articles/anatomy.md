@@ -22,6 +22,12 @@ The key components are:
     `area` method
   - `pupil_raw`: raw recorded pupil source data in arbitrary units
     (a.u.)
+  - `is_resampled`: logical flag marking rows that
+    [`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md)
+    inserted for dropped samples (present *only* when the sampling grid
+    had to be repaired – see the
+    [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+    steps below)
 
 You’ll notice that for each preprocessing step run, a new column will be
 added after the `pupil_raw` column; these new columns follow a structure
@@ -100,6 +106,7 @@ individual steps (e.g., during parameter optimization):
 
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc(block = "auto") |>
+  eyeris::resample() |>  # repair the sampling grid (no-op on uniform data)
   eyeris::deblink(extend = 50) |>
   eyeris::detransient(n = 16) |>
   eyeris::interpolate() |>
@@ -118,14 +125,15 @@ parameters and a worked example:
 | Step | Function | What it does |
 |----|----|----|
 | 1\. Load | [`eyeris::load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md) | Parse the raw `.asc` file into an `eyeris` object |
-| 2\. Deblink | [`eyeris::deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) | NA-pad samples surrounding blink artifacts |
-| 3\. Detransient | [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md) | Remove physiologically implausible jumps |
-| 4\. Interpolate | [`eyeris::interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md) | Linearly fill in missing samples |
-| 5\. Lowpass filter | [`eyeris::lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) | Smooth the pupil time series |
+| 2\. Resample | [`eyeris::resample()`](https://eyeris.shawnschwartz.com/reference/resample.md) | Place each block on the expected uniform sampling grid (repair dropped samples; no-op if already uniform) |
+| 3\. Deblink | [`eyeris::deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) | NA-pad samples surrounding blink artifacts |
+| 4\. Detransient | [`eyeris::detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md) | Remove physiologically implausible jumps |
+| 5\. Interpolate | [`eyeris::interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md) | Linearly fill in missing samples |
+| 6\. Lowpass filter | [`eyeris::lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) | Smooth the pupil time series |
 | *(optional)* Downsample | [`eyeris::downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md) | Decimate to a lower sampling rate (anti-aliased) |
 | *(optional)* Bin | [`eyeris::bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) | Average samples within fixed time bins |
 | *(optional)* Detrend | [`eyeris::detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md) | Remove a linear trend from the time series |
-| 6\. Z-score | [`eyeris::zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md) | Standardize to mean 0 and SD 1 |
+| 7\. Z-score | [`eyeris::zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md) | Standardize to mean 0 and SD 1 |
 | *(summary)* Confounds | [`eyeris::summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md) | Tabulate per-step data-quality metrics |
 
 💡 **Note:**

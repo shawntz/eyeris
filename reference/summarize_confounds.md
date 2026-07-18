@@ -64,35 +64,36 @@ confounds <- demo_data |>
     label = "prePostProbe" # custom epoch label name
   ) |>
   eyeris::summarize_confounds()
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-18 21:25:38] [INFO] Processing block: block_1
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-18 21:25:38] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-18 23:38:00] [INFO] Processing block: block_1
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-18 23:38:00] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-18 21:25:38] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-18 21:25:38] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-18 21:25:38] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-18 21:25:38] [INFO] Block processing summary:
-#> ℹ [2026-07-18 21:25:38] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-18 23:38:00] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-18 23:38:00] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-18 23:38:00] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-18 23:38:00] [INFO] Block processing summary:
+#> ℹ [2026-07-18 23:38:00] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-18 21:25:38] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-07-18 21:25:38] [INFO] Epoching pupil data...
-#> ℹ [2026-07-18 21:25:38] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-07-18 23:38:00] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-07-18 23:38:00] [INFO] Epoching pupil data...
+#> ℹ [2026-07-18 23:38:00] [INFO] Block 1: found 10 matching events for
 #> PROBEtypetrial
-#> ✔ [2026-07-18 21:25:39] [OKAY] Done!
-#> ✔ [2026-07-18 21:25:39] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-07-18 23:38:00] [OKAY] Done!
+#> ✔ [2026-07-18 23:38:00] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-07-18 21:25:39] [OKAY] Pupil epoching completed in 0.12 seconds
-#> ℹ [2026-07-18 21:25:39] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-18 23:38:00] [OKAY] Pupil epoching completed in 0.11 seconds
+#> ℹ [2026-07-18 23:38:00] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 # access confounds for entire time series for a specific block and step
@@ -101,98 +102,110 @@ confounds$confounds$unepoched_timeseries
 #> $block_1$pupil_raw
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767        56  0.002696586        74
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1  0.003563346      1                74                  74                74
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                  74                 74                   74         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172   0.00014446        1    0.04815564
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                    56                    56                     56
-#>   total_blink_time_ms prop_blink_time
-#> 1                  56     0.002696716
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1  0.003563346           0              0      1                74
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                  74                74                  74                 74
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                   74         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1   0.00014446        1    0.04815564                    56
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                    56                     56                  56
+#>   prop_blink_time
+#> 1     0.002696716
 #> 
 #> $block_1$pupil_raw_deblink
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767       156  0.007511918       156
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1  0.007511918      1               156                 156               156
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                 156                156                  156         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172 9.630664e-05        1    0.04815564
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                   156                   156                    156
-#>   total_blink_time_ms prop_blink_time
-#> 1                 156      0.00751228
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1  0.007511918           0              0      1               156
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                 156               156                 156                156
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                  156         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1 9.630664e-05        1    0.04815564                   156
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                   156                    156                 156
+#>   prop_blink_time
+#> 1      0.00751228
 #> 
 #> $block_1$pupil_raw_deblink_detransient
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767       156  0.007511918       156
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1  0.007511918      1               156                 156               156
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                 156                156                  156         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172 9.630664e-05        1    0.04815564
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                   156                   156                    156
-#>   total_blink_time_ms prop_blink_time
-#> 1                 156      0.00751228
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1  0.007511918           0              0      1               156
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                 156               156                 156                156
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                  156         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1 9.630664e-05        1    0.04815564                   156
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                   156                    156                 156
+#>   prop_blink_time
+#> 1      0.00751228
 #> 
 #> $block_1$pupil_raw_deblink_detransient_interpolate
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767         0            0        NA
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1           NA      0                 0                   0                 0
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                   0                  0                    0         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172 9.630664e-05        0             0
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                    NA                    NA                     NA
-#>   total_blink_time_ms prop_blink_time
-#> 1                   0               0
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1           NA           0              0      0                 0
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                   0                 0                   0                  0
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                    0         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1 9.630664e-05        0             0                    NA
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                    NA                     NA                   0
+#>   prop_blink_time
+#> 1               0
 #> 
 #> $block_1$pupil_raw_deblink_detransient_interpolate_lpfilt
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767         0            0        NA
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1           NA      0                 0                   0                 0
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                   0                  0                    0         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172 9.630664e-05        0             0
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                    NA                    NA                     NA
-#>   total_blink_time_ms prop_blink_time
-#> 1                   0               0
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1           NA           0              0      0                 0
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                   0                 0                   0                  0
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                    0         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1 9.630664e-05        0             0                    NA
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                    NA                     NA                   0
+#>   prop_blink_time
+#> 1               0
 #> 
 #> $block_1$pupil_raw_deblink_detransient_interpolate_lpfilt_z
 #>   sampling_rate_hz total_time_ms n_samples n_missing prop_missing n_invalid
 #> 1             1000         20766     20767         0            0        NA
-#>   prop_invalid n_gaps max_gap_n_samples max_gap_duration_ms min_gap_n_samples
-#> 1           NA      0                 0                   0                 0
-#>   min_gap_duration_ms mean_gap_n_samples mean_gap_duration_ms screen_width
-#> 1                   0                  0                    0         1920
-#>   screen_height gaze_x_var_px gaze_y_var_px mean_gaze_distance_from_center_px
-#> 1          1080      197.3489      780.2944                          21.01572
-#>   mean_gaze_distance_from_center_norm prop_clipped n_blinks blink_rate_hz
-#> 1                          0.02866172 9.630664e-05        0             0
-#>   min_blink_duration_ms max_blink_duration_ms mean_blink_duration_ms
-#> 1                    NA                    NA                     NA
-#>   total_blink_time_ms prop_blink_time
-#> 1                   0               0
+#>   prop_invalid n_resampled prop_resampled n_gaps max_gap_n_samples
+#> 1           NA           0              0      0                 0
+#>   max_gap_duration_ms min_gap_n_samples min_gap_duration_ms mean_gap_n_samples
+#> 1                   0                 0                   0                  0
+#>   mean_gap_duration_ms screen_width screen_height gaze_x_var_px gaze_y_var_px
+#> 1                    0         1920          1080      197.3489      780.2944
+#>   mean_gaze_distance_from_center_px mean_gaze_distance_from_center_norm
+#> 1                          21.01572                          0.02866172
+#>   prop_clipped n_blinks blink_rate_hz min_blink_duration_ms
+#> 1 9.630664e-05        0             0                    NA
+#>   max_blink_duration_ms mean_blink_duration_ms total_blink_time_ms
+#> 1                    NA                     NA                   0
+#>   prop_blink_time
+#> 1               0
 #> 
 #> 
 

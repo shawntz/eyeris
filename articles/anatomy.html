@@ -161,6 +161,11 @@ sourced from</li>
 <li>
 <code>pupil_raw</code>: raw recorded pupil source data in arbitrary
 units (a.u.)</li>
+<li>
+<code>is_resampled</code>: logical flag marking rows that
+<code><a href="../reference/resample.html">resample()</a></code> inserted for dropped samples (present
+<em>only</em> when the sampling grid had to be repaired – see the
+<code><a href="../reference/glassbox.html">glassbox()</a></code> steps below)</li>
 </ul>
 </li>
 </ul>
@@ -237,6 +242,7 @@ or swap out individual steps (e.g., during parameter optimization):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"memory.asc"</span>, package <span class="op">=</span> <span class="st">"eyeris"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/load_asc.html">load_asc</a></span><span class="op">(</span>block <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/resample.html">resample</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span>  <span class="co"># repair the sampling grid (no-op on uniform data)</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/deblink.html">deblink</a></span><span class="op">(</span>extend <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/detransient.html">detransient</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="../reference/interpolate.html">interpolate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -268,49 +274,55 @@ parameters and a worked example:</p>
 object</td>
 </tr>
 <tr class="even">
-<td>2. Deblink</td>
+<td>2. Resample</td>
+<td><code><a href="../reference/resample.html">eyeris::resample()</a></code></td>
+<td>Place each block on the expected uniform sampling grid (repair
+dropped samples; no-op if already uniform)</td>
+</tr>
+<tr class="odd">
+<td>3. Deblink</td>
 <td><code><a href="../reference/deblink.html">eyeris::deblink()</a></code></td>
 <td>NA-pad samples surrounding blink artifacts</td>
 </tr>
-<tr class="odd">
-<td>3. Detransient</td>
+<tr class="even">
+<td>4. Detransient</td>
 <td><code><a href="../reference/detransient.html">eyeris::detransient()</a></code></td>
 <td>Remove physiologically implausible jumps</td>
 </tr>
-<tr class="even">
-<td>4. Interpolate</td>
+<tr class="odd">
+<td>5. Interpolate</td>
 <td><code><a href="../reference/interpolate.html">eyeris::interpolate()</a></code></td>
 <td>Linearly fill in missing samples</td>
 </tr>
-<tr class="odd">
-<td>5. Lowpass filter</td>
+<tr class="even">
+<td>6. Lowpass filter</td>
 <td><code><a href="../reference/lpfilt.html">eyeris::lpfilt()</a></code></td>
 <td>Smooth the pupil time series</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <em>(optional)</em> Downsample</td>
 <td><code><a href="../reference/downsample.html">eyeris::downsample()</a></code></td>
 <td>Decimate to a lower sampling rate (anti-aliased)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <em>(optional)</em> Bin</td>
 <td><code><a href="../reference/bin.html">eyeris::bin()</a></code></td>
 <td>Average samples within fixed time bins</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <em>(optional)</em> Detrend</td>
 <td><code><a href="../reference/detrend.html">eyeris::detrend()</a></code></td>
 <td>Remove a linear trend from the time series</td>
 </tr>
-<tr class="odd">
-<td>6. Z-score</td>
+<tr class="even">
+<td>7. Z-score</td>
 <td><code><a href="../reference/zscore.html">eyeris::zscore()</a></code></td>
 <td>Standardize to mean 0 and SD 1</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <em>(summary)</em> Confounds</td>
 <td><code><a href="../reference/summarize_confounds.html">eyeris::summarize_confounds()</a></code></td>

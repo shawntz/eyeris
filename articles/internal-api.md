@@ -23,6 +23,37 @@ as they may change without notice in future versions.
 
 ### Core Processing Functions
 
+#### Sampling-Grid Resampling
+
+##### `resample_block()`
+
+**File**: `R/pipeline-resample.R` **Description**: Internal function to
+place a single recording block onto the expected uniform sampling grid.
+It anchors the grid on the first reliable regular interval, interpolates
+local sub-period timing jitter onto the grid, and inserts `NA` rows at
+longer-than-expected gaps (dropped samples), flagged in an
+`is_resampled` column for the downstream
+[`interpolate_pupil()`](https://eyeris.shawnschwartz.com/reference/interpolate_pupil.md)
+step to fill.
+
+``` r
+
+eyeris:::resample_block(block_df, block_label, verbose)
+```
+
+**Parameters**:
+
+- `block_df`: A single block’s timeseries data frame (must contain a
+  `time_orig` column in milliseconds)
+- `block_label`: Optional character label used in messages
+- `verbose`: Whether to print detailed logging messages
+
+**Returns**: The block data frame placed on a uniform grid, with
+inserted (gap) rows marked in a logical `is_resampled` column; returned
+unchanged (with no `is_resampled` column) when no repair is needed
+
+------------------------------------------------------------------------
+
 #### Blink Removal
 
 ##### `deblink_pupil()`

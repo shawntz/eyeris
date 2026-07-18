@@ -98,6 +98,9 @@ transforming pupil data.
 - [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)
   : Load pupillometry data from a non-EyeLink eye tracker
 
+- [`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md)
+  : Resample an irregularly-sampled pupil timeseries onto a uniform grid
+
 - [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md) :
   NA-pad blink events / missing data
 

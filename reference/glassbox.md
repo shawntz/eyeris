@@ -151,46 +151,56 @@ override (for example, `deblink = list(extend = 40)`).
     This step is skipped when a pre-loaded `eyeris` object is passed as
     `file` (see the `file` parameter).
 
-2.  **Remove blinks** (`deblink`, default: on) – Replaces the missing
+2.  **Resample onto a uniform grid** (`resample`, default: on) – Places
+    each block on the expected uniform sampling grid. For hardware that
+    *drops* samples (instead of zero-filling) when pupil data is
+    missing, this interpolates local sub-period timing jitter and
+    inserts `NA` rows at the dropped timestamps, so the rate-dependent
+    steps that follow stay valid. A guaranteed no-op for already-uniform
+    data (e.g., EyeLink). See
+    [`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md).
+
+3.  **Remove blinks** (`deblink`, default: on) – Replaces the missing
     data around blinks with `NA`s, extending each gap by `50` ms on
     either side so that the rapid dips and spikes that surround a blink
     are removed too. See
     [`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md).
 
-3.  **Remove transient artifacts** (`detransient`, default: on) –
+4.  **Remove transient artifacts** (`detransient`, default: on) –
     Rejects pupil samples that change faster than is physiologically
     plausible, using a speed-based median absolute deviation (MAD)
     threshold. See
     [`detransient()`](https://eyeris.shawnschwartz.com/reference/detransient.md).
 
-4.  **Interpolate missing samples** (`interpolate`, default: on) – Fills
-    the `NA` gaps left by the deblink and detransient steps using linear
-    interpolation, producing a continuous, gap-free time series. See
+5.  **Interpolate missing samples** (`interpolate`, default: on) – Fills
+    the `NA` gaps left by the resample, deblink, and detransient steps
+    using linear interpolation, producing a continuous, gap-free time
+    series. See
     [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md).
 
-5.  **Smooth the signal** (`lpfilt`, default: on) – Applies a low-pass
+6.  **Smooth the signal** (`lpfilt`, default: on) – Applies a low-pass
     filter (default `4` Hz passband) to remove high-frequency noise
     while preserving the slower pupil dynamics of interest. See
     [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md).
 
-6.  **Downsample** (`downsample`, default: off) – Optionally lowers the
+7.  **Downsample** (`downsample`, default: off) – Optionally lowers the
     sampling rate using an anti-aliasing filter, which preserves the
     temporal dynamics of the signal. Cannot be combined with `bin`. See
     [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md).
 
-7.  **Bin** (`bin`, default: off) – Optionally lowers the sampling rate
+8.  **Bin** (`bin`, default: off) – Optionally lowers the sampling rate
     by averaging samples within equal-width time bins. Cannot be
     combined with `downsample`. See
     [`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md).
 
-8.  **Detrend** (`detrend`, default: off) – Optionally fits a linear
+9.  **Detrend** (`detrend`, default: off) – Optionally fits a linear
     model of `pupil ~ time` and returns the residuals (along with the
     fitted slope and intercept) to remove slow linear drift. Use with
     care – see
     [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
     for when this is appropriate.
 
-9.  **Z-score** (`zscore`, default: on) – Rescales the pupil time series
+10. **Z-score** (`zscore`, default: on) – Rescales the pupil time series
     to a mean of `0` and a standard deviation of `1`, making values
     comparable across participants and recordings. See
     [`zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md).
@@ -220,27 +230,28 @@ demo_data <- eyelink_asc_demo_dataset()
 
 ## (a) run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-18 21:24:43] [INFO] Processing block: block_1
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-18 21:24:43] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-18 23:37:02] [INFO] Processing block: block_1
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-18 23:37:02] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-18 21:24:43] [INFO] Block processing summary:
-#> ℹ [2026-07-18 21:24:43] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-18 23:37:02] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-18 23:37:02] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-18 23:37:02] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-18 23:37:02] [INFO] Block processing summary:
+#> ℹ [2026-07-18 23:37:02] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::summarize_confounds()
 
 start_time <- min(output$timeseries$block_1$time_secs)
 end_time <- max(output$timeseries$block_1$time_secs)
@@ -252,7 +263,7 @@ plot(
   preview_window = c(start_time, end_time),
   seed = 0
 )
-#> ℹ [2026-07-18 21:24:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 23:37:02] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -260,12 +271,12 @@ plot(
 ## (b) run a interactive workflow (with confirmation prompts after each step)
 # \donttest{
 output <- eyeris::glassbox(demo_data, interactive_preview = TRUE, seed = 0)
-#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-18 21:24:43] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-07-18 23:37:02] [OKAY] Running eyeris::load_asc()
+#> ℹ [2026-07-18 23:37:02] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 #> Continue? [Yes/No]: 
-#> ℹ [2026-07-18 21:24:44] [INFO] Process cancelled after loading data. Adjust
+#> ℹ [2026-07-18 23:37:03] [INFO] Process cancelled after loading data. Adjust
 #> your parameters and re-run!
 # }
 
@@ -278,21 +289,22 @@ output <- eyeris::glassbox(
   interpolate = list(max_gap_ms = 100),
   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 )
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-18 21:24:44] [INFO] Processing block: block_1
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-18 21:24:44] [WARN] Interpolation now leaves gaps longer than 100 ms
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-18 23:37:03] [INFO] Processing block: block_1
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-18 23:37:03] [WARN] Interpolation now leaves gaps longer than 100 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ! [2026-07-18 21:24:44] [WARN] Left 136 sample(s) as NA across gaps longer than
+#> ! [2026-07-18 23:37:03] [WARN] Left 136 sample(s) as NA across gaps longer than
 #> 100 ms (not interpolated).
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-18 21:24:44] [WARN] `lpfilt()` is operating on data that contains
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-18 23:37:03] [WARN] `lpfilt()` is operating on data that contains
 #> gaps longer than the interpolation limit (`max_gap_ms`), which were left as
 #> `NA`. These gaps are temporarily filled so the filter can run and then masked
 #> back to `NA`; this can slightly bias the valid pupil samples immediately
@@ -300,14 +312,14 @@ output <- eyeris::glassbox(
 #> for your analysis, consider disabling filtering and/or downsampling (e.g.
 #> `lpfilt = FALSE` and/or `downsample = FALSE` in `glassbox()`).
 
-#> ! [2026-07-18 21:24:44] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-18 21:24:44] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-18 21:24:44] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-18 21:24:44] [INFO] Block processing summary:
-#> ℹ [2026-07-18 21:24:44] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-18 23:37:03] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-18 23:37:03] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-18 23:37:03] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-18 23:37:03] [INFO] Block processing summary:
+#> ℹ [2026-07-18 23:37:03] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-18 21:24:44] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-18 23:37:03] [OKAY] Running eyeris::summarize_confounds()
 
 # to suppress messages, set verbose = FALSE in plot():
 plot(output, seed = 0, verbose = FALSE)
@@ -325,30 +337,31 @@ output <- eyeris::glassbox(
   detrend = FALSE,
   zscore = FALSE
 )
-#> ✔ [2026-07-18 21:24:47] [OKAY] Running eyeris::load_asc()
-#> ℹ [2026-07-18 21:24:47] [INFO] Processing block: block_1
-#> ✔ [2026-07-18 21:24:47] [OKAY] Running eyeris::deblink() for block_1
-#> ! [2026-07-18 21:24:47] [WARN] Skipping eyeris::detransient() for block_1
-#> ✔ [2026-07-18 21:24:47] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-18 21:24:47] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-18 23:37:06] [INFO] Processing block: block_1
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::deblink() for block_1
+#> ! [2026-07-18 23:37:06] [WARN] Skipping eyeris::detransient() for block_1
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-18 23:37:06] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-07-18 21:24:47] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-18 21:24:47] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-18 21:24:47] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-18 21:24:47] [WARN] Skipping eyeris::detrend() for block_1
-#> ! [2026-07-18 21:24:47] [WARN] Skipping eyeris::zscore() for block_1
-#> ℹ [2026-07-18 21:24:47] [INFO] Block processing summary:
-#> ℹ [2026-07-18 21:24:47] [INFO] block_1: OK (steps: 4, latest:
+#> ! [2026-07-18 23:37:06] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-18 23:37:06] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-18 23:37:06] [WARN] Skipping eyeris::detrend() for block_1
+#> ! [2026-07-18 23:37:06] [WARN] Skipping eyeris::zscore() for block_1
+#> ℹ [2026-07-18 23:37:06] [INFO] Block processing summary:
+#> ℹ [2026-07-18 23:37:06] [INFO] block_1: OK (steps: 4, latest:
 #> pupil_raw_deblink_interpolate_lpfilt)
-#> ✔ [2026-07-18 21:24:47] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-18 23:37:06] [OKAY] Running eyeris::summarize_confounds()
 
 plot(output, seed = 0)
-#> ℹ [2026-07-18 21:24:47] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 23:37:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
