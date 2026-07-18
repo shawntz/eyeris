@@ -136,6 +136,7 @@ reference:
     contents:
       - load_asc
       - load_generic
+      - resample
       - deblink
       - detransient
       - interpolate

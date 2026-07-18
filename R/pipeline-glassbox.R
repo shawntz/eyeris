@@ -41,33 +41,40 @@
 #' recording into blocks and, for binocular recordings, handling each eye
 #' separately. See [eyeris::load_asc()]. This step is skipped when a pre-loaded
 #' `eyeris` object is passed as `file` (see the `file` parameter).
-#' 2. **Remove blinks** (`deblink`, default: on) -- Replaces the missing data
+#' 2. **Resample onto a uniform grid** (`resample`, default: on) -- Places each
+#' block on the expected uniform sampling grid. For hardware that *drops*
+#' samples (instead of zero-filling) when pupil data is missing, this
+#' interpolates local sub-period timing jitter and inserts `NA` rows at the
+#' dropped timestamps, so the rate-dependent steps that follow stay valid. A
+#' guaranteed no-op for already-uniform data (e.g., EyeLink). See
+#' [eyeris::resample()].
+#' 3. **Remove blinks** (`deblink`, default: on) -- Replaces the missing data
 #' around blinks with `NA`s, extending each gap by `50` ms on either side so
 #' that the rapid dips and spikes that surround a blink are removed too. See
 #' [eyeris::deblink()].
-#' 3. **Remove transient artifacts** (`detransient`, default: on) -- Rejects
+#' 4. **Remove transient artifacts** (`detransient`, default: on) -- Rejects
 #' pupil samples that change faster than is physiologically plausible, using a
 #' speed-based median absolute deviation (MAD) threshold. See
 #' [eyeris::detransient()].
-#' 4. **Interpolate missing samples** (`interpolate`, default: on) -- Fills the
-#' `NA` gaps left by the deblink and detransient steps using linear
+#' 5. **Interpolate missing samples** (`interpolate`, default: on) -- Fills the
+#' `NA` gaps left by the resample, deblink, and detransient steps using linear
 #' interpolation, producing a continuous, gap-free time series. See
 #' [eyeris::interpolate()].
-#' 5. **Smooth the signal** (`lpfilt`, default: on) -- Applies a low-pass
+#' 6. **Smooth the signal** (`lpfilt`, default: on) -- Applies a low-pass
 #' filter (default `4` Hz passband) to remove high-frequency noise while
 #' preserving the slower pupil dynamics of interest. See [eyeris::lpfilt()].
-#' 6. **Downsample** (`downsample`, default: off) -- Optionally lowers the
+#' 7. **Downsample** (`downsample`, default: off) -- Optionally lowers the
 #' sampling rate using an anti-aliasing filter, which preserves the temporal
 #' dynamics of the signal. Cannot be combined with `bin`. See
 #' [eyeris::downsample()].
-#' 7. **Bin** (`bin`, default: off) -- Optionally lowers the sampling rate by
+#' 8. **Bin** (`bin`, default: off) -- Optionally lowers the sampling rate by
 #' averaging samples within equal-width time bins. Cannot be combined with
 #' `downsample`. See [eyeris::bin()].
-#' 8. **Detrend** (`detrend`, default: off) -- Optionally fits a linear model
+#' 9. **Detrend** (`detrend`, default: off) -- Optionally fits a linear model
 #' of `pupil ~ time` and returns the residuals (along with the fitted slope and
 #' intercept) to remove slow linear drift. Use with care -- see
 #' [eyeris::detrend()] for when this is appropriate.
-#' 9. **Z-score** (`zscore`, default: on) -- Rescales the pupil time series to a
+#' 10. **Z-score** (`zscore`, default: on) -- Rescales the pupil time series to a
 #' mean of `0` and a standard deviation of `1`, making values comparable across
 #' participants and recordings. See [eyeris::zscore()].
 #'
@@ -246,6 +253,7 @@ glassbox <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
+    resample = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
@@ -579,6 +587,21 @@ glassbox <- function(
         return(file)
       }
     }
+  }
+
+  # resample onto the expected uniform sampling grid before any rate-dependent
+  # step, so that dropped samples become NA gaps that later steps (e.g.,
+  # interpolate) can handle consistently. Runs once on the full object (whether
+  # freshly loaded above or passed in pre-loaded), ahead of any binocular split
+  # (resample() recurses into both eyes). For already-uniform data (e.g.,
+  # EyeLink) this is a no-op.
+  if (which_steps[["resample"]]) {
+    log_success("Running eyeris::resample()", verbose = verbose)
+    call_info <- list(
+      call = original_call,
+      parameters = list(verbose = verbose)
+    )
+    file <- eyeris::resample(file, verbose = verbose, call_info = call_info)
   }
 
   # handle binocular objects (whether freshly loaded above or passed in
@@ -1015,6 +1038,7 @@ glassbox_internal <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
+    resample = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,

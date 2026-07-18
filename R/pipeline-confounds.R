@@ -215,6 +215,16 @@ get_confounds_for_step <- function(
     prop_missing = mean(is_missing),
     n_invalid = sum(is_invalid),
     prop_invalid = mean(is_invalid),
+    n_resampled = if ("is_resampled" %in% names(pupil_df)) {
+      sum(pupil_df$is_resampled, na.rm = TRUE)
+    } else {
+      0
+    },
+    prop_resampled = if ("is_resampled" %in% names(pupil_df)) {
+      mean(pupil_df$is_resampled, na.rm = TRUE)
+    } else {
+      0
+    },
     n_gaps = length(gap_lengths),
     max_gap_n_samples = if (length(gap_lengths)) max(gap_lengths) else 0,
     max_gap_duration_ms = if (length(gap_lengths)) {

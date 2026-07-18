@@ -119,6 +119,13 @@ EyeLink \code{.asc} file into an \code{eyeris} object, automatically splitting t
 recording into blocks and, for binocular recordings, handling each eye
 separately. See \code{\link[=load_asc]{load_asc()}}. This step is skipped when a pre-loaded
 \code{eyeris} object is passed as \code{file} (see the \code{file} parameter).
+\item \strong{Resample onto a uniform grid} (\code{resample}, default: on) -- Places each
+block on the expected uniform sampling grid. For hardware that \emph{drops}
+samples (instead of zero-filling) when pupil data is missing, this
+interpolates local sub-period timing jitter and inserts \code{NA} rows at the
+dropped timestamps, so the rate-dependent steps that follow stay valid. A
+guaranteed no-op for already-uniform data (e.g., EyeLink). See
+\code{\link[=resample]{resample()}}.
 \item \strong{Remove blinks} (\code{deblink}, default: on) -- Replaces the missing data
 around blinks with \code{NA}s, extending each gap by \code{50} ms on either side so
 that the rapid dips and spikes that surround a blink are removed too. See
@@ -128,7 +135,7 @@ pupil samples that change faster than is physiologically plausible, using a
 speed-based median absolute deviation (MAD) threshold. See
 \code{\link[=detransient]{detransient()}}.
 \item \strong{Interpolate missing samples} (\code{interpolate}, default: on) -- Fills the
-\code{NA} gaps left by the deblink and detransient steps using linear
+\code{NA} gaps left by the resample, deblink, and detransient steps using linear
 interpolation, producing a continuous, gap-free time series. See
 \code{\link[=interpolate]{interpolate()}}.
 \item \strong{Smooth the signal} (\code{lpfilt}, default: on) -- Applies a low-pass
