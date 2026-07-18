@@ -41,8 +41,10 @@ test_that("max_gap_ms threshold is enforced at the sample boundary", {
   pupil_at <- rep(1000, 1000)
   pupil_at[301:550] <- NA # 250 samples
   out_at <- interpolate_pupil(
-    make_pupil_df(pupil_at), "p",
-    verbose = FALSE, max_gap_ms = 250
+    make_pupil_df(pupil_at),
+    "p",
+    verbose = FALSE,
+    max_gap_ms = 250
   )
   expect_false(any(is.na(out_at)))
 
