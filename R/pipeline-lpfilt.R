@@ -189,13 +189,11 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
     if (!grepl("interpolate", prev_op)) {
       log_error("NAs detected in pupil data. Need to interpolate first.")
     } else if (sum(!is.na(prev_pupil)) < 2) {
-      log_error(
-        paste0(
-          "Fewer than 2 valid pupil samples remain after interpolation; ",
-          "cannot low-pass filter around gaps. Check upstream deblink/",
-          "detransient/interpolate settings or this block's data quality."
-        )
-      )
+      log_error(paste0(
+        "Fewer than 2 valid pupil samples remain after interpolation; ",
+        "cannot low-pass filter around gaps. Check upstream deblink/",
+        "detransient/interpolate settings or this block's data quality."
+      ))
     } else {
       # warn that filtering over these long gaps can slightly bias the
       # neighboring valid samples (see Kret & Sjak-Shie, 2018); the user may
