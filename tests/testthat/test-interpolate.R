@@ -283,8 +283,7 @@ test_that("lpfilt still guards against NAs when interpolation was not run", {
   withr::local_pdf(tempfile()) # absorb lpfilt's par() restore device calls
   # deblink leaves NA blinks; without interpolation upstream, lpfilt should
   # still tell the user to interpolate first (prev_op has no 'interpolate')
-  out <- load_demo_with_gap() |>
-    eyeris::deblink(extend = 50)
+  out <- load_demo_with_gap() |> eyeris::deblink(extend = 50)
   expect_error(eyeris::lpfilt(out, plot_freqz = FALSE), "interpolate")
 })
 
