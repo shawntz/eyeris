@@ -148,10 +148,6 @@ plot.eyeris <- function(
     }
   }
 
-  # safely handle user's current options
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
-
   # tests
   tryCatch(
     {
@@ -252,12 +248,16 @@ plot.eyeris <- function(
 
   pupil_steps <- grep("^pupil_", names(pupil_data), value = TRUE)
 
+  # when a downsample/bin step has run, the stored timeseries only retains the
+  # decimated samples. plot earlier (pre-decimation) pipeline steps from the
+  # preserved full-resolution data so they are not misleadingly shown at the
+  # decimated sampling rate (issue #294)
+  full_pupil_data <- get_pre_decimation_block(x, block)
+  has_decimation <- !is.null(full_pupil_data)
+  full_hz <- x$info$sample.rate
+
   colorpal <- eyeris_color_palette()
   colors <- c("black", colorpal)
-
-  transparent_colors <- sapply(colors, function(x) {
-    grDevices::adjustcolor(x, alpha.f = 0.5)
-  })
 
   if (length(steps) == 1) {
     if (steps[1] == "all") {
@@ -285,13 +285,29 @@ plot.eyeris <- function(
       )
     })
 
-    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
+    # build matching full-resolution epochs (over the same time windows) so
+    # that pre-decimation steps can be plotted at their original sampling rate
+    random_epochs_full <- NULL
+    if (has_decimation) {
+      epoch_starts <- vapply(
+        random_epochs,
+        function(e) min(e$time_secs, na.rm = TRUE),
+        numeric(1)
+      )
+      random_epochs_full <- lapply(epoch_starts, function(s0) {
+        slice_epoch_window(full_pupil_data, s0, preview_duration)
+      })
+    }
+
     detrend_plotted <- FALSE
     for (i in seq_along(pupil_steps)) {
+      use_full <- has_decimation && !is_decimated_col(pupil_steps[i])
+      panels <- vector("list", preview_n)
       for (n in 1:preview_n) {
-        st <- min(random_epochs[[n]]$time_orig)
-        et <- max(random_epochs[[n]]$time_orig)
-        title <- paste0("\n[", st, " - ", et, "]")
+        epoch_n <- if (use_full) random_epochs_full[[n]] else random_epochs[[n]]
+        st <- min(epoch_n$time_orig, na.rm = TRUE)
+        et <- max(epoch_n$time_orig, na.rm = TRUE)
+        title <- paste0("[", st, " - ", et, "]")
         header <- paste0(
           gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
           if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
@@ -350,46 +366,32 @@ plot.eyeris <- function(
         }
 
         if (!is.null(params$next_step)) {
-          plot_data <- random_epochs[[n]][[params$next_step[length(
-            params$next_step
-          )]]]
+          plot_data <- epoch_n[[params$next_step[length(params$next_step)]]]
         } else {
-          plot_data <- random_epochs[[n]][[pupil_steps[i]]]
+          plot_data <- epoch_n[[pupil_steps[i]]]
         }
 
         is_placeholder <- "message" %in%
-          colnames(random_epochs[[n]]) &&
-          any(random_epochs[[n]]$message == "NO_VALID_SAMPLES")
+          colnames(epoch_n) &&
+          any(epoch_n$message == "NO_VALID_SAMPLES")
         no_valid_data <- is.null(plot_data) || all(is.na(plot_data))
 
         if (is_placeholder || no_valid_data) {
-          plot(
-            NA,
-            xlim = c(0, 1),
-            ylim = c(0, 1),
-            type = "n",
-            xlab = "",
-            ylab = "",
-            main = title
-          )
-          text(
-            0.5,
-            0.5,
-            "No valid samples\nin this segment.\n
-            Please re-run with a different `report_seed`",
-            cex = 0.8,
-            col = "red"
+          panels[[n]] <- rb_blank_panel(
+            paste0(
+              "No valid samples\nin this segment.\n",
+              "Please re-run with a different `report_seed`"
+            ),
+            title = title
           )
         } else {
-          do.call(
+          panels[[n]] <- do.call(
             robust_plot,
             c(
-              list(y = plot_data, x = random_epochs[[n]]$time_scaled),
+              list(y = plot_data, x = epoch_n$time_scaled),
               plot_params,
               list(
-                type = "l",
                 col = colors[i],
-                lwd = 2,
                 main = title,
                 xlab = "time (ms)",
                 ylab = y_label
@@ -399,47 +401,58 @@ plot.eyeris <- function(
         }
       }
 
-      graphics::mtext(header, outer = TRUE, cex = 1.25, font = 2)
+      rb_print(panels, title = header)
 
       if (plot_distributions) {
         plot_pupil_distribution(
-          data = pupil_data[[pupil_steps[i]]],
+          data = if (use_full) {
+            full_pupil_data[[pupil_steps[i]]]
+          } else {
+            pupil_data[[pupil_steps[i]]]
+          },
           color = colors[i],
           main = header,
           xlab = y_label,
           backuplab = "pupil size"
         )
-
-        par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
       }
     }
-    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   } else {
-    preview_window_indices <- round(preview_window * hz) + 1
-    start_index <- preview_window_indices[1]
-    end_index <- preview_window_indices[2]
-
-    if (
-      start_index < 1 ||
-        start_index > nrow(pupil_data) ||
-        end_index < 1 ||
-        end_index > nrow(pupil_data) ||
-        start_index >= end_index
-    ) {
-      log_error(
-        "Invalid preview_window: start/end index out of range or invalid."
-      )
-    }
-
-    sliced_pupil_data <- pupil_data[start_index:end_index, ]
-
-    # time axis in ms for proper scaling
-    time_ms <- (sliced_pupil_data$time_scaled -
-      min(sliced_pupil_data$time_scaled))
-
     for (i in seq_along(pupil_steps)) {
-      st <- pupil_data$time_orig[start_index]
-      et <- pupil_data$time_orig[end_index]
+      # plot pre-decimation steps from the preserved full-resolution data at
+      # the original sampling rate; decimated steps stay on the decimated data
+      use_full <- has_decimation && !is_decimated_col(pupil_steps[i])
+      this_data <- if (use_full) full_pupil_data else pupil_data
+      this_hz <- if (use_full) full_hz else hz
+
+      preview_window_indices <- round(preview_window * this_hz) + 1
+      start_index <- preview_window_indices[1]
+      end_index <- preview_window_indices[2]
+
+      if (use_full) {
+        # the preserved full-resolution frame can extend slightly past the
+        # decimated frame the preview_window was derived from; clamp rather
+        # than error so the same window can be drawn at full resolution
+        start_index <- max(1, start_index)
+        end_index <- min(nrow(this_data), end_index)
+      }
+
+      if (
+        start_index < 1 ||
+          start_index > nrow(this_data) ||
+          end_index < 1 ||
+          end_index > nrow(this_data) ||
+          start_index >= end_index
+      ) {
+        log_error(
+          "Invalid preview_window: start/end index out of range or invalid."
+        )
+      }
+
+      sliced_pupil_data <- this_data[start_index:end_index, ]
+
+      st <- this_data$time_orig[start_index]
+      et <- this_data$time_orig[end_index]
 
       if (grepl("z", pupil_steps[i])) {
         y_units <- "(z)"
@@ -449,7 +462,7 @@ plot.eyeris <- function(
 
       y_label <- paste("pupil size", y_units)
 
-      do.call(
+      rb_print(do.call(
         robust_plot,
         c(
           list(
@@ -458,9 +471,7 @@ plot.eyeris <- function(
           ),
           plot_params,
           list(
-            type = "l",
             col = colors[i],
-            lwd = 2,
             main = paste0(
               gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
               if (is.list(x$timeseries) && !is.data.frame(x$timeseries)) {
@@ -483,11 +494,11 @@ plot.eyeris <- function(
             ylab = y_label
           )
         )
-      )
+      ))
 
       if (plot_distributions) {
         plot_pupil_distribution(
-          data = pupil_data[[pupil_steps[i]]],
+          data = this_data[[pupil_steps[i]]],
           color = colors[i],
           main = paste(paste0(
             gsub("_", " > ", gsub("pupil_", "", pupil_steps[i])),
@@ -500,14 +511,9 @@ plot.eyeris <- function(
           xlab = y_label,
           backuplab = "pupil size"
         )
-        par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
       }
     }
-
-    par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
   }
-
-  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
   # add progressive summary plot at the end (if requested)
   if (add_progressive_summary) {
@@ -528,7 +534,8 @@ plot.eyeris <- function(
           } else {
             "run-01"
           },
-          cex = 1.15
+          cex = 1.15,
+          full_pupil_data = full_pupil_data
         )
 
         log_success(
@@ -545,8 +552,73 @@ plot.eyeris <- function(
     )
   }
 
-  # reset plotting parameters to prevent downstream issues
-  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = c(5, 4, 4, 2) + 0.1)
+  invisible(NULL)
+}
+
+#' Identify decimated (downsample/bin) pupil columns
+#'
+#' A pupil column is considered "decimated" if it was produced by the
+#' `downsample()`/`bin()` step or by any step that follows it. Such columns
+#' are stored at the decimated sampling rate, whereas earlier columns should
+#' be plotted from the preserved full-resolution data (see issue #294).
+#'
+#' @param col A character vector of pupil column names
+#'
+#' @return A logical vector that is `TRUE` for decimated columns
+#'
+#' @keywords internal
+is_decimated_col <- function(col) {
+  # match the `_downsample`/`_bin` operation suffix whether it is the final
+  # column (e.g. `..._downsample`) or has later steps appended (e.g.
+  # `..._downsample_detrend`, `..._bin_z`), while avoiding accidental matches
+  # mid-token in unrelated names
+  grepl("(_downsample|_bin)($|_)", col)
+}
+
+#' Retrieve the preserved full-resolution data for a block
+#'
+#' Returns the full-resolution (pre-decimation) time series for the requested
+#' block, if it was preserved when a `downsample()`/`bin()` step ran. Used so
+#' that diagnostic plots of earlier pipeline steps can be rendered at their
+#' original sampling rate rather than the decimated rate (see issue #294).
+#'
+#' @param x An object of class `eyeris`
+#' @param block The block number to retrieve
+#'
+#' @return A data frame of full-resolution time series data for the block, or
+#' `NULL` if no pre-decimation data was preserved
+#'
+#' @keywords internal
+get_pre_decimation_block <- function(x, block) {
+  pre <- x$timeseries_pre_decimation
+  if (is.null(pre)) {
+    return(NULL)
+  }
+  if (is.data.frame(pre)) {
+    return(pre)
+  }
+  pre[[paste0("block_", block)]]
+}
+
+#' Slice a fixed time window out of a time series for previewing
+#'
+#' Extracts the rows of `df` whose `time_secs` fall within
+#' `[start_secs, start_secs + d)` and (re)computes a `time_scaled` column (in
+#' milliseconds, relative to the window start). Used to draw a full-resolution
+#' preview epoch over the same time window selected on the decimated data.
+#'
+#' @param df A data frame containing a `time_secs` column
+#' @param start_secs The start of the window in seconds
+#' @param d The window duration in seconds
+#'
+#' @return A data frame containing the rows that fall within the window
+#'
+#' @keywords internal
+slice_epoch_window <- function(df, start_secs, d) {
+  in_window <- df$time_secs >= start_secs & df$time_secs < (start_secs + d)
+  epoch <- df[in_window, , drop = FALSE]
+  epoch$time_scaled <- (epoch$time_secs - start_secs) * 1000
+  epoch
 }
 
 #' Draw random epochs for plotting
@@ -642,67 +714,49 @@ draw_random_epochs <- function(x, n, d, hz) {
 
 #' Robust plotting function with error handling
 #'
-#' A wrapper around base plotting functions that handles errors and missing
-#' data gracefully.
+#' Builds a single-series pupil time series panel with `reaborn`, handling
+#' errors and missing data gracefully. Returns a `ggplot` object (rather than
+#' drawing directly) so callers can combine several panels into a single
+#' `patchwork` row before printing to the active device.
 #'
 #' @param y The y-axis data to plot
 #' @param x The x-axis data (optional, defaults to sequence)
-#' @param ... Additional arguments passed to plot()
+#' @param ... Additional arguments; `col`, `main`, `xlab`, and `ylab` control
+#' the line colour, title, and axis labels (any base-graphics style arguments
+#' such as `type`/`lwd` are accepted and ignored)
 #'
-#' @return No return value; creates a plot or displays warning messages
+#' @return A `ggplot` object
 #'
 #' @keywords internal
 robust_plot <- function(y, x = NULL, ...) {
+  dots <- list(...)
+  col_user <- if ("col" %in% names(dots)) dots$col else "#377EB8"
+  title <- if ("main" %in% names(dots)) dots$main else NULL
+  xlab <- if ("xlab" %in% names(dots)) dots$xlab else "time (ms)"
+  ylab <- if ("ylab" %in% names(dots)) dots$ylab else "pupil size"
+
   tryCatch(
     {
-      if (length(y) == 0 || all(is.na(y))) {
-        log_warn("No finite data to plot.")
-        return(invisible(NULL))
-      }
-
-      dots <- list(...)
-      col_user <- if ("col" %in% names(dots)) dots$col else "blue"
-
-      # store original y for getting NA positions
-      y_orig <- y
-
-      # if x is NULL, use 1:length(y)
       if (is.null(x)) {
-        x_seq <- seq_along(y_orig)
-      } else {
-        x_seq <- x
+        x <- seq_along(y)
       }
-
-      # init placeholder line
-      # handle case where x_seq has no finite values
-      x_range <- range(x_seq, na.rm = TRUE, finite = TRUE)
-      if (any(!is.finite(x_range))) {
-        # fallback to default range if no finite values
-        x_range <- c(0, length(x_seq))
-      }
-
-      plot(x_seq, ifelse(is.na(y_orig), NA, y_orig), xlim = x_range, ...)
-
-      # add vertical lines where there are NAs (using x values if available)
-      na_idx <- which(is.na(y_orig))
-      if (length(na_idx) > 0) {
-        abline(
-          v = if (!is.null(x)) x_seq[na_idx] else na_idx,
-          col = "black",
-          lty = 2
-        )
-      }
-
-      # replace NA with -1 after drawing NA lines for continuity
-      y_clean <- y_orig
-      y_clean[is.na(y_clean)] <- -1
-      lines(x_seq, y_clean, col = col_user)
+      rb_timeseries_panel(
+        x = x,
+        y = y,
+        color = col_user,
+        title = title,
+        xlab = xlab,
+        ylab = ylab
+      )
     },
     error = function(e) {
       log_warn("An error occurred during plotting: {e$message}")
-    },
-    warning = function(w) {
-      log_warn("A warning occurred during plotting: {w$message}")
+      rb_blank_panel(
+        "An error occurred\nduring plotting",
+        title = title,
+        xlab = xlab,
+        ylab = ylab
+      )
     }
   )
 }
@@ -721,58 +775,31 @@ robust_plot <- function(y, x = NULL, ...) {
 #'
 #' @keywords internal
 plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
-  # safely handle user's current options
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
-
-  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-
-  new_xlab <- if (!is.null(xlab)) {
-    xlab
-  } else if (!is.null(backuplab)) {
-    backuplab
-  } else {
-    "pupil size"
-  }
-
-  hist(
-    data,
-    main = main,
-    xlab = new_xlab,
-    ylab = "frequency (count)",
-    col = color,
-    border = "white",
-    breaks = "FD"
+  p <- rb_histogram(
+    data = data,
+    color = color,
+    title = main,
+    xlab = xlab,
+    backuplab = backuplab
   )
-}
-
-#' Draw vertical lines at NA positions
-#'
-#' Adds vertical dashed lines at positions where y values are NA.
-#'
-#' @param x The x-axis values
-#' @param y The y-axis values
-#' @param ... Additional arguments passed to abline()
-#'
-#' @return No return value; adds lines to the current plot
-#'
-#' @keywords internal
-draw_na_lines <- function(x, y, ...) {
-  na_idx <- which(is.na(y))
-  abline(v = x[na_idx], col = "black", lty = 2, ...)
+  # print to the active device; suppress the benign scale/aesthetic chatter
+  # that ggplot2 emits so diagnostic plotting stays quiet during reports
+  suppressMessages(suppressWarnings(print(p)))
+  invisible(NULL)
 }
 
 #' Internal helper to plot detrending overlay
 #'
 #' This function replicates the exact detrending visualization from the
-#' `glassbox()` interactive preview mode. It uses `robust_plot()` to show the
-#' most recent detrended pupil signal overlaid with the fitted linear trend.
+#' `glassbox()` interactive preview mode. It uses `reaborn` to show the most
+#' recent detrended pupil signal overlaid with the fitted linear trend, and
+#' prints the resulting `ggplot` to the active device.
 #'
 #' @param pupil_data A single block of pupil time series data
 #' (e.g. `eyeris$timeseries$block_1`)
-#' @param preview_n Number of columns for `par(mfrow)`. Default = 3.
-#' @param plot_params A named list of additional parameters to forward to
-#' `robust_plot()`
+#' @param pupil_steps Character vector of pupil column names
+#' @param preview_n Unused; retained for backwards compatibility.
+#' @param plot_params Unused; retained for backwards compatibility.
 #' @param suppress_prompt Logical. Whether to skip prompting. Default = TRUE.
 #'
 #' @return Logical indicating whether detrend overlay was plotted successfully
@@ -785,12 +812,6 @@ plot_detrend_overlay <- function(
   plot_params = list(),
   suppress_prompt = TRUE
 ) {
-  # store current par settings to restore them in case func returns early
-  old_par <- par(no.readonly = TRUE)
-  on.exit(par(old_par), add = TRUE)
-
-  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
-
   detrend_step <- grep("_detrend$", pupil_steps, value = TRUE)
 
   all_cols <- colnames(pupil_data)
@@ -799,7 +820,6 @@ plot_detrend_overlay <- function(
   # guard if detrend_fitted_values exists and has a valid previous column
   if (length(detrend_fitted_index) == 0) {
     log_warn("detrend_fitted_values not found in eyeris S3 object.")
-    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
 
@@ -808,8 +828,6 @@ plot_detrend_overlay <- function(
       "No previous pupil column found to plot detrend overlay against.",
       "This can happen when detrend is the only preprocessing step enabled."
     )
-    # restore main plotting func layout
-    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
 
@@ -820,51 +838,48 @@ plot_detrend_overlay <- function(
     log_warn(
       "Previous column is not a pupil column. Cannot plot detrend overlay."
     )
-    # restore main plotting func layout
-    par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
     return(FALSE)
   }
 
-  ydat <- pupil_data[[prev_col]]
-  xdat <- pupil_data$time_secs
+  dstep <- detrend_step[length(detrend_step)]
 
-  do.call(
-    robust_plot,
-    c(
-      list(y = ydat, x = xdat),
-      plot_params,
-      list(
-        type = "l",
-        col = "black",
-        lwd = 2,
-        main = paste0(
-          "detrend:\n",
-          gsub("_", " > ", gsub("pupil_", "", detrend_step))
-        ),
-        xlab = "tracker time (s)",
-        ylab = "pupil size (a.u.)"
-      )
+  # combine the pre-detrend pupil signal and the fitted linear trend into a
+  # single long data frame so `reaborn` draws them as two hue-mapped lines with
+  # an automatic legend (replacing the base-graphics overlay + legend())
+  line_df <- rbind(
+    data.frame(
+      .x = pupil_data$time_secs,
+      .y = pupil_data[[prev_col]],
+      series = "pupil time series",
+      stringsAsFactors = FALSE
+    ),
+    data.frame(
+      .x = pupil_data$time_secs,
+      .y = pupil_data$detrend_fitted_values,
+      series = "linear trend",
+      stringsAsFactors = FALSE
     )
   )
+  line_df <- line_df[is.finite(line_df$.y), , drop = FALSE]
 
-  lines(
-    pupil_data$time_secs,
-    pupil_data$detrend_fitted_values,
-    type = "l",
-    col = "blue",
-    lwd = 2,
-    lty = 1
-  )
+  p <- rb_quiet(reaborn::lineplot(
+    data = line_df,
+    x = ".x",
+    y = ".y",
+    hue = "series",
+    hue_order = c("pupil time series", "linear trend"),
+    palette = c("black", "blue"),
+    estimator = NULL
+  )) +
+    ggplot2::labs(
+      title = paste0("detrend:\n", gsub("_", " > ", gsub("pupil_", "", dstep))),
+      x = "tracker time (s)",
+      y = "pupil size (a.u.)"
+    ) +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
-  legend(
-    "topleft",
-    legend = c("pupil time series", "linear trend"),
-    col = c("black", "blue"),
-    lwd = 2,
-    lty = c(1, 1)
-  )
+  suppressMessages(suppressWarnings(print(p)))
 
-  par(mfrow = c(1, preview_n), oma = c(0, 0, 3, 0))
   if (!suppress_prompt) {
     prompt_user()
   }
@@ -952,74 +967,82 @@ plot_gaze_heatmap <- function(
     main <- paste0(main, " - ", eye_suffix)
   }
 
-  tryCatch(
+  # map the requested palette to a viridis colormap option
+  vir_option <- switch(
+    col_palette,
+    viridis = "viridis",
+    plasma = "plasma",
+    inferno = "inferno",
+    magma = "magma",
+    "viridis"
+  )
+
+  df_xy <- data.frame(.x = x_coords, .y = y_coords)
+
+  # screen coordinates have their origin at the top-left, so the y axis is
+  # reversed (scale_y_reverse actually flips the axis, unlike a reversed
+  # coord_cartesian ylim); the centre fixation cross is drawn on top
+  screen_frame <- function(p) {
+    p +
+      ggplot2::annotate(
+        "point",
+        x = screen_width / 2,
+        y = screen_height / 2,
+        shape = 3,
+        colour = "red",
+        size = 3,
+        stroke = 1
+      ) +
+      ggplot2::scale_x_continuous(
+        limits = c(0, screen_width),
+        expand = c(0, 0)
+      ) +
+      ggplot2::scale_y_reverse(limits = c(screen_height, 0), expand = c(0, 0)) +
+      ggplot2::labs(title = main, x = xlab, y = ylab) +
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
+  }
+
+  p <- tryCatch(
     {
+      # estimate a smooth 2D kernel density over the full screen and render it
+      # as a viridis raster so the colour gradient reflects where gaze samples
+      # concentrated. reaborn's kdeplot only draws discrete filled contour
+      # bands, which collapse to a single colour on tightly clustered gaze data
       dens <- MASS::kde2d(
         x_coords,
         y_coords,
         n = n_bins,
         lims = c(0, screen_width, 0, screen_height)
       )
-      norm_density <- dens$z / max(dens$z, na.rm = TRUE)
+      grid <- expand.grid(gx = dens$x, gy = dens$y)
+      grid$gz <- as.vector(dens$z) / max(dens$z, na.rm = TRUE)
 
-      if (col_palette == "viridis") {
-        colors <- viridis::viridis(100)
-      } else if (col_palette == "plasma") {
-        colors <- viridis::plasma(100)
-      } else if (col_palette == "inferno") {
-        colors <- viridis::inferno(100)
-      } else if (col_palette == "magma") {
-        colors <- viridis::magma(100)
-      } else {
-        colors <- grDevices::heat.colors(100)
-      }
-
-      fields::image.plot(
-        x = dens$x,
-        y = dens$y,
-        z = t(norm_density)[, rev(seq_len(nrow(norm_density)))],
-        col = colors,
-        main = main,
-        xlab = xlab,
-        ylab = ylab,
-        xlim = c(0, screen_width),
-        ylim = c(screen_height, 0),
-        legend.lab = "Normalized density",
-        legend.line = 2.5,
-        zlim = c(0, 1)
-      )
-      rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
-      points(
-        screen_width / 2,
-        screen_height / 2,
-        pch = 3,
-        col = "red",
-        cex = 1.5
-      )
+      suppressMessages(suppressWarnings(screen_frame(
+        ggplot2::ggplot(
+          grid,
+          ggplot2::aes(x = .data$gx, y = .data$gy, fill = .data$gz)
+        ) +
+          ggplot2::geom_raster(interpolate = TRUE) +
+          viridis::scale_fill_viridis(
+            option = vir_option,
+            name = "normalized\ndensity",
+            limits = c(0, 1)
+          )
+      )))
     },
     error = function(e) {
-      plot(
-        x_coords,
-        y_coords,
-        pch = 16,
-        cex = 0.5,
-        col = grDevices::adjustcolor("blue", alpha.f = 0.6),
-        main = main,
-        xlab = xlab,
-        ylab = ylab,
-        xlim = c(0, screen_width),
-        ylim = c(screen_height, 0)
-      )
-      rect(0, 0, screen_width, screen_height, border = "black", lwd = 2)
-      points(
-        screen_width / 2,
-        screen_height / 2,
-        pch = 3,
-        col = "red",
-        cex = 1.5
-      )
+      # fall back to a simple scatter of the raw gaze coordinates
+      suppressMessages(suppressWarnings(screen_frame(rb_quiet(reaborn::scatterplot(
+        data = df_xy,
+        x = ".x",
+        y = ".y",
+        color = grDevices::adjustcolor("blue", alpha.f = 0.6)
+      )))))
     }
   )
+
+  suppressMessages(suppressWarnings(print(p)))
+  invisible(NULL)
 }
 
 #' Plot binocular correlation between left and right eye data
@@ -1096,8 +1119,10 @@ plot_binocular_correlation <- function(
 
     # require exact match for pupil_raw; if not present, skip plot with message
     if (!"pupil_raw" %in% colnames(left_df)) {
-      plot.new()
-      title(main = "Skipped: No pupil_raw column found in left eye data")
+      suppressMessages(suppressWarnings(print(rb_blank_panel(
+        "Skipped: No pupil_raw column\nfound in left eye data",
+        title = "Binocular Correlation"
+      ))))
       log_warn("Skipped: No pupil_raw column found in left eye data")
       return(invisible(NULL))
     }
@@ -1137,47 +1162,25 @@ plot_binocular_correlation <- function(
     right_y <- df$ypr
   }
 
-  n_vars <- length(variables)
-  if (n_vars == 1) {
-    par(mfrow = c(1, 1))
-  } else if (n_vars == 2) {
-    par(mfrow = c(1, 2))
-  } else {
-    par(mfrow = c(1, 3))
-  }
-
-  if (col_palette == "viridis") {
-    colors <- viridis::viridis(100)
-  } else if (col_palette == "plasma") {
-    colors <- viridis::plasma(100)
-  } else if (col_palette == "inferno") {
-    colors <- viridis::inferno(100)
-  } else if (col_palette == "magma") {
-    colors <- viridis::magma(100)
-  } else {
-    colors <- grDevices::heat.colors(100)
-  }
-
-  # create correlation plots for each variable
+  # create one correlation scatter panel per variable, then draw them as a
+  # single patchwork row (replacing the base-graphics par(mfrow) layout)
+  panels <- list()
   for (var in variables) {
     if (var == "pupil") {
       left_var <- left_pupil
       right_var <- right_pupil
-      xlab <- "Left Eye Pupil Size\n"
+      xlab <- "Left Eye Pupil Size"
       ylab <- "Right Eye Pupil Size"
-      title <- ""
     } else if (var == "x") {
       left_var <- left_x
       right_var <- right_x
-      xlab <- "Left Eye X-Coordinate\n"
+      xlab <- "Left Eye X-Coordinate"
       ylab <- "Right Eye X-Coordinate"
-      title <- ""
     } else if (var == "y") {
       left_var <- left_y
       right_var <- right_y
-      xlab <- "Left Eye Y-Coordinate\n"
+      xlab <- "Left Eye Y-Coordinate"
       ylab <- "Right Eye Y-Coordinate"
-      title <- ""
     } else {
       log_warn("Unknown variable '{var}', skipping")
       next
@@ -1194,39 +1197,44 @@ plot_binocular_correlation <- function(
     right_clean <- right_var[valid_data]
 
     cor_value <- cor(left_clean, right_clean, use = "complete.obs")
+    lim <- range(c(left_clean, right_clean), na.rm = TRUE)
+    df_lr <- data.frame(.l = left_clean, .r = right_clean)
 
-    tryCatch(
-      {
-        plot(
-          left_clean,
-          right_clean,
-          pch = 16,
-          cex = 0.5,
-          main = sprintf("%s\nr = %.3f", title, cor_value),
-          xlab = xlab,
-          ylab = ylab,
-          xlim = c(
-            min(min(left_clean), min(right_clean)),
-            max(max(left_clean), max(right_clean))
-          ),
-          ylim = c(
-            min(min(left_clean), min(right_clean)),
-            max(max(left_clean), max(right_clean))
-          ),
-          col = grDevices::adjustcolor("blue", alpha.f = 0.6)
-        )
-        abline(0, 1, col = "red", lwd = 2, lty = 2)
-      },
+    panel <- tryCatch(
+      rb_quiet(reaborn::scatterplot(
+        data = df_lr,
+        x = ".l",
+        y = ".r",
+        color = grDevices::adjustcolor("blue", alpha.f = 0.6)
+      )) +
+        ggplot2::geom_abline(
+          slope = 1,
+          intercept = 0,
+          colour = "red",
+          linewidth = 0.8,
+          linetype = "dashed"
+        ) +
+        ggplot2::coord_cartesian(xlim = lim, ylim = lim) +
+        ggplot2::labs(
+          title = sprintf("r = %.3f", cor_value),
+          x = xlab,
+          y = ylab
+        ) +
+        ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)),
       error = function(e) {
         log_warn("Error creating correlation plot for {var}: {e$message}")
+        NULL
       }
     )
+
+    if (!is.null(panel)) {
+      panels[[length(panels) + 1]] <- panel
+    }
   }
 
-  mtext(main, outer = TRUE, cex = 1.25, font = 2, line = -1)
-
-  # reset plotting parameters
-  par(mfrow = c(1, 1))
+  if (length(panels) > 0) {
+    suppressMessages(suppressWarnings(rb_print(panels, title = main)))
+  }
 
   log_success(
     "Created binocular correlation plots for block {block}",

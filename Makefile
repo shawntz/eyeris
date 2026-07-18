@@ -68,7 +68,7 @@ uninstall:
 # install package deps ----------------------------------------------------
 getdeps:
 	@echo "[INFO] Installing R package dependencies..."
-	Rscript -e "deps <- c('eyelinker', 'dplyr', 'gsignal', 'tidyr', 'zoo', 'purrr', 'cli', 'rlang', 'stringr', 'utils', 'stats', 'graphics', 'grDevices', 'progress', 'data.table', 'withr', 'lifecycle', 'MASS', 'viridis', 'fields', 'jsonlite', 'rmarkdown', 'DBI', 'glue', 'base64enc'); install.packages(deps, repos = 'http://cran.us.r-project.org')" > /dev/null
+	Rscript -e "deps <- c('eyelinker', 'dplyr', 'gsignal', 'tidyr', 'zoo', 'purrr', 'cli', 'rlang', 'stringr', 'utils', 'stats', 'graphics', 'grDevices', 'progress', 'data.table', 'withr', 'lifecycle', 'MASS', 'viridis', 'fields', 'jsonlite', 'rmarkdown', 'DBI', 'glue', 'base64enc', 'reaborn', 'ggplot2', 'patchwork'); install.packages(deps, repos = 'http://cran.us.r-project.org')" > /dev/null
 	Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')" > /dev/null
 	Rscript -e "remotes::install_github('crsh/depgraph')" > /dev/null
 	@echo "[OKAY] Dependencies installed successfully!\n"

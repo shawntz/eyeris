@@ -11,13 +11,17 @@ robust_plot(y, x = NULL, ...)
 
 \item{x}{The x-axis data (optional, defaults to sequence)}
 
-\item{...}{Additional arguments passed to plot()}
+\item{...}{Additional arguments; \code{col}, \code{main}, \code{xlab}, and \code{ylab} control
+the line colour, title, and axis labels (any base-graphics style arguments
+such as \code{type}/\code{lwd} are accepted and ignored)}
 }
 \value{
-No return value; creates a plot or displays warning messages
+A \code{ggplot} object
 }
 \description{
-A wrapper around base plotting functions that handles errors and missing
-data gracefully.
+Builds a single-series pupil time series panel with \code{reaborn}, handling
+errors and missing data gracefully. Returns a \code{ggplot} object (rather than
+drawing directly) so callers can combine several panels into a single
+\code{patchwork} row before printing to the active device.
 }
 \keyword{internal}

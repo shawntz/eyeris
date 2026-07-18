@@ -17,8 +17,13 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
 
   epoch_name_corrected <- sub("^epoch_", "epoch-", epoch_name)
 
-  # include eye_suffix in filename if provided
-  report_filename <- paste0("sub-", params$sub, "_", epoch_name_corrected)
+  # include task and eye_suffix in filename if provided so that different tasks
+  # sharing a run number do not overwrite each other's galleries (#293)
+  report_filename <- paste0("sub-", params$sub)
+  if (!is.null(params$task) && nzchar(params$task)) {
+    report_filename <- paste0(report_filename, "_task-", params$task)
+  }
+  report_filename <- paste0(report_filename, "_", epoch_name_corrected)
   if (!is.null(params$eye_suffix)) {
     report_filename <- paste0(report_filename, "_", params$eye_suffix)
   }
@@ -42,8 +47,14 @@ make_gallery <- function(eyeris, epochs, out, epoch_name, ...) {
     # create figures directory structure in report
     figures_dir <- file.path(report_dir, "figures")
 
-    # extract run number from zip filename (e.g., "run-01.zip")
-    run_match <- regmatches(zip_basename, regexpr("run-[0-9]+", zip_basename))
+    # extract the run-dir token from the zip filename, preserving the task
+    # prefix when present (e.g., "task-study_run-01.zip" -> "task-study_run-01",
+    # legacy "run-01.zip" -> "run-01") so the gallery's internal figures path
+    # stays task-namespaced and collision-free (#293)
+    run_match <- regmatches(
+      zip_basename,
+      regexpr("(task-.+_)?run-[0-9]+", zip_basename)
+    )
     if (length(run_match) > 0) {
       run_dir <- file.path(figures_dir, run_match)
       epoch_dir <- file.path(run_dir, epoch_name)

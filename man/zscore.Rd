@@ -75,4 +75,11 @@ demo_data |>
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
 part of the full eyeris glassbox preprocessing pipeline
+
+For a complete, end-to-end reference pipeline that demonstrates how all
+\code{eyeris} preprocessing functions are chained together in practice, see the
+"Building Blocks Under the Hood" section of the \emph{Anatomy of an \code{eyeris}
+Object} vignette --- \code{vignette("anatomy", package = "eyeris")} --- as
+well as the \emph{Complete Pupillometry Pipeline Walkthrough} vignette:
+\code{vignette("complete-pipeline", package = "eyeris")}.
 }

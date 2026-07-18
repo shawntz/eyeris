@@ -11,7 +11,8 @@ make_prog_summary_plot(
   plot_params = list(),
   run_id = "run-01",
   cex = 2,
-  eye_suffix = NULL
+  eye_suffix = NULL,
+  full_pupil_data = NULL
 )
 }
 \arguments{
@@ -33,6 +34,14 @@ Used for plot titles and file naming. Defaults to \code{"run-01"}}
 \item{cex}{Character expansion factor for plot elements. Defaults to \code{2.0}}
 
 \item{eye_suffix}{Optional eye suffix for binocular data}
+
+\item{full_pupil_data}{Optional data frame containing the full-resolution
+(pre-decimation) pupil time series, with the same \verb{pupil_*} and \code{time_secs}
+columns as \code{pupil_data} (e.g.,
+\code{eyeris$timeseries_pre_decimation$block_1}). When supplied, preprocessing
+steps that precede a \code{downsample()}/\code{bin()} step are drawn from this
+full-resolution data instead of the decimated \code{pupil_data}, so they are not
+shown at the decimated sampling rate. Defaults to \code{NULL}}
 }
 \value{
 NULL (invisibly). Creates a plot showing progressive preprocessing

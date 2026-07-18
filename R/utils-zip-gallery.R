@@ -12,6 +12,7 @@
 #' @param pupil_steps Vector of pupil processing steps
 #' @param eyeris_object The full `eyeris` object (needed for screen dimensions)
 #' @param eye_suffix Optional eye suffix for binocular data
+#' @param task Optional BIDS task name used to namespace the zip file (#293)
 #' @param report_epoch_grouping_var_col Column name for grouping epochs
 #' @param verbose Whether to print verbose output
 #'
@@ -27,10 +28,11 @@ create_epoch_images_zip <- function(
   pupil_steps,
   eyeris_object,
   eye_suffix = NULL,
+  task = NULL,
   report_epoch_grouping_var_col = "matched_event",
   verbose = FALSE
 ) {
-  zip_filename <- sprintf("run-%02d", run_dir_num)
+  zip_filename <- make_run_dir_name(run_dir_num, task)
   if (!is.null(eye_suffix)) {
     zip_filename <- paste0(zip_filename, "_", eye_suffix)
   }
@@ -85,48 +87,34 @@ create_epoch_images_zip <- function(
 
           y_values <- group_df[[pupil_steps[pstep]]]
           if (any(is.finite(y_values))) {
-            plot(
-              group_df$timebin,
-              y_values,
-              type = "l",
-              xlab = "time (s)",
-              ylab = y_label,
-              col = colors[pstep],
-              main = paste0(
+            p <- rb_timeseries_panel(
+              x = group_df$timebin,
+              y = y_values,
+              color = colors[pstep],
+              title = paste0(
                 group,
                 "\n",
                 pupil_steps[pstep],
                 sprintf(" (Run %d)", run_dir_num)
-              )
-            )
-          } else {
-            # handle case where timebin has no finite values
-            timebin_range <- range(
-              group_df$timebin,
-              na.rm = TRUE,
-              finite = TRUE
-            )
-            if (any(!is.finite(timebin_range))) {
-              # fallback to default range if no finite values
-              timebin_range <- c(0, 1)
-            }
-
-            plot(
-              NA,
-              xlim = timebin_range,
-              ylim = c(0, 1),
-              type = "n",
+              ),
               xlab = "time (s)",
-              ylab = y_label,
-              main = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA")
+              ylab = y_label
             )
+            suppressMessages(suppressWarnings(print(p)))
+          } else {
             log_warn(
               "eyeris: no finite pupillometry data to plot for",
               "current epoch...",
               "plotting empty epoch plot.",
               verbose = verbose
             )
-            text(0.5, 0.5, "No valid data", cex = 0.8, col = "red")
+            p <- rb_blank_panel(
+              "No valid data",
+              title = paste0(group, "\n", pupil_steps[pstep], "\nNO DATA"),
+              xlab = "time (s)",
+              ylab = y_label
+            )
+            suppressMessages(suppressWarnings(print(p)))
           }
 
           dev.off()

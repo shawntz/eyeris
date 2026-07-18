@@ -32,6 +32,13 @@
 #' part of the full eyeris glassbox preprocessing pipeline
 #' [eyeris::downsample()] for downsampling functionality
 #'
+#' For a complete, end-to-end reference pipeline that demonstrates how all
+#' `eyeris` preprocessing functions are chained together in practice, see the
+#' "Building Blocks Under the Hood" section of the *Anatomy of an `eyeris`
+#' Object* vignette --- \code{vignette("anatomy", package = "eyeris")} --- as
+#' well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
+#' \code{vignette("complete-pipeline", package = "eyeris")}.
+#'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'

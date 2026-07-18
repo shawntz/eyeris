@@ -66,6 +66,13 @@
 #' @seealso [eyeris::glassbox()] for the recommended way to run this step
 #' as part of the full `eyeris` glassbox preprocessing pipeline.
 #'
+#' For a complete, end-to-end reference pipeline that demonstrates how all
+#' `eyeris` preprocessing functions are chained together in practice, see the
+#' "Building Blocks Under the Hood" section of the *Anatomy of an `eyeris`
+#' Object* vignette --- \code{vignette("anatomy", package = "eyeris")} --- as
+#' well as the *Complete Pupillometry Pipeline Walkthrough* vignette:
+#' \code{vignette("complete-pipeline", package = "eyeris")}.
+#'
 #' @examples
 #' demo_data <- eyelink_asc_demo_dataset()
 #'
@@ -124,6 +131,18 @@ load_asc <- function(
   }
   hz <- x$info$sample.rate
   pupil_type <- tolower(x$info$pupil.dtype)
+
+  # guardrail (#300): surface hardware quirks that violate the pipeline's
+  # uniform-sampling assumption (e.g., trackers that drop samples instead of
+  # zero-filling missing pupil data) before any preprocessing begins. The raw
+  # timestamps are shared across eyes, so this runs once per recording segment
+  # ahead of any binocular split.
+  check_uniform_sampling_intervals(
+    time_vector = x$raw$time,
+    hz = hz,
+    blocks = x$raw$block,
+    verbose = verbose
+  )
 
   # binocular handling start ----------------------------------------------
   has_left <- all(c("psl", "xpl", "ypl") %in% names(x$raw))
