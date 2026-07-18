@@ -89,32 +89,33 @@ resample <- function(eyeris, verbose = TRUE, call_info = NULL) {
   }
 
   # multiblock (named list of block data frames) vs single-frame fallback;
-  # track whether any block was actually resampled (resample_block adds the
-  # `is_resampled` column only when it inserts rows) so that already-uniform data
-  # stays a true no-op
+  # track whether *this* call actually resampled any block. resample_block()
+  # returns the block untouched on every no-op path, so a block that changed is
+  # exactly one that differs from its input -- this keeps already-uniform data,
+  # and idempotent re-runs on already-resampled data (whose `is_resampled`
+  # column persists), true no-ops rather than keying off the column's presence
   acted <- FALSE
   if (is.list(eyeris$timeseries) && !is.data.frame(eyeris$timeseries)) {
     for (block_name in names(eyeris$timeseries)) {
-      eyeris$timeseries[[block_name]] <- resample_block(
-        eyeris$timeseries[[block_name]],
+      before <- eyeris$timeseries[[block_name]]
+      after <- resample_block(
+        before,
         block_label = block_name,
         verbose = verbose
       )
-      acted <- acted ||
-        "is_resampled" %in% colnames(eyeris$timeseries[[block_name]])
+      eyeris$timeseries[[block_name]] <- after
+      acted <- acted || !identical(before, after)
     }
   } else {
-    eyeris$timeseries <- resample_block(
-      eyeris$timeseries,
-      block_label = NULL,
-      verbose = verbose
-    )
-    acted <- "is_resampled" %in% colnames(eyeris$timeseries)
+    before <- eyeris$timeseries
+    after <- resample_block(before, block_label = NULL, verbose = verbose)
+    eyeris$timeseries <- after
+    acted <- !identical(before, after)
   }
 
-  # record provenance only when the grid was actually repaired, so that
-  # already-uniform data is returned untouched (the `is_resampled` column's
-  # presence is the true indicator that resampling occurred)
+  # record provenance only when this call actually repaired the grid, so that
+  # already-uniform data -- and idempotent re-runs on already-resampled data --
+  # are returned untouched without overwriting the original provenance
   if (acted) {
     if (!is.list(eyeris$params)) {
       eyeris$params <- list()

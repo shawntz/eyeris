@@ -200,6 +200,26 @@ test_that("resample processes each block independently and records params", {
   expect_false("is_resampled" %in% names(out_uniform$timeseries$block_1))
 })
 
+test_that("repeated resample() calls preserve provenance and stay no-ops", {
+  obj <- make_eyeris(list(block_1 = make_block(c(0, 1, 2, 3, 6, 7, 8))))
+
+  once <- eyeris:::resample(obj, verbose = FALSE)
+  expect_true("is_resampled" %in% names(once$timeseries$block_1))
+  expect_false(is.null(once$params$resample))
+
+  # tag the recorded provenance so a rewrite on the second pass is detectable
+  once$params$resample$sentinel <- "original"
+
+  twice <- eyeris:::resample(once, verbose = FALSE)
+
+  # a second pass over already-resampled (now-uniform) data is a true no-op ...
+  expect_identical(twice$timeseries$block_1, once$timeseries$block_1)
+  # ... and the original provenance is preserved rather than overwritten,
+  # because `acted` reflects rows changed by this call -- not the persisting
+  # `is_resampled` column from the first call
+  expect_identical(twice$params$resample$sentinel, "original")
+})
+
 test_that("resample recurses into binocular objects", {
   left <- make_eyeris(list(block_1 = make_block(c(0, 1, 2, 5, 6))))
   right <- make_eyeris(list(block_1 = make_block(c(0, 1, 2, 5, 6))))
