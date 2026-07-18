@@ -73,8 +73,10 @@ test_that("max_gap_ms scales with the sampling rate (500 Hz)", {
   pupil2 <- rep(1000, 1000)
   pupil2[301:400] <- NA # 100 samples = 200 ms @ 500 Hz
   out2 <- interpolate_pupil(
-    make_pupil_df(pupil2, hz = 500), "p",
-    verbose = FALSE, max_gap_ms = 250
+    make_pupil_df(pupil2, hz = 500),
+    "p",
+    verbose = FALSE,
+    max_gap_ms = 250
   )
   expect_false(any(is.na(out2)))
 })
