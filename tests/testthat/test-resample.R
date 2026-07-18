@@ -129,6 +129,38 @@ test_that("resample_block anchors on the first regular interval, back-extends, a
   )
 })
 
+test_that("resample_block preserves off-grid source NAs instead of interpolating over them", {
+  # a missing pupil sample sits at an off-grid (jittered) timestamp (t = 3 ms),
+  # which feeds the interpolation onto grid point t = 2 ms. resample() must not
+  # silently fill that missing observation -- it should stay NA for interpolate()
+  # to handle. Regression test: stats::approx() defaults to na.rm = TRUE, which
+  # would interpolate across the source NA (filling t = 2 with 102).
+  block <- make_block(
+    c(0, 3, 6, 10, 14, 18, 26, 30),
+    pupil = c(100, NA, 106, 110, 114, 118, 126, 130),
+    hz = 250L
+  )
+
+  out <- eyeris:::resample_block(block, verbose = FALSE)
+
+  expect_equal(out$time_orig, c(2, 6, 10, 14, 18, 22, 26, 30))
+
+  # the grid point fed by the off-grid missing sample stays NA (not filled to 102)
+  expect_true(is.na(out$pupil_raw[1]))
+  expect_true(is.na(out$eye_x[1])) # applies to every resampled data channel
+  # ... and it is a preserved missing observation, not an inserted dropped sample
+  expect_false(out$is_resampled[1])
+
+  # the genuine dropped sample (t = 22 ms gap) is still the only inserted NA row
+  expect_equal(which(out$is_resampled), 6L)
+
+  # exact on-grid samples are unchanged by the on_sample restoration
+  expect_equal(
+    out$pupil_raw[c(2, 3, 4, 5, 7, 8)],
+    c(106, 110, 114, 118, 126, 130)
+  )
+})
+
 test_that("resample_block turns large gaps into NA rows without an inflation guard", {
   # a 400 ms gap on a 1 ms grid inserts ~400 NA rows: under the two-stage
   # resampler a long gap is represented as missing data for interpolate() to

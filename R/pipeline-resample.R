@@ -279,7 +279,10 @@ resample_block <- function(block_df, block_label = NULL, verbose = TRUE) {
 
   # resample the data channels onto the grid: linear interpolation carries the
   # observed samples (including jitter correction) onto the grid timestamps; then
-  # real-gap interiors are blanked to NA so interpolate() decides how to fill them
+  # real-gap interiors are blanked to NA so interpolate() decides how to fill them.
+  # `na.rm = FALSE` keeps source NAs (missing observations) from being silently
+  # interpolated over, so a missing sample stays missing for interpolate() rather
+  # than being filled here.
   data_cols <- colnames(block_df)[
     vapply(block_df, is.numeric, logical(1)) &
       !(colnames(block_df) %in%
@@ -293,7 +296,8 @@ resample_block <- function(block_df, block_label = NULL, verbose = TRUE) {
       xout = grid_time,
       method = "linear",
       rule = 2,
-      ties = "ordered"
+      ties = "ordered",
+      na.rm = FALSE
     )$y
     yg[inserted] <- NA_real_ # real-gap interior -> missing, for interpolate()
     yg[on_sample] <- v[src[on_sample]] # keep genuine samples exact
