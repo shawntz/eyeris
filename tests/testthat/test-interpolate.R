@@ -96,8 +96,10 @@ test_that("leading and trailing long gaps are left as NA", {
   pupil2[1:10] <- NA
   pupil2[991:1000] <- NA
   out2 <- interpolate_pupil(
-    make_pupil_df(pupil2), "p",
-    verbose = FALSE, max_gap_ms = 250
+    make_pupil_df(pupil2),
+    "p",
+    verbose = FALSE,
+    max_gap_ms = 250
   )
   expect_false(any(is.na(out2)))
 })
