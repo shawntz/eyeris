@@ -1,7 +1,7 @@
 Package: eyeris
 Type: Package
 Title: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
-Version: 3.2.0.9002
+Version: 3.2.0.9003
 Date: 2026-07-16
 Language: en-US
 Authors@R: 
