@@ -417,7 +417,7 @@ make_report <- function(eyeris, out, plots, eye_suffix = NULL, ...) {
 #' @param eyeris An `eyeris` object
 #'
 #' @return A markdown string for the report (empty string if no such filtering
-#' over gaps occurred)
+#' over gaps occurred, or if `max_gap_ms` is not a single finite numeric value)
 #'
 #' @keywords internal
 make_gap_filter_provenance_note <- function(eyeris) {
@@ -437,6 +437,24 @@ make_gap_filter_provenance_note <- function(eyeris) {
     return("")
   }
   blocks <- if (is.data.frame(ts)) list(ts) else ts
+
+  # only emit a long-gap note when max_gap_ms is a single finite, non-NA numeric
+  # value we can name; NULL / Inf / NA / non-scalar means there is no concrete
+  # threshold to report (the length check also guards the is.na()/is.finite()
+  # calls below from length errors on malformed params)
+  max_gap <- tryCatch(
+    params$interpolate$parameters$max_gap_ms,
+    error = function(e) NULL
+  )
+  if (
+    !is.numeric(max_gap) ||
+      length(max_gap) != 1L ||
+      is.na(max_gap) ||
+      !is.finite(max_gap)
+  ) {
+    return("")
+  }
+  limit_txt <- paste0(max_gap, " ms")
 
   # a filter step operated over gaps if its output column retains any NA
   col_has_na <- function(suffix) {
@@ -463,18 +481,6 @@ make_gap_filter_provenance_note <- function(eyeris) {
   }
   if (length(affected) == 0) {
     return("")
-  }
-
-  max_gap <- tryCatch(
-    params$interpolate$parameters$max_gap_ms,
-    error = function(e) NULL
-  )
-  limit_txt <- if (
-    !is.null(max_gap) && is.numeric(max_gap) && is.finite(max_gap)
-  ) {
-    paste0(max_gap, " ms")
-  } else {
-    "the interpolation limit"
   }
 
   paste0(

@@ -11,7 +11,7 @@ make_gap_filter_provenance_note(eyeris)
 }
 \value{
 A markdown string for the report (empty string if no such filtering
-over gaps occurred)
+over gaps occurred, or if \code{max_gap_ms} is not a single finite numeric value)
 }
 \description{
 If \code{lpfilt()} and/or \code{downsample()} were run on data that still contained
