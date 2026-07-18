@@ -152,7 +152,7 @@ my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
 
 ## example 1: using the default 10000 to 20000 ms time subset
 plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
-#> ℹ [2026-07-17 00:01:03] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 21:24:55] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -160,9 +160,9 @@ plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
 
 
 
-#> ℹ [2026-07-17 00:01:06] [INFO] Creating progressive summary plot for block_1
+#> ℹ [2026-07-18 21:24:58] [INFO] Creating progressive summary plot for block_1
 
-#> ✔ [2026-07-17 00:01:06] [OKAY] Progressive summary plot created successfully!
+#> ✔ [2026-07-18 21:24:58] [OKAY] Progressive summary plot created successfully!
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
 plot(
@@ -171,7 +171,7 @@ plot(
   seed = 0,
   add_progressive_summary = TRUE
 )
-#> ℹ [2026-07-17 00:01:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 21:24:58] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -179,15 +179,15 @@ plot(
 
 
 
-#> ℹ [2026-07-17 00:01:07] [INFO] Creating progressive summary plot for block_1
+#> ℹ [2026-07-18 21:24:59] [INFO] Creating progressive summary plot for block_1
 
-#> ✔ [2026-07-17 00:01:08] [OKAY] Progressive summary plot created successfully!
+#> ✔ [2026-07-18 21:24:59] [OKAY] Progressive summary plot created successfully!
 
 # controlling which block of data you would like to plot:
 
 ## example 1: plots first block (default)
 plot(my_eyeris_data, seed = 0)
-#> ℹ [2026-07-17 00:01:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 21:24:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -198,7 +198,7 @@ plot(my_eyeris_data, seed = 0)
 
 ## example 2: plots a specific block
 plot(my_eyeris_data, block = 1, seed = 0)
-#> ℹ [2026-07-17 00:01:10] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 21:25:02] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -215,7 +215,7 @@ plot(
   preview_window = c(1, 2),
   seed = 0
 )
-#> ℹ [2026-07-17 00:01:13] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-07-18 21:25:05] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 

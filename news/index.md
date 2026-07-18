@@ -2,6 +2,83 @@
 
 ## eyeris (development version)
 
+This release adds a configurable maximum-gap limit to the interpolation
+step so that long stretches of missing pupil data are no longer
+interpolated over, following established pupillometry preprocessing
+guidelines.
+
+### 🚨 **Breaking changes & deprecations**
+
+- **BREAKING ([\#295](https://github.com/shawntz/eyeris/issues/295))**:
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)
+  now enforces a maximum gap duration for linear interpolation via a new
+  `max_gap_ms` parameter. Gaps of consecutive missing (`NA`) samples
+  that are **longer** than `max_gap_ms` are now left as `NA` rather than
+  interpolated over. The default of `250` ms follows the recommendation
+  of Kret & Sjak-Shie (2018), who advise against interpolating across
+  long gaps where linear interpolation is unlikely to reflect the true
+  underlying pupil signal. Previously (eyeris ≤ 3.2.0), **all** gaps
+  were interpolated regardless of duration. This is a change in default
+  behavior and may affect downstream results; `eyeris` now prints a
+  console notice (at most once per
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  run) when the limit is in effect. To restore the previous behavior of
+  interpolating across all gaps, set
+  `interpolate = list(max_gap_ms = Inf)` in
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  (or `max_gap_ms = Inf` when calling
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)
+  directly). The threshold can also be customized, e.g.,
+  `glassbox(interpolate = list(max_gap_ms = 100))`. The limit is
+  specified in milliseconds and is internally converted to a number of
+  samples using each recording’s own sampling rate, so it behaves
+  consistently across sampling frequencies, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#295](https://github.com/shawntz/eyeris/issues/295).
+
+- **ENH ([\#295](https://github.com/shawntz/eyeris/issues/295))**: The
+  downstream
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  steps that cannot operate on missing data — low-pass filtering
+  ([`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md)),
+  downsampling
+  ([`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)),
+  binning
+  ([`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md)), and
+  detrending
+  ([`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md))
+  — now work *around* the gaps that `interpolate(max_gap_ms)`
+  intentionally leaves as `NA`. They filter/resample/fit over the
+  available data (filling temporarily where needed) and then restore the
+  gaps as `NA`, so the long-gap `NA`s are preserved through to the final
+  preprocessed output instead of causing these steps to be skipped. When
+  interpolation has not been run upstream, the filter/resample steps
+  still raise the usual “interpolate first” error, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#295](https://github.com/shawntz/eyeris/issues/295).
+
+- **ENH ([\#295](https://github.com/shawntz/eyeris/issues/295))**:
+  [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) and
+  [`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md)
+  now emit a warning when they filter over gaps longer than `max_gap_ms`
+  (left as `NA` by
+  [`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)).
+  Because a low-pass/anti-aliasing filter cannot run on missing data,
+  these gaps are temporarily filled and then masked back to `NA`; the
+  filter can therefore slightly bias the valid pupil samples immediately
+  adjacent to each gap toward the (near-linear) interpolated values —
+  analogous to the edge artifacts seen at the start/end of a filtered
+  recording, but repeated at every long gap. The warning lets you decide
+  whether to disable filtering and/or downsampling (`lpfilt = FALSE`
+  and/or `downsample = FALSE`) to avoid introducing this systematic
+  bias, at the cost of retaining more high-frequency content. The
+  console warning fires at most once per
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  run, and the same information is recorded as a **“Data Quality
+  Notes”** section in the HTML preprocessing report so it is captured as
+  part of the data provenance, by [@shawntz](https://github.com/shawntz)
+  in [\#295](https://github.com/shawntz/eyeris/issues/295).
+
 ### 🚀 New features
 
 - **NF ([\#299](https://github.com/shawntz/eyeris/issues/299))**:

@@ -133,6 +133,7 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_bids_fname.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_epoch_label.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_gallery.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/make_gap_filter_provenance_note.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_md_table.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_md_table_multiline.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/make_prog_summary_plot.html</loc></url>
@@ -142,6 +143,7 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/merge_temp_database.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/modal_value.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/normalize_gaze_coords.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/notify_max_gap_behavior_change.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/parse_call_stack.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/parse_eyelink_info.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/pipeline_handler.html</loc></url>
@@ -169,6 +171,7 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/read_eyeris_parquet.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/render_report.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/require_col.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/reset_gap_notices.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/resolve_sample_rate.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/robust_plot.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/run_bidsify.html</loc></url>
@@ -190,6 +193,8 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/tag_gaze_coords.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/tick.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/trim_pre_decimation_cols.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/validate_max_gap_ms.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/warn_filter_over_gaps.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/warn_irregular_sampling.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/write_csv_and_db.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/write_eyeris_data_to_db.html</loc></url>

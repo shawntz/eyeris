@@ -235,7 +235,7 @@ point</p>
 <p><strong>File</strong>: <code>R/pipeline-interpolate.R</code><br><strong>Description</strong>: Interpolate missing pupil data using
 linear interpolation.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/interpolate_pupil.html">interpolate_pupil</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/interpolate_pupil.html">interpolate_pupil</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span>, <span class="va">verbose</span>, max_gap_ms <span class="op">=</span> <span class="fl">250</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
 <li>
@@ -245,6 +245,10 @@ linear interpolation.</p>
 column</li>
 <li>
 <code>verbose</code>: Logical, whether to print verbose output</li>
+<li>
+<code>max_gap_ms</code>: Maximum gap duration (ms) to interpolate;
+longer gaps are left as <code>NA</code> (use
+<code>Inf</code>/<code>NULL</code> to interpolate across all gaps)</li>
 </ul>
 <p><strong>Returns</strong>: A vector of interpolated pupil values</p>
 <hr>
@@ -988,7 +992,7 @@ architecture:</p>
 <span><span class="va">eyeris_obj</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/deblink_pupil.html">deblink_pupil</a></span><span class="op">(</span>prev_op <span class="op">=</span> <span class="st">"pupil_raw"</span>, extend <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/detransient_pupil.html">detransient_pupil</a></span><span class="op">(</span>prev_op <span class="op">=</span> <span class="st">"pupil_raw_deblink"</span>, n <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/interpolate_pupil.html">interpolate_pupil</a></span><span class="op">(</span>prev_op <span class="op">=</span> <span class="st">"pupil_raw_deblink_detransient"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">eyeris</span><span class="fu">:::</span><span class="fu"><a href="../reference/interpolate_pupil.html">interpolate_pupil</a></span><span class="op">(</span>prev_op <span class="op">=</span> <span class="st">"pupil_raw_deblink_detransient"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, max_gap_ms <span class="op">=</span> <span class="fl">250</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="error-handling-1">Error Handling<a class="anchor" aria-label="anchor" href="#error-handling-1"></a>

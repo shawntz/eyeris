@@ -63,17 +63,17 @@ No return value; creates correlation plots
 ``` r
 # For binocular data loaded with binocular_mode = "both"
 binocular_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "both")
-#> ℹ [2026-07-17 00:01:18] [INFO] Binocular data detected. Processing both mode.
+#> ℹ [2026-07-18 21:25:11] [INFO] Binocular data detected. Processing both mode.
 plot_binocular_correlation(binocular_data)
 
-#> ✔ [2026-07-17 00:01:18] [OKAY] Created binocular correlation plots for block 1
+#> ✔ [2026-07-18 21:25:11] [OKAY] Created binocular correlation plots for block 1
 
 # For binocular data loaded with binocular_mode = "average"
 # (correlation plot will show original left vs right before averaging)
 avg_data <- load_asc(eyelink_asc_binocular_demo_dataset(), binocular_mode = "average")
-#> ℹ [2026-07-17 00:01:19] [INFO] Binocular data detected. Processing average
+#> ℹ [2026-07-18 21:25:11] [INFO] Binocular data detected. Processing average
 #> mode.
 plot_binocular_correlation(avg_data$raw_binocular_object)
 
-#> ✔ [2026-07-17 00:01:19] [OKAY] Created binocular correlation plots for block 1
+#> ✔ [2026-07-18 21:25:12] [OKAY] Created binocular correlation plots for block 1
 ```

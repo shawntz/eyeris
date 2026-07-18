@@ -290,29 +290,35 @@ eye <- eyeris::load_generic(
   screen_height = 1080,
   tracker = "my-tracker"
 )
-#> ℹ [2026-07-17 00:00:53] [INFO] Loaded generic 'my-tracker' data: 1 block(s),
+#> ℹ [2026-07-18 21:24:43] [INFO] Loaded generic 'my-tracker' data: 1 block(s),
 #> 1000 Hz.
 
 # ...and run it straight through the glassbox pipeline
 eye |>
   eyeris::glassbox(lpfilt = list(plot_freqz = FALSE))
-#> ℹ [2026-07-17 00:00:53] [INFO] Received a pre-loaded `eyeris` object; skipping
+#> ℹ [2026-07-18 21:24:43] [INFO] Received a pre-loaded `eyeris` object; skipping
 #> the load step and running the remaining pipeline on it directly.
-#> ℹ [2026-07-17 00:00:53] [INFO] Processing block: block_1
-#> ✔ [2026-07-17 00:00:53] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-17 00:00:53] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-17 00:00:53] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-17 00:00:53] [WARN] No NAs detected in pupil data... Skipping
+#> ℹ [2026-07-18 21:24:43] [INFO] Processing block: block_1
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-18 21:24:43] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
+#> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
+#> your results. To restore the previous behavior, set `interpolate =
+#> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
+#> `interpolate()`).
+#> ! [2026-07-18 21:24:43] [WARN] No NAs detected in pupil data... Skipping
 #> interpolation!
-#> ✔ [2026-07-17 00:00:53] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-17 00:00:53] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-17 00:00:53] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-17 00:00:53] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-17 00:00:53] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-17 00:00:54] [INFO] Block processing summary:
-#> ℹ [2026-07-17 00:00:54] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-18 21:24:43] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-18 21:24:43] [INFO] Block processing summary:
+#> ℹ [2026-07-18 21:24:43] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-17 00:00:54] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-18 21:24:43] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "my-tracker"
 #> 
@@ -5435,6 +5441,9 @@ eye |>
 #> eyeris::glassbox(file = eye, lpfilt = list(plot_freqz = FALSE))
 #> 
 #> $params$interpolate$parameters
+#> $params$interpolate$parameters$max_gap_ms
+#> [1] 250
+#> 
 #> $params$interpolate$parameters$verbose
 #> [1] TRUE
 #> 

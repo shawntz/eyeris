@@ -96,7 +96,7 @@ optimized for pupillometry data.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">interpolate_pupil</span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span>, <span class="va">verbose</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">interpolate_pupil</span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span>, <span class="va">verbose</span>, max_gap_ms <span class="op">=</span> <span class="fl">250</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -114,6 +114,13 @@ optimized for pupillometry data.</p>
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A flag to indicate whether to print detailed logging messages</p></dd>
 
+
+<dt id="arg-max-gap-ms">max_gap_ms<a class="anchor" aria-label="anchor" href="#arg-max-gap-ms"></a></dt>
+<dd><p>The maximum duration (in milliseconds) of a gap of missing
+(<code>NA</code>) samples to interpolate. Gaps longer than this are left as <code>NA</code>. Must
+be greater than <code>0</code>; use <code>Inf</code> or <code>NULL</code> to interpolate across all gaps.
+Defaults to <code>250</code></p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -122,7 +129,11 @@ input</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function is called by the exposed wrapper <code><a href="interpolate.html">interpolate()</a></code>.</p>
+    <p>Gaps longer than <code>max_gap_ms</code> milliseconds are left as <code>NA</code> rather than
+interpolated. The threshold is converted from milliseconds to a number of
+samples using the sampling period of the data (estimated from <code>time_orig</code>),
+so it is robust to different sampling rates.</p>
+<p>This function is called by the exposed wrapper <code><a href="interpolate.html">interpolate()</a></code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
