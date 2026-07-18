@@ -357,7 +357,9 @@ warn_filter_over_gaps <- function(step) {
 
   log_warn(
     paste0(
-      "`", step, "()` is operating on data that contains gaps longer than the ",
+      "`",
+      step,
+      "()` is operating on data that contains gaps longer than the ",
       "interpolation limit (`max_gap_ms`), which were left as `NA`. These gaps ",
       "are temporarily filled so the filter can run and then masked back to ",
       "`NA`; this can slightly bias the valid pupil samples immediately ",
