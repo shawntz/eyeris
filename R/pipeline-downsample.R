@@ -182,13 +182,11 @@ downsample_pupil <- function(
     if (!grepl("interpolate", prev_op)) {
       log_error("NAs detected in pupil data. Need to interpolate first.")
     } else if (sum(!is.na(prev_pupil)) < 2) {
-      log_error(
-        paste0(
-          "Fewer than 2 valid pupil samples remain after interpolation; ",
-          "cannot downsample around gaps. Check upstream deblink/detransient/",
-          "interpolate settings or this block's data quality."
-        )
-      )
+      log_error(paste0(
+        "Fewer than 2 valid pupil samples remain after interpolation; ",
+        "cannot downsample around gaps. Check upstream deblink/detransient/",
+        "interpolate settings or this block's data quality."
+      ))
     } else {
       # warn that the anti-aliasing filter applied over these long gaps can
       # slightly bias the neighboring valid samples (see Kret & Sjak-Shie,
