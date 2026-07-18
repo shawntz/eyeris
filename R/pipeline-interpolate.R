@@ -271,17 +271,11 @@ validate_max_gap_ms <- function(max_gap_ms) {
     return(Inf)
   }
 
-  if (
-    !is.numeric(max_gap_ms) ||
-      length(max_gap_ms) != 1 ||
-      is.na(max_gap_ms)
-  ) {
-    log_error(
-      paste0(
-        "`max_gap_ms` must be a single number (in milliseconds), `Inf`, ",
-        "or `NULL`."
-      )
-    )
+  if (!is.numeric(max_gap_ms) || length(max_gap_ms) != 1 || is.na(max_gap_ms)) {
+    log_error(paste0(
+      "`max_gap_ms` must be a single number (in milliseconds), `Inf`, ",
+      "or `NULL`."
+    ))
   }
 
   if (max_gap_ms <= 0) {
