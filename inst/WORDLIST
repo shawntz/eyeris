@@ -15,6 +15,7 @@ ccessbility
 al
 asc
 ASC
+assocret
 bandpass
 baselining
 Baselining
@@ -28,6 +29,7 @@ changelog
 Clewett
 cli
 codebase
+coercible
 Creating
 customizable
 deblink
@@ -60,6 +62,7 @@ Epoching
 et
 extensibility
 eyelink
+fMRIPrep
 EyeLink
 eyelinker
 eyelinkio
@@ -72,6 +75,7 @@ Formatter
 Fs
 funders
 github
+GazePoint
 glassbox
 Gorgolewski
 GRFP
@@ -98,6 +102,7 @@ modularity
 monotonicity
 msg
 na
+namespaced
 nq
 nteroperability
 nav
@@ -128,6 +133,7 @@ Pupillometry
 Purdon
 RColorBrewer
 README
+recalibration
 reimplementing
 repo
 reproducibility
@@ -141,6 +147,7 @@ shawn
 Shawn
 Shie
 Sjak
+SMI
 src
 SSD
 stderr
@@ -154,6 +161,7 @@ Subtractive
 tibbles
 timeseries
 Timeseries
+Tobii
 Translational
 Tsai
 unicode
@@ -217,3 +225,17 @@ edf2asc
 loaders
 roadmap
 Roadmap
+Diaconis
+AI
+LLM
+quickstart
+composable
+indexers
+vetted
+natively
+Rescales
+colour
+Colour
+ggplot
+reaborn's
+seaborn

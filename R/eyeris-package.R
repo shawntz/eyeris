@@ -23,6 +23,7 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom lifecycle is_present
 #' @importFrom rlang :=
+#' @importFrom rlang .data
 #' @importFrom stats cor
 #' @importFrom stats lm
 #' @importFrom stats median

@@ -17,16 +17,16 @@ check_uniform_sampling_intervals(
 \item{time_vector}{Numeric vector of sample timestamps (in milliseconds).}
 
 \item{hz}{Optional known sampling rate in Hz (e.g., from the file header).
-Used to annotate the warning with the nominal rate, to cross-check for
-systematic dropout, and as a fallback expected interval when it cannot be
-inferred from the data.}
+Used to annotate the warning with the nominal rate and to cross-check for
+systematic dropout.}
 
 \item{blocks}{Optional vector (same length as \code{time_vector}) identifying the
 recording segment each sample belongs to. When supplied, intervals are
 only compared \emph{within} each segment.}
 
-\item{tolerance}{Relative tolerance for flagging a gap (default \code{0.5}). An
-interval is flagged when it exceeds \code{expected_interval * (1 + tolerance)}.}
+\item{tolerance}{Relative tolerance for the systematic-dropout cross-check
+(default \code{0.5}). A rate mismatch is flagged when the data-derived interval
+exceeds the nominal interval (\code{1000 / hz}) by more than this fraction.}
 
 \item{block_label}{Optional character label used in the warning to identify
 the segment being checked (e.g., \code{"block_1"}).}
@@ -58,8 +58,11 @@ informative warning so it can be addressed before preprocessing.
 The expected inter-sample interval is inferred from the data as the modal
 (most frequent) positive interval, which is robust both to a minority of
 irregular intervals and to sub-millisecond timestamp rounding at high
-sampling rates. Intervals that exceed the expected interval by more than
-\code{tolerance} (relative) are treated as gaps indicative of dropped samples.
+sampling rates. Any nonzero interval not exactly equal to this modal
+interval is marked irregular; zero-length intervals (the tell-tale of
+integer-millisecond rounding of sub-millisecond samples) are exempt.
+Intervals longer than the mode are additionally used to estimate the number
+of dropped samples.
 When the timeseries spans multiple recording segments (\code{blocks}), each
 segment is checked independently so that the expected gap \emph{between} segments
 is not mistaken for a dropped sample.

@@ -262,8 +262,11 @@ modal_value <- function(x) {
 #' The expected inter-sample interval is inferred from the data as the modal
 #' (most frequent) positive interval, which is robust both to a minority of
 #' irregular intervals and to sub-millisecond timestamp rounding at high
-#' sampling rates. Intervals that exceed the expected interval by more than
-#' `tolerance` (relative) are treated as gaps indicative of dropped samples.
+#' sampling rates. Any nonzero interval not exactly equal to this modal
+#' interval is marked irregular; zero-length intervals (the tell-tale of
+#' integer-millisecond rounding of sub-millisecond samples) are exempt.
+#' Intervals longer than the mode are additionally used to estimate the number
+#' of dropped samples.
 #' When the timeseries spans multiple recording segments (`blocks`), each
 #' segment is checked independently so that the expected gap *between* segments
 #' is not mistaken for a dropped sample.
@@ -277,14 +280,14 @@ modal_value <- function(x) {
 #'
 #' @param time_vector Numeric vector of sample timestamps (in milliseconds).
 #' @param hz Optional known sampling rate in Hz (e.g., from the file header).
-#'   Used to annotate the warning with the nominal rate, to cross-check for
-#'   systematic dropout, and as a fallback expected interval when it cannot be
-#'   inferred from the data.
+#'   Used to annotate the warning with the nominal rate and to cross-check for
+#'   systematic dropout.
 #' @param blocks Optional vector (same length as `time_vector`) identifying the
 #'   recording segment each sample belongs to. When supplied, intervals are
 #'   only compared *within* each segment.
-#' @param tolerance Relative tolerance for flagging a gap (default `0.5`). An
-#'   interval is flagged when it exceeds `expected_interval * (1 + tolerance)`.
+#' @param tolerance Relative tolerance for the systematic-dropout cross-check
+#'   (default `0.5`). A rate mismatch is flagged when the data-derived interval
+#'   exceeds the nominal interval (`1000 / hz`) by more than this fraction.
 #' @param block_label Optional character label used in the warning to identify
 #'   the segment being checked (e.g., `"block_1"`).
 #' @param verbose Logical. Whether to emit the warning message (default `TRUE`).
@@ -355,23 +358,22 @@ check_uniform_sampling_intervals <- function(
   # fall back to the nominal rate only if the data cannot supply one
   expected <- modal_value(positive_intervals)
   if (!is.finite(expected) || expected <= 0) {
-    expected <- if (!is.null(hz) && is.finite(hz) && hz > 0) {
-      1000 / hz
-    } else {
-      NA_real_
-    }
-  }
-  if (!is.finite(expected) || expected <= 0) {
-    return(invisible(result))
+    log_error(
+      "Unable to infer expected sampling interval from timestamp differences. ",
+      "Check that sample timestamps are finite and increasing."
+    )
   }
 
   result$expected_interval <- expected
   n_total <- length(intervals)
   result$n_intervals <- n_total
 
-  # (A) gap detection: intervals materially larger than the expected spacing
-  # (i.e., sporadic dropped samples, leaving holes in the time grid)
-  irregular <- intervals > expected * (1 + tolerance)
+  # (A) uniform-grid validation: any interval that differs from the expected
+  # spacing indicates an irregular sample grid. Zero-length intervals are the
+  # accepted tell-tale of integer-millisecond rounding of sub-millisecond
+  # samples (see (B) below), so they are exempt here; genuinely inconsistent
+  # nonzero intervals (including time-reversals) remain irregular.
+  irregular <- intervals != expected & intervals != 0
   n_irregular <- sum(irregular, na.rm = TRUE)
 
   # (B) systematic-dropout cross-check against the device's nominal rate.
@@ -402,12 +404,20 @@ check_uniform_sampling_intervals <- function(
   result$prop_irregular <- n_irregular / n_total
 
   segment <- if (!is.null(block_label)) paste0(" in ", block_label) else ""
-  expected_ms <- round(expected, 4)
+  expected_ms <- round(expected, 1)
 
   if (n_irregular > 0) {
-    # estimate dropped samples from how many expected intervals each gap spans
-    gap_intervals <- intervals[irregular]
-    n_missing <- sum(pmax(round(gap_intervals / expected) - 1, 0))
+    long_intervals <- intervals[irregular & intervals > expected]
+    short_intervals <- intervals[irregular & intervals < expected]
+    n_long <- length(long_intervals)
+    n_short <- length(short_intervals)
+
+    # Estimate dropped samples only from intervals longer than expected.
+    n_missing <- if (n_long > 0) {
+      sum(pmax(round(long_intervals / expected) - 1, 0))
+    } else {
+      0
+    }
     result$n_missing_samples <- as.integer(n_missing)
 
     if (verbose) {
@@ -417,19 +427,33 @@ check_uniform_sampling_intervals <- function(
         "inferred from data"
       }
       pct <- round(100 * result$prop_irregular, 2)
-      largest_gap <- round(max(gap_intervals), 4)
-      largest_gap_ratio <- round(max(gap_intervals) / expected, 1)
-      first_gap_sample <- which(irregular)[1] + 1
+      first_irregular_sample <- which(irregular)[1] + 1
+      long_gap_summary <- if (n_long > 0) {
+        largest_gap <- round(max(long_intervals), 4)
+        largest_gap_ratio <- round(max(long_intervals) / expected, 1)
+        paste0(
+          " Estimated ",
+          n_missing,
+          " dropped sample(s); largest long ",
+          "interval is ",
+          largest_gap,
+          " ms (~",
+          largest_gap_ratio,
+          "x expected)."
+        )
+      } else {
+        ""
+      }
 
       msg <- paste0(
         "Non-uniform sampling intervals detected{segment}: {n_irregular} of ",
-        "{n_total} intervals ({pct}%) exceed the expected {expected_ms} ms ",
-        "spacing (nominal rate: {nominal}). Estimated {n_missing} dropped ",
-        "sample(s); largest gap is {largest_gap} ms (~{largest_gap_ratio}x ",
-        "expected) before sample {first_gap_sample}. Some eye trackers drop ",
-        "samples instead of zero-filling missing pupil data, which violates ",
-        "the uniform-sampling assumption of the eyeris pipeline. Consider ",
-        "resampling onto a regular time grid before preprocessing."
+        "{n_total} intervals ({pct}%) differ from the expected ",
+        "{expected_ms} ms spacing (nominal rate: {nominal}); ",
+        "{n_long} longer and {n_short} shorter.{long_gap_summary} ",
+        "First irregular interval occurs before sample ",
+        "{first_irregular_sample}. This violates the uniform-sampling ",
+        "assumption of the eyeris pipeline. Consider resampling onto a ",
+        "regular time grid before preprocessing."
       )
       log_warn(msg, verbose = verbose)
     }

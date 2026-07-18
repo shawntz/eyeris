@@ -4,9 +4,13 @@ news:
     cran_dates: true
     releases:
     - text: "LATEST STABLE RELEASE"
+    - text: "v3.2.0 (CRAN)"
+      href: news/index.html#eyeris-320-lumpy-space-princess-lumpy-space-princess
+    - text: -------
+    - text: "v3.1.0 (CRAN)"
+      href: news/index.html#eyeris-310-lumpy-space-princess-lumpy-space-princess
     - text: "v3.0.1 (CRAN)"
       href: news/index.html#eyeris-301-lumpy-space-princess-lumpy-space-princess
-    - text: -------
     - text: "v3.0.0 (CRAN)"
       href: news/index.html#eyeris-300-lumpy-space-princess-lumpy-space-princess
     - text: "Previous Releases"
@@ -102,6 +106,7 @@ reference:
       Save out BIDS-style derivatives, generate diagnostic HTML reports, and interactively plot and explore your pupil data.
     contents:
       - bidsify
+      - boilerplate
       - summarize_confounds
       - plot.eyeris
       - plot_gaze_heatmap
@@ -130,6 +135,7 @@ reference:
       Modular functions used by the `glassbox` pipeline for cleaning and transforming pupil data.
     contents:
       - load_asc
+      - load_generic
       - resample
       - deblink
       - detransient
@@ -159,6 +165,7 @@ articles:
     contents:
     - complete-pipeline
     - epoching-bids-reports
+    - multiple-runs-separate-files
   - title: Pupil Data Quality Control
     navbar: Pupil Data Quality Control
     contents:
@@ -171,3 +178,7 @@ articles:
     - database-guide
     - chunked-database-export
     - internal-api
+  - title: For AI Coding Agents
+    navbar: For AI Coding Agents
+    contents:
+    - agents

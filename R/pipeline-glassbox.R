@@ -26,36 +26,75 @@
 #' satisfied with the choices of your parameters and their consequences on your
 #' pupil time series data.
 #'
-#' @details
-#' `glassbox()` runs the following steps, in order. Each can be tuned by passing
-#' a named list of parameters (e.g., `deblink = list(extend = 40)`) or disabled
-#' by passing `FALSE` (e.g., `detransient = FALSE`) through `...`:
+#' @section What `glassbox()` does, step by step:
+#' In plain language, `glassbox()` runs the following `eyeris` steps in order on
+#' your pupil time series. Steps marked **(default: on)** run automatically;
+#' steps marked **(default: off)** are skipped unless you explicitly enable
+#' them. Most preprocessing steps can be turned off by passing `<step> = FALSE`
+#' (except `load_asc`, which always runs when `file` is an `.asc` path). Steps
+#' that accept parameters can be
+#' customized by passing `<step> = list(...)` with values you want to override
+#' (for example, `deblink = list(extend = 40)`).
 #'
-#' 1. [eyeris::load_asc()] -- read the EyeLink `.asc` file, auto-detect recording
-#'    blocks, and resolve binocular data. **On by default.**
-#' 2. [eyeris::resample()] -- place each block onto the expected uniform sampling
-#'    grid. For hardware that *drops* samples (instead of zero-filling) when pupil
-#'    data is missing, this interpolates local sub-period timing jitter and
-#'    inserts `NA` rows at the dropped timestamps, so the rate-dependent steps
-#'    that follow stay valid. **On by default**, but a guaranteed no-op for
-#'    already-uniform data (e.g., EyeLink). Disable with `resample = FALSE`.
-#' 3. [eyeris::deblink()] -- extend and mask `NA` padding around detected blinks.
-#'    **On by default.**
-#' 4. [eyeris::detransient()] -- remove speed-based transient artifacts via a
-#'    moving median absolute deviation (MAD) threshold. **On by default.**
-#' 5. [eyeris::interpolate()] -- linearly interpolate the remaining missing
-#'    (`NA`) samples, including the gaps left by `resample()`. **On by default.**
-#' 6. [eyeris::lpfilt()] -- apply a Butterworth lowpass filter. **On by default.**
-#' 7. [eyeris::downsample()] or [eyeris::bin()] -- reduce the effective sampling
-#'    rate (mutually exclusive; enable at most one). **Off by default.**
-#' 8. [eyeris::detrend()] -- remove slow drifts by linear detrending. **Off by
-#'    default** (it can have unintended consequences; make sure it is appropriate
-#'    for your design before enabling it with `detrend = TRUE`).
-#' 9. [eyeris::zscore()] -- z-score the pupil signal within each block. **On by
-#'    default.**
+#' 1. **Load the data** (`load_asc`, default: on) -- Reads and parses the
+#' EyeLink `.asc` file into an `eyeris` object, automatically splitting the
+#' recording into blocks and, for binocular recordings, handling each eye
+#' separately. See [eyeris::load_asc()]. This step is skipped when a pre-loaded
+#' `eyeris` object is passed as `file` (see the `file` parameter).
+#' 2. **Resample onto a uniform grid** (`resample`, default: on) -- Places each
+#' block on the expected uniform sampling grid. For hardware that *drops*
+#' samples (instead of zero-filling) when pupil data is missing, this
+#' interpolates local sub-period timing jitter and inserts `NA` rows at the
+#' dropped timestamps, so the rate-dependent steps that follow stay valid. A
+#' guaranteed no-op for already-uniform data (e.g., EyeLink). See
+#' [eyeris::resample()].
+#' 3. **Remove blinks** (`deblink`, default: on) -- Replaces the missing data
+#' around blinks with `NA`s, extending each gap by `50` ms on either side so
+#' that the rapid dips and spikes that surround a blink are removed too. See
+#' [eyeris::deblink()].
+#' 4. **Remove transient artifacts** (`detransient`, default: on) -- Rejects
+#' pupil samples that change faster than is physiologically plausible, using a
+#' speed-based median absolute deviation (MAD) threshold. See
+#' [eyeris::detransient()].
+#' 5. **Interpolate missing samples** (`interpolate`, default: on) -- Fills the
+#' `NA` gaps left by the resample, deblink, and detransient steps using linear
+#' interpolation, producing a continuous, gap-free time series. See
+#' [eyeris::interpolate()].
+#' 6. **Smooth the signal** (`lpfilt`, default: on) -- Applies a low-pass
+#' filter (default `4` Hz passband) to remove high-frequency noise while
+#' preserving the slower pupil dynamics of interest. See [eyeris::lpfilt()].
+#' 7. **Downsample** (`downsample`, default: off) -- Optionally lowers the
+#' sampling rate using an anti-aliasing filter, which preserves the temporal
+#' dynamics of the signal. Cannot be combined with `bin`. See
+#' [eyeris::downsample()].
+#' 8. **Bin** (`bin`, default: off) -- Optionally lowers the sampling rate by
+#' averaging samples within equal-width time bins. Cannot be combined with
+#' `downsample`. See [eyeris::bin()].
+#' 9. **Detrend** (`detrend`, default: off) -- Optionally fits a linear model
+#' of `pupil ~ time` and returns the residuals (along with the fitted slope and
+#' intercept) to remove slow linear drift. Use with care -- see
+#' [eyeris::detrend()] for when this is appropriate.
+#' 10. **Z-score** (`zscore`, default: on) -- Rescales the pupil time series to a
+#' mean of `0` and a standard deviation of `1`, making values comparable across
+#' participants and recordings. See [eyeris::zscore()].
 #'
-#' @param file An SR Research EyeLink `.asc` file generated by the official
-#' EyeLink `edf2asc` command
+#' After preprocessing, `glassbox()` calls [eyeris::summarize_confounds()] to compute
+#' per-step confound metrics (e.g., missingness and gaze statistics) and store them
+#' in `$confounds`.
+#'
+#' Crucially, each step *adds a new column* to the time series rather than
+#' overwriting the previous one, so every intermediate stage is preserved inside
+#' the returned `eyeris` object. This is what makes the pipeline a "glass box":
+#' you can inspect, plot, and compare the data before and after each
+#' transformation (for example, `plot(output, steps = c(1, 5))`).
+#'
+#' @param file Either an SR Research EyeLink `.asc` file generated by the
+#' official EyeLink `edf2asc` command, or a pre-constructed `eyeris` object. When
+#' an `.asc` path is supplied, the `load_asc` step reads and parses it. When a
+#' pre-loaded `eyeris` object is supplied instead (for example, the output of
+#' [eyeris::load_generic()] for non-EyeLink trackers, or an existing
+#' [eyeris::load_asc()] object), the load step is skipped and the remaining
+#' pipeline runs on the object as-is -- enabling `load_generic(...) |> glassbox()`
 #' @param interactive_preview A flag to indicate whether to run the `glassbox`
 #' pipeline autonomously all the way through (set to `FALSE` by default), or to
 #' interactively provide a visualization after each pipeline step, where you
@@ -125,6 +164,8 @@
 #'   demo_data,
 #'   interactive_preview = FALSE, # TRUE to visualize each step in real-time
 #'   deblink = list(extend = 40),
+#'   # only interpolate gaps up to 100 ms; longer gaps are left as NA
+#'   interpolate = list(max_gap_ms = 100),
 #'   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 #' )
 #'
@@ -156,6 +197,11 @@ glassbox <- function(
   skip_detransient = deprecated()
 ) {
   original_call <- match.call()
+
+  # reset per-run gap-related notices (the interpolation behavior-change notice
+  # and the filter-over-gaps warning) so each fires at most once per glassbox()
+  # run (not once per R session)
+  reset_gap_notices()
 
   # handle deprecated parameters
   if (is_present(confirm)) {
@@ -198,18 +244,11 @@ glassbox <- function(
     skip_detransient <- NULL
   }
 
-  # check if user accidentally passed an eyeris object instead of a file path
-  if (inherits(file, "eyeris")) {
-    log_error(paste0(
-      "You passed an eyeris object to glassbox(), but glassbox() expects a file path.\n\n",
-      "It looks like you may have called load_asc() first:\n",
-      "  eyeris_data <- load_asc('file.asc')\n",
-      "  eyeris_data %>% glassbox()  # <-- This causes an error\n\n",
-      "Instead, pass the file path directly to glassbox():\n",
-      "  'file.asc' %>% glassbox() %>% ...\n\n",
-      "The eyeris package handles .asc file reading internally."
-    ))
-  }
+  # a pre-constructed eyeris object (e.g., from load_generic() for non-EyeLink
+  # trackers, or an already-loaded load_asc() object) may be passed directly:
+  # we detect it here and skip the file-loading step below, running the
+  # remaining pipeline on the object as-is.
+  preloaded_eyeris <- inherits(file, "eyeris")
 
   # the default glassbox pipeline parameters
   default_params <- list(
@@ -229,6 +268,19 @@ glassbox <- function(
   # override defaults
   params <- utils::modifyList(default_params, list(...))
 
+  # if a pre-loaded eyeris object was supplied, skip the file-loading step and
+  # run the remaining pipeline directly on the object
+  if (preloaded_eyeris) {
+    params$load_asc <- FALSE
+    log_info(
+      paste(
+        "Received a pre-loaded `eyeris` object; skipping the load step and",
+        "running the remaining pipeline on it directly."
+      ),
+      verbose = verbose
+    )
+  }
+
   # handle method parameter for bin operation
   if (
     "method" %in%
@@ -240,7 +292,13 @@ glassbox <- function(
   }
 
   # guard params that accept lists in the event a boolean is supplied
-  if ("load_asc" %in% names(list(...)) && isTRUE(list(...)$load_asc)) {
+  # (skipped for a pre-loaded eyeris object, where load_asc stays disabled so a
+  # caller-supplied `load_asc = TRUE` cannot restore file loading on an object)
+  if (
+    !preloaded_eyeris &&
+      "load_asc" %in% names(list(...)) &&
+      isTRUE(list(...)$load_asc)
+  ) {
     log_warn(
       "`load_asc` expects a list of args (not a boolean)... using default: `list(block = 'auto')`",
       verbose = TRUE
@@ -380,11 +438,27 @@ glassbox <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
+        max_gap_ms <- if (
+          is.list(params$interpolate) &&
+            "max_gap_ms" %in% names(params$interpolate)
+        ) {
+          params$interpolate$max_gap_ms
+        } else {
+          250
+        }
+        # validate up front so malformed input aborts clearly (and an explicit
+        # NULL is normalized to Inf) instead of failing deep inside the step
+        max_gap_ms <- validate_max_gap_ms(max_gap_ms)
         call_info <- list(
           call = original_call,
-          parameters = list(verbose = verbose)
+          parameters = list(max_gap_ms = max_gap_ms, verbose = verbose)
         )
-        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
+        eyeris::interpolate(
+          data,
+          max_gap_ms = max_gap_ms,
+          verbose = verbose,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -492,66 +566,6 @@ glassbox <- function(
     log_success("Running eyeris::load_asc()", verbose = verbose)
     file <- pipeline[["load_asc"]](file, params, original_call)
 
-    # resample onto the expected uniform sampling grid before any rate-dependent
-    # step, so that dropped samples become NA gaps that later steps (e.g.,
-    # interpolate) can handle consistently. Runs once on the full object, ahead
-    # of any binocular split (resample() recurses into both eyes). For
-    # already-uniform data (e.g., EyeLink) this is a no-op.
-    if (which_steps[["resample"]]) {
-      log_success("Running eyeris::resample()", verbose = verbose)
-      call_info <- list(
-        call = original_call,
-        parameters = list(verbose = verbose)
-      )
-      file <- eyeris::resample(file, verbose = verbose, call_info = call_info)
-    }
-
-    # handle binocular objects
-    if (is_binocular_object(file)) {
-      log_info(
-        "Detected binocular data - processing left and right eyes separately",
-        verbose = verbose
-      )
-
-      # process left eye
-      left_result <- glassbox_internal(
-        file$left,
-        interactive_preview,
-        preview_n,
-        preview_duration,
-        preview_window,
-        verbose,
-        params,
-        original_call,
-        seed
-      )
-
-      # process right eye
-      right_result <- glassbox_internal(
-        file$right,
-        interactive_preview,
-        preview_n,
-        preview_duration,
-        preview_window,
-        verbose,
-        params,
-        original_call,
-        seed
-      )
-
-      # return combined structure
-      list_out <- list(
-        left = left_result,
-        right = right_result,
-        original_file = file$original_file,
-        raw_binocular_object = file$raw_binocular_object
-      )
-
-      class(list_out) <- "eyeris"
-
-      return(list_out)
-    }
-
     if (interactive_preview) {
       plot_with_seed(
         file = file,
@@ -573,6 +587,68 @@ glassbox <- function(
         return(file)
       }
     }
+  }
+
+  # resample onto the expected uniform sampling grid before any rate-dependent
+  # step, so that dropped samples become NA gaps that later steps (e.g.,
+  # interpolate) can handle consistently. Runs once on the full object (whether
+  # freshly loaded above or passed in pre-loaded), ahead of any binocular split
+  # (resample() recurses into both eyes). For already-uniform data (e.g.,
+  # EyeLink) this is a no-op.
+  if (which_steps[["resample"]]) {
+    log_success("Running eyeris::resample()", verbose = verbose)
+    call_info <- list(
+      call = original_call,
+      parameters = list(verbose = verbose)
+    )
+    file <- eyeris::resample(file, verbose = verbose, call_info = call_info)
+  }
+
+  # handle binocular objects (whether freshly loaded above or passed in
+  # pre-loaded) by processing the left and right eyes separately
+  if (is_binocular_object(file)) {
+    log_info(
+      "Detected binocular data - processing left and right eyes separately",
+      verbose = verbose
+    )
+
+    # process left eye
+    left_result <- glassbox_internal(
+      file$left,
+      interactive_preview,
+      preview_n,
+      preview_duration,
+      preview_window,
+      verbose,
+      params,
+      original_call,
+      seed
+    )
+
+    # process right eye
+    right_result <- glassbox_internal(
+      file$right,
+      interactive_preview,
+      preview_n,
+      preview_duration,
+      preview_window,
+      verbose,
+      params,
+      original_call,
+      seed
+    )
+
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = file$original_file,
+      raw_binocular_object = file$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
   }
 
   has_multiple_blocks <- is.list(file$timeseries) && length(file$timeseries) > 0
@@ -765,6 +841,16 @@ glassbox <- function(
       # preserve decimated.sample.rate from processed blocks
       if (!is.null(temp_file$decimated.sample.rate)) {
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
+      }
+
+      # preserve full-resolution (pre-decimation) data for diagnostic plotting
+      if (!is.null(temp_file$timeseries_pre_decimation[[block_name]])) {
+        if (is.null(file$timeseries_pre_decimation)) {
+          file$timeseries_pre_decimation <- list()
+        }
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
       }
 
       # track latest pointer from successfully processed blocks
@@ -1008,11 +1094,27 @@ glassbox_internal <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
+        max_gap_ms <- if (
+          is.list(params$interpolate) &&
+            "max_gap_ms" %in% names(params$interpolate)
+        ) {
+          params$interpolate$max_gap_ms
+        } else {
+          250
+        }
+        # validate up front so malformed input aborts clearly (and an explicit
+        # NULL is normalized to Inf) instead of failing deep inside the step
+        max_gap_ms <- validate_max_gap_ms(max_gap_ms)
         call_info <- list(
           call = original_call,
-          parameters = list(verbose = verbose)
+          parameters = list(max_gap_ms = max_gap_ms, verbose = verbose)
         )
-        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
+        eyeris::interpolate(
+          data,
+          max_gap_ms = max_gap_ms,
+          verbose = verbose,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -1304,6 +1406,16 @@ glassbox_internal <- function(
       # preserve decimated.sample.rate from processed blocks
       if (!is.null(temp_file$decimated.sample.rate)) {
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
+      }
+
+      # preserve full-resolution (pre-decimation) data for diagnostic plotting
+      if (!is.null(temp_file$timeseries_pre_decimation[[block_name]])) {
+        if (is.null(file$timeseries_pre_decimation)) {
+          file$timeseries_pre_decimation <- list()
+        }
+        file$timeseries_pre_decimation[[
+          block_name
+        ]] <- temp_file$timeseries_pre_decimation[[block_name]]
       }
 
       # track latest pointer from successfully processed blocks

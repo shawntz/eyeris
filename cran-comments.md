@@ -1,6 +1,6 @@
 ## CRAN Submission
 
-This minor release delivers several robustness and stability improvements, fixing memory issues during HTML report rendering, correcting epoch plot compression after downsampling, and improving documentation accuracy.
+This release fixes several correctness and data-integrity bugs and adds new transparency and reproducibility tooling.
 
 ## Notes
 
@@ -8,9 +8,9 @@ All checks (`R CMD check`, `devtools::check(remote = TRUE)`, GitHub Actions CI) 
 
 Thank you for your time and consideration.
 
-## R CMD check results (eyeris v3.1.0)
+## R CMD check results (eyeris v3.2.0)
 
-Duration: 2m 19.9s
+Duration: 2m 36.7s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 

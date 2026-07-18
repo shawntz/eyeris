@@ -51,6 +51,14 @@ customize the parameters for \code{lpfilt} by providing a parameter list. Use
 Users should prefer using \code{glassbox()} rather than invoking this function
 directly unless they have a specific reason to customize the pipeline
 manually.
+
+When the input contains gaps longer than the interpolation limit (see
+\code{\link[=interpolate]{interpolate()}}'s \code{max_gap_ms}) that were left as \code{NA}, those gaps
+are temporarily filled so the Butterworth filter can run and then masked back
+to \code{NA}. This can slightly bias the valid samples immediately adjacent to
+each gap toward the interpolated values, so a warning is emitted in this
+case. If that bias is a concern, consider disabling this step
+(\code{glassbox(lpfilt = FALSE)}).
 }
 \note{
 This function is part of the \code{glassbox()} preprocessing pipeline and is not
@@ -71,4 +79,11 @@ demo_data |>
 \seealso{
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
 part of the full eyeris glassbox preprocessing pipeline
+
+For a complete, end-to-end reference pipeline that demonstrates how all
+\code{eyeris} preprocessing functions are chained together in practice, see the
+"Building Blocks Under the Hood" section of the \emph{Anatomy of an \code{eyeris}
+Object} vignette --- \code{vignette("anatomy", package = "eyeris")} --- as
+well as the \emph{Complete Pupillometry Pipeline Walkthrough} vignette:
+\code{vignette("complete-pipeline", package = "eyeris")}.
 }

@@ -48,6 +48,14 @@ The function automatically designs an anti-aliasing filter using the
 
 The resulting time points will be: 0, 1/X, 2/X, 3/X, ..., etc. where X is
 the new sampling frequency.
+
+When the input contains gaps longer than the interpolation limit (see
+\code{\link[=interpolate]{interpolate()}}'s \code{max_gap_ms}) that were left as \code{NA}, those gaps
+are temporarily filled so the anti-aliasing filter can run and then masked
+back to \code{NA}. This can slightly bias the valid samples immediately adjacent
+to each gap toward the interpolated values, so a warning is emitted in this
+case. If that bias is a concern, consider disabling this step
+(\code{glassbox(downsample = FALSE)}).
 }
 \note{
 This function is part of the \code{glassbox()} preprocessing pipeline and is not
@@ -69,4 +77,11 @@ demo_data |>
 \code{\link[=glassbox]{glassbox()}} for the recommended way to run this step as
 part of the full \code{eyeris} glassbox preprocessing pipeline.
 \code{\link[=bin]{bin()}} for binning functionality.
+
+For a complete, end-to-end reference pipeline that demonstrates how all
+\code{eyeris} preprocessing functions are chained together in practice, see the
+"Building Blocks Under the Hood" section of the \emph{Anatomy of an \code{eyeris}
+Object} vignette --- \code{vignette("anatomy", package = "eyeris")} --- as
+well as the \emph{Complete Pupillometry Pipeline Walkthrough} vignette:
+\code{vignette("complete-pipeline", package = "eyeris")}.
 }

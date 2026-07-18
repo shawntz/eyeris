@@ -231,6 +231,15 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
           }
           eyeris$detrend_coefs[[i_block]] <- list_detrend$coefficients
         } else if (new_suffix == "bin" || new_suffix == "downsample") {
+          # preserve the full-resolution (pre-decimation) data so that
+          # diagnostic plots of earlier pipeline steps are rendered at their
+          # original sampling rate rather than the decimated rate (issue #294)
+          if (is.null(eyeris$timeseries_pre_decimation)) {
+            eyeris$timeseries_pre_decimation <- list()
+          }
+          eyeris$timeseries_pre_decimation[[
+            i_block
+          ]] <- trim_pre_decimation_cols(data)
           list_ds_bin <- do.call(
             operation,
             c(list(data, block_prev_operation), dots)
@@ -280,6 +289,9 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
       eyeris <- data
     } else if (new_suffix == "bin" || new_suffix == "downsample") {
       data <- eyeris$timeseries
+      # preserve the full-resolution (pre-decimation) data for diagnostic
+      # plotting of earlier pipeline steps (issue #294)
+      eyeris$timeseries_pre_decimation <- trim_pre_decimation_cols(data)
       result <- do.call(operation, c(list(data, prev_operation), dots))
       eyeris$timeseries <- result
     } else {
@@ -317,4 +329,33 @@ pipeline_handler <- function(eyeris, operation, new_suffix, ...) {
     }
   }
   eyeris
+}
+
+#' Retain only the columns needed to plot pre-decimation pipeline steps
+#'
+#' Subsets a block of time series data down to the timing columns and pupil
+#' signal columns. This trimmed, full-resolution copy is stashed in
+#' `eyeris$timeseries_pre_decimation` before a `downsample()`/`bin()` step
+#' replaces the working time series with its decimated counterpart, so that
+#' diagnostic plots of earlier steps can be shown at the original sampling
+#' rate rather than the decimated rate (see issue #294).
+#'
+#' @param data A single block of time series data (a data frame)
+#'
+#' @return A data frame containing the timing columns (`block`, `time_orig`,
+#' `time_secs`, `time_scaled`) that are present plus all `pupil_*` columns. A
+#' `time_scaled` column mirroring `time_secs` is added if it is missing.
+#'
+#' @keywords internal
+trim_pre_decimation_cols <- function(data) {
+  timing_cols <- intersect(
+    c("block", "time_orig", "time_secs", "time_scaled"),
+    colnames(data)
+  )
+  pupil_cols <- grep("^pupil_", colnames(data), value = TRUE)
+  out <- data[, c(timing_cols, pupil_cols), drop = FALSE]
+  if (!"time_scaled" %in% colnames(out) && "time_secs" %in% colnames(out)) {
+    out$time_scaled <- out$time_secs
+  }
+  out
 }
