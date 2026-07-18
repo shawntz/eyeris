@@ -469,7 +469,9 @@ make_gap_filter_provenance_note <- function(eyeris) {
     params$interpolate$parameters$max_gap_ms,
     error = function(e) NULL
   )
-  limit_txt <- if (!is.null(max_gap) && is.numeric(max_gap) && is.finite(max_gap)) {
+  limit_txt <- if (
+    !is.null(max_gap) && is.numeric(max_gap) && is.finite(max_gap)
+  ) {
     paste0(max_gap, " ms")
   } else {
     "the interpolation limit"
