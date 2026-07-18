@@ -97,6 +97,34 @@ opinionated steps and provides a pre-/post-plot of the time series data for
 each step so you can adjust parameters and re-run the pipeline until you are
 satisfied with the choices of your parameters and their consequences on your
 pupil time series data.
+
+\code{glassbox()} runs the following steps, in order. Each can be tuned by passing
+a named list of parameters (e.g., \code{deblink = list(extend = 40)}) or disabled
+by passing \code{FALSE} (e.g., \code{detransient = FALSE}) through \code{...}:
+\enumerate{
+\item \code{\link[=load_asc]{load_asc()}} -- read the EyeLink \code{.asc} file, auto-detect recording
+blocks, and resolve binocular data. \strong{On by default.}
+\item \code{\link[=resample]{resample()}} -- place each block onto the expected uniform sampling
+grid. For hardware that \emph{drops} samples (instead of zero-filling) when pupil
+data is missing, this interpolates local sub-period timing jitter and
+inserts \code{NA} rows at the dropped timestamps, so the rate-dependent steps
+that follow stay valid. \strong{On by default}, but a guaranteed no-op for
+already-uniform data (e.g., EyeLink). Disable with \code{resample = FALSE}.
+\item \code{\link[=deblink]{deblink()}} -- extend and mask \code{NA} padding around detected blinks.
+\strong{On by default.}
+\item \code{\link[=detransient]{detransient()}} -- remove speed-based transient artifacts via a
+moving median absolute deviation (MAD) threshold. \strong{On by default.}
+\item \code{\link[=interpolate]{interpolate()}} -- linearly interpolate the remaining missing
+(\code{NA}) samples, including the gaps left by \code{resample()}. \strong{On by default.}
+\item \code{\link[=lpfilt]{lpfilt()}} -- apply a Butterworth lowpass filter. \strong{On by default.}
+\item \code{\link[=downsample]{downsample()}} or \code{\link[=bin]{bin()}} -- reduce the effective sampling
+rate (mutually exclusive; enable at most one). \strong{Off by default.}
+\item \code{\link[=detrend]{detrend()}} -- remove slow drifts by linear detrending. \strong{Off by
+default} (it can have unintended consequences; make sure it is appropriate
+for your design before enabling it with \code{detrend = TRUE}).
+\item \code{\link[=zscore]{zscore()}} -- z-score the pupil signal within each block. \strong{On by
+default.}
+}
 }
 \examples{
 demo_data <- eyelink_asc_demo_dataset()

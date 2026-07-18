@@ -32,7 +32,8 @@ The key components are:
   - `eye`: which eye (Left or Right) the recorded data are sourced from
   - `hz`: tracker sampling rate (hz)
   - `type`: whether source data were recorded using the `diameter` or `area` method
-  - `pupil_raw`: raw recorded pupil source data in arbitrary units (a.u.) 
+  - `pupil_raw`: raw recorded pupil source data in arbitrary units (a.u.)
+  - `is_resampled`: logical flag marking rows that `resample()` inserted for dropped samples (present *only* when the sampling grid had to be repaired -- see the `glassbox()` steps below)
 
 You'll notice that for each preprocessing step run, a new column will be added after
 the `pupil_raw` column; these new columns follow a structure where each subsequent
@@ -79,6 +80,7 @@ steps
 ```{r, eval=FALSE}
 system.file("extdata", "memory.asc", package = "eyeris") |>
   eyeris::load_asc(block = "auto") |>
+  eyeris::resample() |>  # repair the sampling grid (no-op on uniform data)
   eyeris::deblink(extend = 50) |>
   eyeris::detransient(n = 16) |>
   eyeris::interpolate() |>

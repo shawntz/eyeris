@@ -126,6 +126,7 @@ with links to their documentation and a brief description.
 | **Pipeline Orchestration** | [glassbox()](https://shawnschwartz.com/eyeris/reference/glassbox.html) | Run the full recommended preprocessing pipeline with a single function call. |
 | **BIDSify** | [bidsify()](https://shawnschwartz.com/eyeris/reference/bidsify.html) | Create a BIDS-like directory structure for preprocessed data as well as interactive HTML reports for data and signal processing provenance. |
 | **Data Loading** | [load_asc()](https://shawnschwartz.com/eyeris/reference/load_asc.html) | Load EyeLink `.asc` files into an `eyeris` object. |
+| **Sampling-Grid Resampling** | [resample()](https://shawnschwartz.com/eyeris/reference/resample.html) | Place each block onto the expected uniform sampling grid, repairing dropped-sample gaps for hardware that drops (rather than zero-fills) missing pupil data. |
 | **Blink Artifact Removal** | [deblink()](https://shawnschwartz.com/eyeris/reference/deblink.html) | Remove blink artifacts by extending and masking missing samples. |
 | **Transient (Speed-Based) Artifact Removal** | [detransient()](https://shawnschwartz.com/eyeris/reference/detransient.html) | Remove transient spikes in the pupil signal using a moving MAD filter. |
 | **Linear Interpolation** | [interpolate()](https://shawnschwartz.com/eyeris/reference/interpolate.html) | Interpolate missing (NA) samples in the pupil signal. |
@@ -379,6 +380,7 @@ eyeris_preproc <- glassbox(
   lpfilt = list(plot_freqz = FALSE)
 )
 #> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::resample()
 #> ℹ [2026-06-05 00:01:48] [INFO] Processing block: block_1
 #> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::deblink() for block_1
 #> ✔ [2026-06-05 00:01:48] [OKAY] Running eyeris::detransient() for block_1
