@@ -97,8 +97,12 @@
 #'   plot(seed = 0)
 #'
 #' @export
-interpolate <- function(eyeris, max_gap_ms = 250, verbose = TRUE,
-                        call_info = NULL) {
+interpolate <- function(
+  eyeris,
+  max_gap_ms = 250,
+  verbose = TRUE,
+  call_info = NULL
+) {
   max_gap_ms <- validate_max_gap_ms(max_gap_ms)
 
   call_info <- if (is.null(call_info)) {
