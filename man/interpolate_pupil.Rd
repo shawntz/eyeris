@@ -4,7 +4,7 @@
 \alias{interpolate_pupil}
 \title{Interpolate missing pupil data using linear interpolation}
 \usage{
-interpolate_pupil(x, prev_op, verbose)
+interpolate_pupil(x, prev_op, verbose, max_gap_ms = 250)
 }
 \arguments{
 \item{x}{A data frame containing the pupil time series data}
@@ -12,6 +12,11 @@ interpolate_pupil(x, prev_op, verbose)
 \item{prev_op}{The name of the previous operation's output column}
 
 \item{verbose}{A flag to indicate whether to print detailed logging messages}
+
+\item{max_gap_ms}{The maximum duration (in milliseconds) of a gap of missing
+(\code{NA}) samples to interpolate. Gaps longer than this are left as \code{NA}. Must
+be greater than \code{0}; use \code{Inf} or \code{NULL} to interpolate across all gaps.
+Defaults to \code{250}}
 }
 \value{
 A vector of interpolated pupil values with the same length as the
@@ -23,6 +28,11 @@ interpolation. It uses the \code{zoo::na.approx()} function with settings
 optimized for pupillometry data.
 }
 \details{
+Gaps longer than \code{max_gap_ms} milliseconds are left as \code{NA} rather than
+interpolated. The threshold is converted from milliseconds to a number of
+samples using the sampling period of the data (estimated from \code{time_orig}),
+so it is robust to different sampling rates.
+
 This function is called by the exposed wrapper \code{\link[=interpolate]{interpolate()}}.
 }
 \keyword{internal}

@@ -190,6 +190,8 @@ output <- eyeris::glassbox(
   demo_data,
   interactive_preview = FALSE, # TRUE to visualize each step in real-time
   deblink = list(extend = 40),
+  # only interpolate gaps up to 100 ms; longer gaps are left as NA
+  interpolate = list(max_gap_ms = 100),
   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 )
 

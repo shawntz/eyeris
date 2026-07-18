@@ -20,6 +20,14 @@
 #' directly unless they have a specific reason to customize the pipeline
 #' manually.
 #'
+#' When the input contains gaps longer than the interpolation limit (see
+#' [eyeris::interpolate()]'s `max_gap_ms`) that were left as `NA`, those gaps
+#' are temporarily filled so the Butterworth filter can run and then masked back
+#' to `NA`. This can slightly bias the valid samples immediately adjacent to
+#' each gap toward the interpolated values, so a warning is emitted in this
+#' case. If that bias is a concern, consider disabling this step
+#' (`glassbox(lpfilt = FALSE)`).
+#'
 #' @param eyeris An object of class `eyeris` derived from [eyeris::load_asc()]
 #' @param wp The end of passband frequency in Hz (desired lowpass cutoff).
 #' Defaults to `4`
@@ -163,15 +171,37 @@ lpfilt <- function(
 #'
 #' @keywords internal
 lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
-  if (any(is.na(x[[prev_op]]))) {
-    log_error("NAs detected in pupil data. Need to interpolate first.")
-  } else {
-    prev_pupil <- x[[prev_op]]
-  }
+  prev_pupil <- x[[prev_op]]
 
   # additional validation to prevent "non-numeric matrix extent" error
   if (!is.numeric(prev_pupil) || length(prev_pupil) == 0) {
     log_error("Invalid pupil data: data must be numeric and non-empty.")
+  }
+
+  # Gaps left as NA by interpolate(max_gap_ms) are intentional missing-data
+  # segments. Butterworth filtering cannot operate on NAs, so we filter
+  # *around* these gaps: fill them temporarily for the filter pass, then
+  # restore them to NA afterward (consistent with Kret & Sjak-Shie, 2018).
+  # If interpolation was never run upstream, keep the original guard so users
+  # are still told to interpolate first.
+  na_idx <- integer(0)
+  if (anyNA(prev_pupil)) {
+    if (!grepl("interpolate", prev_op)) {
+      log_error("NAs detected in pupil data. Need to interpolate first.")
+    } else if (sum(!is.na(prev_pupil)) < 2) {
+      log_error(paste0(
+        "Fewer than 2 valid pupil samples remain after interpolation; ",
+        "cannot low-pass filter around gaps. Check upstream deblink/",
+        "detransient/interpolate settings or this block's data quality."
+      ))
+    } else {
+      # warn that filtering over these long gaps can slightly bias the
+      # neighboring valid samples (see Kret & Sjak-Shie, 2018); the user may
+      # prefer to disable lpfilt/downsample
+      warn_filter_over_gaps("lpfilt")
+      na_idx <- which(is.na(prev_pupil))
+      prev_pupil <- zoo::na.approx(prev_pupil, na.rm = FALSE, rule = 2)
+    }
   }
 
   if (any(!is.finite(prev_pupil))) {
@@ -215,5 +245,12 @@ lpfilt_pupil <- function(x, prev_op, wp, ws, rp, rs, fs, plot_freqz) {
   }
 
   # filter twice (forward and backward) to preserve phase information
-  gsignal::filtfilt(filt, prev_pupil)
+  filtered <- gsignal::filtfilt(filt, prev_pupil)
+
+  # restore intentional missing-data gaps left by interpolate(max_gap_ms)
+  if (length(na_idx) > 0) {
+    filtered[na_idx] <- NA_real_
+  }
+
+  filtered
 }

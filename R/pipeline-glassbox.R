@@ -157,6 +157,8 @@
 #'   demo_data,
 #'   interactive_preview = FALSE, # TRUE to visualize each step in real-time
 #'   deblink = list(extend = 40),
+#'   # only interpolate gaps up to 100 ms; longer gaps are left as NA
+#'   interpolate = list(max_gap_ms = 100),
 #'   lpfilt = list(plot_freqz = TRUE) # overrides verbose parameter
 #' )
 #'
@@ -188,6 +190,11 @@ glassbox <- function(
   skip_detransient = deprecated()
 ) {
   original_call <- match.call()
+
+  # reset per-run gap-related notices (the interpolation behavior-change notice
+  # and the filter-over-gaps warning) so each fires at most once per glassbox()
+  # run (not once per R session)
+  reset_gap_notices()
 
   # handle deprecated parameters
   if (is_present(confirm)) {
@@ -423,11 +430,27 @@ glassbox <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
+        max_gap_ms <- if (
+          is.list(params$interpolate) &&
+            "max_gap_ms" %in% names(params$interpolate)
+        ) {
+          params$interpolate$max_gap_ms
+        } else {
+          250
+        }
+        # validate up front so malformed input aborts clearly (and an explicit
+        # NULL is normalized to Inf) instead of failing deep inside the step
+        max_gap_ms <- validate_max_gap_ms(max_gap_ms)
         call_info <- list(
           call = original_call,
-          parameters = list(verbose = verbose)
+          parameters = list(max_gap_ms = max_gap_ms, verbose = verbose)
         )
-        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
+        eyeris::interpolate(
+          data,
+          max_gap_ms = max_gap_ms,
+          verbose = verbose,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -1047,11 +1070,27 @@ glassbox_internal <- function(
     },
     interpolate = function(data, params, original_call) {
       if (which_steps[["interpolate"]]) {
+        max_gap_ms <- if (
+          is.list(params$interpolate) &&
+            "max_gap_ms" %in% names(params$interpolate)
+        ) {
+          params$interpolate$max_gap_ms
+        } else {
+          250
+        }
+        # validate up front so malformed input aborts clearly (and an explicit
+        # NULL is normalized to Inf) instead of failing deep inside the step
+        max_gap_ms <- validate_max_gap_ms(max_gap_ms)
         call_info <- list(
           call = original_call,
-          parameters = list(verbose = verbose)
+          parameters = list(max_gap_ms = max_gap_ms, verbose = verbose)
         )
-        eyeris::interpolate(data, verbose = verbose, call_info = call_info)
+        eyeris::interpolate(
+          data,
+          max_gap_ms = max_gap_ms,
+          verbose = verbose,
+          call_info = call_info
+        )
       } else {
         data
       }
