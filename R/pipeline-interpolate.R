@@ -17,7 +17,7 @@
 #' pupil signal. The default of `250` ms matches the value used in that paper.
 #'
 #' Set `max_gap_ms = Inf` (or `NULL`) to disable the limit and interpolate
-#' across all gaps, restoring the behavior of `eyeris` versions <= 3.1.0.
+#' across all gaps, restoring the behavior of `eyeris` versions <= 3.2.0.
 #'
 #' Downstream `glassbox()` steps that cannot operate on missing data (low-pass
 #' filtering, downsampling, and binning) automatically work *around* these
@@ -31,7 +31,7 @@
 #' `lpfilt = FALSE` and/or `downsample = FALSE` in `glassbox()`) if this bias is
 #' a concern for your analysis.
 #'
-#' \strong{Note:} Prior to `eyeris` version 3.2.0, all gaps were interpolated
+#' \strong{Note:} Prior to `eyeris` version 3.3.0, all gaps were interpolated
 #' regardless of duration. Enforcing `max_gap_ms` is a change in default
 #' behavior and may affect downstream results.
 #'
@@ -290,7 +290,7 @@ validate_max_gap_ms <- function(max_gap_ms) {
 #'
 #' Emits a one-time-per-run warning explaining that interpolation now leaves
 #' gaps longer than `max_gap_ms` as `NA`, a change in default behavior from
-#' `eyeris` versions <= 3.1.0. The flag is cleared by [reset_gap_notices()],
+#' `eyeris` versions <= 3.2.0. The flag is cleared by [reset_gap_notices()],
 #' which `glassbox()` calls at the start of each run.
 #'
 #' @param max_gap_ms The active maximum gap duration in milliseconds
@@ -312,7 +312,7 @@ notify_max_gap_behavior_change <- function(max_gap_ms, verbose = TRUE) {
     paste0(
       "Interpolation now leaves gaps longer than {max_gap_ms} ms as `NA` ",
       "instead of interpolating across them (following Kret & Sjak-Shie, ",
-      "2018). This is a change in default behavior from eyeris <= 3.1.0 and ",
+      "2018). This is a change in default behavior from eyeris <= 3.2.0 and ",
       "may affect your results. To restore the previous behavior, set ",
       "`interpolate = list(max_gap_ms = Inf)` in `glassbox()` (or ",
       "`max_gap_ms = Inf` in `interpolate()`)."

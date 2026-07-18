@@ -47,7 +47,7 @@ data, where linear interpolation is unlikely to reflect the true underlying
 pupil signal. The default of \code{250} ms matches the value used in that paper.
 
 Set \code{max_gap_ms = Inf} (or \code{NULL}) to disable the limit and interpolate
-across all gaps, restoring the behavior of \code{eyeris} versions <= 3.1.0.
+across all gaps, restoring the behavior of \code{eyeris} versions <= 3.2.0.
 
 Downstream \code{glassbox()} steps that cannot operate on missing data (low-pass
 filtering, downsampling, and binning) automatically work \emph{around} these
@@ -61,7 +61,7 @@ they operate over such gaps, so you can choose to disable them (e.g.
 \code{lpfilt = FALSE} and/or \code{downsample = FALSE} in \code{glassbox()}) if this bias is
 a concern for your analysis.
 
-\strong{Note:} Prior to \code{eyeris} version 3.2.0, all gaps were interpolated
+\strong{Note:} Prior to \code{eyeris} version 3.3.0, all gaps were interpolated
 regardless of duration. Enforcing \code{max_gap_ms} is a change in default
 behavior and may affect downstream results.
 
