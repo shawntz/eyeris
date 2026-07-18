@@ -166,9 +166,7 @@ test_that("glassbox() threads max_gap_ms through the interpolate step", {
     zscore = FALSE,
     verbose = FALSE
   )
-  expect_false(
-    any(grepl("interpolate", names(g_off$timeseries$block_1)))
-  )
+  expect_false(any(grepl("interpolate", names(g_off$timeseries$block_1))))
 })
 
 # helper: load demo data and inject an isolated long gap (in samples) into the
