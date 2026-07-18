@@ -186,7 +186,7 @@ glassbox <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
-    regularize = TRUE,
+    resample = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
@@ -464,31 +464,18 @@ glassbox <- function(
     log_success("Running eyeris::load_asc()", verbose = verbose)
     file <- pipeline[["load_asc"]](file, params, original_call)
 
-    # regularize the sampling grid before any rate-dependent step, so that
-    # dropped samples become NA gaps on a uniform grid that later steps (e.g.,
+    # resample onto the expected uniform sampling grid before any rate-dependent
+    # step, so that dropped samples become NA gaps that later steps (e.g.,
     # interpolate) can handle consistently. Runs once on the full object, ahead
-    # of any binocular split (regularize() recurses into both eyes). For
+    # of any binocular split (resample() recurses into both eyes). For
     # already-uniform data (e.g., EyeLink) this is a no-op.
-    if (which_steps[["regularize"]]) {
-      log_success("Running eyeris::regularize()", verbose = verbose)
-      max_inflation <- if (
-        is.list(params$regularize) &&
-          "max_inflation" %in% names(params$regularize)
-      ) {
-        params$regularize$max_inflation
-      } else {
-        2
-      }
+    if (which_steps[["resample"]]) {
+      log_success("Running eyeris::resample()", verbose = verbose)
       call_info <- list(
         call = original_call,
-        parameters = list(max_inflation = max_inflation, verbose = verbose)
+        parameters = list(verbose = verbose)
       )
-      file <- eyeris::regularize(
-        file,
-        max_inflation = max_inflation,
-        verbose = verbose,
-        call_info = call_info
-      )
+      file <- eyeris::resample(file, verbose = verbose, call_info = call_info)
     }
 
     # handle binocular objects
@@ -937,7 +924,7 @@ glassbox_internal <- function(
   # the default glassbox pipeline parameters
   default_params <- list(
     load_asc = list(block = "auto", binocular_mode = "average"),
-    regularize = TRUE,
+    resample = TRUE,
     deblink = list(extend = 50),
     detransient = list(n = 16, mad_thresh = NULL),
     interpolate = TRUE,
