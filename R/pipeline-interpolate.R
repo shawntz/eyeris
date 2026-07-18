@@ -279,13 +279,11 @@ validate_max_gap_ms <- function(max_gap_ms) {
   }
 
   if (max_gap_ms <= 0) {
-    log_error(
-      paste0(
-        "`max_gap_ms` must be greater than 0 ms. To skip interpolation ",
-        "entirely, set `interpolate = FALSE` in `glassbox()` (or do not call ",
-        "`interpolate()`)."
-      )
-    )
+    log_error(paste0(
+      "`max_gap_ms` must be greater than 0 ms. To skip interpolation ",
+      "entirely, set `interpolate = FALSE` in `glassbox()` (or do not call ",
+      "`interpolate()`)."
+    ))
   }
 
   max_gap_ms
