@@ -209,8 +209,13 @@ fig_deblink <- function(path) {
   graphics::abline(h = truth$params$baseline_mean, col = "grey55", lty = 3)
   shade_na_runs(t, is.na(w_col), RED, alpha = 0.22)
   graphics::lines(t, w_col, col = RED, lwd = 2.4)
-  graphics::text(ts[i], min(w_col, na.rm = TRUE),
-    labels = "occlusion flanks\nnot removed", col = RED, font = 2, cex = 0.85,
+  graphics::text(
+    ts[i],
+    min(w_col, na.rm = TRUE),
+    labels = "occlusion flanks\nnot removed",
+    col = RED,
+    font = 2,
+    cex = 0.85,
     adj = c(0.5, -0.35)
   )
   box_wrong()
