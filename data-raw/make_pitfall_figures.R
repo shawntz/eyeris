@@ -27,7 +27,9 @@
 # ==============================================================================
 
 suppressWarnings(suppressMessages({
-  if (requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")) {
+  if (
+    requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")
+  ) {
     devtools::load_all(quiet = TRUE)
   } else {
     library(eyeris)
