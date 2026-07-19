@@ -792,7 +792,7 @@ plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
 #'
 #' This function replicates the exact detrending visualization from the
 #' `glassbox()` interactive preview mode. It uses `reaborn` to show the most
-#' recent detrended pupil signal overlaid with the fitted trend, and
+#' recent pre-detrend pupil signal overlaid with the fitted trend, and
 #' prints the resulting `ggplot` to the active device.
 #'
 #' @param pupil_data A single block of pupil time series data
