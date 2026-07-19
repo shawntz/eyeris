@@ -692,8 +692,10 @@ shade_to_zero <- function(t, y, color, alpha = 0.28) {
   ok <- is.finite(t) & is.finite(y)
   yy <- pmax(y[ok], 0) # clip to positive -> only peaks above 0 get filled
   graphics::polygon(
-    c(t[ok], rev(t[ok])), c(yy, rep(0, sum(ok))),
-    col = grDevices::adjustcolor(color, alpha.f = alpha), border = NA
+    c(t[ok], rev(t[ok])),
+    c(yy, rep(0, sum(ok))),
+    col = grDevices::adjustcolor(color, alpha.f = alpha),
+    border = NA
   )
 }
 
