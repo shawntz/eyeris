@@ -732,9 +732,14 @@ fig_detrend <- function(path) {
   open_panel(path)
 
   # panel 1: the preprocessed signal, drift + post-trial-5 decay visible
-  plot(t, pupil,
-    type = "l", col = GREY, lwd = 1.3,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    pupil,
+    type = "l",
+    col = GREY,
+    lwd = 1.3,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) PRE-DETREND  -  steep drift + exponential decay after trial 5"
   )
   graphics::abline(v = decay_onset, col = BLUE, lty = 3, lwd = 1.4)
