@@ -263,13 +263,10 @@ dynamics of the signal. Cannot be combined with <code>bin</code>. See
 <li><p><strong>Bin</strong> (<code>bin</code>, default: off) – Optionally lowers the sampling rate by
 averaging samples within equal-width time bins. Cannot be combined with
 <code>downsample</code>. See <code><a href="bin.html">bin()</a></code>.</p></li>
-<li><p><strong>Detrend</strong> (<code>detrend</code>, default: off) – Optionally fits a model of
-<code>pupil ~ time</code> and returns the residuals (along with the fitted trend) to
-remove slow drift. By default (<code>detrend = TRUE</code>) a straight-line
-(<code>method = "linear"</code>) trend is removed; pass
-<code>detrend = list(method = "spline", spline_df = 5)</code> to instead remove a
-smooth, potentially nonlinear trend via a natural cubic spline of time. Use
-with care – see <code><a href="detrend.html">detrend()</a></code> for when this is appropriate.</p></li>
+<li><p><strong>Detrend</strong> (<code>detrend</code>, default: off) – Optionally fits a linear model
+of <code>pupil ~ time</code> and returns the residuals (along with the fitted slope and
+intercept) to remove slow linear drift. Use with care – see
+<code><a href="detrend.html">detrend()</a></code> for when this is appropriate.</p></li>
 <li><p><strong>Z-score</strong> (<code>zscore</code>, default: on) – Rescales the pupil time series to a
 mean of <code>0</code> and a standard deviation of <code>1</code>, making values comparable across
 participants and recordings. See <code><a href="zscore.html">zscore()</a></code>.</p></li>
@@ -295,28 +292,28 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## (a) run an automated pipeline with no real-time inspection of parameters</span></span></span>
 <span class="r-in"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">glassbox</span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::resample()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:28] [INFO] Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:28] [WARN] Interpolation now leaves gaps longer than 250 ms</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::resample()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:58] [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:58] [WARN] Interpolation now leaves gaps longer than 250 ms</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> your results. To restore the previous behavior, set `interpolate =</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `interpolate()`).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:58] [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="glassbox-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:28] [WARN] Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:28] [WARN] Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:28] [WARN] Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::zscore() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:28] [INFO] Block processing summary:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:28] [INFO] block_1: OK (steps: 6, latest:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:59] [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:59] [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:59] [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:59] [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:59] [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:59] [INFO] block_1: OK (steps: 6, latest:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:28] [OKAY] Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:59] [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">start_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">output</span><span class="op">$</span><span class="va">timeseries</span><span class="op">$</span><span class="va">block_1</span><span class="op">$</span><span class="va">time_secs</span><span class="op">)</span></span></span>
@@ -328,7 +325,7 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-in"><span>  preview_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">end_time</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="glassbox-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="glassbox-3.png" alt="" width="700" height="433"></span>
@@ -336,12 +333,12 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-in"><span><span class="co">## (b) run a interactive workflow (with confirmation prompts after each step)</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">eyeris</span><span class="fu">::</span><span class="fu">glassbox</span><span class="op">(</span><span class="va">demo_data</span>, interactive_preview <span class="op">=</span> <span class="cn">TRUE</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:29] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:59] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:59] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="glassbox-4.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Continue? [Yes/No]: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:29] [INFO] Process cancelled after loading data. Adjust</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:59] [INFO] Process cancelled after loading data. Adjust</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> your parameters and re-run!</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
@@ -354,22 +351,22 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-in"><span>  interpolate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_gap_ms <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  lpfilt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>plot_freqz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># overrides verbose parameter</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:29] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:29] [OKAY] Running eyeris::resample()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:29] [INFO] Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:29] [OKAY] Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:29] [OKAY] Running eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:30] [OKAY] Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] Interpolation now leaves gaps longer than 100 ms</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:59] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::resample()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:00] [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] Interpolation now leaves gaps longer than 100 ms</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> your results. To restore the previous behavior, set `interpolate =</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `interpolate()`).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] Left 136 sample(s) as NA across gaps longer than</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] Left 136 sample(s) as NA across gaps longer than</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 100 ms (not interpolated).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:30] [OKAY] Running eyeris::lpfilt() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] `lpfilt()` is operating on data that contains</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] `lpfilt()` is operating on data that contains</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> gaps longer than the interpolation limit (`max_gap_ms`), which were left as</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `NA`. These gaps are temporarily filled so the filter can run and then masked</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> back to `NA`; this can slightly bias the valid pupil samples immediately</span>
@@ -377,14 +374,14 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> for your analysis, consider disabling filtering and/or downsampling (e.g.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `lpfilt = FALSE` and/or `downsample = FALSE` in `glassbox()`).</span>
 <span class="r-plt img"><img src="glassbox-5.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:30] [WARN] Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:30] [OKAY] Running eyeris::zscore() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:30] [INFO] Block processing summary:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:30] [INFO] block_1: OK (steps: 6, latest:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:00] [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:00] [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:00] [INFO] block_1: OK (steps: 6, latest:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:30] [OKAY] Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:00] [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># to suppress messages, set verbose = FALSE in plot():</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">output</span>, seed <span class="op">=</span> <span class="fl">0</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -402,31 +399,31 @@ transformation (for example, <code>plot(output, steps = c(1, 5))</code>).</p>
 <span class="r-in"><span>  detrend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  zscore <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:32] [OKAY] Running eyeris::load_asc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:32] [OKAY] Running eyeris::resample()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:33] [INFO] Processing block: block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:33] [OKAY] Running eyeris::deblink() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Skipping eyeris::detransient() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:33] [OKAY] Running eyeris::interpolate() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Interpolation now leaves gaps longer than 250 ms</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::load_asc()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::resample()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:03] [INFO] Processing block: block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::deblink() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Skipping eyeris::detransient() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::interpolate() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Interpolation now leaves gaps longer than 250 ms</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> your results. To restore the previous behavior, set `interpolate =</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `interpolate()`).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:33] [OKAY] Running eyeris::lpfilt() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::lpfilt() for block_1</span>
 <span class="r-plt img"><img src="glassbox-12.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Skipping eyeris::downsample() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Skipping eyeris::bin() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Skipping eyeris::detrend() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:50:33] [WARN] Skipping eyeris::zscore() for block_1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:33] [INFO] Block processing summary:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:33] [INFO] block_1: OK (steps: 4, latest:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Skipping eyeris::downsample() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Skipping eyeris::bin() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Skipping eyeris::detrend() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-07-19 05:51:03] [WARN] Skipping eyeris::zscore() for block_1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:03] [INFO] Block processing summary:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:03] [INFO] block_1: OK (steps: 4, latest:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> pupil_raw_deblink_interpolate_lpfilt)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:50:33] [OKAY] Running eyeris::summarize_confounds()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> [2026-07-19 05:51:03] [OKAY] Running eyeris::summarize_confounds()</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">output</span>, seed <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:50:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-07-19 05:51:03] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-plt img"><img src="glassbox-13.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="glassbox-14.png" alt="" width="700" height="433"></span>

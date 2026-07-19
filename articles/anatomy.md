@@ -132,7 +132,7 @@ parameters and a worked example:
 | 6\. Lowpass filter | [`eyeris::lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) | Smooth the pupil time series |
 | *(optional)* Downsample | [`eyeris::downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md) | Decimate to a lower sampling rate (anti-aliased) |
 | *(optional)* Bin | [`eyeris::bin()`](https://eyeris.shawnschwartz.com/reference/bin.md) | Average samples within fixed time bins |
-| *(optional)* Detrend | [`eyeris::detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md) | Remove a linear or spline trend from the time series |
+| *(optional)* Detrend | [`eyeris::detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md) | Remove a linear trend from the time series |
 | 7\. Z-score | [`eyeris::zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md) | Standardize to mean 0 and SD 1 |
 | *(summary)* Confounds | [`eyeris::summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md) | Tabulate per-step data-quality metrics |
 

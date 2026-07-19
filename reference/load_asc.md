@@ -127,28 +127,28 @@ demo_data <- eyelink_asc_demo_dataset()
 
 demo_data |>
   eyeris::glassbox(load_asc = list(block = 1))
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::resample()
-#> ℹ [2026-07-19 05:50:47] [INFO] Processing block: block_1
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-19 05:50:47] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-19 05:51:19] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-19 05:51:19] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-19 05:51:19] [INFO] Processing block: block_1
+#> ✔ [2026-07-19 05:51:19] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-19 05:51:19] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-19 05:51:20] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-19 05:51:20] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-19 05:51:20] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-19 05:50:47] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-19 05:50:47] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-19 05:50:47] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-19 05:50:47] [INFO] Block processing summary:
-#> ℹ [2026-07-19 05:50:47] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-19 05:51:20] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-19 05:51:20] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-19 05:51:20] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-19 05:51:20] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-19 05:51:20] [INFO] Block processing summary:
+#> ℹ [2026-07-19 05:51:20] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-19 05:50:47] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-19 05:51:20] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "/home/runner/work/_temp/Library/eyeris/extdata/memory.asc"
 #> 
