@@ -401,7 +401,9 @@ fig_interpolate <- function(path) {
   graphics::text(mean(range(t)), mean(ylim),
     labels = "GAP REMAINS NA", col = GREEN, font = 2, cex = 2.1
   )
-  graphics::text(mean(range(t)), mean(ylim),
+  graphics::text(
+    mean(range(t)),
+    mean(ylim),
     labels = "\n\n\n> 250 ms of contiguous data lost -> left as NA, not interpolated",
     col = GREEN,
     font = 1,
