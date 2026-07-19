@@ -265,7 +265,8 @@ fig_deblink <- function(path) {
   )
   msg(
     "  [deblink]  flank artifact remaining: suboptimal=%.0f optimal=%.0f",
-    resid_wrong, resid_right
+    resid_wrong,
+    resid_right
   )
   invisible(path)
 }
