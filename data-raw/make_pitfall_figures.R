@@ -337,7 +337,9 @@ fig_interpolate <- function(path) {
     main = "1) RAW INPUT  -  > 250 ms of pupil lost mid-trial (starts high, ends low)"
   )
   shade_na_runs(t, is.na(raw), "grey40", alpha = 0.16)
-  graphics::text(mean(c(gap0, gap1)), ylim[1],
+  graphics::text(
+    mean(c(gap0, gap1)),
+    ylim[1],
     labels = sprintf("%.1f s lost", lost_s),
     col = "grey30", adj = c(0.5, -0.6), font = 2, cex = 0.9
   )
