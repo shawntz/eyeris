@@ -339,8 +339,13 @@ fig_interpolate <- function(path) {
   )
   graphics::lines(t, real_series, col = "grey55", lwd = 1.6) # real, measured
   graphics::lines(t[bridge_sel], filled[bridge_sel], col = RED, lwd = 2.8) # invented
-  graphics::text(mean(c(gap0, gap1)), mean(filled[bridge_sel]),
-    labels = "not real data\n(should stay NA)", col = RED, font = 2, cex = 0.85,
+  graphics::text(
+    mean(c(gap0, gap1)),
+    mean(filled[bridge_sel]),
+    labels = "not real data\n(should stay NA)",
+    col = RED,
+    font = 2,
+    cex = 0.85,
     adj = c(0.5, -0.15)
   )
   graphics::legend(
