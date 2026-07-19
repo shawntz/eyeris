@@ -262,7 +262,8 @@ fig_deblink <- function(path) {
     "eyeris pitfall - deblink: too short a mask leaves the occlusion flanks",
     sprintf(
       "occlusion-flank artifact remaining:  suboptimal = %.0f a.u.,  optimal = %.0f a.u.",
-      resid_wrong, resid_right
+      resid_wrong,
+      resid_right
     )
   )
   msg(
