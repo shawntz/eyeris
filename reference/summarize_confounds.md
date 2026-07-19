@@ -64,36 +64,36 @@ confounds <- demo_data |>
     label = "prePostProbe" # custom epoch label name
   ) |>
   eyeris::summarize_confounds()
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::resample()
-#> ℹ [2026-07-18 23:38:37] [INFO] Processing block: block_1
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-18 23:38:37] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-19 05:51:08] [INFO] Processing block: block_1
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-19 05:51:08] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-07-18 23:38:37] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-18 23:38:37] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-18 23:38:37] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-18 23:38:37] [INFO] Block processing summary:
-#> ℹ [2026-07-18 23:38:37] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-07-19 05:51:08] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-19 05:51:08] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-19 05:51:08] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-19 05:51:08] [INFO] Block processing summary:
+#> ℹ [2026-07-19 05:51:08] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-18 23:38:37] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-07-18 23:38:37] [INFO] Epoching pupil data...
-#> ℹ [2026-07-18 23:38:37] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-07-19 05:51:08] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-07-19 05:51:08] [INFO] Epoching pupil data...
+#> ℹ [2026-07-19 05:51:08] [INFO] Block 1: found 10 matching events for
 #> PROBEtypetrial
-#> ✔ [2026-07-18 23:38:37] [OKAY] Done!
-#> ✔ [2026-07-18 23:38:37] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-07-19 05:51:08] [OKAY] Done!
+#> ✔ [2026-07-19 05:51:08] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-07-18 23:38:37] [OKAY] Pupil epoching completed in 0.11 seconds
-#> ℹ [2026-07-18 23:38:37] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-07-19 05:51:08] [OKAY] Pupil epoching completed in 0.10 seconds
+#> ℹ [2026-07-19 05:51:08] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 # access confounds for entire time series for a specific block and step

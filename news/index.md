@@ -81,6 +81,27 @@ guidelines.
 
 ### 🚀 New features
 
+- **NF**:
+  **[`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
+  now supports spline detrending via a new `method` argument.**
+  Detrending previously only removed a straight-line (linear) trend,
+  which cannot capture the slow, *nonlinear* drift often present in
+  longer recordings.
+  [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
+  now accepts `method = "linear"` (the default, preserving the previous
+  behavior of regressing pupil size on time) or `method = "spline"`,
+  which removes a smooth, potentially nonlinear trend by fitting a
+  natural cubic spline basis of time
+  (`splines::ns(time, df = spline_df)`). The flexibility of the fitted
+  spline is controlled by the new `spline_df` argument (degrees of
+  freedom; default `5`). Both models return the fitted trend and the
+  residuals exactly as before, so all downstream steps, plots, and
+  reports are unchanged aside from the trend shape. Enable it in the
+  pipeline with `glassbox(detrend = list(method = "spline"))`
+  (optionally `spline_df = ...`), or call `detrend(method = "spline")`
+  directly, by [@shawntz](https://github.com/shawntz) in
+  [\#349](https://github.com/shawntz/eyeris/issues/349).
+
 - **NF ([\#299](https://github.com/shawntz/eyeris/issues/299))**:
   **Added
   [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md),
@@ -193,6 +214,30 @@ guidelines.
   [\#320](https://github.com/shawntz/eyeris/issues/320).
 
 ### 🐛 Bugs fixed
+
+- **FF**: Fixed `glassbox(detrend = TRUE)` silently dropping the fitted
+  detrend coefficients. The per-block detrend coefficients are computed
+  inside
+  [`pipeline_handler()`](https://eyeris.shawnschwartz.com/reference/pipeline_handler.md)
+  and stored on the internal per-block object, but
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)’s
+  block-recombine step copied back the timeseries, `params`, decimated
+  sample rate, and pre-decimation data — never `$detrend_coefs`. As a
+  result, `$detrend_coefs` was always absent from the object returned by
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md),
+  even though it was correctly populated when calling
+  [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
+  directly. The recombine step (in both the main and per-eye/binocular
+  paths) now preserves `$detrend_coefs` per block, so the fitted
+  intercept/slope are available on the
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  output for provenance and inspection. It also clears any
+  `$detrend_coefs` inherited from a pre-loaded input object at the start
+  of each run, so the returned object retains only the coefficients
+  produced in that run (and none survive when detrending is disabled or
+  fails). The `detrend_fitted_values` column that drives the detrend
+  diagnostic plots/reports was already preserved and is unaffected, by
+  [@shawntz](https://github.com/shawntz).
 
 - **FF**: Fixed an error in
   [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
