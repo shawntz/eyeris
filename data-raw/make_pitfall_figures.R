@@ -68,8 +68,12 @@ BLUE <- "#1F5FA8"
 tint_bg <- function(color, alpha = 0.07) {
   usr <- graphics::par("usr")
   graphics::rect(
-    usr[1], usr[3], usr[2], usr[4],
-    col = grDevices::adjustcolor(color, alpha.f = alpha), border = NA
+    usr[1],
+    usr[3],
+    usr[2],
+    usr[4],
+    col = grDevices::adjustcolor(color, alpha.f = alpha),
+    border = NA
   )
 }
 
