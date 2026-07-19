@@ -239,7 +239,8 @@ fig_deblink <- function(path) {
   plot(t, r_col,
     type = "n", ylim = ylim, xlab = "time (s)", ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  deblink(extend = 50): clears the 40 ms flanks (+ a bit extra)",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   graphics::abline(h = truth$params$baseline_mean, col = "grey55", lty = 3)
