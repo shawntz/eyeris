@@ -838,6 +838,19 @@ glassbox <- function(
 
       processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
 
+      # preserve detrend coefficients from processed blocks; these are computed
+      # per block on temp_file inside pipeline_handler() but, unlike the other
+      # per-block artifacts below, were previously never copied back onto
+      # `file`, so glassbox(detrend = TRUE) silently dropped `$detrend_coefs`
+      if (!is.null(temp_file$detrend_coefs[[block_name]])) {
+        if (is.null(file$detrend_coefs)) {
+          file$detrend_coefs <- list()
+        }
+        file$detrend_coefs[[block_name]] <- temp_file$detrend_coefs[[
+          block_name
+        ]]
+      }
+
       # preserve decimated.sample.rate from processed blocks
       if (!is.null(temp_file$decimated.sample.rate)) {
         file$decimated.sample.rate <- temp_file$decimated.sample.rate
@@ -1402,6 +1415,19 @@ glassbox_internal <- function(
       }
 
       processed_blocks[[block_name]] <- temp_file$timeseries[[block_name]]
+
+      # preserve detrend coefficients from processed blocks; these are computed
+      # per block on temp_file inside pipeline_handler() but, unlike the other
+      # per-block artifacts below, were previously never copied back onto
+      # `file`, so glassbox(detrend = TRUE) silently dropped `$detrend_coefs`
+      if (!is.null(temp_file$detrend_coefs[[block_name]])) {
+        if (is.null(file$detrend_coefs)) {
+          file$detrend_coefs <- list()
+        }
+        file$detrend_coefs[[block_name]] <- temp_file$detrend_coefs[[
+          block_name
+        ]]
+      }
 
       # preserve decimated.sample.rate from processed blocks
       if (!is.null(temp_file$decimated.sample.rate)) {
