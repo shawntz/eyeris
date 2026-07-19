@@ -96,8 +96,12 @@ shade_na_runs <- function(t, mask, color, alpha = 0.22) {
     x0 <- t[run[1]]
     x1 <- t[run[2]]
     graphics::rect(
-      x0, usr[3], x1, usr[4],
-      col = grDevices::adjustcolor(color, alpha.f = alpha), border = NA
+      x0,
+      usr[3],
+      x1,
+      usr[4],
+      col = grDevices::adjustcolor(color, alpha.f = alpha),
+      border = NA
     )
   }
 }
