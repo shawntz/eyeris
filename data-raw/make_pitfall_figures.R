@@ -738,8 +738,13 @@ fig_detrend <- function(path) {
     main = "1) PRE-DETREND  -  steep drift + exponential decay after trial 5"
   )
   graphics::abline(v = decay_onset, col = BLUE, lty = 3, lwd = 1.4)
-  graphics::text(decay_onset, graphics::par("usr")[4],
-    labels = " decay onset (trial 5)", col = BLUE, adj = c(0, 1.3), cex = 0.85
+  graphics::text(
+    decay_onset,
+    graphics::par("usr")[4],
+    labels = " decay onset (trial 5)",
+    col = BLUE,
+    adj = c(0, 1.3),
+    cex = 0.85
   )
   box_ctx()
 
