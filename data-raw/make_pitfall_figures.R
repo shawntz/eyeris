@@ -521,9 +521,14 @@ fig_lpfilt <- function(path) {
   graphics::lines(t, bw[sel], col = RED, lwd = 2.4)
   # annotate the acausal pre-ringing dip
   graphics::points(dip_t, dip_y, col = RED, pch = 19, cex = 0.9)
-  graphics::text(dip_t, dip_y,
-    labels = "pre-ringing\n(before onset)", col = RED, cex = 0.78,
-    adj = c(1.05, 0.4), font = 2
+  graphics::text(
+    dip_t,
+    dip_y,
+    labels = "pre-ringing\n(before onset)",
+    col = RED,
+    cex = 0.78,
+    adj = c(1.05, 0.4),
+    font = 2
   )
   graphics::text(onset, ylim[2], labels = " stimulus onset",
     col = BLUE, adj = c(0, 1.1), cex = 0.8
