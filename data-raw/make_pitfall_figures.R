@@ -195,9 +195,15 @@ fig_deblink <- function(path) {
   open_panel(path)
 
   # panel 1: raw with the blink (missing core + occlusion flank spikes)
-  plot(t, raw,
-    type = "l", col = GREY, lwd = 1.4, ylim = ylim,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    raw,
+    type = "l",
+    col = GREY,
+    lwd = 1.4,
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) RAW INPUT  -  blink: missing core + occlusion flank spikes"
   )
   box_ctx()
