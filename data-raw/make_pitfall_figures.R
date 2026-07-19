@@ -389,7 +389,8 @@ fig_interpolate <- function(path) {
     xlab = "time (s)",
     ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  leave the long gap as NA (do not interpolate)",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   graphics::lines(t, raw, col = "grey65", lwd = 1.4) # faded surviving data
