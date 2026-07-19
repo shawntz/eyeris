@@ -355,8 +355,13 @@ fig_interpolate <- function(path) {
   box_wrong()
 
   # panel 3: OPTIMAL -- reject the trial (too much contiguous data lost)
-  plot(t, raw,
-    type = "n", ylim = ylim, xlab = "time (s)", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    raw,
+    type = "n",
+    ylim = ylim,
+    xlab = "time (s)",
+    ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  leave the long gap as NA (do not interpolate)",
     col.main = GREEN, font.main = 2
   )
