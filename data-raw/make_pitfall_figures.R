@@ -662,7 +662,11 @@ fig_detransient <- function(path) {
     col.main = GREEN, font.main = 2
   )
   tint_bg(GREEN)
-  graphics::abline(v = c(t1, t2), col = grDevices::adjustcolor(GREEN, 0.4), lty = 3)
+  graphics::abline(
+    v = c(t1, t2),
+    col = grDevices::adjustcolor(GREEN, 0.4),
+    lty = 3
+  )
   graphics::lines(t, r_col, col = GREEN, lwd = 2.4)
   box_right()
 
