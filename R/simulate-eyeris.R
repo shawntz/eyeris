@@ -292,7 +292,12 @@ print.eyeris_sim_params <- function(x, ...) {
 #'
 #' @keywords internal
 .ppr_kernel <- function(tau, n, t_max) {
-  h <- ifelse(tau < 0, 0, tau^n * exp(-n * tau / t_max))
+  # evaluate the power/exponential only for nonnegative tau: computing
+  # tau^n for negative tau with fractional n yields NaN, which `ifelse()`
+  # would otherwise generate eagerly (for every element) and then discard
+  h <- numeric(length(tau))
+  pos <- tau >= 0
+  h[pos] <- tau[pos]^n * exp(-n * tau[pos] / t_max)
   peak <- max(h)
   if (peak > 0) h / peak else h
 }
