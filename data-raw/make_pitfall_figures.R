@@ -8,7 +8,7 @@
 #
 #   1. deblink     -- an over-aggressive NA mask that "bleeds over" real signal
 #   2. interpolate -- linearly bridging a gap that is far too long
-#   3. lpfilt      -- a rectangular (FFT brick-wall) filter instead of Butterworth
+#   3. lpfilt      -- too low a low-pass cutoff rings and distorts the dilation
 #   4. detransient -- low-pass filtering BEFORE removing transients
 #   5. detrend     -- a linear detrend on a curved (exponential-decay) drift,
 #                     vs a spline detrend, seen through z-scored epoch means
@@ -445,29 +445,22 @@ fig_interpolate <- function(path) {
 }
 
 # ==============================================================================
-# 3. lpfilt -- a rectangular (FFT brick-wall) filter instead of Butterworth
+# 3. lpfilt -- choose a sensible low-pass cutoff
+#
+# eyeris's lpfilt() is a zero-phase Butterworth low-pass. What matters for
+# getting it right is the CUTOFF: set it too low and it bites into the pupil
+# dilation's own spectrum, ringing and undershooting the response; set it
+# sensibly and it removes the high-frequency noise while preserving the
+# dilation. This figure shows the same Butterworth at a too-low vs a sensible
+# cutoff.
 # ==============================================================================
 
-# demo-only rectangular brick-wall low-pass: zero every FFT bin above the
-# cutoff (a rectangular window in the frequency domain) and invert. The sharp
-# edge convolves the signal with a sinc in time -> Gibbs ringing. No eyeris
-# function filters this way; this exists only to show why you should not.
-.brickwall_fft <- function(x, fs, cutoff) {
-  n <- length(x)
-  xd <- x - mean(x)
-  X <- stats::fft(xd)
-  freq <- (seq_len(n) - 1) * fs / n
-  keep <- freq <= cutoff | freq >= (fs - cutoff)
-  X[!keep] <- 0 + 0i
-  Re(stats::fft(X, inverse = TRUE)) / n + mean(x)
-}
-
 fig_lpfilt <- function(path) {
-  cutoff <- 1.5 # Hz -- SAME nominal cutoff for both filters, so the only
-  # difference is the transition SHAPE (rectangular vs Butterworth roll-off)
   onset <- 6
-  # a pupil dilation carrying broadband high-frequency noise: a hard
-  # (rectangular) cutoff rings on it, while the Butterworth roll-off does not
+  cutoff_bad <- 1.5 # too low -- bites into the dilation's own spectrum
+  cutoff_good <- 4 # sensible -- removes HF noise, keeps the dilation
+
+  # a brisk pupil dilation carrying broadband high-frequency noise
   params <- sim_params(
     duration_secs = 20,
     blinks = FALSE,
@@ -478,39 +471,37 @@ fig_lpfilt <- function(path) {
     phasic_onsets_ms = c(onset * 1000, 12000),
     phasic_amp = c(430, 430),
     phasic_tmax = 0.5,
-    noise_sd = 10
+    noise_sd = 12
   )
   sim <- simulate_eyeris(seed = 5, params = params, verbose = FALSE)
+  truth <- attr(sim, "sim_truth")
   base <- .quiet(interpolate(sim, verbose = FALSE)) # gap-free input to filter
-  # Butterworth designed at the SAME cutoff for a fair, type-only comparison
-  butter <- .quiet(lpfilt(
-    base,
-    wp = cutoff,
-    ws = cutoff * 2,
-    plot_freqz = FALSE
-  ))
 
   b <- .blk(base)
-  fs <- base$info$sample.rate
   x <- b[[.latest_name(base)]]
-  bw <- .brickwall_fft(x, fs, cutoff)
-  bt <- .latest_col(butter)
+  clean <- truth$clean # the true, noise-free dilation
+
+  # the SAME Butterworth (eyeris lpfilt) at each cutoff
+  lp_at <- function(co) {
+    .latest_col(.quiet(lpfilt(base, wp = co, ws = co * 2, plot_freqz = FALSE)))
+  }
+  bt_bad <- lp_at(cutoff_bad)
+  bt_good <- lp_at(cutoff_good)
 
   win <- c(onset - 2, onset + 3)
   sel <- win_sel(b, win)
   t <- b$time_secs[sel]
 
-  # pre-onset baseline + the acausal pre-ringing dip that precedes the stimulus
   pre_lvl_sel <- b$time_secs >= (onset - 2) & b$time_secs < (onset - 0.5)
-  base_lvl <- mean(x[pre_lvl_sel])
-  ring_sel <- b$time_secs >= (onset - 1.4) & b$time_secs < onset
-  dip_i <- which(ring_sel)[which.min(bw[ring_sel])]
-  dip_t <- b$time_secs[dip_i]
-  dip_y <- bw[dip_i]
+  base_lvl <- mean(clean[pre_lvl_sel])
+  pre <- b$time_secs >= (onset - 1.5) & b$time_secs < onset
+  predip <- function(v) base_lvl - min(v[pre])
+
+  ylim <- range(c(bt_bad[sel], bt_good[sel], clean[sel]), na.rm = TRUE)
 
   open_panel(path)
 
-  # panel 1: the raw input -- a pupil dilation buried in high-frequency noise
+  # panel 1: raw dilation + high-frequency noise (true dilation overlaid)
   plot(
     t,
     x[sel],
@@ -522,94 +513,100 @@ fig_lpfilt <- function(path) {
     ylab = "pupil (a.u.)",
     main = "1) RAW INPUT  -  a pupil dilation with high-frequency noise"
   )
-  graphics::abline(v = onset, col = BLUE, lty = 3)
-  graphics::text(
-    onset,
-    max(x[sel]),
-    labels = " stimulus onset",
-    col = BLUE,
-    adj = c(0, 1.1),
+  graphics::lines(t, clean[sel], col = "grey20", lwd = 1.8, lty = 2)
+  graphics::legend(
+    "topright",
+    legend = c("raw (dilation + HF noise)", "true dilation"),
+    col = c(GREY, "grey20"),
+    lty = c(1, 2),
+    lwd = c(1.0, 1.8),
+    bty = "n",
     cex = 0.8
   )
   box_ctx()
 
-  ylim <- range(c(bw[sel], bt[sel]), na.rm = TRUE)
+  # the Butterworth result at one cutoff, overlaid on the true dilation
+  bt_panel <- function(bt_v, main, boxcol, xlab, note) {
+    plot(
+      t,
+      bt_v[sel],
+      type = "n",
+      ylim = ylim,
+      xlab = xlab,
+      ylab = "pupil (a.u.)",
+      main = main,
+      col.main = boxcol,
+      font.main = 2
+    )
+    tint_bg(boxcol)
+    graphics::abline(h = base_lvl, col = "grey60", lty = 3)
+    graphics::abline(v = onset, col = "grey40", lty = 3)
+    graphics::lines(t, clean[sel], col = "grey20", lwd = 1.8, lty = 2) # truth
+    graphics::lines(t, bt_v[sel], col = BLUE, lwd = 2.6) # Butterworth
+    graphics::legend(
+      "topright",
+      legend = c("Butterworth (lpfilt)", "true dilation"),
+      col = c(BLUE, "grey20"),
+      lty = c(1, 2),
+      lwd = c(2.6, 1.8),
+      bty = "n",
+      cex = 0.8
+    )
+    graphics::text(
+      mean(range(t)),
+      ylim[1],
+      labels = note,
+      adj = c(0.5, -0.5),
+      font = 3,
+      cex = 0.9,
+      col = "grey25"
+    )
+    graphics::box(col = boxcol, lwd = 3)
+  }
 
-  # panel 2: WRONG -- brick-wall rings, including BEFORE the stimulus (acausal)
-  plot(
-    t,
-    bw[sel],
-    type = "n",
-    ylim = ylim,
-    xlab = "",
-    ylab = "pupil (a.u.)",
-    main = "2) SUBOPTIMAL PROCESSING  -  rectangular FFT filter -> ringing",
-    col.main = RED,
-    font.main = 2
-  )
-  tint_bg(RED)
-  graphics::abline(h = base_lvl, col = "grey55", lty = 3)
-  graphics::abline(v = onset, col = BLUE, lty = 3)
-  graphics::lines(t, bt[sel], col = "grey45", lwd = 1.4, lty = 2)
-  graphics::lines(t, bw[sel], col = RED, lwd = 2.4)
-  # annotate the acausal pre-ringing dip
-  graphics::points(dip_t, dip_y, col = RED, pch = 19, cex = 0.9)
-  graphics::text(
-    dip_t,
-    dip_y,
-    labels = "pre-ringing\n(before onset)",
-    col = RED,
-    cex = 0.78,
-    adj = c(1.05, 0.4),
-    font = 2
-  )
-  graphics::text(
-    onset,
-    ylim[2],
-    labels = " stimulus onset",
-    col = BLUE,
-    adj = c(0, 1.1),
-    cex = 0.8
-  )
-  graphics::legend(
-    "topright",
-    legend = c("brick-wall result", "Butterworth (reference)"),
-    col = c(RED, "grey45"),
-    lty = c(1, 2),
-    lwd = c(2.4, 1.4),
-    bty = "n",
-    cex = 0.8
-  )
-  box_wrong()
-
-  # panel 3: RIGHT -- Butterworth is smooth, no ringing
-  plot(
-    t,
-    bt[sel],
-    type = "n",
-    ylim = ylim,
-    xlab = "time (s)",
-    ylab = "pupil (a.u.)",
-    main = "3) OPTIMAL PROCESSING  -  Butterworth retains the dilation shape",
-    col.main = GREEN,
-    font.main = 2
-  )
-  tint_bg(GREEN)
-  graphics::abline(h = base_lvl, col = "grey55", lty = 3)
-  graphics::abline(v = onset, col = BLUE, lty = 3)
-  graphics::lines(t, bt[sel], col = GREEN, lwd = 2.4)
-  box_right()
-
-  dip <- base_lvl - dip_y # depth of the pre-stimulus ringing dip
-  close_panel(
-    "eyeris pitfall - lpfilt: a rectangular filter rings; use Butterworth",
+  # panel 2: SUBOPTIMAL -- cutoff too low, rings and undershoots the dilation
+  bt_panel(
+    bt_bad,
     sprintf(
-      "acausal pre-ringing dip before the stimulus = %.0f a.u.  (matched %.1f Hz cutoff)",
-      dip,
-      cutoff
+      "2) SUBOPTIMAL PROCESSING  -  cutoff too low (%.1f Hz): rings + distorts",
+      cutoff_bad
+    ),
+    RED,
+    "",
+    "an over-aggressive cutoff rings and undershoots the response"
+  )
+
+  # panel 3: OPTIMAL -- sensible cutoff, noise removed and dilation preserved
+  bt_panel(
+    bt_good,
+    sprintf(
+      "3) OPTIMAL PROCESSING  -  sensible cutoff (%.0f Hz): noise gone, dilation kept",
+      cutoff_good
+    ),
+    GREEN,
+    "time (s)",
+    "removes the high-frequency noise and preserves the dilation"
+  )
+
+  pd_bad <- predip(bt_bad)
+  pd_good <- predip(bt_good)
+  close_panel(
+    "eyeris pitfall - lpfilt: too low a cutoff rings and distorts the dilation",
+    sprintf(
+      "pre-stimulus ringing:  %.0f a.u. at %.1f Hz  vs  %.0f a.u. at %.0f Hz",
+      pd_bad,
+      cutoff_bad,
+      pd_good,
+      cutoff_good
     )
   )
-  msg("  [lpfilt]  pre-ring dip = %.1f a.u.", dip)
+  msg(
+    "  [lpfilt]  ring %.1fHz=%.0f  %.0fHz=%.0f",
+    cutoff_bad,
+    pd_bad,
+    cutoff_good,
+    pd_good
+  )
   invisible(path)
 }
 
