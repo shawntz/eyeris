@@ -195,8 +195,13 @@ fig_deblink <- function(path) {
   box_ctx()
 
   # panel 2: SUBOPTIMAL -- extend = 5 ms leaves the occlusion flank spikes
-  plot(t, w_col,
-    type = "n", ylim = ylim, xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    w_col,
+    type = "n",
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  deblink(extend = 5): flank artifacts survive",
     col.main = RED, font.main = 2
   )
