@@ -504,9 +504,13 @@ fig_lpfilt <- function(path) {
   ylim <- range(c(bw[sel], bt[sel]), na.rm = TRUE)
 
   # panel 2: WRONG -- brick-wall rings, including BEFORE the stimulus (acausal)
-  plot(t, bw[sel],
-    type = "n", ylim = ylim,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    bw[sel],
+    type = "n",
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  rectangular FFT filter -> ringing",
     col.main = RED, font.main = 2
   )
