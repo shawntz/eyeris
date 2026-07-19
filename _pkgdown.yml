@@ -152,6 +152,14 @@ reference:
     contents:
       - pipeline_handler
 
+  - title: "🧪 Simulate Pupil Data"
+    desc: >
+      Generate synthetic, pipeline-compatible pupil time series with known ground truth for testing, demonstrations, and reproducible examples.
+    contents:
+      - simulate_eyeris
+      - sim_params
+      - print.eyeris_sim_params
+
   - title: "📈 Demo Datasets"
     desc: >
       Example eye-tracking / pupil datasets for testing and demonstrating pipeline functionality.
