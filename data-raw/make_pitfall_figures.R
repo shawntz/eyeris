@@ -490,9 +490,15 @@ fig_lpfilt <- function(path) {
   open_panel(path)
 
   # panel 1: the raw input -- a pupil dilation buried in high-frequency noise
-  plot(t, x[sel],
-    type = "l", col = GREY, lwd = 1.0, ylim = range(x[sel]),
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    x[sel],
+    type = "l",
+    col = GREY,
+    lwd = 1.0,
+    ylim = range(x[sel]),
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) RAW INPUT  -  a pupil dilation with high-frequency noise"
   )
   graphics::abline(v = onset, col = BLUE, lty = 3)
