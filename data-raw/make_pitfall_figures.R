@@ -378,7 +378,9 @@ fig_interpolate <- function(path) {
   )
   graphics::text(mean(range(t)), mean(ylim),
     labels = "\n\n\n> 250 ms of contiguous data lost -> left as NA, not interpolated",
-    col = GREEN, font = 1, cex = 0.95
+    col = GREEN,
+    font = 1,
+    cex = 0.95
   )
   box_right()
 
