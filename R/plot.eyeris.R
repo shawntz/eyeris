@@ -792,7 +792,7 @@ plot_pupil_distribution <- function(data, color, main, xlab, backuplab = NULL) {
 #'
 #' This function replicates the exact detrending visualization from the
 #' `glassbox()` interactive preview mode. It uses `reaborn` to show the most
-#' recent detrended pupil signal overlaid with the fitted linear trend, and
+#' recent pre-detrend pupil signal overlaid with the fitted trend, and
 #' prints the resulting `ggplot` to the active device.
 #'
 #' @param pupil_data A single block of pupil time series data
@@ -843,7 +843,7 @@ plot_detrend_overlay <- function(
 
   dstep <- detrend_step[length(detrend_step)]
 
-  # combine the pre-detrend pupil signal and the fitted linear trend into a
+  # combine the pre-detrend pupil signal and the fitted trend into a
   # single long data frame so `reaborn` draws them as two hue-mapped lines with
   # an automatic legend (replacing the base-graphics overlay + legend())
   line_df <- rbind(
@@ -856,7 +856,7 @@ plot_detrend_overlay <- function(
     data.frame(
       .x = pupil_data$time_secs,
       .y = pupil_data$detrend_fitted_values,
-      series = "linear trend",
+      series = "fitted trend",
       stringsAsFactors = FALSE
     )
   )
@@ -867,7 +867,7 @@ plot_detrend_overlay <- function(
     x = ".x",
     y = ".y",
     hue = "series",
-    hue_order = c("pupil time series", "linear trend"),
+    hue_order = c("pupil time series", "fitted trend"),
     palette = c("black", "blue"),
     estimator = NULL
   )) +

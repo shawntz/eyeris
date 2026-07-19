@@ -70,10 +70,13 @@
 #' 8. **Bin** (`bin`, default: off) -- Optionally lowers the sampling rate by
 #' averaging samples within equal-width time bins. Cannot be combined with
 #' `downsample`. See [eyeris::bin()].
-#' 9. **Detrend** (`detrend`, default: off) -- Optionally fits a linear model
-#' of `pupil ~ time` and returns the residuals (along with the fitted slope and
-#' intercept) to remove slow linear drift. Use with care -- see
-#' [eyeris::detrend()] for when this is appropriate.
+#' 9. **Detrend** (`detrend`, default: off) -- Optionally fits a model of
+#' `pupil ~ time` and returns the residuals (along with the fitted trend) to
+#' remove slow drift. By default (`detrend = TRUE`) a straight-line
+#' (`method = "linear"`) trend is removed; pass
+#' `detrend = list(method = "spline", spline_df = 5)` to instead remove a
+#' smooth, potentially nonlinear trend via a natural cubic spline of time. Use
+#' with care -- see [eyeris::detrend()] for when this is appropriate.
 #' 10. **Z-score** (`zscore`, default: on) -- Rescales the pupil time series to a
 #' mean of `0` and a standard deviation of `1`, making values comparable across
 #' participants and recordings. See [eyeris::zscore()].
@@ -541,8 +544,31 @@ glassbox <- function(
     },
     detrend = function(data, params, original_call) {
       if (which_steps[["detrend"]]) {
-        call_info <- list(call = original_call, parameters = list())
-        eyeris::detrend(data, call_info = call_info)
+        detrend_opts <- if (is.list(params$detrend)) {
+          params$detrend
+        } else {
+          list()
+        }
+        method <- if (!is.null(detrend_opts$method)) {
+          detrend_opts$method
+        } else {
+          "linear"
+        }
+        spline_df <- if (!is.null(detrend_opts$spline_df)) {
+          detrend_opts$spline_df
+        } else {
+          5
+        }
+        call_info <- list(
+          call = original_call,
+          parameters = list(method = method, spline_df = spline_df)
+        )
+        eyeris::detrend(
+          data,
+          method = method,
+          spline_df = spline_df,
+          call_info = call_info
+        )
       } else {
         data
       }
@@ -1217,8 +1243,31 @@ glassbox_internal <- function(
     },
     detrend = function(data, params, original_call) {
       if (which_steps[["detrend"]]) {
-        call_info <- list(call = original_call, parameters = list())
-        eyeris::detrend(data, call_info = call_info)
+        detrend_opts <- if (is.list(params$detrend)) {
+          params$detrend
+        } else {
+          list()
+        }
+        method <- if (!is.null(detrend_opts$method)) {
+          detrend_opts$method
+        } else {
+          "linear"
+        }
+        spline_df <- if (!is.null(detrend_opts$spline_df)) {
+          detrend_opts$spline_df
+        } else {
+          5
+        }
+        call_info <- list(
+          call = original_call,
+          parameters = list(method = method, spline_df = spline_df)
+        )
+        eyeris::detrend(
+          data,
+          method = method,
+          spline_df = spline_df,
+          call_info = call_info
+        )
       } else {
         data
       }

@@ -112,7 +112,7 @@ worked example:
 | 6. Lowpass filter | `eyeris::lpfilt()` | Smooth the pupil time series |
 | _(optional)_ Downsample | `eyeris::downsample()` | Decimate to a lower sampling rate (anti-aliased) |
 | _(optional)_ Bin | `eyeris::bin()` | Average samples within fixed time bins |
-| _(optional)_ Detrend | `eyeris::detrend()` | Remove a linear trend from the time series |
+| _(optional)_ Detrend | `eyeris::detrend()` | Remove a linear or spline trend from the time series |
 | 7. Z-score | `eyeris::zscore()` | Standardize to mean 0 and SD 1 |
 | _(summary)_ Confounds | `eyeris::summarize_confounds()` | Tabulate per-step data-quality metrics |
 

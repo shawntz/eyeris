@@ -4,21 +4,32 @@
 \alias{detrend_pupil}
 \title{Internal function to detrend pupil data}
 \usage{
-detrend_pupil(x, prev_op)
+detrend_pupil(x, prev_op, method = "linear", spline_df = 5)
 }
 \arguments{
 \item{x}{A data frame containing pupil data with columns \code{time_secs} and
 the previous operation's pupil column}
 
 \item{prev_op}{The name of the previous operation's pupil column}
+
+\item{method}{A string indicating the detrending model to fit, either
+\code{"linear"} (the default) or \code{"spline"}}
+
+\item{spline_df}{The degrees of freedom for the natural cubic spline basis
+used when \code{method = "spline"}. Defaults to \code{5}}
 }
 \value{
 A list containing the fitted values, coefficients, and residuals
 }
 \description{
-This function detrends pupil data by fitting a linear model
-of \code{pupil_data ~ time}, and returning the fitted betas and the residuals
-(\code{pupil_data - fitted_values}).
+This function detrends pupil data by fitting a model of
+\code{pupil_data ~ time} and returning the fitted values (the estimated trend)
+together with the residuals (\code{pupil_data - fitted_values}).
+
+When \code{method = "linear"} (the default) the trend is a straight line fit with
+\code{lm(pupil ~ time)}. When \code{method = "spline"} the trend is a natural cubic
+spline of time fit with \code{lm(pupil ~ splines::ns(time, df = spline_df))},
+allowing a smooth nonlinear drift to be removed.
 
 This function is called by the exposed wrapper \code{\link[=detrend]{detrend()}}.
 }

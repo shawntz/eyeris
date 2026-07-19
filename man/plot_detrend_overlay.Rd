@@ -30,7 +30,7 @@ Logical indicating whether detrend overlay was plotted successfully
 \description{
 This function replicates the exact detrending visualization from the
 \code{glassbox()} interactive preview mode. It uses \code{reaborn} to show the most
-recent detrended pupil signal overlaid with the fitted linear trend, and
+recent pre-detrend pupil signal overlaid with the fitted trend, and
 prints the resulting \code{ggplot} to the active device.
 }
 \keyword{internal}

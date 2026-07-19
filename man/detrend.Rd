@@ -4,21 +4,42 @@
 \alias{detrend}
 \title{Detrend the pupil time series}
 \usage{
-detrend(eyeris, call_info = NULL)
+detrend(
+  eyeris,
+  method = c("linear", "spline"),
+  spline_df = 5,
+  call_info = NULL
+)
 }
 \arguments{
 \item{eyeris}{An object of class \code{eyeris} derived from \code{\link[=load_asc]{load_asc()}}}
+
+\item{method}{A string indicating the detrending model to fit. Either
+\code{"linear"} (the default) to remove a straight-line trend by regressing pupil
+size on time, or \code{"spline"} to remove a smooth, potentially nonlinear trend
+by fitting a natural cubic spline basis of time
+(\code{splines::ns(time, df = spline_df)})}
+
+\item{spline_df}{The degrees of freedom for the natural cubic spline basis
+used when \code{method = "spline"}. Higher values allow the fitted trend to follow
+more rapid, nonlinear drift; lower values enforce a smoother trend. Must be a
+single whole number \verb{>= 1}. Defaults to \code{5}. Ignored when \code{method = "linear"}}
 
 \item{call_info}{A list of call information and parameters. If not provided,
 it will be generated from the function call. Defaults to \code{NULL}}
 }
 \value{
 An \code{eyeris} object with two new columns in \verb{time series}:
-\code{detrend_fitted_betas}, and \verb{pupil_raw_\{...\}_detrend}
+\code{detrend_fitted_values}, and \verb{pupil_raw_\{...\}_detrend}
 }
 \description{
-Linearly detrend_pupil data by fitting a linear model of \code{pupil_data ~ time},
-and return the fitted betas and the residuals (\code{pupil_data - fitted_values}).
+Detrend pupil data by fitting a model of \code{pupil_data ~ time} and returning
+the fitted values (the estimated trend) together with the residuals
+(\code{pupil_data - fitted_values}). Two trend models are supported via the
+\code{method} argument: \code{"linear"} (the default) removes a straight-line drift by
+fitting an ordinary linear model, while \code{"spline"} removes a smooth,
+potentially nonlinear drift by fitting a natural cubic spline basis of \code{time}
+(\code{splines::ns(time, df = spline_df)}).
 }
 \details{
 This function is automatically called by \code{glassbox()} if \code{detrend = TRUE}.
@@ -29,15 +50,23 @@ manually.
 }
 \note{
 This function is part of the \code{glassbox()} preprocessing pipeline and is not
-intended for direct use in most cases. Use \code{glassbox(detrend = TRUE)}.
+intended for direct use in most cases. Use \code{glassbox(detrend = TRUE)} for
+linear detrending, or \code{glassbox(detrend = list(method = "spline"))} for
+spline detrending.
 
 Advanced users may call it directly if needed.
 }
 \examples{
 demo_data <- eyelink_asc_demo_dataset()
 
+# (a) linear detrending (the default)
 demo_data |>
   eyeris::glassbox(detrend = TRUE) |>  # set to FALSE to skip step (default)
+  plot(seed = 0)
+
+# (b) spline detrending (removes a smooth, nonlinear trend)
+demo_data |>
+  eyeris::glassbox(detrend = list(method = "spline", spline_df = 5)) |>
   plot(seed = 0)
 
 }
