@@ -257,7 +257,11 @@ section of the *Anatomy of an `eyeris` Object* vignette.
 
 Detrending is turned off by default. 
 
-> To enable detrending in the pipeline, pass `detrend = TRUE` to `glassbox()`. 
+> To enable detrending in the pipeline, pass `detrend = TRUE` to `glassbox()`.
+> This removes a straight-line (linear) trend by default. To instead remove a
+> smooth, potentially nonlinear trend with a natural cubic spline of time, pass
+> `detrend = list(method = "spline")` (optionally tuning the spline degrees of
+> freedom with `spline_df`, e.g. `detrend = list(method = "spline", spline_df = 5)`).
 
 **Note: Detrending your pupil timeseries can have unintended consequences; **
 **we thus recommend that users understand the implications of detrending – in **

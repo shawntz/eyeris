@@ -29,6 +29,7 @@ Imports:
   stringr,
   utils,
   stats,
+  splines,
   graphics,
   grDevices,
   tidyr,

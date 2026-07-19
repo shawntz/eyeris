@@ -487,10 +487,25 @@ describe_boilerplate_step <- function(step, p, info) {
         method
       )
     },
-    detrend = paste0(
-      "A linear trend (estimated by regressing pupil size on time) was removed ",
-      "from the pupil time series (linear detrending)."
-    ),
+    detrend = {
+      method <- if (!is.null(p$method)) p$method else "linear"
+      if (identical(method, "spline")) {
+        df <- if (!is.null(p$spline_df)) p$spline_df else 5
+        sprintf(
+          paste0(
+            "A smooth trend (estimated with a natural cubic spline basis of ",
+            "time with %s degrees of freedom) was removed from the pupil time ",
+            "series (spline detrending)."
+          ),
+          bp_num(df)
+        )
+      } else {
+        paste0(
+          "A linear trend (estimated by regressing pupil size on time) was ",
+          "removed from the pupil time series (linear detrending)."
+        )
+      }
+    },
     # z-scoring is recorded under the "z" suffix; "zscore" kept as a defensive
     # alias in case params are constructed with the full step name
     z = ,

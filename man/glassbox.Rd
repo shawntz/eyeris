@@ -148,10 +148,13 @@ dynamics of the signal. Cannot be combined with \code{bin}. See
 \item \strong{Bin} (\code{bin}, default: off) -- Optionally lowers the sampling rate by
 averaging samples within equal-width time bins. Cannot be combined with
 \code{downsample}. See \code{\link[=bin]{bin()}}.
-\item \strong{Detrend} (\code{detrend}, default: off) -- Optionally fits a linear model
-of \code{pupil ~ time} and returns the residuals (along with the fitted slope and
-intercept) to remove slow linear drift. Use with care -- see
-\code{\link[=detrend]{detrend()}} for when this is appropriate.
+\item \strong{Detrend} (\code{detrend}, default: off) -- Optionally fits a model of
+\code{pupil ~ time} and returns the residuals (along with the fitted trend) to
+remove slow drift. By default (\code{detrend = TRUE}) a straight-line
+(\code{method = "linear"}) trend is removed; pass
+\code{detrend = list(method = "spline", spline_df = 5)} to instead remove a
+smooth, potentially nonlinear trend via a natural cubic spline of time. Use
+with care -- see \code{\link[=detrend]{detrend()}} for when this is appropriate.
 \item \strong{Z-score} (\code{zscore}, default: on) -- Rescales the pupil time series to a
 mean of \code{0} and a standard deviation of \code{1}, making values comparable across
 participants and recordings. See \code{\link[=zscore]{zscore()}}.
