@@ -135,6 +135,23 @@ pipeline.
 
   Build a generic operation (extension) for the `eyeris` pipeline
 
+## 🧪 Simulate Pupil Data
+
+Generate synthetic, pipeline-compatible pupil time series with known
+ground truth for testing, demonstrations, and reproducible examples.
+
+- [`simulate_eyeris()`](https://eyeris.shawnschwartz.com/reference/simulate_eyeris.md)
+  :
+
+  Generate a synthetic `eyeris` object with realistic pupil
+  characteristics
+
+- [`sim_params()`](https://eyeris.shawnschwartz.com/reference/sim_params.md)
+  : Configure the synthetic pupil signal model
+
+- [`print(`*`<eyeris_sim_params>`*`)`](https://eyeris.shawnschwartz.com/reference/print.eyeris_sim_params.md)
+  : Print a synthetic pupil parameter list
+
 ## 📈 Demo Datasets
 
 Example eye-tracking / pupil datasets for testing and demonstrating

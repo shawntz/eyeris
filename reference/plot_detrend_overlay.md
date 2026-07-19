@@ -3,8 +3,8 @@
 This function replicates the exact detrending visualization from the
 [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
 interactive preview mode. It uses `reaborn` to show the most recent
-detrended pupil signal overlaid with the fitted linear trend, and prints
-the resulting `ggplot` to the active device.
+pre-detrend pupil signal overlaid with the fitted trend, and prints the
+resulting `ggplot` to the active device.
 
 ## Usage
 

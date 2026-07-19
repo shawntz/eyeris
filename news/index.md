@@ -81,6 +81,27 @@ guidelines.
 
 ### 🚀 New features
 
+- **NF**:
+  **[`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
+  now supports spline detrending via a new `method` argument.**
+  Detrending previously only removed a straight-line (linear) trend,
+  which cannot capture the slow, *nonlinear* drift often present in
+  longer recordings.
+  [`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md)
+  now accepts `method = "linear"` (the default, preserving the previous
+  behavior of regressing pupil size on time) or `method = "spline"`,
+  which removes a smooth, potentially nonlinear trend by fitting a
+  natural cubic spline basis of time
+  (`splines::ns(time, df = spline_df)`). The flexibility of the fitted
+  spline is controlled by the new `spline_df` argument (degrees of
+  freedom; default `5`). Both models return the fitted trend and the
+  residuals exactly as before, so all downstream steps, plots, and
+  reports are unchanged aside from the trend shape. Enable it in the
+  pipeline with `glassbox(detrend = list(method = "spline"))`
+  (optionally `spline_df = ...`), or call `detrend(method = "spline")`
+  directly, by [@shawntz](https://github.com/shawntz) in
+  [\#349](https://github.com/shawntz/eyeris/issues/349).
+
 - **NF ([\#299](https://github.com/shawntz/eyeris/issues/299))**:
   **Added
   [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md),

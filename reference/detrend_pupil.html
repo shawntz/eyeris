@@ -5,13 +5,21 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Internal function to detrend pupil data — detrend_pupil"><meta name="description" content="This function detrends pupil data by fitting a linear model
-of pupil_data ~ time, and returning the fitted betas and the residuals
-(pupil_data - fitted_values).
-This function is called by the exposed wrapper detrend()."><meta property="og:description" content="This function detrends pupil data by fitting a linear model
-of pupil_data ~ time, and returning the fitted betas and the residuals
-(pupil_data - fitted_values).
-This function is called by the exposed wrapper detrend()."><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Raleway-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Open_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Internal function to detrend pupil data — detrend_pupil"><meta name="description" content='This function detrends pupil data by fitting a model of
+pupil_data ~ time and returning the fitted values (the estimated trend)
+together with the residuals (pupil_data - fitted_values).
+When method = "linear" (the default) the trend is a straight line fit with
+lm(pupil ~ time). When method = "spline" the trend is a natural cubic
+spline of time fit with lm(pupil ~ splines::ns(time, df = spline_df)),
+allowing a smooth nonlinear drift to be removed.
+This function is called by the exposed wrapper detrend().'><meta property="og:description" content='This function detrends pupil data by fitting a model of
+pupil_data ~ time and returning the fitted values (the estimated trend)
+together with the residuals (pupil_data - fitted_values).
+When method = "linear" (the default) the trend is a straight line fit with
+lm(pupil ~ time). When method = "spline" the trend is a natural cubic
+spline of time fit with lm(pupil ~ splines::ns(time, df = spline_df)),
+allowing a smooth nonlinear drift to be removed.
+This function is called by the exposed wrapper detrend().'><meta property="og:image" content="https://eyeris.shawnschwartz.com/logo.png"><script async src="https://cdn.seline.com/seline.js" data-token="dec3c94d0af2ccd"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +27,7 @@ This function is called by the exposed wrapper detrend()."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,15 +99,19 @@ This function is called by the exposed wrapper detrend()."><meta property="og:im
     </div>
 
     <div class="ref-description section level2">
-    <p>This function detrends pupil data by fitting a linear model
-of <code>pupil_data ~ time</code>, and returning the fitted betas and the residuals
-(<code>pupil_data - fitted_values</code>).</p>
+    <p>This function detrends pupil data by fitting a model of
+<code>pupil_data ~ time</code> and returning the fitted values (the estimated trend)
+together with the residuals (<code>pupil_data - fitted_values</code>).</p>
+<p>When <code>method = "linear"</code> (the default) the trend is a straight line fit with
+<code>lm(pupil ~ time)</code>. When <code>method = "spline"</code> the trend is a natural cubic
+spline of time fit with <code>lm(pupil ~ splines::ns(time, df = spline_df))</code>,
+allowing a smooth nonlinear drift to be removed.</p>
 <p>This function is called by the exposed wrapper <code><a href="detrend.html">detrend()</a></code>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">detrend_pupil</span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">detrend_pupil</span><span class="op">(</span><span class="va">x</span>, <span class="va">prev_op</span>, method <span class="op">=</span> <span class="st">"linear"</span>, spline_df <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -113,6 +125,16 @@ the previous operation's pupil column</p></dd>
 
 <dt id="arg-prev-op">prev_op<a class="anchor" aria-label="anchor" href="#arg-prev-op"></a></dt>
 <dd><p>The name of the previous operation's pupil column</p></dd>
+
+
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
+<dd><p>A string indicating the detrending model to fit, either
+<code>"linear"</code> (the default) or <code>"spline"</code></p></dd>
+
+
+<dt id="arg-spline-df">spline_df<a class="anchor" aria-label="anchor" href="#arg-spline-df"></a></dt>
+<dd><p>The degrees of freedom for the natural cubic spline basis
+used when <code>method = "spline"</code>. Defaults to <code>5</code></p></dd>
 
 </dl></div>
     <div class="section level2">

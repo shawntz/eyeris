@@ -70,6 +70,9 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/detrend.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/detrend_pupil.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/disconnect_eyeris_database.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/dot-ppr_kernel.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/dot-sim_blinks.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/dot-sim_phasic.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/downsample.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/downsample_pupil.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/draw_random_epochs.html</loc></url>
@@ -154,6 +157,7 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/plot_pupil_distribution.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/plot_with_seed.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/print.eyeris_boilerplate.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/print.eyeris_sim_params.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/print_lightbox_img_html.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/print_lightbox_img_html_legacy.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/print_plots.html</loc></url>
@@ -183,6 +187,8 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/save_progressive_summary_plots.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/should_omit_parameter.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/should_plot_binoc_cors.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/sim_params.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/simulate_eyeris.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/slice_epoch.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/slice_epoch_window.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/slice_epochs_no_limits.html</loc></url>
@@ -196,6 +202,7 @@
 <url><loc>https://eyeris.shawnschwartz.com/reference/tick.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/trim_pre_decimation_cols.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/validate_max_gap_ms.html</loc></url>
+<url><loc>https://eyeris.shawnschwartz.com/reference/validate_spline_df.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/warn_filter_over_gaps.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/warn_irregular_sampling.html</loc></url>
 <url><loc>https://eyeris.shawnschwartz.com/reference/write_csv_and_db.html</loc></url>
