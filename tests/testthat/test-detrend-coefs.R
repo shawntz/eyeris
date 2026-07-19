@@ -37,3 +37,24 @@ test_that("glassbox() does not set detrend_coefs when detrend is disabled", {
 
   expect_null(out$detrend_coefs)
 })
+
+test_that("glassbox() clears detrend_coefs inherited from the input object", {
+  demo <- eyeris::eyelink_asc_demo_dataset()
+  obj <- eyeris::load_asc(demo)
+
+  # simulate a pre-loaded object that already carries detrend coefficients
+  # (e.g., the output of a prior detrend()/glassbox() run fed back in)
+  obj$detrend_coefs <- list(block_1 = c("(Intercept)" = 1, timeseries = 2))
+
+  out <- eyeris::glassbox(
+    obj,
+    lpfilt = FALSE,
+    detrend = FALSE,
+    zscore = FALSE,
+    verbose = FALSE
+  )
+
+  # the stale, inherited coefficients must not survive a run where detrend is
+  # disabled -- only coefficients produced in the current run are retained
+  expect_null(out$detrend_coefs)
+})

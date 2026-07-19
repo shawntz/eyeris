@@ -658,6 +658,13 @@ glassbox <- function(
     block_names <- names(file$timeseries)
     processed_blocks <- list()
 
+    # clear any detrend coefficients inherited from a pre-loaded input object
+    # (e.g., an object already processed by detrend()/glassbox()) before the
+    # per-block recombine below, so the returned object retains only the
+    # coefficients produced in this run -- and none survive when detrending is
+    # disabled or fails
+    file$detrend_coefs <- NULL
+
     # store orig latest pointer to restore it later
     original_latest <- file$latest
     final_latest <- NULL
@@ -1236,6 +1243,13 @@ glassbox_internal <- function(
   if (has_multiple_blocks) {
     block_names <- names(file$timeseries)
     processed_blocks <- list()
+
+    # clear any detrend coefficients inherited from a pre-loaded input object
+    # (e.g., an object already processed by detrend()/glassbox()) before the
+    # per-block recombine below, so the returned object retains only the
+    # coefficients produced in this run -- and none survive when detrending is
+    # disabled or fails
+    file$detrend_coefs <- NULL
 
     # store orig latest pointer to restore it later
     original_latest <- file$latest
