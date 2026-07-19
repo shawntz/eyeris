@@ -410,7 +410,8 @@ fig_interpolate <- function(path) {
     "eyeris pitfall - interpolate: do not bridge a long mid-trial dropout",
     sprintf(
       "contiguous data lost: %.1f s (%.0f%% of the trial) -> leave as NA, don't interpolate",
-      lost_s, pct
+      lost_s,
+      pct
     )
   )
   msg("  [interpolate]  gap = %.1f s (%.0f%% of trial)", lost_s, pct)
