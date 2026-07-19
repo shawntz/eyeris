@@ -659,7 +659,8 @@ fig_detransient <- function(path) {
   plot(t, r_col,
     type = "n", ylim = ylim, xlab = "time (s)", ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  detransient -> interpolate -> lpfilt",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   graphics::abline(
