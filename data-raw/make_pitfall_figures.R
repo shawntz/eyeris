@@ -457,7 +457,12 @@ fig_lpfilt <- function(path) {
   sim <- simulate_eyeris(seed = 5, params = params, verbose = FALSE)
   base <- .quiet(interpolate(sim, verbose = FALSE)) # gap-free input to filter
   # Butterworth designed at the SAME cutoff for a fair, type-only comparison
-  butter <- .quiet(lpfilt(base, wp = cutoff, ws = cutoff * 2, plot_freqz = FALSE))
+  butter <- .quiet(lpfilt(
+    base,
+    wp = cutoff,
+    ws = cutoff * 2,
+    plot_freqz = FALSE
+  ))
 
   b <- .blk(base)
   fs <- base$info$sample.rate
