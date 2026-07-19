@@ -236,8 +236,13 @@ fig_deblink <- function(path) {
   box_wrong()
 
   # panel 3: OPTIMAL -- extend = 50 ms clears the 40 ms flanks (plus a little)
-  plot(t, r_col,
-    type = "n", ylim = ylim, xlab = "time (s)", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    r_col,
+    type = "n",
+    ylim = ylim,
+    xlab = "time (s)",
+    ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  deblink(extend = 50): clears the 40 ms flanks (+ a bit extra)",
     col.main = GREEN,
     font.main = 2
@@ -341,17 +346,26 @@ fig_interpolate <- function(path) {
     mean(c(gap0, gap1)),
     ylim[1],
     labels = sprintf("%.1f s lost", lost_s),
-    col = "grey30", adj = c(0.5, -0.6), font = 2, cex = 0.9
+    col = "grey30",
+    adj = c(0.5, -0.6),
+    font = 2,
+    cex = 0.9
   )
   box_ctx()
 
   # panel 2: SUBOPTIMAL -- linear interpolation invents a descending ramp
   real_series <- filled
   real_series[gap_mask] <- NA_real_ # break the line across the gap
-  plot(t, filled,
-    type = "n", ylim = ylim, xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    filled,
+    type = "n",
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  interpolation fabricates 2.4 s of data",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
   usr <- graphics::par("usr")
@@ -400,8 +414,13 @@ fig_interpolate <- function(path) {
   tint_bg(GREEN)
   graphics::lines(t, raw, col = "grey65", lwd = 1.4) # faded surviving data
   shade_na_runs(t, is.na(raw), "grey40", alpha = 0.16)
-  graphics::text(mean(range(t)), mean(ylim),
-    labels = "GAP REMAINS NA", col = GREEN, font = 2, cex = 2.1
+  graphics::text(
+    mean(range(t)),
+    mean(ylim),
+    labels = "GAP REMAINS NA",
+    col = GREEN,
+    font = 2,
+    cex = 2.1
   )
   graphics::text(
     mean(range(t)),
@@ -504,8 +523,13 @@ fig_lpfilt <- function(path) {
     main = "1) RAW INPUT  -  a pupil dilation with high-frequency noise"
   )
   graphics::abline(v = onset, col = BLUE, lty = 3)
-  graphics::text(onset, max(x[sel]),
-    labels = " stimulus onset", col = BLUE, adj = c(0, 1.1), cex = 0.8
+  graphics::text(
+    onset,
+    max(x[sel]),
+    labels = " stimulus onset",
+    col = BLUE,
+    adj = c(0, 1.1),
+    cex = 0.8
   )
   box_ctx()
 
@@ -520,7 +544,8 @@ fig_lpfilt <- function(path) {
     xlab = "",
     ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  rectangular FFT filter -> ringing",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
   graphics::abline(h = base_lvl, col = "grey55", lty = 3)
@@ -538,21 +563,36 @@ fig_lpfilt <- function(path) {
     adj = c(1.05, 0.4),
     font = 2
   )
-  graphics::text(onset, ylim[2], labels = " stimulus onset",
-    col = BLUE, adj = c(0, 1.1), cex = 0.8
+  graphics::text(
+    onset,
+    ylim[2],
+    labels = " stimulus onset",
+    col = BLUE,
+    adj = c(0, 1.1),
+    cex = 0.8
   )
-  graphics::legend("topright",
+  graphics::legend(
+    "topright",
     legend = c("brick-wall result", "Butterworth (reference)"),
-    col = c(RED, "grey45"), lty = c(1, 2), lwd = c(2.4, 1.4), bty = "n", cex = 0.8
+    col = c(RED, "grey45"),
+    lty = c(1, 2),
+    lwd = c(2.4, 1.4),
+    bty = "n",
+    cex = 0.8
   )
   box_wrong()
 
   # panel 3: RIGHT -- Butterworth is smooth, no ringing
-  plot(t, bt[sel],
-    type = "n", ylim = ylim,
-    xlab = "time (s)", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    bt[sel],
+    type = "n",
+    ylim = ylim,
+    xlab = "time (s)",
+    ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  Butterworth retains the dilation shape",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   graphics::abline(h = base_lvl, col = "grey55", lty = 3)
@@ -565,7 +605,8 @@ fig_lpfilt <- function(path) {
     "eyeris pitfall - lpfilt: a rectangular filter rings; use Butterworth",
     sprintf(
       "acausal pre-ringing dip before the stimulus = %.0f a.u.  (matched %.1f Hz cutoff)",
-      dip, cutoff
+      dip,
+      cutoff
     )
   )
   msg("  [lpfilt]  pre-ring dip = %.1f a.u.", dip)
@@ -637,9 +678,14 @@ fig_detransient <- function(path) {
   open_panel(path)
 
   # panel 1: raw with TWO transient spikes
-  plot(t, raw,
-    type = "l", col = GREY, lwd = 1.2,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    raw,
+    type = "l",
+    col = GREY,
+    lwd = 1.2,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) RAW INPUT  -  two isolated transient spikes (tracker glitches)"
   )
   graphics::abline(v = c(t1, t2), col = "grey70", lty = 3)
@@ -648,24 +694,44 @@ fig_detransient <- function(path) {
   ylim <- range(c(w_col, r_col), na.rm = TRUE)
 
   # panel 2: SUBOPTIMAL -- filter first; the smeared spikes survive
-  plot(t, w_col,
-    type = "n", ylim = ylim, xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    w_col,
+    type = "n",
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  interpolate -> lpfilt -> detransient",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
-  graphics::abline(v = c(t1, t2), col = grDevices::adjustcolor(RED, 0.4), lty = 3)
+  graphics::abline(
+    v = c(t1, t2),
+    col = grDevices::adjustcolor(RED, 0.4),
+    lty = 3
+  )
   graphics::lines(t, r_col, col = "grey45", lwd = 1.4, lty = 2)
   graphics::lines(t, w_col, col = RED, lwd = 2.4)
-  graphics::legend("topright",
+  graphics::legend(
+    "topright",
     legend = c("suboptimal result", "optimal result (reference)"),
-    col = c(RED, "grey45"), lty = c(1, 2), lwd = c(2.4, 1.4), bty = "n", cex = 0.8
+    col = c(RED, "grey45"),
+    lty = c(1, 2),
+    lwd = c(2.4, 1.4),
+    bty = "n",
+    cex = 0.8
   )
   box_wrong()
 
   # panel 3: OPTIMAL -- remove transients first; the trace is clean
-  plot(t, r_col,
-    type = "n", ylim = ylim, xlab = "time (s)", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    r_col,
+    type = "n",
+    ylim = ylim,
+    xlab = "time (s)",
+    ylab = "pupil (a.u.)",
     main = "3) OPTIMAL PROCESSING  -  detransient -> interpolate -> lpfilt",
     col.main = GREEN,
     font.main = 2
@@ -774,38 +840,62 @@ fig_detrend <- function(path) {
   m_spl <- mean(z_spl[post], na.rm = TRUE)
 
   # panel 2: WRONG -- linear detrend leaves the curve; z-scores biased low
-  plot(t, z_lin,
-    type = "l", col = RED, lwd = 1.9, ylim = ylim,
-    xlab = "", ylab = "pupil (z)",
+  plot(
+    t,
+    z_lin,
+    type = "l",
+    col = RED,
+    lwd = 1.9,
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (z)",
     main = "2) SUBOPTIMAL PROCESSING  -  linear detrend leaves the decay; z biased below 0",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
   shade_to_zero(t, z_lin, RED)
   graphics::lines(t, z_lin, col = RED, lwd = 1.9)
   graphics::abline(h = 0, col = "grey30", lwd = 1.1)
   graphics::abline(v = decay_onset, col = BLUE, lty = 3)
-  graphics::text(graphics::par("usr")[2], ylim[1],
+  graphics::text(
+    graphics::par("usr")[2],
+    ylim[1],
     labels = sprintf("post-trial-5 mean = %+.2f z ", m_lin),
-    col = RED, adj = c(1, -0.6), font = 2, cex = 0.9
+    col = RED,
+    adj = c(1, -0.6),
+    font = 2,
+    cex = 0.9
   )
   box_wrong()
 
   # panel 3: RIGHT -- spline detrend removes the curve; z sits at ~0
-  plot(t, z_spl,
-    type = "l", col = GREEN, lwd = 1.9, ylim = ylim,
-    xlab = "time (s)", ylab = "pupil (z)",
+  plot(
+    t,
+    z_spl,
+    type = "l",
+    col = GREEN,
+    lwd = 1.9,
+    ylim = ylim,
+    xlab = "time (s)",
+    ylab = "pupil (z)",
     main = "3) OPTIMAL PROCESSING  -  spline detrend removes the decay; z centered on 0",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   shade_to_zero(t, z_spl, GREEN)
   graphics::lines(t, z_spl, col = GREEN, lwd = 1.9)
   graphics::abline(h = 0, col = "grey30", lwd = 1.1)
   graphics::abline(v = decay_onset, col = BLUE, lty = 3)
-  graphics::text(graphics::par("usr")[2], ylim[1],
+  graphics::text(
+    graphics::par("usr")[2],
+    ylim[1],
     labels = sprintf("post-trial-5 mean = %+.2f z ", m_spl),
-    col = GREEN, adj = c(1, -0.6), font = 2, cex = 0.9
+    col = GREEN,
+    adj = c(1, -0.6),
+    font = 2,
+    cex = 0.9
   )
   box_right()
 
@@ -813,7 +903,8 @@ fig_detrend <- function(path) {
     "eyeris pitfall - detrend: a linear fit cannot remove a curved drift",
     sprintf(
       "post-decay z-scored mean:  linear = %+.2f (biased),  spline = %+.2f (unbiased)",
-      m_lin, m_spl
+      m_lin,
+      m_spl
     )
   )
   msg("  [detrend]  post-decay z mean: linear=%+.3f spline=%+.3f", m_lin, m_spl)
@@ -892,18 +983,40 @@ fig_zscore <- function(path) {
   blk2_span <- range(b2$T)
   mark_blocks <- function(labs = TRUE) {
     usr <- graphics::par("usr")
-    graphics::rect(blk1_span[1], usr[3], blk1_span[2], usr[4],
-      col = grDevices::adjustcolor(BLUE, 0.06), border = NA
+    graphics::rect(
+      blk1_span[1],
+      usr[3],
+      blk1_span[2],
+      usr[4],
+      col = grDevices::adjustcolor(BLUE, 0.06),
+      border = NA
     )
-    graphics::rect(blk2_span[1], usr[3], blk2_span[2], usr[4],
-      col = grDevices::adjustcolor("darkorange", 0.08), border = NA
+    graphics::rect(
+      blk2_span[1],
+      usr[3],
+      blk2_span[2],
+      usr[4],
+      col = grDevices::adjustcolor("darkorange", 0.08),
+      border = NA
     )
     if (labs) {
-      graphics::text(mean(blk1_span), usr[4], "block 1", col = BLUE,
-        adj = c(0.5, 1.4), font = 2, cex = 0.9
+      graphics::text(
+        mean(blk1_span),
+        usr[4],
+        "block 1",
+        col = BLUE,
+        adj = c(0.5, 1.4),
+        font = 2,
+        cex = 0.9
       )
-      graphics::text(mean(blk2_span), usr[4], "block 2", col = "darkorange3",
-        adj = c(0.5, 1.4), font = 2, cex = 0.9
+      graphics::text(
+        mean(blk2_span),
+        usr[4],
+        "block 2",
+        col = "darkorange3",
+        adj = c(0.5, 1.4),
+        font = 2,
+        cex = 0.9
       )
     }
   }
@@ -911,20 +1024,31 @@ fig_zscore <- function(path) {
   open_panel(path)
 
   # panel 1: raw a.u. -- blocks sit at different means with different spread
-  plot(raw$T, raw$y,
-    type = "l", col = GREY, lwd = 1.3,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    raw$T,
+    raw$y,
+    type = "l",
+    col = GREY,
+    lwd = 1.3,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) RAW  -  block 1 (low mean/var) vs block 2 (high mean/var)"
   )
   mark_blocks()
   box_ctx()
 
   # panel 2: WRONG -- one global z-score; variance mismatch remains
-  plot(raw$T, raw$zg,
-    type = "l", col = RED, lwd = 1.6,
-    xlab = "", ylab = "pupil (z)",
+  plot(
+    raw$T,
+    raw$zg,
+    type = "l",
+    col = RED,
+    lwd = 1.6,
+    xlab = "",
+    ylab = "pupil (z)",
     main = "2) SUBOPTIMAL PROCESSING  -  single global z-score: blocks still not comparable",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
   mark_blocks(labs = FALSE)
@@ -933,11 +1057,17 @@ fig_zscore <- function(path) {
   box_wrong()
 
   # panel 3: RIGHT -- per-block z-score; blocks now share a common scale
-  plot(raw$T, raw$zp,
-    type = "l", col = GREEN, lwd = 1.6,
-    xlab = "time (s)", ylab = "pupil (z)",
+  plot(
+    raw$T,
+    raw$zp,
+    type = "l",
+    col = GREEN,
+    lwd = 1.6,
+    xlab = "time (s)",
+    ylab = "pupil (z)",
     main = "3) OPTIMAL PROCESSING  -  per-block z-score: blocks now look alike",
-    col.main = GREEN, font.main = 2
+    col.main = GREEN,
+    font.main = 2
   )
   tint_bg(GREEN)
   mark_blocks(labs = FALSE)
@@ -953,9 +1083,17 @@ fig_zscore <- function(path) {
   gap_p <- abs(bmean(raw$zp, 1) - bmean(raw$zp, 2))
   close_panel(
     "eyeris pitfall - zscore: standardize within each block, not across blocks",
-    sprintf("between-block mean gap:  global z = %.2f,  per-block z = %.2f", gap_g, gap_p)
+    sprintf(
+      "between-block mean gap:  global z = %.2f,  per-block z = %.2f",
+      gap_g,
+      gap_p
+    )
   )
-  msg("  [zscore]  between-block mean gap: global=%.3f per-block=%.3f", gap_g, gap_p)
+  msg(
+    "  [zscore]  between-block mean gap: global=%.3f per-block=%.3f",
+    gap_g,
+    gap_p
+  )
   invisible(path)
 }
 
