@@ -329,8 +329,13 @@ fig_interpolate <- function(path) {
   )
   tint_bg(RED)
   usr <- graphics::par("usr")
-  graphics::rect(gap0, usr[3], gap1, usr[4],
-    col = grDevices::adjustcolor(RED, 0.10), border = NA
+  graphics::rect(
+    gap0,
+    usr[3],
+    gap1,
+    usr[4],
+    col = grDevices::adjustcolor(RED, 0.10),
+    border = NA
   )
   graphics::lines(t, real_series, col = "grey55", lwd = 1.6) # real, measured
   graphics::lines(t[bridge_sel], filled[bridge_sel], col = RED, lwd = 2.8) # invented
