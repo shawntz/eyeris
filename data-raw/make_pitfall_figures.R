@@ -321,9 +321,15 @@ fig_interpolate <- function(path) {
   open_panel(path)
 
   # panel 1: raw -- surviving high start, long gap, surviving low end
-  plot(t, raw,
-    type = "l", col = GREY, lwd = 1.4, ylim = ylim,
-    xlab = "", ylab = "pupil (a.u.)",
+  plot(
+    t,
+    raw,
+    type = "l",
+    col = GREY,
+    lwd = 1.4,
+    ylim = ylim,
+    xlab = "",
+    ylab = "pupil (a.u.)",
     main = "1) RAW INPUT  -  > 250 ms of pupil lost mid-trial (starts high, ends low)"
   )
   shade_na_runs(t, is.na(raw), "grey40", alpha = 0.16)
