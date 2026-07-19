@@ -141,7 +141,9 @@ box_ctx <- function() graphics::box(col = "grey65")
 # window subset of a block on time_secs
 win_sel <- function(b, win) {
   sel <- b$time_secs >= win[1] & b$time_secs <= win[2]
-  if (sum(sel, na.rm = TRUE) < 2) sel <- rep(TRUE, nrow(b))
+  if (sum(sel, na.rm = TRUE) < 2) {
+    sel <- rep(TRUE, nrow(b))
+  }
   sel
 }
 
