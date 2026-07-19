@@ -290,36 +290,36 @@ eye <- eyeris::load_generic(
   screen_height = 1080,
   tracker = "my-tracker"
 )
-#> ℹ [2026-07-19 06:45:07] [INFO] Loaded generic 'my-tracker' data: 1 block(s),
+#> ℹ [2026-07-19 07:17:55] [INFO] Loaded generic 'my-tracker' data: 1 block(s),
 #> 1000 Hz.
 
 # ...and run it straight through the glassbox pipeline
 eye |>
   eyeris::glassbox(lpfilt = list(plot_freqz = FALSE))
-#> ℹ [2026-07-19 06:45:07] [INFO] Received a pre-loaded `eyeris` object; skipping
+#> ℹ [2026-07-19 07:17:55] [INFO] Received a pre-loaded `eyeris` object; skipping
 #> the load step and running the remaining pipeline on it directly.
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::resample()
-#> ℹ [2026-07-19 06:45:07] [INFO] Processing block: block_1
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-07-19 06:45:07] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::resample()
+#> ℹ [2026-07-19 07:17:55] [INFO] Processing block: block_1
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-07-19 07:17:55] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ! [2026-07-19 06:45:07] [WARN] No NAs detected in pupil data... Skipping
+#> ! [2026-07-19 07:17:55] [WARN] No NAs detected in pupil data... Skipping
 #> interpolation!
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-07-19 06:45:07] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-07-19 06:45:07] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-07-19 06:45:07] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-07-19 06:45:07] [INFO] Block processing summary:
-#> ℹ [2026-07-19 06:45:07] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-07-19 07:17:55] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-07-19 07:17:55] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-07-19 07:17:55] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-07-19 07:17:55] [INFO] Block processing summary:
+#> ℹ [2026-07-19 07:17:55] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-07-19 06:45:07] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-07-19 07:17:55] [OKAY] Running eyeris::summarize_confounds()
 #> $file
 #> [1] "my-tracker"
 #> 
