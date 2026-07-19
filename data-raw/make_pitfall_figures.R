@@ -343,7 +343,8 @@ fig_interpolate <- function(path) {
     labels = "not real data\n(should stay NA)", col = RED, font = 2, cex = 0.85,
     adj = c(0.5, -0.15)
   )
-  graphics::legend("topright",
+  graphics::legend(
+    "topright",
     legend = c("real (measured)", "interpolated (fabricated)"),
     col = c("grey55", RED), lty = 1, lwd = c(1.6, 2.8), bty = "n", cex = 0.8
   )
