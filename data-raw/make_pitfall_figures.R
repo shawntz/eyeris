@@ -346,7 +346,11 @@ fig_interpolate <- function(path) {
   graphics::legend(
     "topright",
     legend = c("real (measured)", "interpolated (fabricated)"),
-    col = c("grey55", RED), lty = 1, lwd = c(1.6, 2.8), bty = "n", cex = 0.8
+    col = c("grey55", RED),
+    lty = 1,
+    lwd = c(1.6, 2.8),
+    bty = "n",
+    cex = 0.8
   )
   box_wrong()
 
