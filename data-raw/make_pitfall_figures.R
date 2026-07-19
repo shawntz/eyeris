@@ -217,7 +217,8 @@ fig_deblink <- function(path) {
     xlab = "",
     ylab = "pupil (a.u.)",
     main = "2) SUBOPTIMAL PROCESSING  -  deblink(extend = 5): flank artifacts survive",
-    col.main = RED, font.main = 2
+    col.main = RED,
+    font.main = 2
   )
   tint_bg(RED)
   graphics::abline(h = truth$params$baseline_mean, col = "grey55", lty = 3)
