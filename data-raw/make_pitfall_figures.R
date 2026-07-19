@@ -108,7 +108,13 @@ shade_na_runs <- function(t, mask, color, alpha = 0.22) {
 
 # open a 3x1 device with the shared showcase layout
 open_panel <- function(path) {
-  grDevices::png(path, width = fig_w, height = fig_h, units = "in", res = fig_res)
+  grDevices::png(
+    path,
+    width = fig_w,
+    height = fig_h,
+    units = "in",
+    res = fig_res
+  )
   graphics::par(
     mfrow = c(3, 1),
     mar = c(3.4, 4.2, 2.6, 1),
