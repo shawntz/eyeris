@@ -70,7 +70,8 @@ demo_data <- eyelink_asc_demo_dataset()
 # downsample pupil data recorded at 1000 Hz to 100 Hz with the default params
 demo_data |>
   eyeris::glassbox(downsample = list(target_fs = 100)) |>
-  plot(seed = 0)
+  # `preview_window` zooms in on a 2-second subset of the time series
+  plot(seed = 0, preview_window = c(10, 12))
 
 }
 \seealso{

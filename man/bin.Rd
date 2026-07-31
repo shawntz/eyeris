@@ -46,7 +46,8 @@ demo_data <- eyelink_asc_demo_dataset()
 # bin data into 10 bins per second using the (default) "mean" method
 demo_data |>
   eyeris::glassbox(bin = list(bins_per_second = 10, method = "mean")) |>
-  plot(seed = 0)
+  # `preview_window` zooms in on a 2-second subset of the time series
+  plot(seed = 0, preview_window = c(10, 12))
 
 }
 \seealso{

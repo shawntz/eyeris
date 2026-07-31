@@ -49,14 +49,15 @@
 #' # 50 ms in both directions (the default)
 #' demo_data |>
 #'   eyeris::glassbox(deblink = list(extend = 50)) |>
-#'   plot(seed = 0)
+#'   # `preview_window` zooms in on a 2-second subset of the time series
+#'   plot(seed = 0, preview_window = c(10, 12))
 #'
 #' # 40 ms backward, 50 ms forward
 #' demo_data |>
 #'   # set deblink to FALSE (instead of a list of params)
 #'   #  to skip step (not recommended)
 #'   eyeris::glassbox(deblink = list(extend = c(40, 50))) |>
-#'   plot(seed = 0)
+#'   plot(seed = 0, preview_window = c(10, 12))
 #'
 #' @export
 deblink <- function(eyeris, extend = 50, call_info = NULL) {

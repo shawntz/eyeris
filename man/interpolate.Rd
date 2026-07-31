@@ -85,12 +85,13 @@ demo_data <- eyelink_asc_demo_dataset()
 demo_data |>
   # set to FALSE to skip (not recommended)
   eyeris::glassbox(interpolate = TRUE) |>
-  plot(seed = 0)
+  # `preview_window` zooms in on a 2-second subset of the time series
+  plot(seed = 0, preview_window = c(10, 12))
 
 # only interpolate gaps up to 100 ms; leave longer gaps as NA
 demo_data |>
   eyeris::glassbox(interpolate = list(max_gap_ms = 100)) |>
-  plot(seed = 0)
+  plot(seed = 0, preview_window = c(10, 12))
 
 }
 \references{
