@@ -1,6 +1,6 @@
 ## CRAN Submission
 
-This release fixes several correctness and data-integrity bugs and adds new transparency and reproducibility tooling.
+This release changes how missing pupil data is handled (long gaps are no longer interpolated over by default), adds a tracker-agnostic data loader plus a synthetic data generator, and migrates all diagnostic plotting to 'ggplot2'.
 
 ## Notes
 
@@ -8,9 +8,9 @@ All checks (`R CMD check`, `devtools::check(remote = TRUE)`, GitHub Actions CI) 
 
 Thank you for your time and consideration.
 
-## R CMD check results (eyeris v3.2.0)
+## R CMD check results (eyeris v3.3.0)
 
-Duration: 2m 36.7s
+Duration: 5m 9s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
