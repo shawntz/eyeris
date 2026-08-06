@@ -56,12 +56,13 @@
 #' # (a) linear detrending (the default)
 #' demo_data |>
 #'   eyeris::glassbox(detrend = TRUE) |>  # set to FALSE to skip step (default)
-#'   plot(seed = 0)
+#'   # a wider `preview_window` makes the (slow) fitted trend easier to see
+#'   plot(seed = 0, preview_window = c(5, 20))
 #'
 #' # (b) spline detrending (removes a smooth, nonlinear trend)
 #' demo_data |>
 #'   eyeris::glassbox(detrend = list(method = "spline", spline_df = 5)) |>
-#'   plot(seed = 0)
+#'   plot(seed = 0, preview_window = c(5, 20))
 #'
 #' @export
 detrend <- function(

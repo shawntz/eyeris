@@ -69,7 +69,8 @@
 #'
 #' demo_data |>
 #'   eyeris::glassbox(zscore = TRUE) |> # set to FALSE to skip (not recommended)
-#'   plot(seed = 0)
+#'   # `preview_window` zooms in on a 2-second subset of the time series
+#'   plot(seed = 0, preview_window = c(10, 12))
 #'
 #' @export
 zscore <- function(eyeris, call_info = NULL) {

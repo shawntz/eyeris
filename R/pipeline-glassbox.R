@@ -173,7 +173,7 @@
 #' )
 #'
 #' # to suppress messages, set verbose = FALSE in plot():
-#' plot(output, seed = 0, verbose = FALSE)
+#' plot(output, seed = 0, verbose = FALSE, preview_window = c(10, 12))
 #'
 #' # (3) examples of disabling certain steps
 #' output <- eyeris::glassbox(
@@ -183,7 +183,7 @@
 #'   zscore = FALSE
 #' )
 #'
-#' plot(output, seed = 0)
+#' plot(output, seed = 0, preview_window = c(10, 12))
 #'
 #' @export
 glassbox <- function(

@@ -60,7 +60,8 @@
 #' demo_data |>
 #'   # set lpfilt to FALSE (instead of a list of params) to skip step
 #'   eyeris::glassbox(lpfilt = list(plot_freqz = TRUE)) |>
-#'   plot(seed = 0)
+#'   # `preview_window` zooms in on a 2-second subset of the time series
+#'   plot(seed = 0, preview_window = c(10, 12))
 #'
 #' @export
 lpfilt <- function(
