@@ -1,11 +1,43 @@
 # Changelog
 
-## eyeris (development version)
+## eyeris 3.3.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
-This release adds a configurable maximum-gap limit to the interpolation
-step so that long stretches of missing pupil data are no longer
-interpolated over, following established pupillometry preprocessing
-guidelines.
+CRAN release: 2026-07-31
+
+This minor release changes how missing pupil data is handled, broadens
+the range of eye trackers `eyeris` can ingest, and refreshes every
+diagnostic figure. The headline **breaking change** is that
+[`interpolate()`](https://eyeris.shawnschwartz.com/reference/interpolate.md)
+no longer interpolates across arbitrarily long gaps: stretches of
+consecutive missing samples longer than the new `max_gap_ms` limit
+(default `250` ms, following Kret & Sjak-Shie, 2018) are now left as
+`NA`, and the downstream steps that cannot operate on missing data
+([`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md),
+[`downsample()`](https://eyeris.shawnschwartz.com/reference/downsample.md),
+[`bin()`](https://eyeris.shawnschwartz.com/reference/bin.md),
+[`detrend()`](https://eyeris.shawnschwartz.com/reference/detrend.md))
+now work *around* those gaps and restore them, rather than being
+skipped. New features include
+[`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md),
+a tracker-agnostic loader that lets non-EyeLink data enter the pipeline
+(with
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+now accepting a pre-loaded `eyeris` object); a sampling-uniformity
+guardrail plus an automatic
+[`resample()`](https://eyeris.shawnschwartz.com/reference/resample.md)
+step for hardware that silently *drops* samples instead of zero-filling
+them; spline detrending via `detrend(method = "spline")`; and
+[`simulate_eyeris()`](https://eyeris.shawnschwartz.com/reference/simulate_eyeris.md)/[`sim_params()`](https://eyeris.shawnschwartz.com/reference/sim_params.md)
+for generating seeded, synthetic, pipeline-compatible pupil data with
+known ground truth. Bug fixes restore the fitted detrend coefficients on
+the
+[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+output, repair per-run epoch CSV writing in
+[`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md) for
+both multi-run objects and `run_num` overrides, and resolve a
+multi-block crash on R \>= 4.2. Under the hood, all diagnostic plotting
+migrated from base graphics to
+[`reaborn`](https://reaborn.org)/`ggplot2`.
 
 ### 🚨 **Breaking changes & deprecations**
 
@@ -34,7 +66,7 @@ guidelines.
   samples using each recording’s own sampling rate, so it behaves
   consistently across sampling frequencies, by
   [@shawntz](https://github.com/shawntz) in
-  [\#295](https://github.com/shawntz/eyeris/issues/295).
+  [\#318](https://github.com/shawntz/eyeris/issues/318).
 
 - **ENH ([\#295](https://github.com/shawntz/eyeris/issues/295))**: The
   downstream
@@ -55,7 +87,7 @@ guidelines.
   interpolation has not been run upstream, the filter/resample steps
   still raise the usual “interpolate first” error, by
   [@shawntz](https://github.com/shawntz) in
-  [\#295](https://github.com/shawntz/eyeris/issues/295).
+  [\#318](https://github.com/shawntz/eyeris/issues/318).
 
 - **ENH ([\#295](https://github.com/shawntz/eyeris/issues/295))**:
   [`lpfilt()`](https://eyeris.shawnschwartz.com/reference/lpfilt.md) and
@@ -77,7 +109,7 @@ guidelines.
   run, and the same information is recorded as a **“Data Quality
   Notes”** section in the HTML preprocessing report so it is captured as
   part of the data provenance, by [@shawntz](https://github.com/shawntz)
-  in [\#295](https://github.com/shawntz/eyeris/issues/295).
+  in [\#318](https://github.com/shawntz/eyeris/issues/318).
 
 ### 🚀 New features
 
@@ -133,7 +165,7 @@ guidelines.
   Native readers for specific tracker formats can now be layered on top
   of this function incrementally, by
   [@shawntz](https://github.com/shawntz) in
-  [\#299](https://github.com/shawntz/eyeris/issues/299).
+  [\#311](https://github.com/shawntz/eyeris/issues/311).
 
 - **NF**:
   **[`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
@@ -146,7 +178,9 @@ guidelines.
   [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md)
   object piped into
   [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
-  now processes correctly instead of raising an error.
+  now processes correctly instead of raising an error, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#311](https://github.com/shawntz/eyeris/issues/311).
 
 - **ENH ([\#300](https://github.com/shawntz/eyeris/issues/300))**: Added
   a hardware-quirk guardrail that detects non-uniform sampling intervals
@@ -213,6 +247,39 @@ guidelines.
   [@shawntz](https://github.com/shawntz) in
   [\#320](https://github.com/shawntz/eyeris/issues/320).
 
+- **NF**: **Added
+  [`simulate_eyeris()`](https://eyeris.shawnschwartz.com/reference/simulate_eyeris.md)
+  and
+  [`sim_params()`](https://eyeris.shawnschwartz.com/reference/sim_params.md),
+  a seeded synthetic pupil data generator with known ground truth.**
+  `eyeris` previously had no way to produce synthetic pupil data, making
+  it difficult to write self-contained tests, build reproducible
+  documentation examples, or demonstrate how a preprocessing step
+  behaves without shipping and loading a real recording.
+  [`sim_params()`](https://eyeris.shawnschwartz.com/reference/sim_params.md)
+  builds the signal-model parameter list, with every component
+  independently toggle-able and validated: tonic baseline, slow drift,
+  hippus, Hoeks & Levelt phasic responses, blinks (missing cores plus
+  occlusion flank spikes), transient spikes, broadband noise, and
+  optional line noise.
+  [`simulate_eyeris()`](https://eyeris.shawnschwartz.com/reference/simulate_eyeris.md)
+  then generates the signal under a confined RNG
+  ([`withr::with_seed()`](https://withr.r-lib.org/reference/with_seed.html),
+  so the global `.Random.seed` is left untouched) and delegates to the
+  same internal object constructor used by
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md),
+  so the returned `eyeris` object is structurally identical to a real
+  recording and flows through the entire pipeline unchanged
+  ([`deblink()`](https://eyeris.shawnschwartz.com/reference/deblink.md)
+  … [`zscore()`](https://eyeris.shawnschwartz.com/reference/zscore.md),
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md),
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html),
+  [`epoch()`](https://eyeris.shawnschwartz.com/reference/epoch.md),
+  [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)).
+  This addition is purely additive and changes no existing behavior, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#351](https://github.com/shawntz/eyeris/issues/351).
+
 ### 🐛 Bugs fixed
 
 - **FF**: Fixed `glassbox(detrend = TRUE)` silently dropping the fitted
@@ -237,7 +304,8 @@ guidelines.
   produced in that run (and none survive when detrending is disabled or
   fails). The `detrend_fitted_values` column that drives the detrend
   diagnostic plots/reports was already preserved and is unaffected, by
-  [@shawntz](https://github.com/shawntz).
+  [@shawntz](https://github.com/shawntz) in
+  [\#350](https://github.com/shawntz/eyeris/issues/350).
 
 - **FF**: Fixed an error in
   [`summarize_confounds()`](https://eyeris.shawnschwartz.com/reference/summarize_confounds.md)
@@ -247,7 +315,11 @@ guidelines.
   multi-block data on R ≥ 4.2. The internal
   [`is.na()`](https://rdrr.io/r/base/NA.html) guard now handles vectors
   of block numbers, so multi-block recordings flow through the confound
-  summary step correctly.
+  summary step correctly. This latent bug was surfaced by the new
+  multi-block
+  [`load_generic()`](https://eyeris.shawnschwartz.com/reference/load_generic.md)
+  tests, by [@shawntz](https://github.com/shawntz) in
+  [\#311](https://github.com/shawntz/eyeris/issues/311).
 
 - **FF**: Fixed multi-run epoch CSV files
   (`*_desc-preproc_pupil_epoch-<label>.csv`) not being written for each
@@ -274,7 +346,31 @@ guidelines.
   [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
   under `verbose = FALSE` whenever epochs were present), by
   [@alicexue](https://github.com/alicexue) and
-  [@shawntz](https://github.com/shawntz).
+  [@shawntz](https://github.com/shawntz) in
+  [\#322](https://github.com/shawntz/eyeris/issues/322).
+
+- **FF**: Fixed the `run_num` override being ignored for epoch CSV and
+  per-run `metadata.json` outputs when preprocessing separate
+  single-block `.asc` files into a shared `bids_dir`. In that workflow
+  the run number is not forced at
+  [`load_asc()`](https://eyeris.shawnschwartz.com/reference/load_asc.md),
+  so every file loads as `block_1` and the per-file `run_num` is instead
+  passed to
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md);
+  two outputs ignored the `block_1` → `block_<run_num>` rename and
+  collapsed onto `run-01`, so every run’s
+  `*_desc-preproc_pupil_epoch-<label>.csv` overwrote itself and every
+  run’s `*_metadata.json` ended up holding the last run’s
+  `source_file`/`call_stack`. The epoch-block rename now writes the
+  renamed block key back onto the epoch list (previously it updated only
+  a local copy of the block-name vector), and per-run metadata
+  regeneration in
+  [`make_report()`](https://eyeris.shawnschwartz.com/reference/make_report.md)
+  is scoped to the blocks present in the current object rather than
+  every `run-XX` directory found on disk — so sibling runs written in
+  earlier loop iterations keep their own metadata and are only read back
+  for the combined report, by [@shawntz](https://github.com/shawntz) in
+  [\#334](https://github.com/shawntz/eyeris/issues/334).
 
 ### 🔧 Under the hood
 
@@ -306,7 +402,46 @@ guidelines.
   intentionally remain on `gsignal`, as they fall outside the
   statistical-visualization scope of `reaborn`. Adds `reaborn`,
   `ggplot2`, and `patchwork` to `Imports` and drops the now-unused
-  `fields`, by [@shawntz](https://github.com/shawntz).
+  `fields`, by [@shawntz](https://github.com/shawntz) in
+  [\#338](https://github.com/shawntz/eyeris/issues/338).
+
+### 📚 Documentation
+
+- **DOC**: Added a *Preprocessing Multiple Runs in Separate Files*
+  vignette covering the common case where each run of a session is
+  recorded to its own `.asc` file rather than as multiple blocks within
+  one file, including the `run_num` override needed to keep runs
+  distinct in a shared `bids_dir`, an equivalent `run_num` example, and
+  a documented bridge function for multi-block data that `eyeris` cannot
+  auto-separate. Demo data shown in the vignette was anonymized, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#324](https://github.com/shawntz/eyeris/issues/324),
+  [\#330](https://github.com/shawntz/eyeris/issues/330),
+  [\#331](https://github.com/shawntz/eyeris/issues/331), and
+  [\#336](https://github.com/shawntz/eyeris/issues/336).
+
+- **DOC**: Added a step-by-step breakdown of the
+  [`glassbox()`](https://eyeris.shawnschwartz.com/reference/glassbox.md)
+  pipeline to the function documentation, so the default recipe and the
+  order in which each step runs are visible directly from
+  [`?glassbox`](https://eyeris.shawnschwartz.com/reference/glassbox.md),
+  by [@shawntz](https://github.com/shawntz) in
+  [\#332](https://github.com/shawntz/eyeris/issues/332).
+
+- **DOC**: Added a “Built for the Age of AI Coding Agents” article to
+  the package website describing how `eyeris`’s modular, introspectable
+  design supports agent-assisted analysis workflows, by
+  [@shawntz](https://github.com/shawntz) in
+  [\#337](https://github.com/shawntz/eyeris/issues/337).
+
+- **DOC**: Pointed the package and website URLs at
+  <https://eyeris.shawnschwartz.com/>, and fixed stale BIDS output
+  filenames in the README and vignettes so the documented directory
+  layout matches what
+  [`bidsify()`](https://eyeris.shawnschwartz.com/reference/bidsify.md)
+  actually writes, by [@shawntz](https://github.com/shawntz) in
+  [\#340](https://github.com/shawntz/eyeris/issues/340) and
+  [\#323](https://github.com/shawntz/eyeris/issues/323).
 
 ## eyeris 3.2.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 

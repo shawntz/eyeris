@@ -83,7 +83,7 @@ to configure the synthetic signal.
 ``` r
 # generate a synthetic recording and run it through the pipeline
 sim <- simulate_eyeris(seed = 1, params = sim_params(duration_secs = 20))
-#> ℹ [2026-07-19 07:18:31] [INFO] Simulated 20.0 s @ 1000 Hz (20000 samples, 5.72%
+#> ℹ [2026-08-13 17:23:20] [INFO] Simulated 20.0 s @ 1000 Hz (20000 samples, 5.72%
 #> missing, 6 blinks, 3 transients).
 
 # \donttest{
@@ -93,9 +93,9 @@ out <- sim |>
   eyeris::interpolate() |>
   eyeris::lpfilt() |>
   eyeris::zscore()
-#> ! [2026-07-19 07:18:31] [WARN] Left 995 sample(s) as NA across gaps longer than
+#> ! [2026-08-13 17:23:20] [WARN] Left 995 sample(s) as NA across gaps longer than
 #> 250 ms (not interpolated).
-#> ! [2026-07-19 07:18:31] [WARN] `lpfilt()` is operating on data that contains
+#> ! [2026-08-13 17:23:20] [WARN] `lpfilt()` is operating on data that contains
 #> gaps longer than the interpolation limit (`max_gap_ms`), which were left as
 #> `NA`. These gaps are temporarily filled so the filter can run and then masked
 #> back to `NA`; this can slightly bias the valid pupil samples immediately
@@ -105,10 +105,10 @@ out <- sim |>
 
 pdf(tempfile(fileext = ".pdf"))
 plot(out, seed = 1)
-#> ℹ [2026-07-19 07:18:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 17:23:20] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 dev.off()
-#> agg_record_1a555217f43 
-#>                      2 
+#> agg_record_1b316d048199 
+#>                       2 
 # }
 ```

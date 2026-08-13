@@ -149,10 +149,18 @@ my_eyeris_data <- system.file("extdata", "memory.asc", package = "eyeris") |>
 
 
 # controlling the time series range (i.e., preview window) in your plots:
+#  (note: omitting `preview_window` uses the default 10000 to 20000 ms
+#   subset; the examples below pass shorter windows explicitly so that they
+#   run quickly)
 
-## example 1: using the default 10000 to 20000 ms time subset
-plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
-#> ℹ [2026-07-19 07:18:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+## example 1: a 2-second time subset (i.e., 10000 to 12000 ms)
+plot(
+  my_eyeris_data,
+  preview_window = c(10, 12),
+  seed = 0,
+  add_progressive_summary = TRUE
+)
+#> ℹ [2026-08-13 17:23:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -160,18 +168,17 @@ plot(my_eyeris_data, seed = 0, add_progressive_summary = TRUE)
 
 
 
-#> ℹ [2026-07-19 07:18:10] [INFO] Creating progressive summary plot for block_1
+#> ℹ [2026-08-13 17:23:07] [INFO] Creating progressive summary plot for block_1
 
-#> ✔ [2026-07-19 07:18:10] [OKAY] Progressive summary plot created successfully!
+#> ✔ [2026-08-13 17:23:07] [OKAY] Progressive summary plot created successfully!
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
 plot(
   my_eyeris_data,
   preview_window = c(0.01, 0.5),
-  seed = 0,
-  add_progressive_summary = TRUE
+  seed = 0
 )
-#> ℹ [2026-07-19 07:18:10] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 17:23:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -179,43 +186,17 @@ plot(
 
 
 
-#> ℹ [2026-07-19 07:18:11] [INFO] Creating progressive summary plot for block_1
-
-#> ✔ [2026-07-19 07:18:11] [OKAY] Progressive summary plot created successfully!
 
 # controlling which block of data you would like to plot:
-
-## example 1: plots first block (default)
-plot(my_eyeris_data, seed = 0)
-#> ℹ [2026-07-19 07:18:11] [INFO] Plotting block 1 with sampling rate 1000 Hz from
-#> possible blocks: 1
-
-
-
-
-
-
-
-## example 2: plots a specific block
-plot(my_eyeris_data, block = 1, seed = 0)
-#> ℹ [2026-07-19 07:18:14] [INFO] Plotting block 1 with sampling rate 1000 Hz from
-#> possible blocks: 1
-
-
-
-
-
-
-
-## example 3: plots a specific block along with a custom preview window
-##   (i.e., 1000 to 2000 ms)
+#  (`block` defaults to 1, i.e., the first block; here it is combined with a
+#   custom preview window of 1000 to 2000 ms)
 plot(
   my_eyeris_data,
   block = 1,
   preview_window = c(1, 2),
   seed = 0
 )
-#> ℹ [2026-07-19 07:18:18] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 17:23:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
