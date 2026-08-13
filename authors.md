@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/shawntz/eyeris/blob/v3.3.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/shawntz/eyeris/blob/dev/inst/CITATION)
 
 Schwartz ST, Yang H, Xue AM, He M (2025). “eyeris: A flexible,
 extensible, and reproducible pupillometry preprocessing framework in R.”

@@ -103,7 +103,7 @@ epoch(), and summarize_confounds()."><meta property="og:image" content="https://
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Generate a synthetic <code>eyeris</code> object with realistic pupil characteristics</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/v3.3.0/R/simulate-eyeris.R" class="external-link"><code>R/simulate-eyeris.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shawntz/eyeris/blob/dev/R/simulate-eyeris.R" class="external-link"><code>R/simulate-eyeris.R</code></a></small>
       <div class="d-none name"><code>simulate_eyeris.Rd</code></div>
     </div>
 
@@ -178,7 +178,7 @@ truth from a retained copy rather than relying on the attribute.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># generate a synthetic recording and run it through the pipeline</span></span></span>
 <span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">simulate_eyeris</span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1</span>, params <span class="op">=</span> <span class="fu"><a href="sim_params.html">sim_params</a></span><span class="op">(</span>duration_secs <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-08-13 17:23:20] [INFO] Simulated 20.0 s @ 1000 Hz (20000 samples, 5.72%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-08-13 18:06:52] [INFO] Simulated 20.0 s @ 1000 Hz (20000 samples, 5.72%</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> missing, 6 blinks, 3 transients).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
@@ -188,9 +188,9 @@ truth from a retained copy rather than relying on the attribute.</p>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="interpolate.html">interpolate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="lpfilt.html">lpfilt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">eyeris</span><span class="fu">::</span><span class="fu"><a href="zscore.html">zscore</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-08-13 17:23:20] [WARN] Left 995 sample(s) as NA across gaps longer than</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-08-13 18:06:52] [WARN] Left 995 sample(s) as NA across gaps longer than</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 250 ms (not interpolated).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-08-13 17:23:20] [WARN] `lpfilt()` is operating on data that contains</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> [2026-08-13 18:06:52] [WARN] `lpfilt()` is operating on data that contains</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> gaps longer than the interpolation limit (`max_gap_ms`), which were left as</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `NA`. These gaps are temporarily filled so the filter can run and then masked</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> back to `NA`; this can slightly bias the valid pupil samples immediately</span>
@@ -200,10 +200,10 @@ truth from a retained copy rather than relying on the attribute.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".pdf"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-08-13 17:23:20] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> [2026-08-13 18:06:52] [INFO] Plotting block 1 with sampling rate 1000 Hz from</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> possible blocks: 1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agg_record_1b316d048199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> agg_record_1c3a1b1721ba </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       2 </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

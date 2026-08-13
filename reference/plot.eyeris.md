@@ -160,7 +160,7 @@ plot(
   seed = 0,
   add_progressive_summary = TRUE
 )
-#> ℹ [2026-08-13 17:23:06] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 18:06:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -168,9 +168,9 @@ plot(
 
 
 
-#> ℹ [2026-08-13 17:23:07] [INFO] Creating progressive summary plot for block_1
+#> ℹ [2026-08-13 18:06:41] [INFO] Creating progressive summary plot for block_1
 
-#> ✔ [2026-08-13 17:23:07] [OKAY] Progressive summary plot created successfully!
+#> ✔ [2026-08-13 18:06:41] [OKAY] Progressive summary plot created successfully!
 
 ## example 2: using a custom time subset (i.e., 1 to 500 ms)
 plot(
@@ -178,7 +178,7 @@ plot(
   preview_window = c(0.01, 0.5),
   seed = 0
 )
-#> ℹ [2026-08-13 17:23:07] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 18:06:41] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 
@@ -196,7 +196,7 @@ plot(
   preview_window = c(1, 2),
   seed = 0
 )
-#> ℹ [2026-08-13 17:23:08] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-08-13 18:06:42] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
 
 

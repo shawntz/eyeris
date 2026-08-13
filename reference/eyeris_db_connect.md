@@ -51,16 +51,16 @@ tryCatch({
   message("No eyeris DB found - create one first with bidsify(db_enabled = TRUE)")
 })
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpD5czL2/duckdb
+#> ℹ /tmp/RtmpfyHCi2/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-08-13 17:21:18] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpD5czL2/derivatives/my-project.eyerisdb
-#> ℹ [2026-08-13 17:21:18] [INFO] Executing query: SELECT * FROM (SELECT
+#> ✔ [2026-08-13 18:04:48] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpfyHCi2/derivatives/my-project.eyerisdb
+#> ℹ [2026-08-13 18:04:48] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "time_orig", "time_secs", "time_scaled", "eye_x",
 #> "eye_y", "eye", "hz", "type", "pupil_raw", "pupil_raw_deblink",
@@ -76,6 +76,6 @@ tryCatch({
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =
 #> '001'
-#> ℹ [2026-08-13 17:21:18] [INFO] Disconnected from eyeris database
+#> ℹ [2026-08-13 18:04:48] [INFO] Disconnected from eyeris database
 # }
 ```
