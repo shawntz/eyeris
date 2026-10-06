@@ -27,8 +27,9 @@ Windows uses an x64 NSIS installer for the current user, with an installation
 folder chooser and Start menu/desktop shortcuts. macOS uses a DMG/ZIP; the pinned
 Apple Silicon R package binaries require macOS Sonoma 14 or newer. Linux uses an
 AppImage built on Ubuntu 22.04, retaining the host's standard glibc/GUI requirements.
-Native Windows ARM64 and 32-bit Windows are not targeted. Public distribution
-still requires platform signing; bundling R does not replace signing/notarization.
+Native Windows ARM64 and 32-bit Windows are not targeted. macOS distribution
+requires signing/notarization. Unsigned Windows installers may show SmartScreen
+warnings; Windows signing can be enabled when a certificate is available.
 
 ## Development
 
@@ -306,22 +307,27 @@ only if every platform passes. PR builds never publish or receive signing
 credentials. Release artifacts include installers, macOS ZIP updates, blockmaps,
 update metadata, and SHA256SUMS.
 
-Configure these repository Actions secrets before the first release:
+Configure the Apple repository Actions secrets before the first release.
+Windows certificate secrets are optional until a certificate is available:
 
-| Secret                                 | Value                                                      |
-| -------------------------------------- | ---------------------------------------------------------- |
-| `DESKTOP_MAC_CERTIFICATE`              | Base64-encoded Developer ID Application `.p12`             |
-| `DESKTOP_MAC_CERTIFICATE_PASSWORD`     | Certificate export password                                |
-| `DESKTOP_APPLE_API_KEY`                | Raw App Store Connect `.p8` key contents                   |
-| `DESKTOP_APPLE_API_KEY_ID`             | App Store Connect key ID                                   |
-| `DESKTOP_APPLE_API_ISSUER`             | App Store Connect issuer ID                                |
-| `DESKTOP_WINDOWS_CERTIFICATE`          | Base64-encoded Authenticode `.pfx` usable by the CI runner |
-| `DESKTOP_WINDOWS_CERTIFICATE_PASSWORD` | Certificate export password                                |
+| Secret                                 | Value                                                    |
+| -------------------------------------- | -------------------------------------------------------- |
+| `DESKTOP_MAC_CERTIFICATE`              | Base64-encoded Developer ID Application `.p12`           |
+| `DESKTOP_MAC_CERTIFICATE_PASSWORD`     | Certificate export password                              |
+| `DESKTOP_APPLE_API_KEY`                | Raw App Store Connect `.p8` key contents                 |
+| `DESKTOP_APPLE_API_KEY_ID`             | App Store Connect key ID                                 |
+| `DESKTOP_APPLE_API_ISSUER`             | App Store Connect issuer ID                              |
+| `DESKTOP_WINDOWS_CERTIFICATE`          | Optional base64-encoded Authenticode `.pfx` usable by CI |
+| `DESKTOP_WINDOWS_CERTIFICATE_PASSWORD` | Certificate export password                              |
 
 Windows hardware-backed/cloud signing requires adapting the signing step to
-that service; do not export a non-exportable key. macOS release builds are signed
-and notarized; Windows release builds must be signed. Missing signing credentials
-fail the release instead of publishing an unsigned auto-update. GitHub's built-in
+that service; do not export a non-exportable key. macOS release builds must be signed
+and notarized; missing Apple credentials fail the release. Windows signing is
+optional initially: without its certificate, CI warns and publishes an unsigned
+NSIS installer, which may show SmartScreen warnings. Such updates still verify
+SHA-512 hashes from the HTTPS desktop feed, but do not provide Authenticode
+publisher verification. Configure the Windows certificate secrets to enable
+signing and publisher verification for subsequent installed versions. GitHub's built-in
 `GITHUB_TOKEN` supplies release publishing permission; no PAT is embedded in the
 app. Keep the same signing identity for subsequent updates.
 

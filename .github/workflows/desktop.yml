@@ -120,8 +120,11 @@ jobs:
           APPLE_API_KEY_ID: ${{ secrets.DESKTOP_APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.DESKTOP_APPLE_API_ISSUER }}
         run: |
-          if [ "$RUNNER_OS" != Linux ]; then
+          if [ "$RUNNER_OS" = macOS ]; then
             test -n "$CSC_LINK" || { echo 'Missing desktop signing certificate'; exit 1; }
+          fi
+          if [ "$RUNNER_OS" = Windows ] && [ -z "$CSC_LINK" ]; then
+            echo '::warning::Windows signing is not configured. This installer will be unsigned and may show SmartScreen warnings.'
           fi
           if [ "$RUNNER_OS" = macOS ]; then
             test -n "$APPLE_API_KEY_ID" && test -n "$APPLE_API_ISSUER" || { echo 'Missing Apple notarization configuration'; exit 1; }

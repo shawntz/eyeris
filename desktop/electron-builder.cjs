@@ -22,7 +22,10 @@ module.exports = {
     entitlementsInherit: "build/entitlements.mac.plist",
     notarize: release,
   },
-  forceCodeSigning: sign && process.platform !== "linux",
+  forceCodeSigning:
+    sign &&
+    (process.platform === "darwin" ||
+      (process.platform === "win32" && Boolean(process.env.CSC_LINK))),
   dmg: {
     title: "Install eyeris",
     icon: "build/dmg-icon.icns",
