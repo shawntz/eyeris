@@ -6,6 +6,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 test("desktop review, stage changes, keyboard decisions, resume, and export", async () => {
+  test.setTimeout(120000);
   const root = process.cwd();
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-electron-test-"));
   const projectDir = path.join(dir, "Memory study.eyeris");
@@ -148,6 +149,7 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
     await page.getByRole("button", { name: "Import processed RDS" }).click();
     await expect(page.getByRole("status")).toContainText(
       "10,001 epochs imported",
+      { timeout: 30000 },
     );
     await page
       .getByRole("combobox", { name: "Participant filter" })

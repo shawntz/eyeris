@@ -1,0 +1,116 @@
+name: Desktop cross-platform
+
+on:
+  push:
+    branches: [dev, main, master, "release/**"]
+    paths:
+      [
+        "desktop/**",
+        "R/**",
+        "inst/**",
+        "DESCRIPTION",
+        "NAMESPACE",
+        ".github/workflows/desktop.yml",
+      ]
+  pull_request:
+    paths:
+      [
+        "desktop/**",
+        "R/**",
+        "inst/**",
+        "DESCRIPTION",
+        "NAMESPACE",
+        ".github/workflows/desktop.yml",
+      ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      EYERIS_SIGN: "0"
+      EYERIS_RELEASE: "0"
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.0"
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-pandoc@v2
+        with:
+          pandoc-version: "3.10"
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: local::.
+          dependencies: '"hard"'
+          extra-packages: |
+            any::pkgload
+            any::duckdb
+      - name: Install desktop dependencies
+        run: npm ci
+      - name: Install Linux GUI dependencies
+        if: runner.os == 'Linux'
+        run: |
+          npx playwright install-deps chromium
+          sudo apt-get update
+          sudo apt-get install -y patchelf
+      - name: Test backend and runtime discovery
+        run: npm test
+      - name: Test Electron UI
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            xvfb-run -a npm run test:e2e
+          else
+            npm run test:e2e
+          fi
+      - name: Build native installer
+        run: npm run package
+      - name: Smoke test packaged app
+        if: runner.os != 'Windows'
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            xvfb-run -a npm run test:package
+          else
+            npm run test:package
+          fi
+      - name: Install and smoke test Windows app
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem release/eyeris-*-win-x64.exe | Select-Object -First 1
+          if (!$installer) { throw 'Windows NSIS installer was not produced' }
+          $destination = Join-Path $env:RUNNER_TEMP 'eyeris installed app'
+          $process = Start-Process -FilePath $installer.FullName -ArgumentList '/S', "/D=$destination" -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+          npm run test:package -- "$destination/eyeris.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: desktop-${{ matrix.os }}
+          path: |
+            desktop/release/*.exe
+            desktop/release/*.dmg
+            desktop/release/*.zip
+            desktop/release/*.AppImage
+            desktop/test-results/
+          if-no-files-found: warn
