@@ -15,6 +15,7 @@ export function App() {
   const [recent, setRecent] = useState<string | null>(null);
   const [screen, setScreen] = useState<"subjects" | "review">("subjects");
   const [error, setError] = useState("");
+  const [runtimeReady, setRuntimeReady] = useState(false);
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     window.eyeris
@@ -22,6 +23,8 @@ export function App() {
       .then((r) => {
         setReviewer(r.reviewer);
         setRecent(r.recent);
+        if (r.warning) setError(r.warning);
+        else setRuntimeReady(true);
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -98,14 +101,14 @@ export function App() {
             <div className="splash-actions">
               <button
                 className="button primary"
-                disabled={busy}
+                disabled={busy || !runtimeReady}
                 onClick={() => void open("createProject")}
               >
                 <Plus size={17} /> New project
               </button>
               <button
                 className="button"
-                disabled={busy}
+                disabled={busy || !runtimeReady}
                 onClick={() => void open("openProject")}
               >
                 <FolderOpen size={17} /> Open project
@@ -114,7 +117,10 @@ export function App() {
             {recent && (
               <div className="recent-project">
                 <h2>Recent project</h2>
-                <button disabled={busy} onClick={() => void open("openRecent")}>
+                <button
+                  disabled={busy || !runtimeReady}
+                  onClick={() => void open("openRecent")}
+                >
                   <span>
                     {recent
                       .split(/[\\/]/)
@@ -125,6 +131,9 @@ export function App() {
                   <ArrowRight size={17} />
                 </button>
               </div>
+            )}
+            {!runtimeReady && !error && (
+              <p role="status">Checking processing tools…</p>
             )}
             {error && (
               <div className="message error" role="alert">

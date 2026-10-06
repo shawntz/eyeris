@@ -7,6 +7,7 @@ module.exports = {
   files: ["dist/**/*", "electron/**/*", "package.json"],
   extraResources: [
     { from: "r", to: "r" },
+    { from: "build/runtime", to: "runtime" },
     { from: "build/r-library", to: "r-library" },
   ],
   asar: true,
@@ -44,6 +45,11 @@ module.exports = {
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
   },
-  linux: { target: ["AppImage"], icon: "build/icon.png", category: "Science" },
+  linux: {
+    target: ["AppImage"],
+    executableName: "eyeris",
+    icon: "build/icon.png",
+    category: "Science",
+  },
   publish: null,
 };

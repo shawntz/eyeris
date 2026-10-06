@@ -72,3 +72,6 @@ desktop/build/dmg-background.png
 desktop/build/dmg-background@2x.png
 desktop/public/app-icon.png
 desktop/build/r-library/
+desktop/build/runtime/
+
+desktop/build/runtime-cache/

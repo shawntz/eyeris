@@ -1,5 +1,6 @@
 args <- commandArgs(trailingOnly = FALSE)
 script <- sub("^--file=", "", args[grepl("^--file=", args)])
+script <- gsub("~+~", " ", script, fixed=TRUE)
 source(file.path(dirname(script), "review.R"))
 lib <- Sys.getenv("EYERIS_PACKAGE_LIBRARY")
 if (nzchar(lib) && dir.exists(lib)) .libPaths(c(lib, .libPaths()))

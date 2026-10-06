@@ -1,3 +1,4 @@
+import { rEnvironment } from "../electron/runtime.mjs";
 import { resolveRscript } from "../electron/rscript.mjs";
 // Verify the installed resource paths and packaged R library, not the dev tree.
 import { _electron as electron } from "@playwright/test";
@@ -18,6 +19,12 @@ const executablePath = path.resolve(
 const dir = await mkdtemp(path.join(tmpdir(), "eyeris package smoke-"));
 const env = {
   ...process.env,
+  EYERIS_RSCRIPT: "/missing-system-R/Rscript",
+  R_HOME: "/missing-system-R",
+  R_LIBS: "/missing-user-library",
+  R_LIBS_USER: "/missing-user-library",
+  R_LIBS_SITE: "/missing-site-library",
+  RSTUDIO_PANDOC: "/missing-system-pandoc",
   EYERIS_TEST_USER_DATA: path.join(dir, "settings"),
 };
 delete env.ELECTRON_RUN_AS_NODE;
@@ -27,6 +34,17 @@ try {
   await page
     .getByRole("button", { name: "New project", exact: true })
     .waitFor();
+  const info = await app.evaluate(({ app }) => ({
+    packaged: app.isPackaged,
+    resource: process.resourcesPath,
+  }));
+  assert.equal(info.packaged, true);
+  const bundledEnv = rEnvironment({
+    env: { ...env, EYERIS_RESOURCE_DIR: info.resource },
+  });
+  const bundledR = resolveRscript({ env: bundledEnv });
+  const ready = await page.evaluate(() => window.eyeris.init());
+  assert.equal(ready.warning, "");
   const projectDir = path.join(dir, "Smoke.eyeris");
   await app.evaluate(({ dialog }, filePath) => {
     dialog.showSaveDialog = async () => ({ canceled: false, filePath });
@@ -34,9 +52,9 @@ try {
   await page.evaluate(() => window.eyeris.createProject());
   await page.evaluate(() => window.eyeris.addSubject("001"));
   const asc = execFileSync(
-    resolveRscript(),
+    bundledR,
     ["-e", "cat(eyeris::eyelink_asc_demo_dataset())"],
-    { encoding: "utf8" },
+    { encoding: "utf8", env: bundledEnv },
   ).trim();
   await app.evaluate(({ dialog }, file) => {
     dialog.showOpenDialog = async () => ({
@@ -61,8 +79,8 @@ try {
           label: "probe",
           baseline: false,
         },
-        report: false,
-        database: false,
+        report: true,
+        database: true,
       }),
     state.recordings[0].id,
   );
@@ -84,6 +102,15 @@ try {
     done.pipeline.jobs[0].error || JSON.stringify(done.pipeline),
   );
   assert.ok(done.project.counts.total > 0);
+  const outputs = JSON.parse(done.pipeline.jobs[0].outputs);
+  assert.ok(
+    outputs.some((file) => file.endsWith(".html")),
+    "Bundled Pandoc must generate HTML reports",
+  );
+  assert.ok(
+    outputs.some((file) => file.endsWith(".eyerisdb")),
+    "Bundled DuckDB must generate a database",
+  );
   const runtime = JSON.parse(
     await readFile(
       path.join(
@@ -96,17 +123,12 @@ try {
     ),
   );
   assert.equal(runtime.eyeris, "3.3.0");
-  const info = await app.evaluate(({ app }) => ({
-    packaged: app.isPackaged,
-    resource: process.resourcesPath,
-  }));
-  assert.equal(info.packaged, true);
   const ping = execFileSync(
-    resolveRscript(),
+    bundledR,
     ["--vanilla", "-e", 'cat(find.package("eyeris"))'],
     {
       encoding: "utf8",
-      env: { ...process.env, R_LIBS: path.join(info.resource, "r-library") },
+      env: bundledEnv,
     },
   ).trim();
   assert.equal(

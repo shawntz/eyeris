@@ -4,6 +4,7 @@ args <- commandArgs(trailingOnly = TRUE)
 options(device = function(...) grDevices::pdf(file = NULL))
 destination <- if (length(args)) args[[1]] else file.path(getwd(), "sub-demo_task-memory.rds")
 script <- sub("^--file=", "", commandArgs()[grepl("^--file=", commandArgs())])
+script <- gsub("~+~", " ", script, fixed=TRUE)
 source(file.path(dirname(script), "load-package.R"))
 if (!nzchar(Sys.getenv("EYERIS_PACKAGE_LIBRARY")) && !nzchar(Sys.getenv("EYERIS_SOURCE"))) {
   repo <- normalizePath(file.path(dirname(script), "../.."), mustWork = FALSE)
