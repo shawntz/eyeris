@@ -38,8 +38,12 @@ export class RWorker {
         ),
       ),
     );
-    child.on("exit", (code) =>
-      fail(new Error(`R worker exited (${code}). ${this.logs.slice(-1500)}`)),
+    child.on("exit", (code, signal) =>
+      fail(
+        new Error(
+          `R worker exited (${signal ? `signal ${signal}` : `code ${code}`}). ${this.logs.slice(-1500)}`,
+        ),
+      ),
     );
     child.stderr.on("data", (chunk) => {
       this.logs = (this.logs + chunk).slice(-4000);
@@ -65,6 +69,10 @@ export class RWorker {
     const id = ++this.counter;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(
+          new Error(`R worker request ${method} timed out after 300 seconds.`),
+        );
         this.child?.kill();
       }, 300_000);
       this.pending.set(id, { resolve, reject, timer });

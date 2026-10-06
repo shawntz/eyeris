@@ -15,6 +15,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { Project } from "../electron/project.mjs";
 import { RWorker } from "../electron/r-worker.mjs";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 test("R-backed review: identity, traces, decisions, persistence, and lossless export", async (t) => {
@@ -121,6 +122,10 @@ test("R-backed review: identity, traces, decisions, persistence, and lossless ex
   const result = await project.export(exportParent);
   const manifest = JSON.parse(
     await readFile(path.join(result.directory, "manifest.json"), "utf8"),
+  );
+  assert.equal(
+    manifest.application,
+    `${packageMetadata.name}/${packageMetadata.version}`,
   );
   assert.equal(manifest.decisions.length, 15);
   assert.equal(manifest.history.length, 4);

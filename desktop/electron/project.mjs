@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { mkdir, copyFile, rename, rm, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const states = ["unreviewed", "keep", "exclude"];
 const digest = (text) => createHash("sha256").update(text).digest("hex");
@@ -332,7 +333,7 @@ export class Project {
       const manifest = {
         schemaVersion: 1,
         exportedAt: new Date().toISOString(),
-        application: "eyeris-desktop/0.1.0",
+        application: `${packageMetadata.name}/${packageMetadata.version}`,
         policy:
           "Only explicitly kept epochs are retained. Unreviewed epochs are exported separately. All stored stages and original samples are preserved.",
         sources,
