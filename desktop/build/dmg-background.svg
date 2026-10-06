@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="480" viewBox="0 0 660 480">
+  <rect width="660" height="480" fill="#f7f5f2"/>
+  <path d="M0 0H660V140H0Z" fill="#820000"/>
+  <g fill="none" stroke="#fff" stroke-width="1.5" opacity=".15">
+    <path d="M368 72C400 72 405 70 421 52S446 15 471 35S488 99 520 91S547 55 570 63S599 79 660 73"/>
+    <path d="M368 84C397 84 411 82 428 64S450 28 472 47S493 107 522 102S550 70 572 75S602 91 660 85"/>
+    <path d="M368 96C402 96 417 90 434 76S454 43 475 59S497 119 526 114S553 83 576 87S611 103 660 97"/>
+  </g>
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="40" y="74" fill="#fff" font-size="48" font-weight="600" letter-spacing="-2">eyeris</text>
+    <text x="42" y="108" fill="#f2dada" font-size="14">Pupillometry preprocessing &amp; epoch review</text>
+    <text x="330" y="186" text-anchor="middle" fill="#292626" font-size="17" font-weight="500">Drag eyeris into Applications</text>
+  </g>
+  <g fill="none" stroke="#820000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M289 273H369M357 261L369 273L357 285"/>
+  </g>
+</svg>
