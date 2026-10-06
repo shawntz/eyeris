@@ -1,6 +1,6 @@
 {
   "name": "eyeris-desktop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Pupillometry preprocessing and epoch review",
   "author": "Shawn Schwartz",
@@ -22,6 +22,7 @@
     "runtime:prepare": "node scripts/bundle-runtime.mjs"
   },
   "dependencies": {
+    "electron-updater": "6.8.9",
     "lucide-react": "^0.468.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
@@ -32,7 +33,9 @@
     "@types/react-dom": "^19.2.0",
     "electron": "44.5.1",
     "electron-builder": "^26.15.3",
+    "js-yaml": "4.3.2",
     "prettier": "^3.9.9",
+    "semver": "7.8.5",
     "sharp": "^0.35.5",
     "typescript": "^5.9.0",
     "vite": "^7.3.0"

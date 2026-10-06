@@ -5,6 +5,7 @@ import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 export function App() {
   const [project, setProject] = useState<Summary | null>(null);
+  const [version, setVersion] = useState("");
   const [pipeline, setPipeline] = useState<PipelineState>({
     subjects: [],
     recordings: [],
@@ -21,6 +22,7 @@ export function App() {
     window.eyeris
       .init()
       .then((r) => {
+        setVersion(r.appVersion);
         setReviewer(r.reviewer);
         setRecent(r.recent);
         if (r.warning) setError(r.warning);
@@ -87,7 +89,7 @@ export function App() {
       <div className="splash">
         <header>
           <span>eyeris Desktop</span>
-          <span>0.2.0</span>
+          <span>{version}</span>
         </header>
         <section className="splash-content">
           <img

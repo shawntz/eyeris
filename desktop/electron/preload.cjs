@@ -7,6 +7,10 @@ contextBridge.exposeInMainWorld(
   Object.fromEntries(
     [
       "init",
+      "updateState",
+      "checkForUpdates",
+      "downloadUpdate",
+      "installUpdate",
       "createProject",
       "openProject",
       "demo",

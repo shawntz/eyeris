@@ -2,7 +2,7 @@ import { rEnvironment } from "../electron/runtime.mjs";
 import { resolveRscript } from "../electron/rscript.mjs";
 // Verify the installed resource paths and packaged R library, not the dev tree.
 import { _electron as electron } from "@playwright/test";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { mkdtemp, rm, readFile, mkdir, cp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -143,6 +143,12 @@ try {
   console.log(
     "Packaged app launched, loaded its eyeris library, processed ASC, wrote BIDS, indexed epochs, and opened the demo.",
   );
+} catch (error) {
+  // Preserve the complete R log and runtime state when native CI fails.
+  const artifacts = path.resolve("test-results/package-smoke-failure");
+  await mkdir(artifacts, { recursive: true });
+  await cp(dir, artifacts, { recursive: true });
+  throw error;
 } finally {
   await app.close();
   await rm(dir, { recursive: true, force: true });

@@ -10,10 +10,13 @@ import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { RWorker } from "./r-worker.mjs";
 import { Project } from "./project.mjs";
 import { Pipeline } from "./pipeline.mjs";
+import electronUpdater from "electron-updater";
+import { DesktopUpdates } from "./updates.mjs";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const worker = new RWorker();
-let window, project, demoChild, pipeline;
+let window, project, demoChild, pipeline, updates;
 let queue = Promise.resolve();
 app.setName("eyeris");
 if (process.env.EYERIS_TEST_USER_DATA)
@@ -39,6 +42,10 @@ async function activate(directory, create) {
   return project.summary();
 }
 const methods = {
+  updateState: () => updates.snapshot(),
+  checkForUpdates: () => updates.check(),
+  downloadUpdate: () => updates.download(),
+  installUpdate: () => updates.install(),
   async init() {
     let warning = "";
     try {
@@ -51,6 +58,7 @@ const methods = {
       recent = JSON.parse(await readFile(settingsFile(), "utf8")).lastProject;
     } catch {}
     return {
+      appVersion: packageMetadata.version,
       project: project?.summary() ?? null,
       reviewer: userInfo().username,
       warning,
@@ -225,6 +233,15 @@ const methods = {
 };
 
 app.whenReady().then(async () => {
+  updates = new DesktopUpdates({
+    updater: electronUpdater.autoUpdater,
+    version: packageMetadata.version,
+    enabled:
+      app.isPackaged &&
+      !process.env.EYERIS_TEST_USER_DATA &&
+      (process.platform !== "linux" || Boolean(process.env.APPIMAGE)),
+    busy: () => Boolean(pipeline?.active || demoChild || worker.pending.size),
+  });
   if (app.isPackaged) process.env.EYERIS_RESOURCE_DIR = process.resourcesPath;
   if (!app.isPackaged) process.env.EYERIS_RSCRIPT = resolveRscript();
   const pageURL = new URL("../dist/index.html", import.meta.url).href;
@@ -236,7 +253,11 @@ app.whenReady().then(async () => {
         event.senderFrame.url !== pageURL
       )
         throw new Error("Unknown review window.");
-      const result = queue.then(() => fn(...args));
+      const result = queue.then(() => {
+        if (updates.state.status === "installing" && method !== "updateState")
+          throw new Error("The app is restarting to install an update.");
+        return fn(...args);
+      });
       queue = result.catch(() => {});
       return result;
     });
@@ -277,9 +298,11 @@ app.whenReady().then(async () => {
     (_wc, _permission, callback) => callback(false),
   );
   await window.loadFile(path.join(root, "dist/index.html"));
+  updates.start();
 });
 app.on("window-all-closed", () => app.quit());
 app.on("before-quit", () => {
+  updates?.stop();
   if (pipeline?.active) {
     project.db
       .prepare(

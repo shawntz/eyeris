@@ -137,10 +137,10 @@ export async function relocateNative(roots, runtime, origins = new Map()) {
     }
     await chmod(file, 0o755);
     if (mac) {
-      // Remove old signatures before modifying load commands; sign the result.
-      try {
-        run("/usr/bin/codesign", ["--remove-signature", file]);
-      } catch {}
+      // Keep the signature's link-edit allocation while changing load commands.
+      // Removing it first leaves some Intel CRAN binaries with a layout that
+      // Xcode 16's install_name_tool rejects. Replace the invalidated signature
+      // immediately after relocation; the release build signs it again.
       if (changes.length) run("/usr/bin/install_name_tool", [...changes, file]);
       run("/usr/bin/codesign", ["--force", "--sign", "-", file]);
     } else {

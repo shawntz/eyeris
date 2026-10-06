@@ -1,0 +1,76 @@
+name: Automatic desktop release
+
+on:
+  push:
+    branches: [dev]
+
+# Check the newest dev head when a queued run begins. Listening to all dev
+# pushes prevents a later R-only push from hiding an earlier desktop change.
+concurrency:
+  group: desktop-auto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.plan.outputs.release }}
+      source: ${{ steps.plan.outputs.source }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+        working-directory: desktop
+      - id: plan
+        run: node desktop/scripts/auto-release.mjs plan
+  validate:
+    needs: plan
+    if: needs.plan.outputs.release == 'true'
+    uses: ./.github/workflows/desktop.yml
+    with:
+      ref: ${{ needs.plan.outputs.source }}
+  version:
+    needs: [plan, validate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release: ${{ steps.version.outputs.release }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+        working-directory: desktop
+      - id: version
+        name: Merge a version-only PR and tag its commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESKTOP_SOURCE: ${{ needs.plan.outputs.source }}
+          DESKTOP_TAG: ${{ needs.plan.outputs.tag }}
+        run: node desktop/scripts/auto-release.mjs prepare
+  release:
+    needs: version
+    if: needs.version.outputs.release == 'true'
+    permissions:
+      contents: write
+    # GITHUB_TOKEN pushes do not trigger push workflows; call publishing here.
+    uses: ./.github/workflows/desktop-release.yml
+    with:
+      ref: ${{ needs.version.outputs.tag }}
+    secrets: inherit

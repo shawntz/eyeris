@@ -10,7 +10,7 @@ on:
         "inst/**",
         "DESCRIPTION",
         "NAMESPACE",
-        ".github/workflows/desktop.yml",
+        ".github/workflows/desktop*.yml",
       ]
   pull_request:
     paths:
@@ -20,9 +20,23 @@ on:
         "inst/**",
         "DESCRIPTION",
         "NAMESPACE",
-        ".github/workflows/desktop.yml",
+        ".github/workflows/desktop*.yml",
       ]
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit or desktop tag to build
+        type: string
+        default: ""
+      artifact-prefix:
+        description: Separate validation and signed artifacts within a run
+        type: string
+        default: desktop
+      release:
+        description: Build signed and notarized release artifacts
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,9 +46,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-22.04]
+        include:
+          - os: windows-latest
+            target: windows-x64
+          - os: macos-latest
+            target: macos-arm64
+          - os: macos-15-intel
+            target: macos-x64
+          - os: ubuntu-22.04
+            target: linux-x64
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: desktop
@@ -46,6 +68,8 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -67,13 +91,18 @@ jobs:
             any::duckdb
       - name: Install desktop dependencies
         run: npm ci
+      - name: Validate desktop release tag
+        if: inputs.release
+        env:
+          DESKTOP_RELEASE_TAG: ${{ inputs.ref || github.ref_name }}
+        run: node --input-type=module -e 'import {validateTag} from "./scripts/release-assets.mjs"; import pkg from "./package.json" with {type:"json"}; validateTag(process.env.DESKTOP_RELEASE_TAG,pkg.version);'
       - name: Install Linux GUI dependencies
         if: runner.os == 'Linux'
         run: |
           npx playwright install-deps chromium
           sudo apt-get update
           sudo apt-get install -y patchelf
-      - name: Test backend and runtime discovery
+      - name: Test backend and update policy
         run: npm test
       - name: Test Electron UI
         run: |
@@ -83,7 +112,40 @@ jobs:
             npm run test:e2e
           fi
       - name: Build native installer
+        if: ${{ !inputs.release }}
         run: npm run package
+      - name: Prepare Apple notarization key
+        if: inputs.release && runner.os == 'macOS'
+        env:
+          APPLE_KEY_CONTENTS: ${{ secrets.DESKTOP_APPLE_API_KEY }}
+        run: |
+          test -n "$APPLE_KEY_CONTENTS" || { echo 'Missing DESKTOP_APPLE_API_KEY'; exit 1; }
+          umask 077
+          printf '%s' "$APPLE_KEY_CONTENTS" > "$RUNNER_TEMP/eyeris-notarization.p8"
+      - name: Build signed native installer
+        if: inputs.release
+        env:
+          EYERIS_RELEASE: "1"
+          CSC_IDENTITY_AUTO_DISCOVERY: "true"
+          CSC_LINK: ${{ runner.os == 'macOS' && secrets.DESKTOP_MAC_CERTIFICATE || runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE || '' }}
+          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.DESKTOP_MAC_CERTIFICATE_PASSWORD || runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE_PASSWORD || '' }}
+          APPLE_API_KEY_ID: ${{ secrets.DESKTOP_APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.DESKTOP_APPLE_API_ISSUER }}
+        run: |
+          if [ "$RUNNER_OS" = macOS ]; then
+            test -n "$CSC_LINK" || { echo 'Missing desktop signing certificate'; exit 1; }
+          fi
+          if [ "$RUNNER_OS" = Windows ] && [ -z "$CSC_LINK" ]; then
+            echo '::warning::Windows signing is not configured. This installer will be unsigned and may show SmartScreen warnings.'
+          fi
+          if [ "$RUNNER_OS" = macOS ]; then
+            test -n "$APPLE_API_KEY_ID" && test -n "$APPLE_API_ISSUER" || { echo 'Missing Apple notarization configuration'; exit 1; }
+            export APPLE_API_KEY="$RUNNER_TEMP/eyeris-notarization.p8"
+          fi
+          npm run package
+      - name: Remove notarization key
+        if: always() && inputs.release && runner.os == 'macOS'
+        run: rm -f "$RUNNER_TEMP/eyeris-notarization.p8"
       - name: Smoke test packaged app
         if: runner.os != 'Windows'
         run: |
@@ -106,11 +168,43 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: desktop-${{ matrix.os }}
+          name: ${{ inputs.artifact-prefix || 'desktop' }}-${{ matrix.target }}
+          path: desktop/test-results/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-prefix || 'desktop' }}-release-${{ matrix.target }}
+          retention-days: 14
           path: |
             desktop/release/*.exe
             desktop/release/*.dmg
             desktop/release/*.zip
             desktop/release/*.AppImage
-            desktop/test-results/
-          if-no-files-found: warn
+            desktop/release/*.blockmap
+            desktop/release/latest*.yml
+          if-no-files-found: error
+  release-layout:
+    needs: desktop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: desktop
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ inputs.artifact-prefix || 'desktop' }}-release-*
+          path: release-input
+      - name: Validate all platform artifacts, checksums, and merged update feeds
+        run: |
+          node --input-type=module -e '
+            import {prepareRelease} from "./desktop/scripts/release-assets.mjs";
+            import pkg from "./desktop/package.json" with {type:"json"};
+            await prepareRelease("release-input", "release-validated", pkg.version);
+          '
