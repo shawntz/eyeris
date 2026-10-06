@@ -10,9 +10,11 @@ test("desktop update UI downloads on request and offers an explicit restart", as
   const app = await electron.launch({ args: ["."], cwd: process.cwd(), env });
   try {
     const page = await app.firstWindow();
+    // Startup checks R on the shared IPC queue; wait until they finish before
+    // measuring the updater UI's response to events on slower native runners.
     await expect(
       page.getByRole("button", { name: "New project", exact: true }),
-    ).toBeVisible();
+    ).toBeEnabled({ timeout: 30_000 });
     // Emit genuine updater events without networking or changing the installed
     // app. Only this test process gets the mocked download/install methods.
     await app.evaluate(async ({ app }) => {
