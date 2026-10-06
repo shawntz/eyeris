@@ -16,3 +16,11 @@ audit history, and lossless RDS/CSV exports. Tests exercise repeated trial IDs,
 10,001-epoch paging, trace reduction, persistence, undo, source tampering, and
 export fidelity. R discovery supports Windows, macOS, and Linux and can be
 overridden with EYERIS_RSCRIPT.
+
+## Processing engine
+
+Subject/session/task recordings feed isolated R processing jobs. Each run stores its
+configuration, logs, version provenance, replay script, RDS, and BIDS outputs.
+Cancellation stops publication; reruns retain complete output without overwriting
+existing shared BIDS files. Tests cover real ASC input, reports, DuckDB, epochs,
+reprocessing, failures, and cancellation. HTML reports require Pandoc.
