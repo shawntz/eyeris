@@ -264,7 +264,7 @@ export class Pipeline {
       log(error.message);
     });
     active.done = new Promise((resolve) =>
-      child.on("close", async (code) => {
+      child.on("close", async (code, signal) => {
         if (this.disposed) {
           await new Promise((closed) => stream.close(closed));
           resolve();
@@ -277,7 +277,9 @@ export class Pipeline {
             : "failed";
         let error =
           spawnError?.message ||
-          (status === "failed" ? active.log.slice(-3000) : null);
+          (status === "failed"
+            ? `R processing terminated ${signal ? `by signal ${signal}` : `with exit code ${code}`}.\n${active.log.slice(-3000)}`
+            : null);
         try {
           if (status === "completed") {
             active.phase = "publishing";

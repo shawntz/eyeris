@@ -332,15 +332,15 @@ signing and publisher verification for subsequent installed versions. GitHub's b
 app. Keep the same signing identity for subsequent updates.
 
 For the initial release, tag the merged commit containing this workflow as
-`desktop-v0.2.0`. For a subsequent release:
+`desktop-v0.3.0`. For a subsequent release:
 
 ```sh
 cd desktop
 npm version patch --no-git-tag-version
 # Commit package.json/package-lock.json and merge the release changes.
 # From the merged checkout, create/push the matching tag, for example:
-git tag desktop-v0.2.1
-git push origin desktop-v0.2.1
+git tag desktop-v0.3.1
+git push origin desktop-v0.3.1
 ```
 
 The publisher creates the versioned `desktop-v<version>` release first, then
