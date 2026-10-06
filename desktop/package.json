@@ -1,0 +1,32 @@
+{
+  "name": "eyeris-desktop",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Pupillometry preprocessing and epoch review",
+  "author": "Shawn Schwartz",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/test.mjs",
+    "demo": "node scripts/demo.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "electron": "44.5.1",
+    "electron-builder": "^26.15.3",
+    "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.0",
+    "vite": "^7.3.0"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

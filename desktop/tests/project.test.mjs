@@ -1,0 +1,244 @@
+import { resolveRscript } from "../electron/rscript.mjs";
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import {
+  mkdtemp,
+  mkdir,
+  readFile,
+  copyFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { Project } from "../electron/project.mjs";
+import { RWorker } from "../electron/r-worker.mjs";
+
+const root = fileURLToPath(new URL("../", import.meta.url));
+test("R-backed review: identity, traces, decisions, persistence, and lossless export", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-review-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  project = await Project.open(path.join(dir, "review.eyeris"), worker, true);
+  const first = path.join(dir, "sub-001_task-memory.rds");
+  assert.equal((await project.importFile(first)).count, 3);
+  assert.equal((await project.importFile(first)).duplicate, true);
+  assert.equal(
+    (await project.importFile(path.join(dir, "sub-002_task-memory.rds"))).count,
+    3,
+  );
+  assert.equal(
+    (await project.importFile(path.join(dir, "sub-003_task-memory.rds"))).count,
+    9,
+  );
+  assert.equal(project.summary().counts.total, 15);
+  await assert.rejects(
+    () => project.importFile(path.join(dir, "invalid.rds")),
+    /epoched eyeris/,
+  );
+  assert.equal(
+    project.summary().counts.total,
+    15,
+    "invalid import does not partly commit",
+  );
+  const rows = project.list({ participant: "001" }).rows;
+  assert.equal(rows.length, 3);
+  assert.notEqual(
+    rows[0].id,
+    rows[1].id,
+    "repeated events and trial numbers remain distinct",
+  );
+  assert.equal(project.list({ search: "' OR 1=1 --" }).total, 0);
+  assert.equal(project.list({ stage: "pupil_raw" }).total, 15);
+  assert.equal(project.list({ stage: "nonexistent" }).total, 0);
+  const trace = await project.trace(rows[0].id, "final");
+  assert.equal(trace.stage, "pupil_raw_lpfilt");
+  assert.equal(trace.samples, 12000);
+  assert.ok(trace.time.length < 12000, "reduce plotting payload");
+  assert.ok(trace.signal.includes(null), "preserve missing samples");
+  assert.ok(trace.signal.includes(9500), "preserve narrow artifact");
+  assert.ok(Math.abs(trace.missing - 100 / 12000) < 1e-14);
+  const zoom = await project.trace(rows[0].id, "final", [0.74, 0.76]);
+  assert.ok(zoom.time.length < 200);
+  assert.ok(zoom.signal.includes(9500), "zoom uses full-resolution source");
+  await assert.rejects(
+    () => project.trace(rows[0].id, "nonexistent"),
+    /selected stage/,
+  );
+  assert.throws(
+    () => project.decision({ id: rows[0].id, status: "bad" }),
+    /status/,
+  );
+  project.decision({
+    id: rows[0].id,
+    status: "keep",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "Clear",
+  });
+  project.decision({
+    id: rows[1].id,
+    status: "exclude",
+    stage: "pupil_raw",
+    reviewer: "Tester",
+    reason: 'Artifact, "spike"\nconfirmed',
+  });
+  assert.equal(project.list({ status: "exclude" }).total, 1);
+  assert.equal(project.undo().status, "unreviewed");
+  project.decision({
+    id: rows[1].id,
+    status: "exclude",
+    stage: "pupil_raw",
+    reviewer: "Tester",
+    reason: 'Artifact, "spike"\nconfirmed',
+  });
+  const savedIds = rows.map((e) => e.id);
+  project.close();
+  project = await Project.open(path.join(dir, "review.eyeris"), worker);
+  assert.deepEqual(
+    project.list({ participant: "001" }).rows.map((e) => e.id),
+    savedIds,
+  );
+  assert.deepEqual(project.summary().counts, {
+    total: 15,
+    keep: 1,
+    exclude: 1,
+    unreviewed: 13,
+  });
+  // Moving the original file has no effect on the immutable imported copy.
+  await rm(first);
+  assert.equal((await project.trace(rows[0].id, "final")).samples, 12000);
+  const exportParent = path.join(dir, "exports");
+  await mkdir(exportParent);
+  const result = await project.export(exportParent);
+  const manifest = JSON.parse(
+    await readFile(path.join(result.directory, "manifest.json"), "utf8"),
+  );
+  assert.equal(manifest.decisions.length, 15);
+  assert.equal(manifest.history.length, 4);
+  assert.equal(manifest.history[2].kind, "undo");
+  assert.equal(
+    manifest.decisions.find((e) => e.id === rows[1].id).stage,
+    "pupil_raw",
+  );
+  const script = `args <- commandArgs(TRUE); source <- readRDS(args[1]); target <- args[2]; source_df <- source$epoch_probe$block_1; for (i in 1:3) { status <- c('retained','excluded','unreviewed')[i]; files <- list.files(file.path(target, status), pattern='\\\\.rds$', full.names=TRUE); stopifnot(length(files)==1); actual <- readRDS(files[1]); expected <- source_df[seq.int((i-1)*12000+1,i*12000),]; rownames(actual)<-NULL; rownames(expected)<-NULL; stopifnot(identical(actual[,names(expected)], expected), nrow(actual)==12000, length(unique(actual$.review_epoch_id))==1) }; cat('Lossless partitions verified')`;
+  const sourceId = rows[0].source_id;
+  const verify = path.join(dir, "verify.R");
+  // Direct R comparison includes original precision, missing values, all stages and metadata.
+  await writeFile(verify, script);
+  const output = execFileSync(
+    resolveRscript(),
+    [
+      verify,
+      path.join(project.directory, "sources", `${sourceId}.rds`),
+      path.join(result.directory, sourceId),
+    ],
+    { encoding: "utf8" },
+  );
+  assert.match(output, /Lossless partitions verified/);
+  const exportedCSV = await readFile(
+    path.join(result.directory, "decisions.csv"),
+    "utf8",
+  );
+  assert.ok(exportedCSV.includes('"Artifact, ""spike""\nconfirmed"'));
+  assert.notEqual(
+    (await project.export(exportParent)).directory,
+    result.directory,
+    "exports never overwrite previous runs",
+  );
+});
+
+test("large queues page correctly and changed sources cannot inherit decisions", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-scale-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  const projectDir = path.join(dir, "large.eyeris");
+  project = await Project.open(projectDir, worker, true);
+  assert.equal(
+    (await project.importFile(path.join(dir, "sub-large.rds"))).count,
+    10001,
+  );
+  const first = project.list();
+  const second = project.list({ offset: 80 });
+  assert.equal(first.total, 10001);
+  assert.equal(first.rows.length, 80);
+  assert.equal(second.rows[0].ordinal, 81);
+  assert.equal(project.list({ offset: 10000 }).rows.length, 1);
+  const e = first.rows[0];
+  project.decision({
+    id: e.id,
+    status: "keep",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "",
+  });
+  assert.equal(project.list({ status: "unreviewed" }).total, 10000);
+  // The same filename with new bytes is a new source, with fresh decisions.
+  await copyFile(
+    path.join(dir, "sub-001_task-memory.rds"),
+    path.join(dir, "sub-large.rds"),
+  );
+  assert.equal(
+    (await project.importFile(path.join(dir, "sub-large.rds"))).count,
+    3,
+  );
+  assert.equal(project.summary().counts.keep, 1);
+  assert.equal(project.summary().counts.unreviewed, 10003);
+  // Tampering with the stored copy is detected before plotting or export.
+  await writeFile(
+    path.join(projectDir, "sources", `${e.source_id}.rds`),
+    "changed",
+  );
+  await assert.rejects(
+    () => project.trace(e.id, "final"),
+    /source has changed/,
+  );
+  const dest = path.join(dir, "exports");
+  await mkdir(dest);
+  await assert.rejects(() => project.export(dest), /source has changed/);
+  const { readdir } = await import("node:fs/promises");
+  assert.deepEqual(
+    await readdir(dest),
+    [],
+    "failed export leaves no partial output",
+  );
+});
+
+test("real eyeris pipeline output can be reviewed", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-real-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  const demo = path.join(dir, "sub-demo.rds");
+  execFileSync(resolveRscript(), [path.join(root, "r/make-demo.R"), demo], {
+    stdio: "pipe",
+  });
+  project = await Project.open(path.join(dir, "real.eyeris"), worker, true);
+  const result = await project.importFile(demo);
+  assert.ok(result.count > 0);
+  const { rows } = project.list();
+  assert.ok(rows[0].meta.stages.length > 2);
+  for (const stage of rows[0].meta.stages) {
+    const trace = await project.trace(rows[0].id, stage);
+    assert.equal(trace.time.length, trace.signal.length);
+    assert.ok(trace.samples > 0);
+  }
+});
