@@ -7,6 +7,7 @@ module.exports = {
   files: ["dist/**/*", "electron/**/*", "package.json"],
   extraResources: [
     { from: "r", to: "r" },
+    { from: "build/runtime", to: "runtime" },
     { from: "build/r-library", to: "r-library" },
   ],
   asar: true,

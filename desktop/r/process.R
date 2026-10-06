@@ -1,5 +1,6 @@
 args <- commandArgs(trailingOnly = TRUE)
 script <- sub("^--file=", "", commandArgs()[grepl("^--file=", commandArgs())])
+script <- gsub("~+~", " ", script, fixed=TRUE)
 source(file.path(dirname(script), "load-package.R"))
 options(device = function(...) grDevices::pdf(file = NULL))
 emit <- function(phase) {

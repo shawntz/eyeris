@@ -1,3 +1,4 @@
+import { ensureRuntime } from "./runtime-check.mjs";
 import { resolveRscript } from "./rscript.mjs";
 import { app, BrowserWindow, ipcMain, dialog, Menu, shell } from "electron";
 import { spawn } from "node:child_process";
@@ -24,6 +25,7 @@ const requireProject = () => {
   return project;
 };
 async function activate(directory, create) {
+  await ensureRuntime();
   if (pipeline?.active)
     throw new Error(
       "Wait for processing to finish or cancel it before switching projects.",
@@ -38,6 +40,12 @@ async function activate(directory, create) {
 }
 const methods = {
   async init() {
+    let warning = "";
+    try {
+      await ensureRuntime();
+    } catch (error) {
+      warning = error.message;
+    }
     let recent = null;
     try {
       recent = JSON.parse(await readFile(settingsFile(), "utf8")).lastProject;
@@ -45,7 +53,7 @@ const methods = {
     return {
       project: project?.summary() ?? null,
       reviewer: userInfo().username,
-      warning: "",
+      warning,
       recent,
     };
   },
@@ -122,6 +130,7 @@ const methods = {
     return activate(result.filePaths[0], false);
   },
   async demo() {
+    await ensureRuntime();
     const directory = path.join(app.getPath("userData"), "Demo.eyeris");
     try {
       await access(path.join(directory, "review.sqlite"));
@@ -217,7 +226,7 @@ const methods = {
 
 app.whenReady().then(async () => {
   if (app.isPackaged) process.env.EYERIS_RESOURCE_DIR = process.resourcesPath;
-  process.env.EYERIS_RSCRIPT = resolveRscript();
+  if (!app.isPackaged) process.env.EYERIS_RSCRIPT = resolveRscript();
   const pageURL = new URL("../dist/index.html", import.meta.url).href;
   for (const [method, fn] of Object.entries(methods)) {
     ipcMain.handle(`review:${method}`, (event, ...args) => {

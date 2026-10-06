@@ -20,6 +20,21 @@ export function resolveRscript({
   list = readdirSync,
   exec = execFileSync,
 } = {}) {
+  if (env.EYERIS_RESOURCE_DIR) {
+    const paths = platform === "win32" ? path.win32 : path.posix;
+    const executable = paths.join(
+      env.EYERIS_RESOURCE_DIR,
+      "runtime",
+      "R",
+      "bin",
+      platform === "win32" ? "Rscript.exe" : "Rscript",
+    );
+    if (!available(executable))
+      throw new Error(
+        "The bundled R runtime is missing or damaged. Reinstall eyeris.",
+      );
+    return executable;
+  }
   if (env.EYERIS_RSCRIPT) return unquote(env.EYERIS_RSCRIPT);
   const windows = platform === "win32";
   const paths = windows ? path.win32 : path.posix;

@@ -3,67 +3,49 @@
 Electron + React desktop application for the eyeris R package. The package runs
 all scientific processing in a separate local R process.
 
-## Run
+## Install and run
 
-Requires Node.js 22.13+ (or a newer supported release), npm, and R with the eyeris
-dependencies installed. Development also needs `pkgload`; it loads the current
-repository rather than an older installed eyeris version. HTML reports require
-Pandoc; DuckDB output requires the R `duckdb` package.
+Native installers include a private R 4.6.0 runtime, all 75 pinned R dependency
+packages, the current eyeris package, DuckDB, and Pandoc 3.10 for HTML reports.
+Users do not install R, R packages, Pandoc, Node.js, or compilers. Runtime
+preparation happens during the build; the installed app does not download or
+install dependencies on first launch.
+
+Install the native artifact and launch eyeris. The app checks its runtime,
+package versions, package-library isolation, and Pandoc before enabling project
+creation/opening. A damaged or incomplete installation shows an error instead of
+silently falling back to system R. Reinstall the app to repair the bundle.
+
+Packaged builds always use their bundled R, even if `EYERIS_RSCRIPT`, `R_HOME`,
+`R_LIBS`, `R_LIBS_USER`, or RStudio/Pandoc settings exist in the user's environment.
+User R profiles and workspaces are skipped. The package search path is restricted
+to the app's dependency library and its private base R library. Project data and
+settings stay in their normal writable user/project locations; the installation
+is read-only during use.
+
+Windows uses an x64 NSIS installer for the current user, with an installation
+folder chooser and Start menu/desktop shortcuts. macOS uses a DMG/ZIP; the pinned
+Apple Silicon R package binaries require macOS Sonoma 14 or newer. Linux uses an
+AppImage built on Ubuntu 22.04, retaining the host's standard glibc/GUI requirements.
+Native Windows ARM64 and 32-bit Windows are not targeted. Public distribution
+still requires platform signing; bundling R does not replace signing/notarization.
+
+## Development
+
+Development uses local R so changes to the R source load directly through pkgload.
+Install Node.js 22.13+, R with the eyeris dependencies, pkgload, duckdb, and Pandoc.
+From `desktop/`, these commands work in PowerShell and Unix shells:
 
 ```sh
-make desktop-deps
-make desktop
-```
-
-The app discovers R using `EYERIS_RSCRIPT`, `R_HOME`, and PATH, then standard
-installation locations. Windows also checks R's per-user and machine registry
-entries, `%LOCALAPPDATA%\Programs\R`, and `%ProgramFiles%\R`; macOS checks
-Homebrew and the R framework. Paths containing spaces are supported. R processes
-run without opening console windows on Windows. Set `EYERIS_RSCRIPT` to select a
-custom installation. The desktop app has no remote server or account requirement.
-
-### Windows development and builds
-
-Use 64-bit Windows 10/11 with 64-bit R and Node.js. Install the R dependencies
-from an R console with the repository root as the working directory:
-
-```r
-install.packages(c("remotes", "pkgload", "duckdb"), repos = "https://cloud.r-project.org")
-remotes::install_local(".", dependencies = NA, upgrade = "never", build_vignettes = FALSE)
-```
-
-Install Pandoc for HTML reports. If a dependency must be built from source,
-install the Rtools version matching your R installation. Then use PowerShell;
-GNU Make, WSL, and a Unix shell are not required:
-
-```powershell
-cd desktop
 npm ci
 npm start
 npm test
 npm run test:e2e
-npm run package
 ```
 
-The build creates `release/eyeris-<version>-win-x64.exe`, an NSIS installer with
-an installation-folder chooser and Start menu/desktop shortcuts. It installs for
-the current user by default. The current Windows target is x64; native Windows
-ARM64 and 32-bit Windows are not covered. For a custom R installation, set this
-before launching or building (substitute your actual path):
-
-```powershell
-$env:EYERIS_RSCRIPT = 'D:\Tools\R\bin\Rscript.exe'
-npm start
-```
-
-For an installed app, persist that variable through Windows Environment Variables
-and restart the app. End users need R and the eyeris R dependencies, but do not
-need Node.js. The installer bundles the repository's eyeris package. Unsigned
-Windows builds may display an unknown-publisher/SmartScreen prompt; public
-Windows signing credentials must be configured separately.
-
-See the [R for Windows FAQ](https://cran.r-project.org/bin/windows/base/rw-FAQ.html)
-for R installation locations and Rtools requirements.
+Development R discovery checks `EYERIS_RSCRIPT`, `R_HOME`, PATH, standard macOS
+locations, and Windows registry/install directories. `EYERIS_RSCRIPT` is a
+development override only; it never overrides a packaged runtime.
 
 ## Projects and processing
 
@@ -175,10 +157,43 @@ Icon positions and window dimensions live in `electron-builder.cjs`.
 The mounted volume uses the original transparent hex sticker, generated as
 `build/dmg-icon.icns` on macOS; the application retains its solid red square icon.
 
-**The installer bundles eyeris, not the R runtime or its dependency library.**
-Users still need a compatible local R installation with eyeris dependencies.
-This is a downloadable desktop build, not a standalone R distribution. Full
-runtime bundling is separate work; do not distribute it as requiring no setup.
+### Private runtime preparation
+
+Build natively using exactly R 4.6.0 and Pandoc 3.10. Use the official CRAN R
+distribution on macOS/Windows; Homebrew R is not ABI-compatible with every CRAN
+macOS binary. `EYERIS_BUILD_R_HOME` can select an extracted official R home
+without changing the developer's system installation. The repository's CI provisions
+these versions. Run `npm run package`; `npm run runtime:prepare` prepares and
+validates just the runtime. Build-time internet access is required for the pinned
+package snapshot. Linux preparation currently targets Ubuntu 22.04 and needs
+`patchelf`; macOS needs the command-line developer tools for dylib relocation.
+Windows uses the official R installation's relocatable directory layout.
+Optional macOS X11/Tcl/Tk/data-entry modules are omitted; the app uses native
+offscreen graphics and does not require XQuartz.
+
+`runtime-lock.json` pins the R/Pandoc versions and complete dependency closure to
+a dated Posit package snapshot. Builds download exact native package binaries
+(macOS/Windows) or the dated Ubuntu binary repository, verify every version, and
+install the current repository's eyeris source into `build/r-library`. Missing
+versions or native dependencies fail the build. No personal package library is
+copied wholesale. Downloaded archives are cached under `build/runtime-cache`.
+
+The builder copies R into `build/runtime/R`, bundles Pandoc, and relocates native
+shared-library dependencies into the app. macOS load commands use relative paths
+and receive ad-hoc signatures before the final app signing stage. Linux uses
+relative RPATHs while retaining standard system glibc libraries. The generated
+`runtime/manifest.json` records versions, architecture, and native dependency
+origins; R/package copyright files and third-party notices accompany the bundle.
+
+To intentionally update dependencies, run this from `desktop/`, review the lock
+diff, and rebuild/test every platform:
+
+```sh
+Rscript scripts/update-runtime-lock.R YYYY-MM-DD
+```
+
+Update the R/Pandoc pins and corresponding CI toolchain versions together when
+upgrading those tools. Package versions must be available for every target.
 
 The macOS configuration defaults to the developer's existing Developer ID
 Application identity. Override it with `CSC_NAME` (omit the `Developer ID
@@ -223,8 +238,8 @@ npm run test:package -- "C:\Users\you\AppData\Local\Programs\eyeris\eyeris.exe"
 `.github/workflows/desktop.yml` runs backend tests, Electron UI tests, native
 installer builds, and packaged-app smoke tests on all three systems. The Windows
 job silently installs the NSIS artifact into a path containing spaces, then tests
-the installed executable. Smoke tests cover project creation, ASC processing,
-BIDS output, epoch indexing, and the bundled demo. Linux GUI tests use Xvfb.
+the installed executable. Smoke tests poison host R/package settings and cover startup validation, project
+creation, ASC processing, BIDS/HTML/DuckDB output, epoch indexing, and the bundled demo. Linux GUI tests use Xvfb.
 Workflow artifacts retain installers and test screenshots. The workflow can also
 be launched manually through GitHub Actions; adding it does not constitute a
 successful Windows/Linux test run.
