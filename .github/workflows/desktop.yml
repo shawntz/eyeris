@@ -23,6 +23,11 @@ on:
         ".github/workflows/desktop*.yml",
       ]
   workflow_dispatch:
+    inputs:
+      signing-check:
+        description: Build signed/notarized installers without publishing a release
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       ref:
@@ -112,10 +117,16 @@ jobs:
             npm run test:e2e
           fi
       - name: Build native installer
-        if: ${{ !inputs.release }}
+        if: ${{ !inputs.release && !inputs.signing-check }}
         run: npm run package
+      - name: Prepare Apple signing keychain
+        if: (inputs.release || inputs.signing-check) && runner.os == 'macOS'
+        env:
+          MAC_CERTIFICATE: ${{ secrets.DESKTOP_MAC_CERTIFICATE }}
+          MAC_CERTIFICATE_PASSWORD: ${{ secrets.DESKTOP_MAC_CERTIFICATE_PASSWORD }}
+        run: node scripts/mac-signing.mjs
       - name: Prepare Apple notarization key
-        if: inputs.release && runner.os == 'macOS'
+        if: (inputs.release || inputs.signing-check) && runner.os == 'macOS'
         env:
           APPLE_KEY_CONTENTS: ${{ secrets.DESKTOP_APPLE_API_KEY }}
         run: |
@@ -123,17 +134,18 @@ jobs:
           umask 077
           printf '%s' "$APPLE_KEY_CONTENTS" > "$RUNNER_TEMP/eyeris-notarization.p8"
       - name: Build signed native installer
-        if: inputs.release
+        if: inputs.release || inputs.signing-check
         env:
           EYERIS_RELEASE: "1"
           CSC_IDENTITY_AUTO_DISCOVERY: "true"
-          CSC_LINK: ${{ runner.os == 'macOS' && secrets.DESKTOP_MAC_CERTIFICATE || runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE || '' }}
-          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.DESKTOP_MAC_CERTIFICATE_PASSWORD || runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE_PASSWORD || '' }}
+          CSC_LINK: ${{ runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE || '' }}
+          CSC_KEY_PASSWORD: ${{ runner.os == 'Windows' && secrets.DESKTOP_WINDOWS_CERTIFICATE_PASSWORD || '' }}
           APPLE_API_KEY_ID: ${{ secrets.DESKTOP_APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.DESKTOP_APPLE_API_ISSUER }}
         run: |
           if [ "$RUNNER_OS" = macOS ]; then
-            test -n "$CSC_LINK" || { echo 'Missing desktop signing certificate'; exit 1; }
+            test -n "$CSC_KEYCHAIN" || { echo 'Missing desktop signing keychain'; exit 1; }
+            unset CSC_LINK CSC_KEY_PASSWORD
           fi
           if [ "$RUNNER_OS" = Windows ] && [ -z "$CSC_LINK" ]; then
             echo '::warning::Windows signing is not configured. This installer will be unsigned and may show SmartScreen warnings.'
@@ -143,9 +155,13 @@ jobs:
             export APPLE_API_KEY="$RUNNER_TEMP/eyeris-notarization.p8"
           fi
           npm run package
-      - name: Remove notarization key
-        if: always() && inputs.release && runner.os == 'macOS'
-        run: rm -f "$RUNNER_TEMP/eyeris-notarization.p8"
+      - name: Remove Apple signing credentials
+        if: always() && (inputs.release || inputs.signing-check) && runner.os == 'macOS'
+        run: |
+          rm -f "$RUNNER_TEMP/eyeris-notarization.p8" "$RUNNER_TEMP/eyeris-signing.p12"
+          if [ -f "$RUNNER_TEMP/eyeris-signing.keychain-db" ]; then
+            security delete-keychain "$RUNNER_TEMP/eyeris-signing.keychain-db"
+          fi
       - name: Smoke test packaged app
         if: runner.os != 'Windows'
         run: |

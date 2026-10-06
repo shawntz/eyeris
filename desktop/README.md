@@ -405,3 +405,15 @@ running `Publish desktop release` against the existing desktop tag. If artifacts
 were already published, reuse the original artifacts when retrying promotion;
 rebuilt binaries with different bytes still require a new version. No workflow
 modifies `DESCRIPTION` or creates CRAN-style `v*` tags.
+
+The CI signing setup imports the Developer ID certificate into a temporary
+keychain using a separate random keychain password. It passes `CSC_KEYCHAIN` to
+electron-builder with `CSC_LINK` unset, avoiding the certificate/keychain password
+mix-up in electron-builder 26.15.3. Certificate files, the notarization key, and
+the temporary keychain are removed even when a build fails. Existing secret names
+and values do not change.
+
+For release troubleshooting, manually run **Desktop cross-platform** on the fix
+branch with **signing-check** enabled. This builds and notarizes installers using
+the configured secrets and runs packaged smoke tests, but does not commit, tag,
+publish, or update the download channel. Pull-request runs remain unsigned.
