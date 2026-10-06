@@ -359,3 +359,49 @@ version are rejected. The workflow serializes channel promotion and uploads
 metadata last. A failed platform build leaves the existing channel untouched.
 To roll back an application bug, publish the corrected code under a higher
 desktop version; clients intentionally do not downgrade.
+
+### Automatic patch releases from dev
+
+After the initial `desktop-v0.3.0` release, merge the automatic-release workflow
+follow-up PR. Each push to `dev` checks for changes under `desktop/` or to the
+`.github/workflows/desktop*.yml` workflows since the latest desktop tag. Changes
+only to the R package or root documentation do not release the desktop app.
+Queued pushes are combined by checking the newest dev head, so a later unrelated
+push cannot hide an earlier desktop change.
+
+For a relevant change, the workflow:
+
+1. Runs the complete native desktop CI matrix against the selected commit.
+2. Increments the patch version in `desktop/package.json` and both root version
+   fields in `desktop/package-lock.json` (for example, `0.3.0` to `0.3.1`).
+3. Creates and merges a version-only PR into `dev`, respecting its existing
+   requirement that commits arrive through PRs. No manual approval is needed
+   under the current zero-required-approvals policy.
+4. Tags the resulting version commit as `desktop-v0.3.1` and directly calls the
+   signed release workflow, which builds and validates that exact tag before
+   publishing its installers and update feeds.
+
+This uses the built-in `GITHUB_TOKEN`; no extra PAT or GitHub App is needed.
+GitHub does not start push workflows for commits/tags made by that token, so
+version commits cannot recursively release. The direct reusable-workflow call
+ensures the generated tag still produces a release. Validation artifacts and
+signed artifacts use separate names within the same workflow run.
+
+The repository must continue to allow Actions to create pull requests. If branch
+rules later require additional reviews or checks, the version PR will remain
+reviewable and the workflow will fail instead of bypassing those rules. New dev
+commits arriving during validation cause obsolete candidates to be skipped;
+changes racing with the version merge are never tagged without validation.
+
+The automation activates when this workflow lands on `dev`; changes on feature
+branches and PRs do not release. Merging this follow-up itself counts as a desktop
+workflow change. If enabled before any desktop tag exists, the first automatic
+release increments the manifest's current patch version; publish `0.3.0` first
+if that should be the initial public version.
+
+To resume a failed run, use **Re-run failed jobs** so the selected version and
+validated source are retained. A failure after tagging can also be retried by
+running `Publish desktop release` against the existing desktop tag. If artifacts
+were already published, reuse the original artifacts when retrying promotion;
+rebuilt binaries with different bytes still require a new version. No workflow
+modifies `DESCRIPTION` or creates CRAN-style `v*` tags.

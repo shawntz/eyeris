@@ -14,7 +14,10 @@ import {
 const version = JSON.parse(
   await readFile(new URL("../package.json", import.meta.url)),
 ).version;
-validateTag(process.env.GITHUB_REF_NAME, version);
+validateTag(
+  process.env.DESKTOP_RELEASE_TAG || process.env.GITHUB_REF_NAME,
+  version,
+);
 const gh = (...args) =>
   execFileSync("gh", args, { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 });
 const api = (route, data) =>
@@ -111,7 +114,7 @@ if (!channel)
     "--repo",
     repository,
     "--target",
-    process.env.GITHUB_SHA,
+    execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
     "--draft",
     "--latest=false",
     "--title",

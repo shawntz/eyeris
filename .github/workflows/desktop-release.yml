@@ -3,6 +3,13 @@ name: Publish desktop release
 on:
   push:
     tags: ["desktop-v*"]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: Desktop tag to build and publish
+        type: string
+        required: true
 
 # Only one promotion may update the desktop download channel at a time.
 concurrency:
@@ -17,6 +24,8 @@ jobs:
     uses: ./.github/workflows/desktop.yml
     with:
       release: true
+      ref: ${{ inputs.ref || github.ref_name }}
+      artifact-prefix: desktop-signed
     secrets: inherit
   publish:
     needs: build
@@ -25,6 +34,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -34,9 +45,10 @@ jobs:
         working-directory: desktop
       - uses: actions/download-artifact@v4
         with:
-          pattern: desktop-release-*
+          pattern: desktop-signed-release-*
           path: release-input
       - name: Publish versioned release and desktop-only update channel
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESKTOP_RELEASE_TAG: ${{ inputs.ref || github.ref_name }}
         run: node desktop/scripts/publish-release.mjs release-input

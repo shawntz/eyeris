@@ -25,6 +25,14 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
+      ref:
+        description: Commit or desktop tag to build
+        type: string
+        default: ""
+      artifact-prefix:
+        description: Separate validation and signed artifacts within a run
+        type: string
+        default: desktop
       release:
         description: Build signed and notarized release artifacts
         type: boolean
@@ -60,6 +68,8 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -83,7 +93,9 @@ jobs:
         run: npm ci
       - name: Validate desktop release tag
         if: inputs.release
-        run: node --input-type=module -e 'import {validateTag} from "./scripts/release-assets.mjs"; import pkg from "./package.json" with {type:"json"}; validateTag(process.env.GITHUB_REF_NAME,pkg.version);'
+        env:
+          DESKTOP_RELEASE_TAG: ${{ inputs.ref || github.ref_name }}
+        run: node --input-type=module -e 'import {validateTag} from "./scripts/release-assets.mjs"; import pkg from "./package.json" with {type:"json"}; validateTag(process.env.DESKTOP_RELEASE_TAG,pkg.version);'
       - name: Install Linux GUI dependencies
         if: runner.os == 'Linux'
         run: |
@@ -156,12 +168,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: desktop-${{ matrix.target }}
+          name: ${{ inputs.artifact-prefix || 'desktop' }}-${{ matrix.target }}
           path: desktop/test-results/
           if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
-          name: desktop-release-${{ matrix.target }}
+          name: ${{ inputs.artifact-prefix || 'desktop' }}-release-${{ matrix.target }}
           retention-days: 14
           path: |
             desktop/release/*.exe
@@ -176,6 +188,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -185,7 +199,7 @@ jobs:
         working-directory: desktop
       - uses: actions/download-artifact@v4
         with:
-          pattern: desktop-release-*
+          pattern: ${{ inputs.artifact-prefix || 'desktop' }}-release-*
           path: release-input
       - name: Validate all platform artifacts, checksums, and merged update feeds
         run: |
