@@ -16,15 +16,13 @@ module.exports = {
     target: ["dmg", "zip"],
     category: "public.app-category.education",
     icon: "build/icon.png",
-    identity: sign
-      ? process.env.CSC_NAME || "Shawn Schwartz (ZL4K35VM2L)"
-      : null,
+    identity: sign ? process.env.CSC_NAME || undefined : null,
     hardenedRuntime: true,
     entitlements: "build/entitlements.mac.plist",
     entitlementsInherit: "build/entitlements.mac.plist",
     notarize: release,
   },
-  forceCodeSigning: sign,
+  forceCodeSigning: sign && process.platform !== "linux",
   dmg: {
     title: "Install eyeris",
     icon: "build/dmg-icon.icns",
@@ -51,5 +49,9 @@ module.exports = {
     icon: "build/icon.png",
     category: "Science",
   },
-  publish: null,
+  publish: {
+    provider: "generic",
+    url: "https://github.com/shawntz/eyeris/releases/download/desktop-latest/",
+    useMultipleRangeRequest: false,
+  },
 };

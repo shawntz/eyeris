@@ -21,6 +21,7 @@ on:
 
 jobs:
   pkgdown:
+    if: github.event_name != 'release' || !startsWith(github.event.release.tag_name, 'desktop-')
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

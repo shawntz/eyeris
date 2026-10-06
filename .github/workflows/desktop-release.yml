@@ -1,0 +1,42 @@
+name: Publish desktop release
+
+on:
+  push:
+    tags: ["desktop-v*"]
+
+# Only one promotion may update the desktop download channel at a time.
+concurrency:
+  group: desktop-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/desktop.yml
+    with:
+      release: true
+    secrets: inherit
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: desktop
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-release-*
+          path: release-input
+      - name: Publish versioned release and desktop-only update channel
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node desktop/scripts/publish-release.mjs release-input

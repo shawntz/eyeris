@@ -104,8 +104,29 @@ export interface PipelineState {
   jobs: Job[];
   active: { id: string; phase: string; log: string } | null;
 }
+export interface UpdateState {
+  status:
+    | "unavailable"
+    | "idle"
+    | "checking"
+    | "current"
+    | "available"
+    | "downloading"
+    | "downloaded"
+    | "installing"
+    | "error";
+  currentVersion: string;
+  version?: string;
+  percent?: number;
+  message?: string;
+}
 interface API {
+  updateState(): Promise<UpdateState>;
+  checkForUpdates(): Promise<UpdateState>;
+  downloadUpdate(): Promise<UpdateState>;
+  installUpdate(): Promise<UpdateState>;
   init(): Promise<{
+    appVersion: string;
     project: Summary | null;
     reviewer: string;
     warning: string;

@@ -257,3 +257,99 @@ should use per-participant RDS sources; a DuckDB/Parquet review input adapter an
 out-of-core access remain future work. Review currently exports epoch tables;
 applying decisions to every associated confound/baseline structure is not yet
 implemented. Use one application process per project.
+
+## Downloads and automatic updates
+
+After the first desktop release is published, these links always offer the
+current desktop installer (no GitHub account required):
+
+| Platform            | Download                                                                                                 |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| Windows x64         | [Installer](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe)   |
+| macOS Apple Silicon | [DMG](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg)         |
+| macOS Intel         | [DMG](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-x64.dmg)           |
+| Linux x64           | [AppImage](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage) |
+
+[Desktop downloads and release history](https://github.com/shawntz/eyeris/releases/tag/desktop-latest).
+Move the macOS app into Applications before running it. On Linux, make the
+AppImage executable and run the AppImage itself; an extracted app has no
+AppImage installation for the updater to replace.
+
+Installed apps check 30 seconds after startup and every six hours while open.
+Use **Check for updates** to check immediately. A newer version offers **Download
+update**, then **Restart and install**. Downloads do not begin without the user's
+request, and updates never silently restart the app or install on normal exit.
+Restart is blocked while processing, importing/exporting, or creating a demo.
+Network errors leave the current app usable and can be retried. Automatic
+checks are disabled in development and package smoke tests.
+
+Updates replace the entire app bundle, including its pinned R runtime and
+libraries. Projects and settings remain in their existing user directories.
+Electron Updater validates downloaded artifacts against their SHA-512 metadata
+and the platform's code-signature requirements. This PR's automated tests cover
+feed preparation, version guards, updater behavior and UI; a real signed
+upgrade between two published versions should be tested before announcing
+production auto-updates.
+
+## Publishing a desktop release
+
+Desktop versions live **only in `desktop/package.json` and its lockfile**.
+The R package's `DESCRIPTION`, CRAN `v3.x` tags, and GitHub's repository-wide
+“Latest” release are independent. GitHub Packages is not used: installers and
+update metadata are GitHub Release assets in this same repository.
+
+The `Publish desktop release` workflow runs on **`desktop-v*` tag pushes**. It
+requires an exact match with the desktop package version and stable semantic
+versions (no prerelease channel yet). It builds Windows x64, macOS arm64/x64,
+and Ubuntu 22.04 x64 natively, runs backend/UI/packaged smoke tests, and publishes
+only if every platform passes. PR builds never publish or receive signing
+credentials. Release artifacts include installers, macOS ZIP updates, blockmaps,
+update metadata, and SHA256SUMS.
+
+Configure these repository Actions secrets before the first release:
+
+| Secret                                 | Value                                                      |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `DESKTOP_MAC_CERTIFICATE`              | Base64-encoded Developer ID Application `.p12`             |
+| `DESKTOP_MAC_CERTIFICATE_PASSWORD`     | Certificate export password                                |
+| `DESKTOP_APPLE_API_KEY`                | Raw App Store Connect `.p8` key contents                   |
+| `DESKTOP_APPLE_API_KEY_ID`             | App Store Connect key ID                                   |
+| `DESKTOP_APPLE_API_ISSUER`             | App Store Connect issuer ID                                |
+| `DESKTOP_WINDOWS_CERTIFICATE`          | Base64-encoded Authenticode `.pfx` usable by the CI runner |
+| `DESKTOP_WINDOWS_CERTIFICATE_PASSWORD` | Certificate export password                                |
+
+Windows hardware-backed/cloud signing requires adapting the signing step to
+that service; do not export a non-exportable key. macOS release builds are signed
+and notarized; Windows release builds must be signed. Missing signing credentials
+fail the release instead of publishing an unsigned auto-update. GitHub's built-in
+`GITHUB_TOKEN` supplies release publishing permission; no PAT is embedded in the
+app. Keep the same signing identity for subsequent updates.
+
+For the initial release, tag the merged commit containing this workflow as
+`desktop-v0.2.0`. For a subsequent release:
+
+```sh
+cd desktop
+npm version patch --no-git-tag-version
+# Commit package.json/package-lock.json and merge the release changes.
+# From the merged checkout, create/push the matching tag, for example:
+git tag desktop-v0.2.1
+git push origin desktop-v0.2.1
+```
+
+The publisher creates the versioned `desktop-v<version>` release first, then
+updates the `desktop-latest` download channel. Neither is marked as GitHub's
+repository-wide Latest release. The dedicated generic updater feed reads only
+`desktop-latest/latest*.yml`, with absolute download URLs pointing to immutable
+versioned desktop assets. Publishing an R release cannot affect this feed.
+Both Mac architectures are merged into one `latest-mac.yml` before promotion.
+Checksums, required platform assets, version ordering, and tag/package agreement
+are validated before publishing; an older version cannot replace a newer channel.
+
+Do not overwrite published versioned binaries. If a published build needs a fix,
+bump the desktop version and release again. A promotion retry may reuse identical
+artifacts from the original successful build; differing bytes under an existing
+version are rejected. The workflow serializes channel promotion and uploads
+metadata last. A failed platform build leaves the existing channel untouched.
+To roll back an application bug, publish the corrected code under a higher
+desktop version; clients intentionally do not downgrade.
