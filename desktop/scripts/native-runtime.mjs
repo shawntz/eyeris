@@ -71,7 +71,10 @@ export async function relocateNative(roots, runtime, origins = new Map()) {
     const mac = process.platform === "darwin";
     // Official Linux Pandoc is static: it has no dependencies or RPATH to
     // relocate, and ldd correctly exits nonzero for it.
-    if (!mac && !/\bDYNAMIC\b/.test(run("readelf", ["--program-headers", file])))
+    if (
+      !mac &&
+      !/\bDYNAMIC\b/.test(run("readelf", ["--program-headers", file]))
+    )
       continue;
     const output = run(
       mac ? "/usr/bin/otool" : "ldd",

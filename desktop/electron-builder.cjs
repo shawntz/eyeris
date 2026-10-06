@@ -45,6 +45,11 @@ module.exports = {
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
   },
-  linux: { target: ["AppImage"], icon: "build/icon.png", category: "Science" },
+  linux: {
+    target: ["AppImage"],
+    executableName: "eyeris",
+    icon: "build/icon.png",
+    category: "Science",
+  },
   publish: null,
 };
