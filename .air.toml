@@ -4,6 +4,6 @@ indent-width = 2
 indent-style = "space"
 line-ending = "native"
 persistent-line-breaks = false
-exclude = []
+exclude = ["/desktop/"]
 default-exclude = true
 skip = []
