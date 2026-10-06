@@ -13,7 +13,12 @@
     "test": "node scripts/test.mjs",
     "test:e2e": "npm run build && playwright test",
     "demo": "node scripts/demo.mjs",
-    "icons": "node scripts/icons.mjs"
+    "icons": "node scripts/icons.mjs",
+    "package:prepare": "npm run build && node scripts/package-r.mjs",
+    "package": "npm run package:prepare && electron-builder --publish never",
+    "package:sign": "node scripts/release.mjs --sign",
+    "package:release": "node scripts/release.mjs",
+    "test:package": "node scripts/smoke-package.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

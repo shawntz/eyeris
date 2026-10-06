@@ -1,14 +1,20 @@
 # default target def ------------------------------------------------------
 all: uninstall getdeps build install roxygenize readme ghpages clean
 
-# Desktop development (independent of the R package build targets)
-.PHONY: desktop desktop-deps desktop-test
+# Desktop application (independent of the R package build targets)
+.PHONY: desktop desktop-deps desktop-test desktop-build desktop-sign desktop-release
 desktop:
 	cd desktop && npm start
 desktop-deps:
 	cd desktop && npm ci
 desktop-test:
 	cd desktop && npm test && npm run test:e2e
+desktop-build:
+	cd desktop && npm run package
+desktop-sign:
+	cd desktop && npm run package:sign
+desktop-release:
+	cd desktop && npm run package:release
 
 # debugging target def ----------------------------------------------------
 debug: uninstall build install clean

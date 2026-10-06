@@ -117,7 +117,7 @@ export function App() {
                 <button disabled={busy} onClick={() => void open("openRecent")}>
                   <span>
                     {recent
-                      .split("/")
+                      .split(/[\\/]/)
                       .at(-1)
                       ?.replace(/\.eyeris$/, "")}
                     <small>{recent}</small>

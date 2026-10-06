@@ -1,15 +1,69 @@
 # eyeris Desktop
 
-Electron + React interface for local eyeris processing and epoch review.
-Requires Node.js 22.13+, R with eyeris dependencies and pkgload, and Pandoc for reports.
+Electron + React desktop application for the eyeris R package. The package runs
+all scientific processing in a separate local R process.
+
+## Run
+
+Requires Node.js 22.13+ (or a newer supported release), npm, and R with the eyeris
+dependencies installed. Development also needs `pkgload`; it loads the current
+repository rather than an older installed eyeris version. HTML reports require
+Pandoc; DuckDB output requires the R `duckdb` package.
 
 ```sh
+make desktop-deps
+make desktop
+```
+
+The app discovers R using `EYERIS_RSCRIPT`, `R_HOME`, and PATH, then standard
+installation locations. Windows also checks R's per-user and machine registry
+entries, `%LOCALAPPDATA%\Programs\R`, and `%ProgramFiles%\R`; macOS checks
+Homebrew and the R framework. Paths containing spaces are supported. R processes
+run without opening console windows on Windows. Set `EYERIS_RSCRIPT` to select a
+custom installation. The desktop app has no remote server or account requirement.
+
+### Windows development and builds
+
+Use 64-bit Windows 10/11 with 64-bit R and Node.js. Install the R dependencies
+from an R console with the repository root as the working directory:
+
+```r
+install.packages(c("remotes", "pkgload", "duckdb"), repos = "https://cloud.r-project.org")
+remotes::install_local(".", dependencies = NA, upgrade = "never", build_vignettes = FALSE)
+```
+
+Install Pandoc for HTML reports. If a dependency must be built from source,
+install the Rtools version matching your R installation. Then use PowerShell;
+GNU Make, WSL, and a Unix shell are not required:
+
+```powershell
 cd desktop
 npm ci
 npm start
 npm test
 npm run test:e2e
+npm run package
 ```
+
+The build creates `release/eyeris-<version>-win-x64.exe`, an NSIS installer with
+an installation-folder chooser and Start menu/desktop shortcuts. It installs for
+the current user by default. The current Windows target is x64; native Windows
+ARM64 and 32-bit Windows are not covered. For a custom R installation, set this
+before launching or building (substitute your actual path):
+
+```powershell
+$env:EYERIS_RSCRIPT = 'D:\Tools\R\bin\Rscript.exe'
+npm start
+```
+
+For an installed app, persist that variable through Windows Environment Variables
+and restart the app. End users need R and the eyeris R dependencies, but do not
+need Node.js. The installer bundles the repository's eyeris package. Unsigned
+Windows builds may display an unknown-publisher/SmartScreen prompt; public
+Windows signing credentials must be configured separately.
+
+See the [R for Windows FAQ](https://cran.r-project.org/bin/windows/base/rw-FAQ.html)
+for R installation locations and Rtools requirements.
 
 ## Projects and processing
 
@@ -98,3 +152,93 @@ baseline lists and confounds are not filtered by review exports. Each exported
 frame adds `.review_epoch_id` for joining decisions. Use RDS to preserve R types
 and numeric precision. CSV is provided alongside it.
 
+## Build and sign
+
+```sh
+make desktop-build      # native-platform installer; unsigned on macOS
+make desktop-sign       # macOS Developer ID signed DMG and ZIP
+make desktop-release    # macOS signed, notarized DMG and ZIP
+```
+
+Artifacts are written to `desktop/release/`. Builds generate a solid `#820000`
+red square icon with the original sticker's white artwork and install the current eyeris source
+package into the application resources. The macOS bundle identifier is
+`com.shawnschwartz.eyeris`. macOS uses DMG/ZIP, Windows uses NSIS, and Linux uses
+AppImage; build on the target platform/architecture. The desktop CI workflow
+builds native installers on Windows x64, macOS, and Linux. Local execution in this
+workspace verifies macOS; Windows/Linux runtime validation requires the respective
+CI jobs to pass.
+
+The DMG uses a branded drag-to-install layout. Edit `build/dmg-background.svg`
+to change its artwork; `npm run icons` renders standard and Retina backgrounds.
+Icon positions and window dimensions live in `electron-builder.cjs`.
+The mounted volume uses the original transparent hex sticker, generated as
+`build/dmg-icon.icns` on macOS; the application retains its solid red square icon.
+
+**The installer bundles eyeris, not the R runtime or its dependency library.**
+Users still need a compatible local R installation with eyeris dependencies.
+This is a downloadable desktop build, not a standalone R distribution. Full
+runtime bundling is separate work; do not distribute it as requiring no setup.
+
+The macOS configuration defaults to the developer's existing Developer ID
+Application identity. Override it with `CSC_NAME` (omit the `Developer ID
+Application:` prefix). CI may instead supply electron-builder's `CSC_LINK` and
+`CSC_KEY_PASSWORD`. Signing uses the macOS keychain; private keys are not stored
+in this repository. The release target refuses to silently produce an unsigned
+or unnotarized build.
+
+For App Store Connect notarization, configure these in your shell or CI secret
+store, never in a committed file:
+
+```sh
+export APPLE_API_KEY=/absolute/path/to/AuthKey_KEYID.p8
+export APPLE_API_KEY_ID=YOUR_KEY_ID
+export APPLE_API_ISSUER=YOUR_ISSUER_ID
+make desktop-release
+```
+
+A stored notarytool profile can alternatively be selected with
+`APPLE_KEYCHAIN_PROFILE` (and optionally `APPLE_KEYCHAIN`). The release command
+submits to Apple's notarization service through electron-builder and staples the
+app. It does not publish a GitHub release or upload public downloads. A signed
+build from `desktop-sign` is **not notarized** and should not be described as a
+Gatekeeper-ready public release.
+
+References: [macOS signing](https://www.electron.build/v26/docs/mac/) and
+[packaging resources](https://www.electron.build/v26/docs/contents/).
+
+## Validation and remaining limits
+
+```sh
+make desktop-test
+# Or on any platform, from desktop/:
+npm test
+npm run test:e2e
+# After npm run package (defaults to the native unpacked executable):
+npm run test:package
+# Or verify a specific installed executable:
+npm run test:package -- "C:\Users\you\AppData\Local\Programs\eyeris\eyeris.exe"
+```
+
+`.github/workflows/desktop.yml` runs backend tests, Electron UI tests, native
+installer builds, and packaged-app smoke tests on all three systems. The Windows
+job silently installs the NSIS artifact into a path containing spaces, then tests
+the installed executable. Smoke tests cover project creation, ASC processing,
+BIDS output, epoch indexing, and the bundled demo. Linux GUI tests use Xvfb.
+Workflow artifacts retain installers and test screenshots. The workflow can also
+be launched manually through GitHub Actions; adding it does not constitute a
+successful Windows/Linux test run.
+
+Runtime-discovery tests exercise Windows registry and filesystem layouts, custom
+paths, missing R, and macOS/Linux fallbacks on every platform. Backend tests check real ASC processing through the current package, BIDS CSV,
+HTML and DuckDB outputs, replay metadata, cancellation, failure recovery, reruns,
+10,001-epoch paging, repeated trial identities, gap/spike preservation, autosave,
+undo, and lossless RDS exports. Playwright launches Electron to exercise the
+project splash, subject creation, processing, plot controls, keyboard review,
+reopening, export, and page-boundary navigation.
+
+RDS access still loads one whole source into the R worker. Large combined studies
+should use per-participant RDS sources; a DuckDB/Parquet review input adapter and
+out-of-core access remain future work. Review currently exports epoch tables;
+applying decisions to every associated confound/baseline structure is not yet
+implemented. Use one application process per project.
