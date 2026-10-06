@@ -24,4 +24,4 @@
 ^Meta$
 ^\.air\.toml$
 ^\.claude$
-^desktop$
+^desktop($|/)
