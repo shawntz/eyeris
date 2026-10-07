@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-<p align="center">
+<p align="center" class="pkgdown-hide">
   <a href="https://eyeris.shawnschwartz.com/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" width="100" alt="eyeris website" /></a>
 </p>
 
