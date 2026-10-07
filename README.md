@@ -10,8 +10,7 @@ status](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/badges/dev-b
 [![CRAN
 status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
 [![downloads](http://cranlogs.r-pkg.org/badges/grand-total/eyeris?color=brightgreen)](https://cran.r-project.org/package=badger)
-[![bioRxiv
-Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
+[![Published manuscript](https://img.shields.io/badge/Psychophysiology-DOI-brightgreen)](https://onlinelibrary.wiley.com/doi/abs/10.1111/psyp.70375)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
