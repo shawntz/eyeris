@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
 <!-- badges: end -->
 
-## Desktop app <img src="https://img.shields.io/badge/NEW-FFD700?style=for-the-badge" alt="New" height="22" />
+## <img src="https://img.shields.io/badge/NEW-FFD700?style=for-the-badge" alt="New" height="22" /> Desktop app
 
 Preprocess pupil data and review epochs in `eyeris` Desktop, with `R` included.
 
