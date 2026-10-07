@@ -33,27 +33,27 @@ library(eyeris)
 # Load the example memory task file and run default glassbox preproc workflow
 demo_data <- eyelink_asc_demo_dataset()
 eye <- glassbox(demo_data)
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::resample()
-#> ℹ [2026-10-07 10:56:46] [INFO] Processing block: block_1
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-10-07 10:56:46] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::resample()
+#> ℹ [2026-10-07 10:58:05] [INFO] Processing block: block_1
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-10-07 10:58:05] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-10-07 10:56:46] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-10-07 10:56:46] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-10-07 10:56:46] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-10-07 10:56:46] [INFO] Block processing summary:
-#> ℹ [2026-10-07 10:56:46] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-10-07 10:58:05] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-10-07 10:58:05] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-10-07 10:58:05] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-10-07 10:58:05] [INFO] Block processing summary:
+#> ℹ [2026-10-07 10:58:05] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-10-07 10:56:46] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-10-07 10:58:05] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ## 2 Extract Data Epochs
@@ -73,13 +73,13 @@ flexible extraction of trials using:
 
 eye_1a <- eye |>
   epoch(events = "PROBE*", limits = c(-1, 1))
-#> ℹ [2026-10-07 10:56:47] [INFO] Epoching pupil data...
-#> ℹ [2026-10-07 10:56:47] [INFO] Block 1: found 10 matching events for PROBE
-#> ✔ [2026-10-07 10:56:47] [OKAY] Done!
-#> ✔ [2026-10-07 10:56:47] [OKAY] Block 1: pupil data from 10 unique event
+#> ℹ [2026-10-07 10:58:06] [INFO] Epoching pupil data...
+#> ℹ [2026-10-07 10:58:06] [INFO] Block 1: found 10 matching events for PROBE
+#> ✔ [2026-10-07 10:58:06] [OKAY] Done!
+#> ✔ [2026-10-07 10:58:06] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-10-07 10:56:47] [OKAY] Pupil epoching completed in 0.20 seconds
-#> ℹ [2026-10-07 10:56:47] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-10-07 10:58:06] [OKAY] Pupil epoching completed in 0.18 seconds
+#> ℹ [2026-10-07 10:58:06] [INFO] Recalculating epoched confounds for new
 #> epochs...
 ```
 
@@ -161,14 +161,14 @@ eye_1b <- eye |>
     limits = c(0, 1),
     label = "probeAfter"
   )
-#> ℹ [2026-10-07 10:56:47] [INFO] Epoching pupil data...
-#> ℹ [2026-10-07 10:56:47] [INFO] Block 1: found 5 matching events for
+#> ℹ [2026-10-07 10:58:06] [INFO] Epoching pupil data...
+#> ℹ [2026-10-07 10:58:06] [INFO] Block 1: found 5 matching events for
 #> PROBESTARTtrial
-#> ✔ [2026-10-07 10:56:47] [OKAY] Done!
-#> ✔ [2026-10-07 10:56:47] [OKAY] Block 1: pupil data from 5 unique event messages
+#> ✔ [2026-10-07 10:58:06] [OKAY] Done!
+#> ✔ [2026-10-07 10:58:06] [OKAY] Block 1: pupil data from 5 unique event messages
 #> extracted
-#> ✔ [2026-10-07 10:56:47] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-10-07 10:56:47] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-10-07 10:58:06] [OKAY] Pupil epoching completed in 0.06 seconds
+#> ℹ [2026-10-07 10:58:06] [INFO] Recalculating epoched confounds for new
 #> epochs...
 
 eye_1b |>
@@ -378,19 +378,21 @@ Run the following in R to get the citation:
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   Schwartz ST, Yang H, Xue AM, He M (2026). "eyeris: A flexible,
 #>   extensible, and reproducible pupillometry preprocessing framework in
-#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
-#>   <https://doi.org/10.1101/2025.06.01.657312>.
+#>   R." _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375
+#>   <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Article{,
 #>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
 #>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
-#>     journal = {bioRxiv},
-#>     year = {2025},
-#>     pages = {1--37},
-#>     doi = {10.1101/2025.06.01.657312},
+#>     journal = {Psychophysiology},
+#>     year = {2026},
+#>     volume = {63},
+#>     number = {8},
+#>     pages = {e70375},
+#>     doi = {10.1111/psyp.70375},
 #>   }
 ```

@@ -731,8 +731,8 @@ welcomed and appreciated, thanks!
 
 ## 📚 Citing `eyeris`
 
-If you use the `eyeris` package in your research, please consider citing
-our preprint!
+If you use the `eyeris` package in your research, please cite our
+published paper in *Psychophysiology*.
 
 Run the following in R to get the citation:
 
@@ -741,20 +741,22 @@ Run the following in R to get the citation:
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   Schwartz ST, Yang H, Xue AM, He M (2026). "eyeris: A flexible,
 #>   extensible, and reproducible pupillometry preprocessing framework in
-#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
-#>   <https://doi.org/10.1101/2025.06.01.657312>.
+#>   R." _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375
+#>   <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Article{,
 #>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
 #>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
-#>     journal = {bioRxiv},
-#>     year = {2025},
-#>     pages = {1--37},
-#>     doi = {10.1101/2025.06.01.657312},
+#>     journal = {Psychophysiology},
+#>     year = {2026},
+#>     volume = {63},
+#>     number = {8},
+#>     pages = {e70375},
+#>     doi = {10.1111/psyp.70375},
 #>   }
 ```
 

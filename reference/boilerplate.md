@@ -112,7 +112,7 @@ boilerplate(eyeris_obj)
 #> 
 #> **Reproducibility.** A complete, machine-readable record of every preprocessing operation and the exact parameter values used is stored alongside your data in a per-run JSON metadata sidecar (`source/logs/run-XX_metadata.json`). This call-stack provenance, together with the `eyeris` version reported above, is sufficient to reproduce this pipeline.
 #> 
-#> **Citation.** If you use `eyeris` in your research, please cite: Schwartz ST, Yang H, Xue AM, He M (2025). “eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R.” _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312 <https://doi.org/10.1101/2025.06.01.657312>.
+#> **Citation.** If you use `eyeris` in your research, please cite: Schwartz ST, Yang H, Xue AM, He M (2026). “eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R.” _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375 <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> > **License & attribution.** This auto-generated boilerplate text is licensed under the [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) license. You are free to copy, adapt, and paste it directly into your manuscript, provided that you give appropriate credit by citing `eyeris` (run `citation('eyeris')` for the reference). Including the `eyeris` citation in your references satisfies this attribution requirement.
 
@@ -125,7 +125,7 @@ cat(methods_md)
 #> 
 #> **Reproducibility.** A complete, machine-readable record of every preprocessing operation and the exact parameter values used is stored alongside your data in a per-run JSON metadata sidecar (`source/logs/run-XX_metadata.json`). This call-stack provenance, together with the `eyeris` version reported above, is sufficient to reproduce this pipeline.
 #> 
-#> **Citation.** If you use `eyeris` in your research, please cite: Schwartz ST, Yang H, Xue AM, He M (2025). “eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R.” _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312 <https://doi.org/10.1101/2025.06.01.657312>.
+#> **Citation.** If you use `eyeris` in your research, please cite: Schwartz ST, Yang H, Xue AM, He M (2026). “eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R.” _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375 <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> > **License & attribution.** This auto-generated boilerplate text is licensed under the [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) license. You are free to copy, adapt, and paste it directly into your manuscript, provided that you give appropriate credit by citing `eyeris` (run `citation('eyeris')` for the reference). Including the `eyeris` citation in your references satisfies this attribution requirement.
 ```

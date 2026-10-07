@@ -92,215 +92,215 @@ eyeris::bidsify(
   run_num = "03", # override default run-01 (block_1) to use run-03 instead
   db_enabled = TRUE # enable database storage
 )
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::resample()
-#> ℹ [2026-10-07 10:53:21] [INFO] Processing block: block_1
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-10-07 10:53:21] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::resample()
+#> ℹ [2026-10-07 10:55:13] [INFO] Processing block: block_1
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-10-07 10:55:13] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-10-07 10:53:21] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-10-07 10:53:21] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-10-07 10:53:21] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-10-07 10:53:21] [INFO] Block processing summary:
-#> ℹ [2026-10-07 10:53:21] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-10-07 10:55:13] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-10-07 10:55:13] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-10-07 10:55:13] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-10-07 10:55:13] [INFO] Block processing summary:
+#> ℹ [2026-10-07 10:55:13] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-10-07 10:53:21] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-10-07 10:53:21] [INFO] Epoching pupil data...
-#> ℹ [2026-10-07 10:53:21] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-10-07 10:55:13] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-10-07 10:55:13] [INFO] Epoching pupil data...
+#> ℹ [2026-10-07 10:55:13] [INFO] Block 1: found 10 matching events for
 #> PROBEstartstoptrial
-#> ✔ [2026-10-07 10:53:21] [OKAY] Done!
-#> ✔ [2026-10-07 10:53:21] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-10-07 10:55:13] [OKAY] Done!
+#> ✔ [2026-10-07 10:55:13] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-10-07 10:53:21] [OKAY] Pupil epoching completed in 0.13 seconds
-#> ℹ [2026-10-07 10:53:21] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-10-07 10:55:13] [OKAY] Pupil epoching completed in 0.11 seconds
+#> ℹ [2026-10-07 10:55:13] [INFO] Recalculating epoched confounds for new
 #> epochs...
-#> ℹ [2026-10-07 10:53:21] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-10-07 10:53:21] [INFO] Only 1 block detected...
-#> ℹ [2026-10-07 10:53:21] [INFO] Using run_num = 03 for single block data
-#> ℹ [2026-10-07 10:53:21] [INFO] Filtered epochs: epoch_prePostProbe
-#> ℹ [2026-10-07 10:53:21] [INFO] Epoch names to save: epoch_prePostProbe
-#> ℹ [2026-10-07 10:53:21] [INFO] Parallel processing detected for job unknown
-#> (PID: 6702), using temporary database
+#> ℹ [2026-10-07 10:55:13] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-10-07 10:55:13] [INFO] Only 1 block detected...
+#> ℹ [2026-10-07 10:55:13] [INFO] Using run_num = 03 for single block data
+#> ℹ [2026-10-07 10:55:13] [INFO] Filtered epochs: epoch_prePostProbe
+#> ℹ [2026-10-07 10:55:13] [INFO] Epoch names to save: epoch_prePostProbe
+#> ℹ [2026-10-07 10:55:13] [INFO] Parallel processing detected for job unknown
+#> (PID: 6502), using temporary database
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpeTG0RJ/duckdb
+#> ℹ /tmp/Rtmp3K2Hqv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:53:21] [OKAY] Created temporary database:
-#> /tmp/RtmpeTG0RJ/derivatives/my-project_temp_6702_20261007_105321_750.eyerisdb
-#> ℹ [2026-10-07 10:53:21] [INFO] epoch_prePostProbe:
-#> ℹ [2026-10-07 10:53:21] [INFO] block_3: data.frame with 20000 rows
-#> ℹ [2026-10-07 10:53:21] [INFO] info: list with 1 elements
-#> ! [2026-10-07 10:53:21] [WARN] '/tmp/RtmpeTG0RJ' already exists. Skipping
+#> ✔ [2026-10-07 10:55:13] [OKAY] Created temporary database:
+#> /tmp/Rtmp3K2Hqv/derivatives/my-project_temp_6502_20261007_105513_752.eyerisdb
+#> ℹ [2026-10-07 10:55:13] [INFO] epoch_prePostProbe:
+#> ℹ [2026-10-07 10:55:13] [INFO] block_3: data.frame with 20000 rows
+#> ℹ [2026-10-07 10:55:13] [INFO] info: list with 1 elements
+#> ! [2026-10-07 10:55:13] [WARN] '/tmp/Rtmp3K2Hqv' already exists. Skipping
 #> creation...
-#> ! [2026-10-07 10:53:21] [WARN] '/tmp/RtmpeTG0RJ/derivatives' already exists.
+#> ! [2026-10-07 10:55:13] [WARN] '/tmp/Rtmp3K2Hqv/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-10-07 10:53:21] [WARN] '/tmp/RtmpeTG0RJ/derivatives/sub-001' already
+#> ! [2026-10-07 10:55:13] [WARN] '/tmp/Rtmp3K2Hqv/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-10-07 10:53:21] [WARN] '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01'
+#> ! [2026-10-07 10:55:13] [WARN] '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ! [2026-10-07 10:53:21] [WARN] '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/eye'
+#> ! [2026-10-07 10:55:13] [WARN] '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/eye'
 #> already exists. Skipping creation...
-#> ℹ [2026-10-07 10:53:21] [INFO] Writing blinks data to
-#> /tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-blinks.csv...
-#> ✔ [2026-10-07 10:53:21] [OKAY] Wrote blinks data (1 rows) to CSV and database
-#> ℹ [2026-10-07 10:53:21] [INFO] Writing events data to
-#> /tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-events.csv...
-#> ✔ [2026-10-07 10:53:21] [OKAY] Wrote events data (67 rows) to CSV and database
-#> ℹ [2026-10-07 10:53:21] [INFO] Processing single-run epoch: epoch_prePostProbe
+#> ℹ [2026-10-07 10:55:13] [INFO] Writing blinks data to
+#> /tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-blinks.csv...
+#> ✔ [2026-10-07 10:55:13] [OKAY] Wrote blinks data (1 rows) to CSV and database
+#> ℹ [2026-10-07 10:55:13] [INFO] Writing events data to
+#> /tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-assocret_run-03_desc-events.csv...
+#> ✔ [2026-10-07 10:55:13] [OKAY] Wrote events data (67 rows) to CSV and database
+#> ℹ [2026-10-07 10:55:13] [INFO] Processing single-run epoch: epoch_prePostProbe
 #> (label: prePostProbe)
-#> ℹ [2026-10-07 10:53:21] [INFO] Block block_3 for epoch epoch_prePostProbe has
+#> ℹ [2026-10-07 10:55:13] [INFO] Block block_3 for epoch epoch_prePostProbe has
 #> 20000 rows
-#> ! [2026-10-07 10:53:21] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:13] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:53:21] [INFO] Found epoch events in structure:
+#> ℹ [2026-10-07 10:55:13] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:53:21] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:13] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:53:21] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:13] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:53:21] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:13] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote epochs data (20000 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote epochs data (20000 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote timeseries data (20767 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote timeseries data (20767 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote run_confounds data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote run_confounds data (6 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:53:22] [INFO] Created epoch summary for epoch_prePostProbe
+#> ℹ [2026-10-07 10:55:14] [INFO] Created epoch summary for epoch_prePostProbe
 #> with 9 fields
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:53:22] [INFO] Found epoch events in structure:
+#> ℹ [2026-10-07 10:55:14] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:53:22] [INFO] Found epoch events in epoch structure:
+#> ℹ [2026-10-07 10:55:14] [INFO] Found epoch events in epoch structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:53:22] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:55:14] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:22] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:53:23] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:55:14] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:53:23] [WARN]
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ! [2026-10-07 10:55:14] [WARN]
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ! [2026-10-07 10:53:23] [WARN]
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
+#> ! [2026-10-07 10:55:14] [WARN]
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
 #> already exists. Skipping creation...
-#> ℹ [2026-10-07 10:53:23] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:14] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:23] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:15] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:24] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:16] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:25] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:16] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:25] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:17] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:26] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:17] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:27] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:18] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:27] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:18] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:28] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:19] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:28] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:19] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:29] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:20] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:30] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:20] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:30] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:21] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:31] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:21] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:31] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:22] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:31] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:22] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:31] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:22] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ℹ [2026-10-07 10:53:32] [INFO] Plotting block 3 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:55:22] [INFO] Plotting block 3 with sampling rate 1000 Hz from
 #> possible blocks: 3
-#> ! [2026-10-07 10:53:32] [WARN]
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
+#> ! [2026-10-07 10:55:22] [WARN]
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
 #> already exists. Skipping creation...
-#> ✔ [2026-10-07 10:53:32] [OKAY] Created gaze heatmap for run-03
-#> ! [2026-10-07 10:53:32] [WARN]
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
+#> ✔ [2026-10-07 10:55:23] [OKAY] Created gaze heatmap for run-03
+#> ! [2026-10-07 10:55:23] [WARN]
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03'
 #> already exists. Skipping creation...
-#> ℹ [2026-10-07 10:53:32] [INFO]
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe'
+#> ℹ [2026-10-07 10:55:23] [INFO]
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe'
 #> does not exist. Creating...
-#> ✔ [2026-10-07 10:53:32] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe'
-#> ✔ [2026-10-07 10:53:50] [OKAY] Created epoch images zip:
-#> /tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe/task-assocret_run-03.zip
+#> ✔ [2026-10-07 10:55:23] [OKAY] BIDS directory successfully created at:
+#> '/tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe'
+#> ✔ [2026-10-07 10:55:38] [OKAY] Created epoch images zip:
+#> /tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe/task-assocret_run-03.zip
 #> (70 images)
-#> ℹ [2026-10-07 10:53:50] [INFO] Using absolute zip file path:
-#> /tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe/task-assocret_run-03.zip
-#> ✔ [2026-10-07 10:53:50] [OKAY] Embedded zip file as data URL (11755799 bytes)
+#> ℹ [2026-10-07 10:55:38] [INFO] Using absolute zip file path:
+#> /tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe/task-assocret_run-03.zip
+#> ✔ [2026-10-07 10:55:38] [OKAY] Embedded zip file as data URL (11755799 bytes)
 #> 
 #> 
 #> processing file: sub-001_task-assocret_epoch-prePostProbe_run-03.Rmd
@@ -310,13 +310,13 @@ eyeris::bidsify(
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_task-assocret_epoch-prePostProbe_run-03.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-assocret_epoch-prePostProbe_run-03.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-assocret_epoch-prePostProbe_run-03.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpeTG0RJ/rmarkdown-str1a2e744f4e46.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-assocret_epoch-prePostProbe_run-03.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-assocret_epoch-prePostProbe_run-03.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3K2Hqv/rmarkdown-str1966235cc71c.html 
 #> 
 #> Output created: sub-001_task-assocret_epoch-prePostProbe_run-03.html
-#> ! [2026-10-07 10:54:00] [WARN] Skipping block info for epoch 1 - no valid data
-#> ℹ [2026-10-07 10:54:00] [INFO] Removing duplicate plain epoch directory:
-#> /tmp/RtmpeTG0RJ/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe
-#> ! [2026-10-07 10:54:00] [WARN] No detrend data found for run-03
+#> ! [2026-10-07 10:55:47] [WARN] Skipping block info for epoch 1 - no valid data
+#> ℹ [2026-10-07 10:55:47] [INFO] Removing duplicate plain epoch directory:
+#> /tmp/Rtmp3K2Hqv/derivatives/sub-001/ses-01/source/figures/task-assocret_run-03/epoch_prePostProbe
+#> ! [2026-10-07 10:55:47] [WARN] No detrend data found for run-03
 #> 
 #> 
 #> processing file: sub-001_task-assocret.Rmd
@@ -326,80 +326,80 @@ eyeris::bidsify(
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_task-assocret.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-assocret.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-assocret.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpeTG0RJ/rmarkdown-str1a2e3ac055f4.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-assocret.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-assocret.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/Rtmp3K2Hqv/rmarkdown-str1966373b1bec.html 
 #> 
 #> Output created: sub-001_task-assocret.html
-#> ℹ [2026-10-07 10:54:01] [INFO] Merging temporary database from job unknown
-#> (PID: 6702) into main database
-#> ℹ [2026-10-07 10:54:01] [INFO] Merging 8 tables from temporary database to main
+#> ℹ [2026-10-07 10:55:48] [INFO] Merging temporary database from job unknown
+#> (PID: 6502) into main database
+#> ℹ [2026-10-07 10:55:48] [INFO] Merging 8 tables from temporary database to main
 #> database
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpeTG0RJ/duckdb
+#> ℹ /tmp/Rtmp3K2Hqv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ℹ [2026-10-07 10:54:01] [INFO] Created new table 'blinks_001_01_assocret_run03'
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table 'blinks_001_01_assocret_run03'
 #> with 1 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table
 #> 'confounds_events_001_01_assocret_run03_prepostprobe' with 60 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table
 #> 'confounds_summary_001_01_assocret_run03_prepostprobe' with 10 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table
 #> 'epoch_summary_001_01_assocret_run03' with 1 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table
 #> 'epochs_001_01_assocret_run03_prepostprobe' with 20000 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table 'events_001_01_assocret_run03'
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table 'events_001_01_assocret_run03'
 #> with 67 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:48] [INFO] Created new table
 #> 'run_confounds_001_01_assocret_run03' with 6 rows
-#> ℹ [2026-10-07 10:54:02] [INFO] Created new table
+#> ℹ [2026-10-07 10:55:49] [INFO] Created new table
 #> 'timeseries_001_01_assocret_run03' with 20767 rows
-#> ✔ [2026-10-07 10:54:02] [OKAY] Successfully merged 8/8 tables
-#> ✔ [2026-10-07 10:54:02] [OKAY] Successfully merged job unknown (PID: 6702) data
+#> ✔ [2026-10-07 10:55:49] [OKAY] Successfully merged 8/8 tables
+#> ✔ [2026-10-07 10:55:49] [OKAY] Successfully merged job unknown (PID: 6502) data
 #> into main database
-#> ℹ [2026-10-07 10:54:02] [INFO] Disconnected from temporary database
-#> ✔ [2026-10-07 10:54:02] [OKAY] Cleaned up temporary database file
-#> ℹ [2026-10-07 10:54:02] [INFO] Finished BIDSify for sub-001 (Duration: 40.97
+#> ℹ [2026-10-07 10:55:49] [INFO] Disconnected from temporary database
+#> ✔ [2026-10-07 10:55:49] [OKAY] Cleaned up temporary database file
+#> ℹ [2026-10-07 10:55:49] [INFO] Finished BIDSify for sub-001 (Duration: 35.52
 #> seconds)
 
 # extract all data for all subjects (returns list of data frames)
 all_data <- eyeris_db_collect(tempdir())
-#> ℹ [2026-10-07 10:54:02] [INFO] Connecting to eyeris database...
+#> ℹ [2026-10-07 10:55:49] [INFO] Connecting to eyeris database...
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpeTG0RJ/duckdb
+#> ℹ /tmp/Rtmp3K2Hqv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:54:02] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpeTG0RJ/derivatives/my-project.eyerisdb
-#> ℹ [2026-10-07 10:54:02] [INFO] Found 16 tables in database
-#> ℹ [2026-10-07 10:54:02] [INFO] Extracting data types: blinks, events,
+#> ✔ [2026-10-07 10:55:49] [OKAY] Connected to eyeris database:
+#> /tmp/Rtmp3K2Hqv/derivatives/my-project.eyerisdb
+#> ℹ [2026-10-07 10:55:49] [INFO] Found 16 tables in database
+#> ℹ [2026-10-07 10:55:49] [INFO] Extracting data types: blinks, events,
 #> timeseries, epochs, epoch_summary, run_confounds, confounds_events,
 #> confounds_summary
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing blinks...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing blinks...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "stime", "etime", "dur", "eye" FROM
 #> "blinks_001_01_assocret_run01" UNION ALL SELECT "subject_id", "session_id",
 #> "task_name", "data_type", "run_number", "created_timestamp", "block", "stime",
 #> "etime", "dur", "eye" FROM "blinks_001_01_assocret_run03") as combined_data
 #> WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing events...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing events...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "time", "text", "text_unique" FROM
 #> "events_001_01_assocret_run01" UNION ALL SELECT "subject_id", "session_id",
 #> "task_name", "data_type", "run_number", "created_timestamp", "block", "time",
 #> "text", "text_unique" FROM "events_001_01_assocret_run03") as combined_data
 #> WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing timeseries...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing timeseries...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "time_orig", "time_secs", "time_scaled", "eye_x",
 #> "eye_y", "eye", "hz", "type", "pupil_raw", "pupil_raw_deblink",
@@ -414,8 +414,8 @@ all_data <- eyeris_db_collect(tempdir())
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt",
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing epochs...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing epochs...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "epoch_label", "created_timestamp", "block", "time_orig", "timebin",
 #> "time_secs", "time_scaled", "eye_x", "eye_y", "eye", "hz", "type", "pupil_raw",
@@ -434,8 +434,8 @@ all_data <- eyeris_db_collect(tempdir())
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z", "text_unique",
 #> "template", "matching_pattern", "matched_event", "startstop", "trial" FROM
 #> "epochs_001_01_assocret_run03_prepostprobe") as combined_data WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing epoch_summary...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing epoch_summary...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "epoch_type", "calc_baseline", "apply_baseline",
 #> "baseline_type", "baseline_events", "baseline_period", "epoch_events",
@@ -446,8 +446,8 @@ all_data <- eyeris_db_collect(tempdir())
 #> "baseline_events", "baseline_period", "epoch_events", "epoch_limits",
 #> "n_epochs", "n_baseline_epochs" FROM "epoch_summary_001_01_assocret_run03") as
 #> combined_data WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing run_confounds...
-#> ℹ [2026-10-07 10:54:02] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing run_confounds...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "step", "sampling_rate_hz", "total_time_ms",
 #> "n_samples", "n_missing", "prop_missing", "n_invalid", "prop_invalid",
@@ -470,8 +470,8 @@ all_data <- eyeris_db_collect(tempdir())
 #> "max_blink_duration_ms", "mean_blink_duration_ms", "total_blink_time_ms",
 #> "prop_blink_time" FROM "run_confounds_001_01_assocret_run03") as combined_data
 #> WHERE 1=1
-#> ℹ [2026-10-07 10:54:02] [INFO] Processing confounds_events...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing confounds_events...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "epoch_label", "created_timestamp", "matched_event", "text_unique", "step",
 #> "n_samples", "n_missing", "prop_missing", "range", "zscore_max", "zscore_min",
@@ -483,8 +483,8 @@ all_data <- eyeris_db_collect(tempdir())
 #> "prop_blink_time", "pre_epoch_pupil_sd", "epoch_pupil_sd" FROM
 #> "confounds_events_001_01_assocret_run03_prepostprobe") as combined_data WHERE
 #> 1=1
-#> ℹ [2026-10-07 10:54:03] [INFO] Processing confounds_summary...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing confounds_summary...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "epoch_label", "created_timestamp", "matched_event", "text_unique",
 #> "n_samples", "n_blinks_in_baseline", "time_to_first_blink_ms",
@@ -495,16 +495,16 @@ all_data <- eyeris_db_collect(tempdir())
 #> "epoch_duration_ms" FROM
 #> "confounds_summary_001_01_assocret_run03_prepostprobe") as combined_data WHERE
 #> 1=1
-#> ✔ [2026-10-07 10:54:03] [OKAY] Successfully extracted 8 data types
-#> ℹ [2026-10-07 10:54:03] [INFO] blinks: 3 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] events: 201 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] timeseries: 62301 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] epochs: 40000 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] epoch_summary: 2 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] run_confounds: 18 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] confounds_events: 120 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] confounds_summary: 20 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] Disconnected from eyeris database
+#> ✔ [2026-10-07 10:55:49] [OKAY] Successfully extracted 8 data types
+#> ℹ [2026-10-07 10:55:49] [INFO] blinks: 3 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] events: 201 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] timeseries: 62301 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] epochs: 40000 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] epoch_summary: 2 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] run_confounds: 18 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] confounds_events: 120 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] confounds_summary: 20 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:49] [INFO] Disconnected from eyeris database
 
 # view available data types
 names(all_data)
@@ -522,30 +522,30 @@ subset_data <- eyeris_db_collect(
   subjects = c("001"),
   data_types = c("blinks", "epochs", "timeseries")
 )
-#> ℹ [2026-10-07 10:54:03] [INFO] Connecting to eyeris database...
+#> ℹ [2026-10-07 10:55:49] [INFO] Connecting to eyeris database...
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpeTG0RJ/duckdb
+#> ℹ /tmp/Rtmp3K2Hqv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:54:03] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpeTG0RJ/derivatives/my-project.eyerisdb
-#> ℹ [2026-10-07 10:54:03] [INFO] Found 16 tables in database
-#> ℹ [2026-10-07 10:54:03] [INFO] Extracting data types: blinks, epochs,
+#> ✔ [2026-10-07 10:55:49] [OKAY] Connected to eyeris database:
+#> /tmp/Rtmp3K2Hqv/derivatives/my-project.eyerisdb
+#> ℹ [2026-10-07 10:55:49] [INFO] Found 16 tables in database
+#> ℹ [2026-10-07 10:55:49] [INFO] Extracting data types: blinks, epochs,
 #> timeseries
-#> ℹ [2026-10-07 10:54:03] [INFO] Processing blinks...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing blinks...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "stime", "etime", "dur", "eye" FROM
 #> "blinks_001_01_assocret_run01" UNION ALL SELECT "subject_id", "session_id",
 #> "task_name", "data_type", "run_number", "created_timestamp", "block", "stime",
 #> "etime", "dur", "eye" FROM "blinks_001_01_assocret_run03") as combined_data
 #> WHERE 1=1 AND subject_id = '001'
-#> ℹ [2026-10-07 10:54:03] [INFO] Processing epochs...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing epochs...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "epoch_label", "created_timestamp", "block", "time_orig", "timebin",
 #> "time_secs", "time_scaled", "eye_x", "eye_y", "eye", "hz", "type", "pupil_raw",
@@ -565,8 +565,8 @@ subset_data <- eyeris_db_collect(
 #> "template", "matching_pattern", "matched_event", "startstop", "trial" FROM
 #> "epochs_001_01_assocret_run03_prepostprobe") as combined_data WHERE 1=1 AND
 #> subject_id = '001'
-#> ℹ [2026-10-07 10:54:03] [INFO] Processing timeseries...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ℹ [2026-10-07 10:55:49] [INFO] Processing timeseries...
+#> ℹ [2026-10-07 10:55:49] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "created_timestamp", "block", "time_orig", "time_secs", "time_scaled", "eye_x",
 #> "eye_y", "eye", "hz", "type", "pupil_raw", "pupil_raw_deblink",
@@ -582,11 +582,11 @@ subset_data <- eyeris_db_collect(
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z" FROM
 #> "timeseries_001_01_assocret_run03") as combined_data WHERE 1=1 AND subject_id =
 #> '001'
-#> ✔ [2026-10-07 10:54:03] [OKAY] Successfully extracted 3 data types
-#> ℹ [2026-10-07 10:54:03] [INFO] blinks: 3 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] epochs: 40000 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] timeseries: 62301 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] Disconnected from eyeris database
+#> ✔ [2026-10-07 10:55:49] [OKAY] Successfully extracted 3 data types
+#> ℹ [2026-10-07 10:55:49] [INFO] blinks: 3 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:50] [INFO] epochs: 40000 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:50] [INFO] timeseries: 62301 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:50] [INFO] Disconnected from eyeris database
 
 # extract epoch data for specific epoch label
 epoch_data <- eyeris_db_collect(
@@ -594,21 +594,21 @@ epoch_data <- eyeris_db_collect(
   data_types = "epochs",
   epoch_labels = "prepostprobe"
 )
-#> ℹ [2026-10-07 10:54:03] [INFO] Connecting to eyeris database...
+#> ℹ [2026-10-07 10:55:50] [INFO] Connecting to eyeris database...
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpeTG0RJ/duckdb
+#> ℹ /tmp/Rtmp3K2Hqv/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:54:03] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpeTG0RJ/derivatives/my-project.eyerisdb
-#> ℹ [2026-10-07 10:54:03] [INFO] Found 16 tables in database
-#> ℹ [2026-10-07 10:54:03] [INFO] Extracting data types: epochs
-#> ℹ [2026-10-07 10:54:03] [INFO] Processing epochs...
-#> ℹ [2026-10-07 10:54:03] [INFO] Executing query: SELECT * FROM (SELECT
+#> ✔ [2026-10-07 10:55:50] [OKAY] Connected to eyeris database:
+#> /tmp/Rtmp3K2Hqv/derivatives/my-project.eyerisdb
+#> ℹ [2026-10-07 10:55:50] [INFO] Found 16 tables in database
+#> ℹ [2026-10-07 10:55:50] [INFO] Extracting data types: epochs
+#> ℹ [2026-10-07 10:55:50] [INFO] Processing epochs...
+#> ℹ [2026-10-07 10:55:50] [INFO] Executing query: SELECT * FROM (SELECT
 #> "subject_id", "session_id", "task_name", "data_type", "run_number",
 #> "epoch_label", "created_timestamp", "block", "time_orig", "timebin",
 #> "time_secs", "time_scaled", "eye_x", "eye_y", "eye", "hz", "type", "pupil_raw",
@@ -627,9 +627,9 @@ epoch_data <- eyeris_db_collect(
 #> "pupil_raw_deblink_detransient_interpolate_lpfilt_z", "text_unique",
 #> "template", "matching_pattern", "matched_event", "startstop", "trial" FROM
 #> "epochs_001_01_assocret_run03_prepostprobe") as combined_data WHERE 1=1
-#> ✔ [2026-10-07 10:54:03] [OKAY] Successfully extracted 1 data types
-#> ℹ [2026-10-07 10:54:03] [INFO] epochs: 40000 rows across 1 subjects
-#> ℹ [2026-10-07 10:54:03] [INFO] Disconnected from eyeris database
+#> ✔ [2026-10-07 10:55:50] [OKAY] Successfully extracted 1 data types
+#> ℹ [2026-10-07 10:55:50] [INFO] epochs: 40000 rows across 1 subjects
+#> ℹ [2026-10-07 10:55:50] [INFO] Disconnected from eyeris database
 
 # }
 ```

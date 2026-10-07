@@ -156,27 +156,27 @@ needing to write any additional code)!</p>
 <span><span class="co"># Load the example memory task file and run default glassbox preproc workflow</span></span>
 <span><span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eyelink_asc_demo_dataset.html">eyelink_asc_demo_dataset</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">eye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassbox.html">glassbox</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::load_asc()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::resample()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:46] [INFO] Processing block: block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::deblink() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::detransient() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::interpolate() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:56:46] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::load_asc()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::resample()</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:05] [INFO] Processing block: block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::deblink() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::detransient() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::interpolate() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:58:05] [WARN] Interpolation now leaves gaps longer than 250 ms</span></span>
 <span><span class="co">#&gt; as `NA` instead of interpolating across them (following Kret &amp; Sjak-Shie,</span></span>
 <span><span class="co">#&gt; 2018). This is a change in default behavior from eyeris &lt;= 3.2.0 and may affect</span></span>
 <span><span class="co">#&gt; your results. To restore the previous behavior, set `interpolate =</span></span>
 <span><span class="co">#&gt; list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in</span></span>
 <span><span class="co">#&gt; `interpolate()`).</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:56:46] [WARN] Skipping eyeris::downsample() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:56:46] [WARN] Skipping eyeris::bin() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:56:46] [WARN] Skipping eyeris::detrend() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::zscore() for block_1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:46] [INFO] Block processing summary:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:46] [INFO] block_1: OK (steps: 6, latest:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::lpfilt() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:58:05] [WARN] Skipping eyeris::downsample() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:58:05] [WARN] Skipping eyeris::bin() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> [2026-10-07 10:58:05] [WARN] Skipping eyeris::detrend() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::zscore() for block_1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:05] [INFO] Block processing summary:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:05] [INFO] block_1: OK (steps: 6, latest:</span></span>
 <span><span class="co">#&gt; pupil_raw_deblink_detransient_interpolate_lpfilt_z)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:46] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:05] [OKAY] Running eyeris::summarize_confounds()</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="extract-data-epochs">2 Extract Data Epochs<a class="anchor" aria-label="anchor" href="#extract-data-epochs"></a>
@@ -196,13 +196,13 @@ needing to write any additional code)!</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eye_1a</span> <span class="op">&lt;-</span> <span class="va">eye</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epoch.html">epoch</a></span><span class="op">(</span>events <span class="op">=</span> <span class="st">"PROBE*"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Epoching pupil data...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Block 1: found 10 matching events for PROBE</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Done!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Block 1: pupil data from 10 unique event</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Epoching pupil data...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Block 1: found 10 matching events for PROBE</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Done!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Block 1: pupil data from 10 unique event</span></span>
 <span><span class="co">#&gt; messages extracted</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Pupil epoching completed in 0.20 seconds</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Recalculating epoched confounds for new</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Pupil epoching completed in 0.18 seconds</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Recalculating epoched confounds for new</span></span>
 <span><span class="co">#&gt; epochs...</span></span></code></pre></div>
 <p>Now, if you take a look at <code>eye</code>, you’ll notice there’s a
 new list element within this <code>eyeris</code> object:
@@ -280,14 +280,14 @@ label to the resulting epoch set.</p>
 <span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    label <span class="op">=</span> <span class="st">"probeAfter"</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Epoching pupil data...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Block 1: found 5 matching events for</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Epoching pupil data...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Block 1: found 5 matching events for</span></span>
 <span><span class="co">#&gt; PROBESTARTtrial</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Done!</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Block 1: pupil data from 5 unique event messages</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Done!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Block 1: pupil data from 5 unique event messages</span></span>
 <span><span class="co">#&gt; extracted</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:56:47] [OKAY] Pupil epoching completed in 0.07 seconds</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:56:47] [INFO] Recalculating epoched confounds for new</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> [2026-10-07 10:58:06] [OKAY] Pupil epoching completed in 0.06 seconds</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> [2026-10-07 10:58:06] [INFO] Recalculating epoched confounds for new</span></span>
 <span><span class="co">#&gt; epochs...</span></span>
 <span></span>
 <span><span class="va">eye_1b</span> <span class="op">|&gt;</span></span>
@@ -489,20 +489,22 @@ cite it!</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"eyeris"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'eyeris' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,</span></span>
+<span><span class="co">#&gt;   Schwartz ST, Yang H, Xue AM, He M (2026). "eyeris: A flexible,</span></span>
 <span><span class="co">#&gt;   extensible, and reproducible pupillometry preprocessing framework in</span></span>
-<span><span class="co">#&gt;   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312</span></span>
-<span><span class="co">#&gt;   &lt;https://doi.org/10.1101/2025.06.01.657312&gt;.</span></span>
+<span><span class="co">#&gt;   R." _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375</span></span>
+<span><span class="co">#&gt;   &lt;https://doi.org/10.1111/psyp.70375&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Article{,</span></span>
 <span><span class="co">#&gt;     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},</span></span>
 <span><span class="co">#&gt;     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},</span></span>
-<span><span class="co">#&gt;     journal = {bioRxiv},</span></span>
-<span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     pages = {1--37},</span></span>
-<span><span class="co">#&gt;     doi = {10.1101/2025.06.01.657312},</span></span>
+<span><span class="co">#&gt;     journal = {Psychophysiology},</span></span>
+<span><span class="co">#&gt;     year = {2026},</span></span>
+<span><span class="co">#&gt;     volume = {63},</span></span>
+<span><span class="co">#&gt;     number = {8},</span></span>
+<span><span class="co">#&gt;     pages = {e70375},</span></span>
+<span><span class="co">#&gt;     doi = {10.1111/psyp.70375},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -18,16 +18,18 @@
 Source:
 [`inst/CITATION`](https://github.com/shawntz/eyeris/blob/dev/inst/CITATION)
 
-Schwartz ST, Yang H, Xue AM, He M (2025). “eyeris: A flexible,
+Schwartz ST, Yang H, Xue AM, He M (2026). “eyeris: A flexible,
 extensible, and reproducible pupillometry preprocessing framework in R.”
-*bioRxiv*, 1–37.
-[doi:10.1101/2025.06.01.657312](https://doi.org/10.1101/2025.06.01.657312).
+*Psychophysiology*, **63**(8), e70375.
+[doi:10.1111/psyp.70375](https://doi.org/10.1111/psyp.70375).
 
     @Article{,
       title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
       author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
-      journal = {bioRxiv},
-      year = {2025},
-      pages = {1--37},
-      doi = {10.1101/2025.06.01.657312},
+      journal = {Psychophysiology},
+      year = {2026},
+      volume = {63},
+      number = {8},
+      pages = {e70375},
+      doi = {10.1111/psyp.70375},
     }

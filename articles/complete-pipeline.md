@@ -162,31 +162,31 @@ parameters and pipeline recipe:
 
 # Run an automated pipeline with no real-time inspection of parameters
 output <- eyeris::glassbox(demo_data)
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::resample()
-#> ℹ [2026-10-07 10:56:29] [INFO] Processing block: block_1
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-10-07 10:56:29] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::resample()
+#> ℹ [2026-10-07 10:57:52] [INFO] Processing block: block_1
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-10-07 10:57:52] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::lpfilt() for block_1
 ```
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-1.png)
 
-    #> ! [2026-10-07 10:56:29] [WARN] Skipping eyeris::downsample() for block_1
-    #> ! [2026-10-07 10:56:29] [WARN] Skipping eyeris::bin() for block_1
-    #> ! [2026-10-07 10:56:29] [WARN] Skipping eyeris::detrend() for block_1
-    #> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::zscore() for block_1
-    #> ℹ [2026-10-07 10:56:29] [INFO] Block processing summary:
-    #> ℹ [2026-10-07 10:56:29] [INFO] block_1: OK (steps: 6, latest:
+    #> ! [2026-10-07 10:57:52] [WARN] Skipping eyeris::downsample() for block_1
+    #> ! [2026-10-07 10:57:52] [WARN] Skipping eyeris::bin() for block_1
+    #> ! [2026-10-07 10:57:52] [WARN] Skipping eyeris::detrend() for block_1
+    #> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::zscore() for block_1
+    #> ℹ [2026-10-07 10:57:52] [INFO] Block processing summary:
+    #> ℹ [2026-10-07 10:57:52] [INFO] block_1: OK (steps: 6, latest:
     #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-    #> ✔ [2026-10-07 10:56:29] [OKAY] Running eyeris::summarize_confounds()
+    #> ✔ [2026-10-07 10:57:52] [OKAY] Running eyeris::summarize_confounds()
 
     # Preview first and second steps of the pipeline
     plot(
@@ -195,7 +195,7 @@ output <- eyeris::glassbox(demo_data)
       preview_window = c(0, max(output$timeseries$block_1$time_secs)),
       seed = 0
     )
-    #> ℹ [2026-10-07 10:56:29] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+    #> ℹ [2026-10-07 10:57:53] [INFO] Plotting block 1 with sampling rate 1000 Hz from
     #> possible blocks: 1
 
 ![](complete-pipeline_files/figure-html/unnamed-chunk-3-2.png)![](complete-pipeline_files/figure-html/unnamed-chunk-3-3.png)
@@ -255,27 +255,27 @@ output <- eyeris::glassbox(
   deblink = list(extend = 40),
   lpfilt = list(plot_freqz = FALSE)
 )
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::resample()
-#> ℹ [2026-10-07 10:56:35] [INFO] Processing block: block_1
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-10-07 10:56:35] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::resample()
+#> ℹ [2026-10-07 10:57:56] [INFO] Processing block: block_1
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-10-07 10:57:56] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::lpfilt() for block_1
-#> ! [2026-10-07 10:56:35] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-10-07 10:56:35] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-10-07 10:56:35] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-10-07 10:56:35] [INFO] Block processing summary:
-#> ℹ [2026-10-07 10:56:35] [INFO] block_1: OK (steps: 6, latest:
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::lpfilt() for block_1
+#> ! [2026-10-07 10:57:56] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-10-07 10:57:56] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-10-07 10:57:56] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-10-07 10:57:56] [INFO] Block processing summary:
+#> ℹ [2026-10-07 10:57:56] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-10-07 10:56:35] [OKAY] Running eyeris::summarize_confounds()
+#> ✔ [2026-10-07 10:57:56] [OKAY] Running eyeris::summarize_confounds()
 ```
 
 ##### Pipeline Steps with Overridable Parameters
@@ -457,19 +457,21 @@ Run the following in R to get the citation:
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   Schwartz ST, Yang H, Xue AM, He M (2026). "eyeris: A flexible,
 #>   extensible, and reproducible pupillometry preprocessing framework in
-#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
-#>   <https://doi.org/10.1101/2025.06.01.657312>.
+#>   R." _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375
+#>   <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Article{,
 #>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
 #>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
-#>     journal = {bioRxiv},
-#>     year = {2025},
-#>     pages = {1--37},
-#>     doi = {10.1101/2025.06.01.657312},
+#>     journal = {Psychophysiology},
+#>     year = {2026},
+#>     volume = {63},
+#>     number = {8},
+#>     pages = {e70375},
+#>     doi = {10.1111/psyp.70375},
 #>   }
 ```
