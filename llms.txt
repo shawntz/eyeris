@@ -1,4 +1,4 @@
-# `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
+# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R
 
 ## ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge) Desktop app
 
