@@ -1,16 +1,16 @@
 # `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
 
-## Desktop app
+## Desktop app ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge)
 
-Preprocess pupil data and review epochs in eyeris Desktop, with R
+Preprocess pupil data and review epochs in `eyeris` Desktop, with `R`
 included.
 
-[![Download for Windows
-x64](https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge)](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe)
 [![Download for macOS Apple
 Silicon](https://img.shields.io/badge/Download-macOS_Apple_Silicon-6E56CF?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg)
 [![Download for Linux
 x64](https://img.shields.io/badge/Download-Linux_x64-333333?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage)
+[![Download for Windows
+x64](https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge&logo=data:image%2Fsvg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDBoMTF2MTFIMHptMTMgMGgxMXYxMUgxM3pNMCAxM2gxMXYxMUgwem0xMyAwaDExdjExSDEzeiIvPjwvc3ZnPg%3D%3D)](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe)
 
 ![eyeris Desktop welcome screen with New project and Open project
 buttons](reference/figures/desktop-splash.png)
