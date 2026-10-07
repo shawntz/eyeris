@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing <a href="https://eyeris.shawnschwartz.com/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R <a href="https://eyeris.shawnschwartz.com/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
