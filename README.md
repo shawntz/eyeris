@@ -37,20 +37,6 @@ Preprocess pupil data and review epochs in `eyeris` Desktop, with `R` included.
 
 [Installation help](https://github.com/shawntz/eyeris/blob/dev/desktop/README.md)
 
-<div class="alert alert-light">
-
-<h2>
-
-💻 eyeris DevOps Dashboard
-</h2>
-
-Dive deeper into <code>eyeris’</code> development and operational
-insights with our new
-<a href="https://shawnschwartz.notion.site/eyeris-devops" target="_blank">eyeris
-DevOps Dashboard</a>!
-
-</div>
-
 <!-- The goal of eyeris is to ... -->
 
 ## 💡 Motivation
