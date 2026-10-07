@@ -18,7 +18,6 @@ async function fixture(t) {
   const matrix = [
     ["win-x64", "latest.yml", ["exe"]],
     ["mac-arm64", "latest-mac.yml", ["zip", "dmg"]],
-    ["mac-x64", "latest-mac.yml", ["zip", "dmg"]],
     ["linux-x86_64", "latest-linux.yml", ["AppImage"]],
   ];
   for (const [target, channel, extensions] of matrix) {
@@ -49,14 +48,19 @@ test("desktop tags and version promotion are independent of CRAN and monotonic",
   assertNewer("0.3.0", "0.2.0");
   assert.throws(() => assertNewer("0.2.0", "0.3.0"), /newer/);
 });
-test("release metadata merges Mac architectures and points to immutable desktop releases", async (t) => {
+test("three-platform releases need no Intel artifacts and use immutable update URLs", async (t) => {
   const { source, output } = await fixture(t);
   const plan = await prepareRelease(source, output, "0.3.0");
-  assert.equal(Object.keys(plan.aliases).length, 4);
+  assert.deepEqual(Object.keys(plan.aliases).sort(), [
+    "eyeris-linux-x64.AppImage",
+    "eyeris-macos-arm64.dmg",
+    "eyeris-windows-x64.exe",
+  ]);
   const mac = yaml.load(
     await readFile(path.join(output, "latest-mac.yml"), "utf8"),
   );
-  assert.equal(mac.files.length, 4);
+  assert.equal(mac.files.length, 2);
+  assert.ok(mac.files.every((item) => item.url.includes("mac-arm64")));
   for (const item of mac.files)
     assert.match(
       item.url,
@@ -67,13 +71,17 @@ test("release metadata merges Mac architectures and points to immutable desktop 
     /latest-linux.yml/,
   );
 });
-test("a missing platform prevents release preparation", async (t) => {
-  const { source, output } = await fixture(t);
-  await rm(path.join(source, "mac-x64"), { recursive: true });
-  await assert.rejects(
-    prepareRelease(source, output, "0.3.0"),
-    /Missing platform/,
-  );
+test("each active platform is still required for release preparation", async (t) => {
+  for (const target of ["win-x64", "mac-arm64", "linux-x86_64"]) {
+    await t.test(target, async (t) => {
+      const { source, output } = await fixture(t);
+      await rm(path.join(source, target), { recursive: true });
+      await assert.rejects(
+        prepareRelease(source, output, "0.3.0"),
+        /Missing platform/,
+      );
+    });
+  }
 });
 test("artifact corruption prevents release preparation", async (t) => {
   const { source, output } = await fixture(t);

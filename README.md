@@ -28,9 +28,9 @@ suggest](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.
 The desktop app bundles R and its dependencies for local processing and epoch review.
 Desktop downloads will be available after the first signed desktop release:
 [Windows x64](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe),
-[macOS Apple Silicon](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg),
-[macOS Intel](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-x64.dmg), and
+[macOS Apple Silicon](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg), and
 [Linux x64](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage).
+Intel Mac builds are temporarily paused.
 See the [desktop installation and update guide](https://github.com/shawntz/eyeris/blob/dev/desktop/README.md).
 Desktop versions and updates are independent of the R package and CRAN releases.
 

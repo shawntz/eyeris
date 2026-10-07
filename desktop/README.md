@@ -268,10 +268,11 @@ current desktop installer (no GitHub account required):
 | ------------------- | -------------------------------------------------------------------------------------------------------- |
 | Windows x64         | [Installer](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe)   |
 | macOS Apple Silicon | [DMG](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg)         |
-| macOS Intel         | [DMG](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-x64.dmg)           |
 | Linux x64           | [AppImage](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage) |
 
 [Desktop downloads and release history](https://github.com/shawntz/eyeris/releases/tag/desktop-latest).
+Intel Mac builds and downloads are temporarily paused because of recurring CI
+failures. The macOS installer currently supports Apple Silicon only.
 Move the macOS app into Applications before running it. On Linux, make the
 AppImage executable and run the AppImage itself; an extracted app has no
 AppImage installation for the updater to replace.
@@ -301,7 +302,7 @@ update metadata are GitHub Release assets in this same repository.
 
 The `Publish desktop release` workflow runs on **`desktop-v*` tag pushes**. It
 requires an exact match with the desktop package version and stable semantic
-versions (no prerelease channel yet). It builds Windows x64, macOS arm64/x64,
+versions (no prerelease channel yet). It builds Windows x64, macOS arm64,
 and Ubuntu 22.04 x64 natively, runs backend/UI/packaged smoke tests, and publishes
 only if every platform passes. PR builds never publish or receive signing
 credentials. Release artifacts include installers, macOS ZIP updates, blockmaps,
