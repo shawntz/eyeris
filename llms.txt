@@ -1,8 +1,5 @@
 # `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R
 
-[![eyeris
-website](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png)](https://eyeris.shawnschwartz.com/ "eyeris website")
-
 ## ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge) Desktop app
 
 Preprocess pupil data and review epochs in `eyeris` Desktop, with `R`

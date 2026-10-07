@@ -87,27 +87,27 @@ if (requireNamespace("arrow", quietly = TRUE)) {
   # read specific data type only
   timeseries_data <- read_eyeris_parquet(base_dir, db_name = db_name, data_type = "timeseries")
 }
-#> ℹ [2026-10-07 11:03:02] [INFO] Found 2 parquet files
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Found 2 parquet files
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-01-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-02-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Combining 2 files...
-#> ✔ [2026-10-07 11:03:02] [OKAY] Successfully read 10 total rows from parquet
+#> ℹ [2026-10-07 11:14:12] [INFO] Combining 2 files...
+#> ✔ [2026-10-07 11:14:12] [OKAY] Successfully read 10 total rows from parquet
 #> files
-#> ℹ [2026-10-07 11:03:02] [INFO] Found 2 parquet files
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Found 2 parquet files
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-01-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-02-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Combined timeseries: 10 total rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Found 2 parquet files
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Combined timeseries: 10 total rows
+#> ℹ [2026-10-07 11:14:12] [INFO] Found 2 parquet files
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-01-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Read
+#> ℹ [2026-10-07 11:14:12] [INFO] Read
 #> example-db_timeseries_part-02-of-02.parquet: 5 rows
-#> ℹ [2026-10-07 11:03:02] [INFO] Combining 2 files...
-#> ✔ [2026-10-07 11:03:02] [OKAY] Successfully read 10 total rows from parquet
+#> ℹ [2026-10-07 11:14:12] [INFO] Combining 2 files...
+#> ✔ [2026-10-07 11:14:12] [OKAY] Successfully read 10 total rows from parquet
 #> files
 # }
 ```
