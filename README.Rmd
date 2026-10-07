@@ -608,7 +608,7 @@ Please use the issues tab (https://github.com/shawntz/eyeris/issues) to make not
 
 ## 📚 Citing `eyeris`
 <div class="alert alert-light" style="padding-bottom: 0;">
-  If you use the `eyeris` package in your research, please consider citing our preprint!
+  If you use the `eyeris` package in your research, please cite our published paper in *Psychophysiology*.
   
   Run the following in R to get the citation:
 </div>
