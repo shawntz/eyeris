@@ -28,14 +28,14 @@ knitr::opts_chunk$set(
 [![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
 <!-- badges: end -->
 
-## Desktop app
+## Desktop app <img src="https://img.shields.io/badge/NEW-FFD700?style=for-the-badge" alt="New" height="22" />
 
-Preprocess pupil data and review epochs in eyeris Desktop, with R included.
+Preprocess pupil data and review epochs in `eyeris` Desktop, with `R` included.
 
 <p>
-  <a href="https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe"><img src="https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge" alt="Download for Windows x64" height="36" /></a>
   <a href="https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg"><img src="https://img.shields.io/badge/Download-macOS_Apple_Silicon-6E56CF?style=for-the-badge&amp;logo=apple&amp;logoColor=white" alt="Download for macOS Apple Silicon" height="36" /></a>
   <a href="https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage"><img src="https://img.shields.io/badge/Download-Linux_x64-333333?style=for-the-badge&amp;logo=linux&amp;logoColor=white" alt="Download for Linux x64" height="36" /></a>
+  <a href="https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe"><img src="https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge&amp;logo=data:image%2Fsvg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDBoMTF2MTFIMHptMTMgMGgxMXYxMUgxM3pNMCAxM2gxMXYxMUgwem0xMyAwaDExdjExSDEzeiIvPjwvc3ZnPg%3D%3D" alt="Download for Windows x64" height="36" /></a>
 </p>
 
 <img src="man/figures/desktop-splash.png" alt="eyeris Desktop welcome screen with New project and Open project buttons" width="960" />
