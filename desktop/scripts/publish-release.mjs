@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFile, mkdtemp, copyFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { findRelease } from "./github-releases.mjs";
 import {
   repository,
   channelTag,
@@ -32,14 +33,7 @@ const api = (route, data) =>
       { input: data ? JSON.stringify(data) : undefined, encoding: "utf8" },
     ),
   );
-function release(tag) {
-  try {
-    return api(`releases/tags/${tag}`);
-  } catch (error) {
-    if (String(error.stderr).includes("HTTP 404")) return null;
-    throw error;
-  }
-}
+const release = (tag, options) => findRelease(api, tag, options);
 const channel = release(channelTag);
 let current = null;
 if (channel && !channel.draft) {
@@ -103,7 +97,7 @@ if (existing && !existing.draft) {
     repository,
     "--clobber",
   );
-  const staged = release(plan.tag);
+  const staged = release(plan.tag, { required: true });
   api(`releases/${staged.id}`, { draft: false, make_latest: "false" });
 }
 if (!channel)
@@ -156,7 +150,7 @@ const notes =
     )
     .join("\n") +
   `\n\n[Versioned release and checksums](https://github.com/${repository}/releases/tag/${plan.tag}). Desktop releases are independent of the R/CRAN package.\n`;
-api(`releases/${release(channelTag).id}`, {
+api(`releases/${release(channelTag, { required: true }).id}`, {
   body: notes,
   draft: false,
   make_latest: "false",
