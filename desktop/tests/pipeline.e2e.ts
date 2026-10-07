@@ -4,6 +4,7 @@ import { mkdtemp, rm, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
+import { captureScreenshot } from "./screenshot.mjs";
 test("splash → subject → ASC → glassbox and BIDS → epoch review", async () => {
   test.setTimeout(180000);
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-ui-pipeline-"));
@@ -19,9 +20,9 @@ test("splash → subject → ASC → glassbox and BIDS → epoch review", async 
     page.on("pageerror", (e) => errors.push(e.message));
     await expect(
       page.getByRole("button", { name: "New project", exact: true }),
-    ).toBeVisible();
+    ).toBeEnabled({ timeout: 30_000 });
     await expect(page.getByAltText("eyeris logo sticker")).toBeVisible();
-    await page.screenshot({ path: "test-results/splash.png" });
+    await captureScreenshot(page, { path: "test-results/splash.png" });
     const project = path.join(dir, "Pupil study.eyeris");
     await app.evaluate(({ dialog }, filePath) => {
       dialog.showSaveDialog = async () => ({ canceled: false, filePath });
@@ -30,7 +31,7 @@ test("splash → subject → ASC → glassbox and BIDS → epoch review", async 
       .getByRole("button", { name: "New project", exact: true })
       .click();
     await page.getByLabel("New subject ID").fill("001");
-    await page.screenshot({ path: "test-results/subject-focus.png" });
+    await captureScreenshot(page, { path: "test-results/subject-focus.png" });
     await page.getByRole("button", { name: "Create subject" }).click();
     await page
       .getByRole("textbox", { name: "Task", exact: true })
@@ -72,21 +73,30 @@ test("splash → subject → ASC → glassbox and BIDS → epoch review", async 
     await page
       .locator(".processing-content")
       .evaluate((el) => (el.scrollTop = 0));
-    await page.screenshot({ path: "test-results/processing.png" });
+    await captureScreenshot(page, { path: "test-results/processing.png" });
     await page
       .getByRole("button", { name: "Review epochs", exact: true })
       .click();
     await expect(
       page.getByRole("button", { name: /Keep epoch/ }),
     ).toBeEnabled();
-    await page.screenshot({ path: "test-results/review-real.png" });
+    await captureScreenshot(page, { path: "test-results/review-real.png" });
     await page.getByRole("button", { name: /Keep epoch/ }).click();
     await expect(page.locator(".epoch-status.keep")).toHaveCount(1);
     expect(errors).toEqual([]);
   } catch (e) {
-    const page = await app.firstWindow();
-    console.log(await page.locator("body").innerText());
-    await page.screenshot({ path: "test-results/pipeline-failure.png" });
+    try {
+      const page = await app.firstWindow();
+      console.log(await page.locator("body").innerText());
+      await captureScreenshot(page, {
+        path: "test-results/pipeline-failure.png",
+      });
+    } catch (diagnosticError) {
+      console.warn(
+        "Could not capture pipeline failure diagnostics:",
+        diagnosticError,
+      );
+    }
     throw e;
   } finally {
     await app.close();

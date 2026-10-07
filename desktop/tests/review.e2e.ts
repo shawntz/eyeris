@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { captureScreenshot } from "./screenshot.mjs";
 
 test("desktop review, stage changes, keyboard decisions, resume, and export", async () => {
   test.setTimeout(120000);
@@ -110,7 +111,7 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
     expect(keepBox!.y + keepBox!.height).toBeLessThan(
       await page.evaluate(() => window.innerHeight),
     );
-    await page.screenshot({
+    await captureScreenshot(page, {
       path: path.join(root, "test-results/review-desktop.png"),
       fullPage: true,
     });
@@ -177,7 +178,7 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
     );
   } catch (error) {
     const page = await app.firstWindow();
-    await page.screenshot({
+    await captureScreenshot(page, {
       path: path.join(root, "test-results/review-failure.png"),
       fullPage: true,
     });

@@ -2,6 +2,7 @@ import { test, expect, _electron as electron } from "@playwright/test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { captureScreenshot } from "./screenshot.mjs";
 
 test("desktop update UI downloads on request and offers an explicit restart", async () => {
   const directory = await mkdtemp(path.join(tmpdir(), "eyeris-update-ui-"));
@@ -38,7 +39,7 @@ test("desktop update UI downloads on request and offers an explicit restart", as
     await expect(updates).toContainText("eyeris 0.3.0 is available");
     await updates.getByRole("button", { name: "Download update" }).click();
     await expect(updates).toContainText("ready to install");
-    await page.screenshot({
+    await captureScreenshot(page, {
       path: "test-results/update-ready.png",
       fullPage: true,
     });
