@@ -1,6 +1,6 @@
 # `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
 
-## Desktop app ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge)
+## ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge) Desktop app
 
 Preprocess pupil data and review epochs in `eyeris` Desktop, with `R`
 included.
@@ -12,17 +12,32 @@ x64](https://img.shields.io/badge/Download-Linux_x64-333333?style=for-the-badge&
 [![Download for Windows
 x64](https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge&logo=data:image%2Fsvg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDBoMTF2MTFIMHptMTMgMGgxMXYxMUgxM3pNMCAxM2gxMXYxMUgwem0xMyAwaDExdjExSDEzeiIvPjwvc3ZnPg%3D%3D)](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe)
 
-![eyeris Desktop welcome screen with New project and Open project
-buttons](reference/figures/desktop-splash.png)
+![eyeris Desktop walkthrough: organize recordings, configure
+preprocessing and epoch extraction, compare pupil signals, keep or
+reject epochs, and export review
+results](reference/figures/desktop-workflow.gif)
+
+*A tour of the desktop workflow using the bundled EyeLink demo
+recording. [View the welcome
+screen](https://eyeris.shawnschwartz.com/man/figures/desktop-splash.png).*
+
+- **Organize your study:** keep subjects, recordings, processing
+  outputs, and review decisions together in a local project.
+- **Configure preprocessing:** import EyeLink ASC files and adjust blink
+  removal, interpolation, filtering, and other pipeline steps.
+- **Extract epochs:** choose event patterns, time windows, and optional
+  baseline correction; generate BIDS outputs and diagnostic reports.
+- **Inspect pupil signals:** compare preprocessing stages, zoom into
+  traces, and search or filter the epoch queue. You can also import
+  processed `eyeris` RDS files.
+- **Keep or reject epochs:** record exclusion reasons and notes, use
+  keyboard shortcuts, undo decisions, and resume a saved review.
+- **Export reviewed data:** save kept, excluded, and unreviewed epochs
+  separately as CSV and RDS, alongside the decision log and review
+  history.
 
 [Installation
 help](https://github.com/shawntz/eyeris/blob/dev/desktop/README.md)
-
-## 💻 eyeris DevOps Dashboard
-
-Dive deeper into `eyeris’` development and operational insights with our
-new [eyeris DevOps
-Dashboard](https://shawnschwartz.notion.site/eyeris-devops)!
 
 ## 💡 Motivation
 
