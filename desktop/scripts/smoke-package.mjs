@@ -123,6 +123,24 @@ try {
     ),
   );
   assert.equal(runtime.eyeris, "3.3.0");
+  const run = path.join(projectDir, "processing", done.pipeline.jobs[0].id);
+  const recovered = await readFile(
+    path.join(run, "recovery.json"),
+    "utf8",
+  ).catch((error) => {
+    if (error.code !== "ENOENT") throw error;
+    return null;
+  });
+  if (recovered) {
+    // A successful retry must not erase the evidence needed to diagnose the
+    // underlying native-library fault after this temporary project is removed.
+    await cp(run, path.resolve("test-results/package-smoke-recovered-crash"), {
+      recursive: true,
+    });
+    console.warn(
+      "::warning::The packaged app recovered from a native Windows R crash. The failed attempt and recovery record are retained in test-results.",
+    );
+  }
   const ping = execFileSync(
     bundledR,
     ["--vanilla", "-e", 'cat(find.package("eyeris"))'],
