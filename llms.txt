@@ -1,6 +1,6 @@
 # `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing
 
-## Desktop app ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge)
+## ![New](https://img.shields.io/badge/NEW-FFD700?style=for-the-badge) Desktop app
 
 Preprocess pupil data and review epochs in `eyeris` Desktop, with `R`
 included.
