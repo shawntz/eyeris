@@ -15,6 +15,7 @@ on:
         - 'man/**'
         - '_pkgdown.yml'
         - 'DESCRIPTION'
+        - 'inst/CITATION'
   release:
     types: [published]
   workflow_dispatch:
