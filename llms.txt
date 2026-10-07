@@ -8,11 +8,10 @@ desktop release: [Windows
 x64](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-windows-x64.exe),
 [macOS Apple
 Silicon](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-arm64.dmg),
-[macOS
-Intel](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-macos-x64.dmg),
 and [Linux
 x64](https://github.com/shawntz/eyeris/releases/download/desktop-latest/eyeris-linux-x64.AppImage).
-See the [desktop installation and update
+Intel Mac builds are temporarily paused. See the [desktop installation
+and update
 guide](https://github.com/shawntz/eyeris/blob/dev/desktop/README.md).
 Desktop versions and updates are independent of the R package and CRAN
 releases.
