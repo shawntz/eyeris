@@ -109,217 +109,217 @@ demo_data |>
     db_enabled = TRUE,
     db_path = "memory-task"
   )
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::load_asc()
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::resample()
-#> ℹ [2026-10-07 10:46:33] [INFO] Processing block: block_1
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::deblink() for block_1
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::detransient() for block_1
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::interpolate() for block_1
-#> ! [2026-10-07 10:46:33] [WARN] Interpolation now leaves gaps longer than 250 ms
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::load_asc()
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::resample()
+#> ℹ [2026-10-07 10:47:28] [INFO] Processing block: block_1
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::deblink() for block_1
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::detransient() for block_1
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::interpolate() for block_1
+#> ! [2026-10-07 10:47:28] [WARN] Interpolation now leaves gaps longer than 250 ms
 #> as `NA` instead of interpolating across them (following Kret & Sjak-Shie,
 #> 2018). This is a change in default behavior from eyeris <= 3.2.0 and may affect
 #> your results. To restore the previous behavior, set `interpolate =
 #> list(max_gap_ms = Inf)` in `glassbox()` (or `max_gap_ms = Inf` in
 #> `interpolate()`).
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::lpfilt() for block_1
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::lpfilt() for block_1
 
-#> ! [2026-10-07 10:46:33] [WARN] Skipping eyeris::downsample() for block_1
-#> ! [2026-10-07 10:46:33] [WARN] Skipping eyeris::bin() for block_1
-#> ! [2026-10-07 10:46:33] [WARN] Skipping eyeris::detrend() for block_1
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::zscore() for block_1
-#> ℹ [2026-10-07 10:46:33] [INFO] Block processing summary:
-#> ℹ [2026-10-07 10:46:33] [INFO] block_1: OK (steps: 6, latest:
+#> ! [2026-10-07 10:47:28] [WARN] Skipping eyeris::downsample() for block_1
+#> ! [2026-10-07 10:47:28] [WARN] Skipping eyeris::bin() for block_1
+#> ! [2026-10-07 10:47:28] [WARN] Skipping eyeris::detrend() for block_1
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::zscore() for block_1
+#> ℹ [2026-10-07 10:47:28] [INFO] Block processing summary:
+#> ℹ [2026-10-07 10:47:28] [INFO] block_1: OK (steps: 6, latest:
 #> pupil_raw_deblink_detransient_interpolate_lpfilt_z)
-#> ✔ [2026-10-07 10:46:33] [OKAY] Running eyeris::summarize_confounds()
-#> ℹ [2026-10-07 10:46:33] [INFO] Epoching pupil data...
-#> ℹ [2026-10-07 10:46:33] [INFO] Block 1: found 10 matching events for
+#> ✔ [2026-10-07 10:47:28] [OKAY] Running eyeris::summarize_confounds()
+#> ℹ [2026-10-07 10:47:28] [INFO] Epoching pupil data...
+#> ℹ [2026-10-07 10:47:28] [INFO] Block 1: found 10 matching events for
 #> PROBEstartstoptrial
-#> ✔ [2026-10-07 10:46:33] [OKAY] Done!
-#> ✔ [2026-10-07 10:46:34] [OKAY] Block 1: pupil data from 10 unique event
+#> ✔ [2026-10-07 10:47:28] [OKAY] Done!
+#> ✔ [2026-10-07 10:47:28] [OKAY] Block 1: pupil data from 10 unique event
 #> messages extracted
-#> ✔ [2026-10-07 10:46:34] [OKAY] Pupil epoching completed in 0.07 seconds
-#> ℹ [2026-10-07 10:46:34] [INFO] Recalculating epoched confounds for new
+#> ✔ [2026-10-07 10:47:28] [OKAY] Pupil epoching completed in 0.13 seconds
+#> ℹ [2026-10-07 10:47:28] [INFO] Recalculating epoched confounds for new
 #> epochs...
-#> ℹ [2026-10-07 10:46:34] [INFO] Starting BIDSify for sub-001 (monocular)
-#> ℹ [2026-10-07 10:46:34] [INFO] Only 1 block detected...
-#> ℹ [2026-10-07 10:46:34] [INFO] Using run_num = 1 for single block data
-#> ℹ [2026-10-07 10:46:34] [INFO] Filtered epochs: epoch_prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Epoch names to save: epoch_prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Parallel processing detected for job unknown
-#> (PID: 6480), using temporary database
+#> ℹ [2026-10-07 10:47:28] [INFO] Starting BIDSify for sub-001 (monocular)
+#> ℹ [2026-10-07 10:47:28] [INFO] Only 1 block detected...
+#> ℹ [2026-10-07 10:47:28] [INFO] Using run_num = 1 for single block data
+#> ℹ [2026-10-07 10:47:28] [INFO] Filtered epochs: epoch_prePostProbe
+#> ℹ [2026-10-07 10:47:28] [INFO] Epoch names to save: epoch_prePostProbe
+#> ℹ [2026-10-07 10:47:28] [INFO] Parallel processing detected for job unknown
+#> (PID: 6643), using temporary database
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpIkVeOt/duckdb
+#> ℹ /tmp/RtmpTYQj8A/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:46:34] [OKAY] Created temporary database:
-#> /tmp/RtmpIkVeOt/derivatives/memory-task_temp_6480_20261007_104634_138.eyerisdb
-#> ℹ [2026-10-07 10:46:34] [INFO] epoch_prePostProbe:
-#> ℹ [2026-10-07 10:46:34] [INFO] block_1: data.frame with 20000 rows
-#> ℹ [2026-10-07 10:46:34] [INFO] info: list with 1 elements
-#> ! [2026-10-07 10:46:34] [WARN] '/tmp/RtmpIkVeOt' already exists. Skipping
+#> ✔ [2026-10-07 10:47:28] [OKAY] Created temporary database:
+#> /tmp/RtmpTYQj8A/derivatives/memory-task_temp_6643_20261007_104728_861.eyerisdb
+#> ℹ [2026-10-07 10:47:28] [INFO] epoch_prePostProbe:
+#> ℹ [2026-10-07 10:47:28] [INFO] block_1: data.frame with 20000 rows
+#> ℹ [2026-10-07 10:47:28] [INFO] info: list with 1 elements
+#> ! [2026-10-07 10:47:28] [WARN] '/tmp/RtmpTYQj8A' already exists. Skipping
 #> creation...
-#> ! [2026-10-07 10:46:34] [WARN] '/tmp/RtmpIkVeOt/derivatives' already exists.
+#> ! [2026-10-07 10:47:28] [WARN] '/tmp/RtmpTYQj8A/derivatives' already exists.
 #> Skipping creation...
-#> ! [2026-10-07 10:46:34] [WARN] '/tmp/RtmpIkVeOt/derivatives/sub-001' already
+#> ! [2026-10-07 10:47:28] [WARN] '/tmp/RtmpTYQj8A/derivatives/sub-001' already
 #> exists. Skipping creation...
-#> ! [2026-10-07 10:46:34] [WARN] '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01'
+#> ! [2026-10-07 10:47:28] [WARN] '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01'
 #> already exists. Skipping creation...
-#> ! [2026-10-07 10:46:34] [WARN] '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/eye'
+#> ! [2026-10-07 10:47:28] [WARN] '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/eye'
 #> already exists. Skipping creation...
-#> ℹ [2026-10-07 10:46:34] [INFO] Writing blinks data to
-#> /tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-blinks.csv...
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote blinks data (1 rows) to CSV and database
-#> ℹ [2026-10-07 10:46:34] [INFO] Writing events data to
-#> /tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-events.csv...
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote events data (67 rows) to CSV and database
-#> ℹ [2026-10-07 10:46:34] [INFO] Processing single-run epoch: epoch_prePostProbe
+#> ℹ [2026-10-07 10:47:28] [INFO] Writing blinks data to
+#> /tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-blinks.csv...
+#> ✔ [2026-10-07 10:47:28] [OKAY] Wrote blinks data (1 rows) to CSV and database
+#> ℹ [2026-10-07 10:47:28] [INFO] Writing events data to
+#> /tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/eye/sub-001_ses-01_task-memory_run-01_desc-events.csv...
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote events data (67 rows) to CSV and database
+#> ℹ [2026-10-07 10:47:29] [INFO] Processing single-run epoch: epoch_prePostProbe
 #> (label: prePostProbe)
-#> ℹ [2026-10-07 10:46:34] [INFO] Block block_1 for epoch epoch_prePostProbe has
+#> ℹ [2026-10-07 10:47:29] [INFO] Block block_1 for epoch epoch_prePostProbe has
 #> 20000 rows
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Found epoch events in structure:
+#> ℹ [2026-10-07 10:47:29] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote epochs data (20000 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote epochs data (20000 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote timeseries data (20767 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote timeseries data (20767 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote run_confounds data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote run_confounds data (6 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Created epoch summary for epoch_prePostProbe
+#> ℹ [2026-10-07 10:47:29] [INFO] Created epoch summary for epoch_prePostProbe
 #> with 9 fields
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote epoch_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Found epoch events in structure:
+#> ℹ [2026-10-07 10:47:29] [INFO] Found epoch events in structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_summary data (1 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ℹ [2026-10-07 10:46:34] [INFO] Found epoch events in epoch structure:
+#> ℹ [2026-10-07 10:47:29] [INFO] Found epoch events in epoch structure:
 #> PROBE_{startstop}_{trial}
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ! [2026-10-07 10:46:34] [WARN] No baseline structure found for epoch label:
+#> ! [2026-10-07 10:47:29] [WARN] No baseline structure found for epoch label:
 #> prePostProbe
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:29] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ✔ [2026-10-07 10:46:34] [OKAY] Wrote confounds_events data (6 rows) to CSV and
+#> ✔ [2026-10-07 10:47:30] [OKAY] Wrote confounds_events data (6 rows) to CSV and
 #> database
-#> ! [2026-10-07 10:46:34] [WARN]
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures' already exists.
+#> ! [2026-10-07 10:47:30] [WARN]
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures' already exists.
 #> Skipping creation...
-#> ℹ [2026-10-07 10:46:34] [INFO]
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
+#> ℹ [2026-10-07 10:47:30] [INFO]
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
 #> does not exist. Creating...
-#> ✔ [2026-10-07 10:46:34] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
-#> ℹ [2026-10-07 10:46:34] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ✔ [2026-10-07 10:47:30] [OKAY] BIDS directory successfully created at:
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
+#> ℹ [2026-10-07 10:47:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:35] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:30] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:35] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:31] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:32] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:33] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:34] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:35] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:35] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:36] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:39] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:37] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ℹ [2026-10-07 10:46:40] [INFO] Plotting block 1 with sampling rate 1000 Hz from
+#> ℹ [2026-10-07 10:47:38] [INFO] Plotting block 1 with sampling rate 1000 Hz from
 #> possible blocks: 1
-#> ! [2026-10-07 10:46:40] [WARN]
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
+#> ! [2026-10-07 10:47:38] [WARN]
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
 #> already exists. Skipping creation...
-#> ✔ [2026-10-07 10:46:40] [OKAY] Created gaze heatmap for run-01
-#> ! [2026-10-07 10:46:40] [WARN]
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
+#> ✔ [2026-10-07 10:47:39] [OKAY] Created gaze heatmap for run-01
+#> ! [2026-10-07 10:47:39] [WARN]
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01'
 #> already exists. Skipping creation...
-#> ℹ [2026-10-07 10:46:40] [INFO]
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe'
+#> ℹ [2026-10-07 10:47:39] [INFO]
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe'
 #> does not exist. Creating...
-#> ✔ [2026-10-07 10:46:40] [OKAY] BIDS directory successfully created at:
-#> '/tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe'
-#> ✔ [2026-10-07 10:46:51] [OKAY] Created epoch images zip:
-#> /tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe/task-memory_run-01.zip
+#> ✔ [2026-10-07 10:47:39] [OKAY] BIDS directory successfully created at:
+#> '/tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe'
+#> ✔ [2026-10-07 10:47:55] [OKAY] Created epoch images zip:
+#> /tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe/task-memory_run-01.zip
 #> (70 images)
-#> ℹ [2026-10-07 10:46:51] [INFO] Using absolute zip file path:
-#> /tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe/task-memory_run-01.zip
-#> ✔ [2026-10-07 10:46:51] [OKAY] Embedded zip file as data URL (11696718 bytes)
+#> ℹ [2026-10-07 10:47:55] [INFO] Using absolute zip file path:
+#> /tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe/task-memory_run-01.zip
+#> ✔ [2026-10-07 10:47:55] [OKAY] Embedded zip file as data URL (11696718 bytes)
 #> 
 #> 
 #> processing file: sub-001_task-memory_epoch-prePostProbe_run-01.Rmd
@@ -329,13 +329,13 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_task-memory_epoch-prePostProbe_run-01.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-memory_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-memory_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpIkVeOt/rmarkdown-str195037144dde.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-memory_epoch-prePostProbe_run-01.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-memory_epoch-prePostProbe_run-01.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpTYQj8A/rmarkdown-str19f3cebb8ec.html 
 #> 
 #> Output created: sub-001_task-memory_epoch-prePostProbe_run-01.html
-#> ! [2026-10-07 10:46:58] [WARN] Skipping block info for epoch 1 - no valid data
-#> ℹ [2026-10-07 10:46:58] [INFO] Removing duplicate plain epoch directory:
-#> /tmp/RtmpIkVeOt/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe
-#> ! [2026-10-07 10:46:59] [WARN] No detrend data found for run-01
+#> ! [2026-10-07 10:48:04] [WARN] Skipping block info for epoch 1 - no valid data
+#> ℹ [2026-10-07 10:48:04] [INFO] Removing duplicate plain epoch directory:
+#> /tmp/RtmpTYQj8A/derivatives/sub-001/ses-01/source/figures/task-memory_run-01/epoch_prePostProbe
+#> ! [2026-10-07 10:48:06] [WARN] No detrend data found for run-01
 #> 
 #> 
 #> processing file: sub-001_task-memory.Rmd
@@ -345,43 +345,43 @@ demo_data |>
 #> 4/5 [session-info]
 #> 5/5               
 #> output file: sub-001_task-memory.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-memory.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-memory.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpIkVeOt/rmarkdown-str19503d07ae2d.html 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS sub-001_task-memory.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output sub-001_task-memory.html --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/latex-div.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/table-classes.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 6 --variable toc_float=1 --variable toc_selectors=h1,h2,h3,h4,h5,h6 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /home/runner/work/_temp/Library/rmarkdown/rmd/h/default.html --syntax-highlighting none --variable highlightjs=1 --variable theme=bootstrap --css /home/runner/work/_temp/Library/eyeris/rmarkdown/css/report.css --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpTYQj8A/rmarkdown-str19f326f0c44c.html 
 #> 
 #> Output created: sub-001_task-memory.html
-#> ℹ [2026-10-07 10:47:00] [INFO] Merging temporary database from job unknown
-#> (PID: 6480) into main database
-#> ℹ [2026-10-07 10:47:00] [INFO] Merging 8 tables from temporary database to main
+#> ℹ [2026-10-07 10:48:07] [INFO] Merging temporary database from job unknown
+#> (PID: 6643) into main database
+#> ℹ [2026-10-07 10:48:07] [INFO] Merging 8 tables from temporary database to main
 #> database
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpIkVeOt/duckdb
+#> ℹ /tmp/RtmpTYQj8A/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table 'blinks_001_01_memory_run01'
+#> ℹ [2026-10-07 10:48:07] [INFO] Created new table 'blinks_001_01_memory_run01'
 #> with 1 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:07] [INFO] Created new table
 #> 'confounds_events_001_01_memory_run01_prepostprobe' with 60 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:07] [INFO] Created new table
 #> 'confounds_summary_001_01_memory_run01_prepostprobe' with 10 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:07] [INFO] Created new table
 #> 'epoch_summary_001_01_memory_run01' with 1 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:08] [INFO] Created new table
 #> 'epochs_001_01_memory_run01_prepostprobe' with 20000 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table 'events_001_01_memory_run01'
+#> ℹ [2026-10-07 10:48:08] [INFO] Created new table 'events_001_01_memory_run01'
 #> with 67 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:08] [INFO] Created new table
 #> 'run_confounds_001_01_memory_run01' with 6 rows
-#> ℹ [2026-10-07 10:47:00] [INFO] Created new table
+#> ℹ [2026-10-07 10:48:08] [INFO] Created new table
 #> 'timeseries_001_01_memory_run01' with 20767 rows
-#> ✔ [2026-10-07 10:47:00] [OKAY] Successfully merged 8/8 tables
-#> ✔ [2026-10-07 10:47:01] [OKAY] Successfully merged job unknown (PID: 6480) data
+#> ✔ [2026-10-07 10:48:08] [OKAY] Successfully merged 8/8 tables
+#> ✔ [2026-10-07 10:48:08] [OKAY] Successfully merged job unknown (PID: 6643) data
 #> into main database
-#> ℹ [2026-10-07 10:47:01] [INFO] Disconnected from temporary database
-#> ✔ [2026-10-07 10:47:01] [OKAY] Cleaned up temporary database file
-#> ℹ [2026-10-07 10:47:01] [INFO] Finished BIDSify for sub-001 (Duration: 26.95
+#> ℹ [2026-10-07 10:48:08] [INFO] Disconnected from temporary database
+#> ✔ [2026-10-07 10:48:08] [OKAY] Cleaned up temporary database file
+#> ℹ [2026-10-07 10:48:08] [INFO] Finished BIDSify for sub-001 (Duration: 39.59
 #> seconds)
 
 # split into 3 parquet files per data type - creates memory-task/ folder
@@ -390,91 +390,91 @@ split_info <- eyeris_db_to_parquet(
   db_path = "memory-task",
   n_files_per_type = 3
 )
-#> ℹ [2026-10-07 10:47:01] [INFO] Created output directory:
-#> /tmp/RtmpIkVeOt/derivatives/parquet/memory-task
-#> ℹ [2026-10-07 10:47:01] [INFO] Connecting to eyeris database:
+#> ℹ [2026-10-07 10:48:08] [INFO] Created output directory:
+#> /tmp/RtmpTYQj8A/derivatives/parquet/memory-task
+#> ℹ [2026-10-07 10:48:08] [INFO] Connecting to eyeris database:
 #> memory-task.eyerisdb
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpIkVeOt/duckdb
+#> ℹ /tmp/RtmpTYQj8A/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:47:01] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpIkVeOt/derivatives/memory-task.eyerisdb
-#> ℹ [2026-10-07 10:47:01] [INFO] Found 8 valid tables in database (excluded 0
+#> ✔ [2026-10-07 10:48:08] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpTYQj8A/derivatives/memory-task.eyerisdb
+#> ℹ [2026-10-07 10:48:08] [INFO] Found 8 valid tables in database (excluded 0
 #> temp tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] Grouping tables by data type...
-#> ℹ [2026-10-07 10:47:01] [INFO] Found 7 data types: blinks, confounds, epoch,
+#> ℹ [2026-10-07 10:48:08] [INFO] Grouping tables by data type...
+#> ℹ [2026-10-07 10:48:08] [INFO] Found 7 data types: blinks, confounds, epoch,
 #> epochs, events, run, timeseries
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: blinks (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] blinks: 1 rows (~0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting blinks into 3 files (~1 rows per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: blinks (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] blinks: 1 rows (~0 MB)
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting blinks into 3 files (~1 rows per file)
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_blinks_part-01-of-03.parquet: 1 rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: confounds (2 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] confounds[prepostprobe]: 70 rows (~size est
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: confounds (2 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] confounds[prepostprobe]: 70 rows (~size est
 #> deferred)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting confounds[prepostprobe] into 3 files
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting confounds[prepostprobe] into 3 files
 #> (~24 rows per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_confounds_prepostprobe_part-01-of-03.parquet: 24 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_confounds_prepostprobe_part-02-of-03.parquet: 24 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_confounds_prepostprobe_part-03-of-03.parquet: 22 rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: epoch (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] epoch[nolabel]: 1 rows (~size est deferred)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting epoch[nolabel] into 3 files (~1 rows
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: epoch (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] epoch[nolabel]: 1 rows (~size est deferred)
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting epoch[nolabel] into 3 files (~1 rows
 #> per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created memory-task_epoch_part-01-of-03.parquet:
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created memory-task_epoch_part-01-of-03.parquet:
 #> 1 rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: epochs (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] epochs[prepostprobe]: 20000 rows (~size est
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: epochs (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] epochs[prepostprobe]: 20000 rows (~size est
 #> deferred)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting epochs[prepostprobe] into 3 files
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting epochs[prepostprobe] into 3 files
 #> (~6667 rows per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-01-of-03.parquet: 6667 rows (0.3 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-02-of-03.parquet: 6667 rows (0.3 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-03-of-03.parquet: 6666 rows (0.3 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: events (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] events: 67 rows (~0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting events into 3 files (~23 rows per
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: events (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] events: 67 rows (~0 MB)
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting events into 3 files (~23 rows per
 #> file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_events_part-01-of-03.parquet: 23 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_events_part-02-of-03.parquet: 23 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_events_part-03-of-03.parquet: 21 rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: run (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] run: 6 rows (~0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting run into 3 files (~2 rows per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created memory-task_run_part-01-of-03.parquet: 2
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: run (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] run: 6 rows (~0 MB)
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting run into 3 files (~2 rows per file)
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created memory-task_run_part-01-of-03.parquet: 2
 #> rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created memory-task_run_part-02-of-03.parquet: 2
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created memory-task_run_part-02-of-03.parquet: 2
 #> rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created memory-task_run_part-03-of-03.parquet: 2
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created memory-task_run_part-03-of-03.parquet: 2
 #> rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: timeseries (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] timeseries: 20767 rows (~3.3 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting timeseries into 3 files (~6923 rows
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: timeseries (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] timeseries: 20767 rows (~3.3 MB)
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting timeseries into 3 files (~6923 rows
 #> per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_timeseries_part-01-of-03.parquet: 6923 rows (0.3 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_timeseries_part-02-of-03.parquet: 6923 rows (0.3 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_timeseries_part-03-of-03.parquet: 6921 rows (0.3 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Successfully created 17 parquet files across 7
+#> ✔ [2026-10-07 10:48:08] [OKAY] Successfully created 17 parquet files across 7
 #> data types
-#> ℹ [2026-10-07 10:47:01] [INFO] Total output: 1.9 MB
-#> ℹ [2026-10-07 10:47:01] [INFO] Disconnected from eyeris database
+#> ℹ [2026-10-07 10:48:08] [INFO] Total output: 1.9 MB
+#> ℹ [2026-10-07 10:48:08] [INFO] Disconnected from eyeris database
 
 # split with size constraint and specific data types using the same database
 split_info <- eyeris_db_to_parquet(
@@ -484,68 +484,68 @@ split_info <- eyeris_db_to_parquet(
   max_file_size = 50,  # max 50MB per file
   data_types = c("timeseries", "epochs", "events")
 )
-#> ℹ [2026-10-07 10:47:01] [INFO] Connecting to eyeris database:
+#> ℹ [2026-10-07 10:48:08] [INFO] Connecting to eyeris database:
 #> memory-task.eyerisdb
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpIkVeOt/duckdb
+#> ℹ /tmp/RtmpTYQj8A/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> ✔ [2026-10-07 10:47:01] [OKAY] Connected to eyeris database:
-#> /tmp/RtmpIkVeOt/derivatives/memory-task.eyerisdb
-#> ℹ [2026-10-07 10:47:01] [INFO] Found 8 valid tables in database (excluded 0
+#> ✔ [2026-10-07 10:48:08] [OKAY] Connected to eyeris database:
+#> /tmp/RtmpTYQj8A/derivatives/memory-task.eyerisdb
+#> ℹ [2026-10-07 10:48:08] [INFO] Found 8 valid tables in database (excluded 0
 #> temp tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] Grouping tables by data type...
-#> ℹ [2026-10-07 10:47:01] [INFO] Found 3 data types: epochs, events, timeseries
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: epochs (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] epochs[prepostprobe]: 20000 rows (~size est
+#> ℹ [2026-10-07 10:48:08] [INFO] Grouping tables by data type...
+#> ℹ [2026-10-07 10:48:08] [INFO] Found 3 data types: epochs, events, timeseries
+#> ℹ [2026-10-07 10:48:08] [INFO] Processing data type: epochs (1 tables)
+#> ℹ [2026-10-07 10:48:08] [INFO] epochs[prepostprobe]: 20000 rows (~size est
 #> deferred)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting epochs[prepostprobe] into 5 files
+#> ℹ [2026-10-07 10:48:08] [INFO] Splitting epochs[prepostprobe] into 5 files
 #> (~4000 rows per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-01-of-05.parquet: 4000 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-02-of-05.parquet: 4000 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:08] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-03-of-05.parquet: 4000 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-04-of-05.parquet: 4000 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_epochs_prepostprobe_part-05-of-05.parquet: 4000 rows (0.2 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: events (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] events: 67 rows (~0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting events into 5 files (~14 rows per
+#> ℹ [2026-10-07 10:48:09] [INFO] Processing data type: events (1 tables)
+#> ℹ [2026-10-07 10:48:09] [INFO] events: 67 rows (~0 MB)
+#> ℹ [2026-10-07 10:48:09] [INFO] Splitting events into 5 files (~14 rows per
 #> file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_events_part-01-of-05.parquet: 14 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_events_part-02-of-05.parquet: 14 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_events_part-03-of-05.parquet: 14 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_events_part-04-of-05.parquet: 14 rows (0 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_events_part-05-of-05.parquet: 11 rows (0 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Processing data type: timeseries (1 tables)
-#> ℹ [2026-10-07 10:47:01] [INFO] timeseries: 20767 rows (~3.3 MB)
-#> ℹ [2026-10-07 10:47:01] [INFO] Splitting timeseries into 5 files (~4154 rows
+#> ℹ [2026-10-07 10:48:09] [INFO] Processing data type: timeseries (1 tables)
+#> ℹ [2026-10-07 10:48:09] [INFO] timeseries: 20767 rows (~3.3 MB)
+#> ℹ [2026-10-07 10:48:09] [INFO] Splitting timeseries into 5 files (~4154 rows
 #> per file)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_timeseries_part-01-of-05.parquet: 4154 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_timeseries_part-02-of-05.parquet: 4154 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_timeseries_part-03-of-05.parquet: 4154 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_timeseries_part-04-of-05.parquet: 4154 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Created
+#> ✔ [2026-10-07 10:48:09] [OKAY] Created
 #> memory-task_timeseries_part-05-of-05.parquet: 4151 rows (0.2 MB)
-#> ✔ [2026-10-07 10:47:01] [OKAY] Successfully created 15 parquet files across 3
+#> ✔ [2026-10-07 10:48:09] [OKAY] Successfully created 15 parquet files across 3
 #> data types
-#> ℹ [2026-10-07 10:47:01] [INFO] Total output: 1.9 MB
-#> ℹ [2026-10-07 10:47:01] [INFO] Disconnected from eyeris database
+#> ℹ [2026-10-07 10:48:09] [INFO] Total output: 1.9 MB
+#> ℹ [2026-10-07 10:48:09] [INFO] Disconnected from eyeris database
 # }
 ```
