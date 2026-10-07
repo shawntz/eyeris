@@ -56,8 +56,8 @@ jobs:
             target: windows-x64
           - os: macos-latest
             target: macos-arm64
-          - os: macos-15-intel
-            target: macos-x64
+          # Intel Mac builds are temporarily paused; keep release-assets.mjs
+          # and the documented downloads in sync when re-enabling them.
           - os: ubuntu-22.04
             target: linux-x64
     runs-on: ${{ matrix.os }}

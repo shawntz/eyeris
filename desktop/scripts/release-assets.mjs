@@ -86,13 +86,11 @@ export async function prepareRelease(source, output, version) {
   const aliases = {
     "eyeris-windows-x64.exe": `eyeris-${version}-win-x64.exe`,
     "eyeris-macos-arm64.dmg": `eyeris-${version}-mac-arm64.dmg`,
-    "eyeris-macos-x64.dmg": `eyeris-${version}-mac-x64.dmg`,
     "eyeris-linux-x64.AppImage": `eyeris-${version}-linux-x86_64.AppImage`,
   };
   const required = [
     ...Object.values(aliases),
     `eyeris-${version}-mac-arm64.zip`,
-    `eyeris-${version}-mac-x64.zip`,
   ];
   for (const name of required)
     if (!assets.has(name))
