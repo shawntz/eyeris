@@ -1,6 +1,7 @@
 import { resolveRscript } from "./rscript.mjs";
 import { spawn } from "node:child_process";
 import { createWriteStream } from "node:fs";
+import { finished } from "node:stream/promises";
 import {
   mkdir,
   copyFile,
@@ -10,10 +11,12 @@ import {
   rename,
   rm,
   access,
+  appendFile,
 } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
+import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -222,94 +225,132 @@ export class Pipeline {
         JSON.stringify(settings),
         new Date().toISOString(),
       );
-    const stream = createWriteStream(path.join(dir, "process.log"));
-    const child = spawn(
-      resolveRscript(),
-      [
-        "--vanilla",
-        path.join(rDirectory(), "process.R"),
-        path.join(dir, "config.json"),
-      ],
-      {
-        env: rEnvironment(),
-        stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true,
-      },
-    );
-    const active = { id, child, log: "", phase: "starting", cancelled: false };
-    this.active = active;
-    let stdout = "";
-    const log = (data) => {
-      stream.write(data);
-      active.log = (
-        active.log + data.toString().replace(/\x1b\[[0-9;]*m/g, "")
-      ).slice(-18000);
+    const active = {
+      id,
+      child: null,
+      log: "",
+      phase: "starting",
+      cancelled: false,
     };
-    child.stderr.on("data", log);
-    child.stdout.on("data", (data) => {
-      log(data);
-      stdout += data.toString();
-      const lines = stdout.split("\n");
-      stdout = lines.pop();
-      for (const line of lines)
-        if (line.startsWith("@@EYERIS@@")) {
+    this.active = active;
+    const run = (attempt) =>
+      new Promise((resolve) => {
+        const stream = createWriteStream(path.join(dir, "process.log"));
+        const closed = finished(stream);
+        // Keep a disk-write error observable when the child closes, without an
+        // unhandled rejection while processing is still running.
+        closed.catch(() => {});
+        const child = spawn(
+          resolveRscript(),
+          [
+            "--vanilla",
+            path.join(rDirectory(), "process.R"),
+            path.join(dir, "config.json"),
+          ],
+          {
+            env: rEnvironment(),
+            stdio: ["ignore", "pipe", "pipe"],
+            windowsHide: true,
+          },
+        );
+        active.child = child;
+        active.log = "";
+        let stdout = "";
+        const log = (data) => {
+          stream.write(data);
+          active.log = (
+            active.log + data.toString().replace(/\x1b\[[0-9;]*m/g, "")
+          ).slice(-18000);
+        };
+        if (attempt > 1)
+          log(
+            "Restarting processing after a Windows R access violation; the first attempt is preserved in failed-attempt-1.\n",
+          );
+        child.stderr.on("data", log);
+        child.stdout.on("data", (data) => {
+          log(data);
+          stdout += data.toString();
+          const lines = stdout.split("\n");
+          stdout = lines.pop();
+          for (const line of lines)
+            if (line.startsWith("@@EYERIS@@")) {
+              try {
+                active.phase = JSON.parse(line.slice(10)).phase;
+              } catch {}
+            }
+        });
+        let spawnError;
+        child.on("error", (error) => {
+          spawnError = error;
+          log(error.message);
+        });
+        child.on("close", async (code, signal) => {
+          stream.end();
           try {
-            active.phase = JSON.parse(line.slice(10)).phase;
-          } catch {}
-        }
-    });
-    let spawnError;
-    child.on("error", (error) => {
-      spawnError = error;
-      log(error.message);
-    });
-    active.done = new Promise((resolve) =>
-      child.on("close", async (code, signal) => {
-        if (this.disposed) {
-          await new Promise((closed) => stream.close(closed));
-          resolve();
-          return;
-        }
-        let status = active.cancelled
-          ? "cancelled"
-          : code === 0
-            ? "completed"
-            : "failed";
-        let error =
-          spawnError?.message ||
-          (status === "failed"
-            ? `R processing terminated ${signal ? `by signal ${signal}` : `with exit code ${code}`}.\n${active.log.slice(-3000)}`
-            : null);
-        try {
-          if (status === "completed") {
-            active.phase = "publishing";
-            this.project.db
-              .prepare(
-                "UPDATE jobs SET status='publishing', phase='publishing' WHERE id=?",
-              )
-              .run(id);
-            const outputs = await this.publishBids(dir, record, id);
-            if (settings.epoch) await this.project.importFile(output);
-            this.project.db
-              .prepare("UPDATE jobs SET outputs=? WHERE id=?")
-              .run(JSON.stringify(outputs), id);
+            await closed;
+          } catch (error) {
+            spawnError = error;
           }
-        } catch (e) {
-          status = "failed";
-          error = e.message;
-          log(`\n${error}\n`);
+          resolve({ code, signal, spawnError });
+        });
+      });
+    active.done = (async () => {
+      let result;
+      try {
+        result = await runWithWindowsRecovery({
+          run,
+          directory: dir,
+          output,
+          isCancelled: () => active.cancelled || this.disposed,
+          onRetry: () => {
+            active.phase = "restarting";
+          },
+        });
+      } catch (error) {
+        result = { code: null, spawnError: error };
+      }
+      const { code, signal, spawnError } = result;
+      if (this.disposed) {
+        return;
+      }
+      let status = active.cancelled
+        ? "cancelled"
+        : code === 0 && !spawnError
+          ? "completed"
+          : "failed";
+      let error =
+        spawnError?.message ||
+        (status === "failed"
+          ? `R processing terminated ${signal ? `by signal ${signal}` : `with exit code ${code}`}.\n${active.log.slice(-3000)}`
+          : null);
+      try {
+        if (status === "completed") {
+          active.phase = "publishing";
+          this.project.db
+            .prepare(
+              "UPDATE jobs SET status='publishing', phase='publishing' WHERE id=?",
+            )
+            .run(id);
+          const outputs = await this.publishBids(dir, record, id);
+          if (settings.epoch) await this.project.importFile(output);
+          this.project.db
+            .prepare("UPDATE jobs SET outputs=? WHERE id=?")
+            .run(JSON.stringify(outputs), id);
         }
-        this.project.db
-          .prepare(
-            "UPDATE jobs SET status=?,phase=?,error=?,finished_at=? WHERE id=?",
-          )
-          .run(status, status, error, new Date().toISOString(), id);
-        // Windows cannot remove a run folder until its log handle is closed.
-        await new Promise((closed) => stream.close(closed));
-        this.active = null;
-        resolve();
-      }),
-    );
+      } catch (e) {
+        status = "failed";
+        error = e.message;
+        await appendFile(path.join(dir, "process.log"), `\n${error}\n`).catch(
+          () => {},
+        );
+      }
+      this.project.db
+        .prepare(
+          "UPDATE jobs SET status=?,phase=?,error=?,finished_at=? WHERE id=?",
+        )
+        .run(status, status, error, new Date().toISOString(), id);
+      this.active = null;
+    })();
     return this.snapshot();
   }
   async publishBids(dir, recording, jobId) {

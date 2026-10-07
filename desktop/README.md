@@ -245,6 +245,14 @@ Workflow artifacts retain installers and test screenshots. The workflow can also
 be launched manually through GitHub Actions; adding it does not constitute a
 successful Windows/Linux test run.
 
+If Windows R terminates with access violation `0xC0000005`, processing retries
+once with a clean BIDS output directory. The interrupted files and log remain
+under `processing/<job>/failed-attempt-1`, with a `recovery.json` record beside
+them. Only a successful attempt is published. Cancellation, ordinary R errors,
+and a second native crash do not retry. CI retains recovered-crash evidence and
+Windows native crash reports; this recovery does not resolve the underlying
+intermittent native-library fault.
+
 Runtime-discovery tests exercise Windows registry and filesystem layouts, custom
 paths, missing R, and macOS/Linux fallbacks on every platform. Backend tests check real ASC processing through the current package, BIDS CSV,
 HTML and DuckDB outputs, replay metadata, cancellation, failure recovery, reruns,
