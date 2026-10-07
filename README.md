@@ -1,29 +1,29 @@
 
 <!-- README.md is generated from README.Rmd-->
 
-# `eyeris`: Flexible, Extensible, & Reproducible Pupillometry Preprocessing <a href="https://eyeris.shawnschwartz.com/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
+# `eyeris`: A Flexible, Extensible, and Reproducible Pupillometry Preprocessing Framework in R <a href="https://eyeris.shawnschwartz.com/" title="eyeris website"><img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/man/figures/logo.png" align="right" width="100" alt="eyeris website" /></a>
 
 <!-- badges: start -->
 
-[![dev branch
-status](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/badges/dev-branch-version.svg)](https://github.com/shawntz/eyeris/tree/dev)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/eyeris)](https://CRAN.R-project.org/package=eyeris)
-[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/eyeris?color=brightgreen)](https://cran.r-project.org/package=badger)
-[![bioRxiv
-Preprint](https://img.shields.io/badge/bioRxiv_Preprint-DOI-brightgreen)](https://doi.org/10.1101/2025.06.01.657312)
-[![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![build](https://github.com/shawntz/eyeris/actions/workflows/build.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/build.yml)
-[![air format
-check](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml)
-[![air format
-suggest](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml)
-[![spellcheck](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml)
-[![pkgdown](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml)
+<p>
+  <a href="https://github.com/shawntz/eyeris/tree/dev"><img src="https://img.shields.io/github/r-package/v/shawntz/eyeris/dev?style=for-the-badge&amp;label=dev&amp;logo=r&amp;logoColor=white" alt="Development version" height="36" /></a>
+  <a href="https://CRAN.R-project.org/package=eyeris"><img src="https://img.shields.io/cran/v/eyeris?style=for-the-badge&amp;logo=r&amp;logoColor=white" alt="CRAN version" height="36" /></a>
+  <a href="https://cran.r-project.org/package=eyeris"><img src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fcranlogs.r-pkg.org%2Fbadges%2Fgrand-total%2Feyeris&amp;query=substring-after%28%2F%2A%2F%40aria-label%2C+%22CRAN+downloads+%22%29&amp;label=downloads&amp;color=brightgreen&amp;style=for-the-badge&amp;logo=r&amp;logoColor=white" alt="Total CRAN downloads" height="36" /></a>
+  <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/psyp.70375"><img src="https://img.shields.io/badge/Psychophysiology-DOI-brightgreen?style=for-the-badge&amp;logo=doi&amp;logoColor=white" alt="Published manuscript" height="36" /></a>
+  <a href="https://lifecycle.r-lib.org/articles/stages.html#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen?style=for-the-badge" alt="Lifecycle: stable" height="36" /></a>
+</p>
+
+<p>
+  <a href="https://github.com/shawntz/eyeris/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/shawntz/eyeris/build.yml?style=for-the-badge&amp;branch=dev&amp;label=build&amp;logo=githubactions&amp;logoColor=white" alt="build workflow status" height="36" /></a>
+  <a href="https://github.com/shawntz/eyeris/actions/workflows/air-format-check.yml"><img src="https://img.shields.io/github/actions/workflow/status/shawntz/eyeris/air-format-check.yml?style=for-the-badge&amp;branch=dev&amp;label=air+check&amp;logo=githubactions&amp;logoColor=white" alt="air check workflow status" height="36" /></a>
+  <a href="https://github.com/shawntz/eyeris/actions/workflows/air-format-suggest.yml"><img src="https://img.shields.io/github/actions/workflow/status/shawntz/eyeris/air-format-suggest.yml?style=for-the-badge&amp;branch=dev&amp;label=air+suggest&amp;logo=githubactions&amp;logoColor=white" alt="air suggest workflow status" height="36" /></a>
+  <a href="https://github.com/shawntz/eyeris/actions/workflows/spellcheck.yml"><img src="https://img.shields.io/github/actions/workflow/status/shawntz/eyeris/spellcheck.yml?style=for-the-badge&amp;branch=dev&amp;label=spellcheck&amp;logo=githubactions&amp;logoColor=white" alt="spellcheck workflow status" height="36" /></a>
+  <a href="https://github.com/shawntz/eyeris/actions/workflows/pkgdown.yml"><img src="https://img.shields.io/github/actions/workflow/status/shawntz/eyeris/pkgdown.yml?style=for-the-badge&amp;branch=dev&amp;label=pkgdown&amp;logo=githubactions&amp;logoColor=white" alt="pkgdown workflow status" height="36" /></a>
+</p>
+
 <!-- badges: end -->
 
-## Desktop app <img src="https://img.shields.io/badge/NEW-FFD700?style=for-the-badge" alt="New" height="22" />
+## <img src="https://img.shields.io/badge/NEW-FFD700?style=for-the-badge" alt="New" height="22" /> Desktop app
 
 Preprocess pupil data and review epochs in `eyeris` Desktop, with `R` included.
 
@@ -711,8 +711,8 @@ welcomed and appreciated, thanks!
 
 <div class="alert alert-light" style="padding-bottom: 0;">
 
-If you use the `eyeris` package in your research, please consider citing
-our preprint!
+If you use the `eyeris` package in your research, please cite our published
+paper in *Psychophysiology*.
 
 Run the following in R to get the citation:
 
@@ -722,19 +722,21 @@ Run the following in R to get the citation:
 citation("eyeris")
 #> To cite package 'eyeris' in publications use:
 #> 
-#>   Schwartz ST, Yang H, Xue AM, He M (2025). "eyeris: A flexible,
+#>   Schwartz ST, Yang H, Xue AM, He M (2026). "eyeris: A flexible,
 #>   extensible, and reproducible pupillometry preprocessing framework in
-#>   R." _bioRxiv_, 1-37. doi:10.1101/2025.06.01.657312
-#>   <https://doi.org/10.1101/2025.06.01.657312>.
+#>   R." _Psychophysiology_, *63*(8), e70375. doi:10.1111/psyp.70375
+#>   <https://doi.org/10.1111/psyp.70375>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Article{,
 #>     title = {eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R},
 #>     author = {Shawn T Schwartz and Haopei Yang and Alice M Xue and Mingjian He},
-#>     journal = {bioRxiv},
-#>     year = {2025},
-#>     pages = {1--37},
-#>     doi = {10.1101/2025.06.01.657312},
+#>     journal = {Psychophysiology},
+#>     year = {2026},
+#>     volume = {63},
+#>     number = {8},
+#>     pages = {e70375},
+#>     doi = {10.1111/psyp.70375},
 #>   }
 ```
