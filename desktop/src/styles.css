@@ -542,6 +542,14 @@ main {
   padding: 0;
   justify-content: flex-start;
 }
+.recordings-table .select-column {
+  width: 1px;
+  padding-right: 0;
+}
+.recordings-table .select-column input {
+  display: block;
+  margin: 0;
+}
 .add-recording {
   display: flex;
   align-items: flex-end;
@@ -553,6 +561,9 @@ main {
 }
 .add-recording input {
   padding: 7px 9px;
+}
+.add-recording .run-field {
+  max-width: 80px;
 }
 .add-recording .button {
   padding: 8px 12px;
@@ -684,6 +695,15 @@ main {
 }
 .run-actions .button {
   width: 100%;
+}
+.run-note {
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #666;
+}
+.run-note:empty {
+  display: none;
 }
 .run-progress {
   margin-top: 17px;

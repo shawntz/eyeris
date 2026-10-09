@@ -14,12 +14,16 @@ export interface EpochMeta {
   samples: number;
   duration: number;
   missing: number;
+  blocks?: number | null;
   limits: number[] | null;
 }
 export interface Epoch {
   id: string;
   source_id: string;
   participant: string;
+  session: string;
+  task: string;
+  run: string;
   event: string;
   trial: string;
   label: string;
@@ -40,6 +44,7 @@ export interface Summary {
   counts: { total: number; keep: number; exclude: number; unreviewed: number };
   sources: { id: string; name: string; participant: string }[];
   participants: string[];
+  runs: string[];
   stages: string[];
   canUndo: boolean;
 }
@@ -55,6 +60,7 @@ export interface Trace {
 export interface Filters {
   status: Status | "all";
   participant: string;
+  run: string;
   search: string;
   stage: string;
   sort: string;
@@ -84,12 +90,14 @@ export interface Recording {
   subject: string;
   session: string;
   task: string;
+  run: string;
   name: string;
   file: string;
 }
 export interface Job {
   id: string;
   recording_id: string;
+  recordings: string[];
   status: string;
   phase: string;
   config: PipelineSettings;
@@ -102,7 +110,13 @@ export interface PipelineState {
   subjects: { id: string }[];
   recordings: Recording[];
   jobs: Job[];
-  active: { id: string; phase: string; log: string } | null;
+  active: {
+    id: string;
+    phase: string;
+    log: string;
+    recordings: string[];
+    current: string;
+  } | null;
 }
 export interface UpdateState {
   status:
@@ -142,8 +156,12 @@ interface API {
     subject: string;
     session: string;
     task: string;
+    run: string;
   }): Promise<PipelineState | null>;
-  startPipeline(id: string, settings: PipelineSettings): Promise<PipelineState>;
+  startPipeline(
+    ids: string[],
+    settings: PipelineSettings,
+  ): Promise<PipelineState>;
   cancelPipeline(): Promise<PipelineState>;
   pipelineLog(id: string): Promise<string>;
   showProjectFiles(kind: string, id?: string): Promise<void>;

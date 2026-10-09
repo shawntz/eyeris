@@ -13,6 +13,8 @@ review_index <- function(x) {
   out <- list()
   for (eye in names(objects)) {
     object <- objects[[eye]]
+    # bidsify() names runs by block unless the recording has exactly one block.
+    blocks <- if (is.list(object$timeseries)) length(object$timeseries) else NA_integer_
     for (label in grep("^epoch_", names(object), value = TRUE)) {
       for (block in names(object[[label]])) {
         df <- object[[label]][[block]]
@@ -39,7 +41,7 @@ review_index <- function(x) {
             event = value(c("matched_event", "start_matched_event", "start_msg", "text_unique"), paste("Epoch", i)),
             stages = unname(as.list(stages)), finalStage = final,
             samples = b - a + 1L, duration = df$timebin[b] - df$timebin[a],
-            missing = mean(!is.finite(ys)),
+            missing = mean(!is.finite(ys)), blocks = blocks,
             limits = object[[label]]$info[[block]]$epoch_limits
           )
         }

@@ -161,6 +161,57 @@ test("R-backed review: identity, traces, decisions, persistence, and lossless ex
   );
 });
 
+test("BIDS session, task and run labels let runs be reviewed together", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-runs-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  project = await Project.open(path.join(dir, "runs.eyeris"), worker, true);
+  for (const name of [
+    "sub-002_ses-02_task-memory_run-3.rds",
+    "sub-002_task-memory.rds",
+    "sub-003_task-memory.rds",
+  ])
+    await project.importFile(path.join(dir, name));
+  assert.deepEqual(project.summary().runs, ["01", "03", "07"]);
+  // Without a run entity, numbered blocks name the runs, as in bidsify().
+  assert.deepEqual(
+    project
+      .list({ participant: "003" })
+      .rows.map((e) => `${e.block}:${e.run}`)
+      .filter((v, i, all) => all.indexOf(v) === i),
+    ["block_1:01", "block_7:07"],
+  );
+  const named = project.list({ run: "03" });
+  assert.equal(named.total, 3);
+  assert.ok(
+    named.rows.every(
+      (e) =>
+        e.participant === "002" &&
+        e.session === "02" &&
+        e.task === "memory" &&
+        e.block === "block_1",
+    ),
+  );
+  // A participant's runs are listed together, in session and run order.
+  assert.deepEqual(
+    project.list({ participant: "002" }).rows.map((e) => e.session + e.run),
+    ["01", "01", "01", "0203", "0203", "0203"],
+  );
+  const exportParent = path.join(dir, "exports");
+  await mkdir(exportParent);
+  const result = await project.export(exportParent);
+  const header = (
+    await readFile(path.join(result.directory, "decisions.csv"), "utf8")
+  ).split("\n")[0];
+  assert.match(header, /"participant","session","task","run","label"/);
+});
+
 test("large queues page correctly and changed sources cannot inherit decisions", async (t) => {
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-scale-test-"));
   const worker = new RWorker();
@@ -241,6 +292,8 @@ test("real eyeris pipeline output can be reviewed", async (t) => {
   assert.ok(result.count > 0);
   const { rows } = project.list();
   assert.ok(rows[0].meta.stages.length > 2);
+  assert.equal(rows[0].meta.blocks, 1);
+  assert.equal(rows[0].run, "01");
   for (const stage of rows[0].meta.stages) {
     const trace = await project.trace(rows[0].id, stage);
     assert.equal(trace.time.length, trace.signal.length);

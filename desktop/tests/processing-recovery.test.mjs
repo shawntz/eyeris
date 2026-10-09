@@ -19,7 +19,11 @@ async function fixture(t) {
   await writeFile(path.join(directory, "config.json"), "original settings");
   return {
     directory,
-    output: path.join(directory, "result.rds"),
+    // A job writes one RDS per recording. Every one must be archived.
+    outputs: [
+      path.join(directory, "result_run-01.rds"),
+      path.join(directory, "result_run-02.rds"),
+    ],
     platform: "win32",
     isCancelled: () => false,
   };
@@ -36,7 +40,8 @@ for (const code of [3221225477, -1073741819]) {
             path.join(options.directory, "bids", "partial.db"),
             "incomplete database",
           );
-          await writeFile(options.output, "partial RDS");
+          for (const output of options.outputs)
+            await writeFile(output, "partial RDS");
           await writeFile(
             path.join(options.directory, "runtime.json"),
             "incomplete metadata",
@@ -52,7 +57,20 @@ for (const code of [3221225477, -1073741819]) {
           await readdir(path.join(options.directory, "bids")),
           [],
         );
-        await assert.rejects(readFile(options.output), { code: "ENOENT" });
+        for (const output of options.outputs) {
+          await assert.rejects(readFile(output), { code: "ENOENT" });
+          assert.equal(
+            await readFile(
+              path.join(
+                options.directory,
+                "failed-attempt-1",
+                path.basename(output),
+              ),
+              "utf8",
+            ),
+            "partial RDS",
+          );
+        }
         await assert.rejects(
           readFile(path.join(options.directory, "runtime.json")),
           { code: "ENOENT" },

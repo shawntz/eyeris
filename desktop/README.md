@@ -55,9 +55,12 @@ folder, open an existing folder, or choose the recent project. Opening a project
 does not automatically run any processing.
 
 1. Create a subject using an alphanumeric ID, without the `sub-` prefix.
-2. Enter the session and task, then select an EyeLink `.asc` file. The application
-   copies it into the project. Each session/task accepts one ASC per subject;
-   multiple blocks in that ASC become BIDS runs using the package's existing rules.
+2. Enter the session and task, then select one EyeLink `.asc` file per run. The
+   application copies each file into the project. Selecting several files adds
+   consecutive runs in filename order, starting after the subject's existing runs
+   of that session and task, or at **First run** if it is set. The run number is
+   passed to `eyeris::bidsify(run_num = ...)`. As in the package, an ASC that
+   contains several recording blocks has its blocks numbered as runs instead.
 3. Configure the glassbox steps. The interface provides the package's default
    pipeline, individual step switches, common parameters, eye selection, and a
    random seed. Advanced JSON exposes additional supported step parameters.
@@ -65,20 +68,27 @@ does not automatically run any processing.
 4. Optionally enable epoch extraction with an event pattern and time limits. Add
    baseline correction if needed. Epoching is optional for preprocessing but is
    required to add the result to the trial-review queue.
-5. Select HTML reports and/or a DuckDB database, then run the pipeline. It calls
-   `eyeris::glassbox()`, optional `eyeris::epoch()`, and `eyeris::bidsify()` directly.
-   Processing runs separately from the review worker, so existing epochs remain
-   available for review. Progress reports the active package operation and the
-   processing log updates while R runs. Cancel stops the R job before publication.
-6. Open the completed run's files or go directly to epoch review. The saved RDS
-   and any extracted epochs are indexed automatically.
+5. Select HTML reports and/or a DuckDB database, check the recordings to process,
+   then run the pipeline. It calls `eyeris::glassbox()`, optional `eyeris::epoch()`,
+   and `eyeris::bidsify()` directly for each recording, in run order, in one R
+   session that writes one BIDS folder. Each session-level report and database
+   therefore covers all of the runs processed together. Process all runs of a
+   session in one job; the app notes when only some are selected. An ASC with
+   several blocks cannot share a job with other runs of its task, because its
+   blocks would overwrite those runs. Processing runs separately from the review
+   worker, so existing epochs remain available for review. Progress reports the
+   recording and package operation, and the log updates while R runs. Cancel
+   stops the whole job before publication.
+6. Open the completed job's files or go directly to epoch review, which opens on
+   the subject with all of its runs. Each run's saved RDS and extracted epochs
+   are indexed automatically.
 
 Project layout:
 
 ```text
 Study.eyeris/
   review.sqlite                     # review index, decisions, subjects, jobs
-  sourcedata/sub-001/ses-01/task-memory/recording.asc
+  sourcedata/sub-001/ses-01/task-memory/run-01/recording.asc
   sources/<sha256>.rds               # immutable review sources
   bids/                             # non-conflicting published package outputs
   processing/<run-id>/
@@ -86,7 +96,7 @@ Study.eyeris/
     runtime.json                    # R/package version and session information
     reproduce.R                     # script for rerunning outside the GUI
     process.log
-    sub-001_ses-01_task-memory.rds
+    sub-001_ses-01_task-memory_run-01.rds  # one per processed recording
     bids/                           # complete BIDS output from this run
 ```
 
@@ -99,6 +109,11 @@ retain logs and partial staging output in their run folder, but do not publish
 that partial output to the common BIDS tree. Reopening a project marks unfinished
 jobs as interrupted. Processing history includes reusable settings.
 
+Projects created by earlier versions are upgraded when opened. Their existing
+recordings keep block-based run numbering, and later files for the same session
+and task are added as the next runs. Upgraded projects cannot be opened by
+earlier versions of the app.
+
 The replay script is intended to run from its processing folder. Its configuration
 records absolute paths from the run; update those paths if the project is moved.
 
@@ -106,17 +121,21 @@ records absolute paths from the run; update those paths if the project is moved.
 
 Use **Import processed RDS** to inspect saved, epoched eyeris objects from outside
 the GUI. Select multiple files for a study. The `sub-` filename entity supplies
-the participant label; otherwise the filename is used.
+the participant label; otherwise the filename is used. `ses-`, `task-` and
+`run-` entities label each epoch's session, task and run. Following
+`eyeris::bidsify()`, the filename's run applies when the recording has one block;
+otherwise, and when the name has no run, block numbers name the runs.
 
 - Select the final available stage or an individual stored preprocessing column.
-- Search events, trials, participants or epoch labels; filter by review status or
-  participant. The queue pages 80 epochs at a time.
+- Search events, trials, participants or epoch labels; filter by review status,
+  participant or run. A participant's runs are listed together in session, task
+  and run order. The queue pages 80 epochs at a time.
 - Hover to inspect, drag horizontally to zoom, and reset or double-click to unzoom.
 - `K` keeps, `X` excludes, arrow keys navigate, and `U` or Cmd/Ctrl-Z undoes the last
   decision outside text inputs. Decisions, reviewer, reason, and inspected stage
   are saved to SQLite immediately. Auto-advance can be disabled.
 - Export creates retained, excluded, and unreviewed tables, plus `decisions.csv`
-  and `manifest.json` with audit history. Only explicit keep decisions enter the
+  (including session, task and run) and `manifest.json` with audit history. Only explicit keep decisions enter the
   retained data. Existing exports are never overwritten.
 
 Decisions apply to an individual epoch across all stored stages, not other epoch
