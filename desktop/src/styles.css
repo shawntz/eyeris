@@ -594,6 +594,62 @@ main {
 .job-status.partial {
   color: #6b5a16;
 }
+.session-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e5e5e5;
+  font-size: 12px;
+}
+.session-list > li {
+  border-bottom: 1px solid #e5e5e5;
+}
+.session-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 10px 2px;
+}
+.session-row strong {
+  font-weight: 500;
+  min-width: 90px;
+}
+.session-row span {
+  flex: 1;
+  color: #666;
+}
+.session-row .button {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+.project-sessions .message {
+  margin-bottom: 12px;
+}
+.session-confirm {
+  border: 1px solid #e3c9c9;
+  background: #fffafa;
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+.session-confirm strong {
+  font-weight: 600;
+}
+.session-confirm ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+.session-confirm p {
+  color: #555;
+}
+.session-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
 .import-choice {
   border: 1px solid #ddd;
   background: #fff;

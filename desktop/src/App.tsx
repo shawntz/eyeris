@@ -22,6 +22,7 @@ const emptyPipeline: PipelineState = {
   importing: null,
   detecting: null,
   lastImport: null,
+  lastRemoval: null,
 };
 export function App() {
   const [project, setProject] = useState<Summary | null>(null);

@@ -58,19 +58,12 @@ export function threadLimits(jobs, cores = availableParallelism()) {
   const threads = String(Math.max(1, Math.floor(cores / jobs)));
   return { R_DATATABLE_NUM_THREADS: threads, OMP_NUM_THREADS: threads };
 }
-// Copy the tables of a job's DuckDB database into the project's database. Tables
-// are named by subject, session, task and run, so existing tables are the same
-// published run and are kept.
-function mergeDatabase(source, target) {
+// Run one of the app's R scripts on a DuckDB database.
+function databaseScript(script, args, failure) {
   return new Promise((resolve, reject) => {
     const child = spawn(
       resolveRscript(),
-      [
-        "--vanilla",
-        path.join(rDirectory(), "merge-database.R"),
-        source,
-        target,
-      ],
+      ["--vanilla", path.join(rDirectory(), script), ...args],
       {
         env: rEnvironment(),
         stdio: ["ignore", "pipe", "pipe"],
@@ -82,12 +75,19 @@ function mergeDatabase(source, target) {
       stream.on("data", (data) => (log = (log + data).slice(-3000)));
     child.on("error", reject);
     child.on("close", (code) =>
-      code === 0
-        ? resolve()
-        : reject(new Error(`The DuckDB database could not be merged. ${log}`)),
+      code === 0 ? resolve() : reject(new Error(`${failure} ${log}`)),
     );
   });
 }
+// Copy the tables of a job's DuckDB database into the project's database. Tables
+// are named by subject, session, task and run, so existing tables are the same
+// published run and are kept.
+const mergeDatabase = (source, target) =>
+  databaseScript(
+    "merge-database.R",
+    [source, target],
+    "The DuckDB database could not be merged.",
+  );
 async function files(dir, base = dir) {
   const result = [];
   for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -321,6 +321,7 @@ export class Pipeline {
         current: this.importing.current,
       },
       lastImport: this.lastImport,
+      lastRemoval: this.lastRemoval ?? null,
       detecting: this.detecting && {
         total: this.detecting.total,
         done: this.detecting.done,
@@ -420,10 +421,11 @@ export class Pipeline {
           // An unreadable file has no messages to suggest.
         }
         if (this.disposed) break;
+        // The recording may have been removed while its file was read.
         db.prepare(
-          "INSERT INTO recording_messages VALUES (?,?,?) ON CONFLICT(recording_id) DO UPDATE SET file=excluded.file, summary=excluded.summary",
-        ).run(r.id, r.file, JSON.stringify(summary));
-        this.messageQueue.shift();
+          "INSERT INTO recording_messages SELECT ?,?,? WHERE EXISTS (SELECT 1 FROM recordings WHERE id=?) ON CONFLICT(recording_id) DO UPDATE SET file=excluded.file, summary=excluded.summary",
+        ).run(r.id, r.file, JSON.stringify(summary), r.id);
+        this.messageQueue = this.messageQueue.filter((x) => x !== r);
       }
       this.readingMessages = null;
     })();
@@ -761,6 +763,151 @@ export class Pipeline {
   }
   cancelImport() {
     this.importing?.cancel.abort();
+  }
+  // Everything in the project that belongs to a session: its recordings, the
+  // processing jobs of only those recordings, and the subjects that have no
+  // other recordings.
+  removalPlan(session) {
+    const db = this.project.db;
+    const recordings = db
+      .prepare(`SELECT * FROM recordings WHERE session=? ORDER BY ${runOrder}`)
+      .all(session);
+    if (!recordings.length)
+      throw new Error(`This project has no ses-${session} recordings.`);
+    const ids = new Set(recordings.map((r) => r.id));
+    const subjects = [...new Set(recordings.map((r) => r.subject))];
+    const linked = Map.groupBy(
+      db.prepare("SELECT job_id, recording_id FROM job_recordings").all(),
+      (l) => l.job_id,
+    );
+    const jobs = db
+      .prepare("SELECT id, recording_id FROM jobs")
+      .all()
+      .filter((j) =>
+        (
+          linked.get(j.id)?.map((l) => l.recording_id) ?? [j.recording_id]
+        ).every((id) => ids.has(id)),
+      )
+      .map((j) => j.id);
+    const epochs = db
+      .prepare(
+        "SELECT COUNT(*) AS n, COALESCE(SUM(status != 'unreviewed'), 0) AS reviewed FROM epochs WHERE session=?",
+      )
+      .get(session);
+    return {
+      session,
+      recordings,
+      subjects,
+      emptied: subjects.filter(
+        (s) =>
+          !db
+            .prepare("SELECT 1 FROM recordings WHERE subject=? AND session!=?")
+            .get(s, session),
+      ),
+      jobs,
+      epochs: epochs.n,
+      reviewed: epochs.reviewed,
+    };
+  }
+  // What removing a session takes out of the project, to confirm it first.
+  sessionRemoval(session) {
+    const plan = this.removalPlan(session);
+    return {
+      session,
+      recordings: plan.recordings.length,
+      subjects: plan.subjects.length,
+      emptied: plan.emptied,
+      jobs: plan.jobs.length,
+      epochs: plan.epochs,
+      reviewed: plan.reviewed,
+    };
+  }
+  // Remove a session from the project, such as one with different event
+  // messages that belongs in a project of its own: its recordings and their
+  // copies, processing jobs and published BIDS derivatives, eyeris' DuckDB
+  // tables, epochs with their review decisions, linked behavioral data, and
+  // subjects left without recordings. The original files are not touched.
+  async removeSession(session) {
+    if (this.busy || this.importing)
+      throw new Error(
+        "Wait for processing or the BIDS import to finish before removing a session.",
+      );
+    if (this.project.exporting)
+      throw new Error(
+        "Wait for the export to finish before removing a session.",
+      );
+    const plan = this.removalPlan(session);
+    const directory = this.project.directory;
+    const db = this.project.db;
+    // The DuckDB tables go first: if they cannot be dropped, nothing changes.
+    const derivatives = path.join(directory, "bids", "derivatives");
+    const databases = (
+      await readdir(derivatives).catch((e) => {
+        if (e.code === "ENOENT") return [];
+        throw e;
+      })
+    ).filter((name) => name.endsWith(".eyerisdb"));
+    const patterns = [
+      ...new Set(
+        plan.recordings.map((r) => `_${r.subject}_${r.session}_${r.task}_run`),
+      ),
+    ];
+    for (const name of databases)
+      await databaseScript(
+        "drop-database-tables.R",
+        [path.join(derivatives, name), ...patterns],
+        `The ses-${session} tables could not be removed from ${name}.`,
+      );
+    const ids = plan.recordings.map((r) => r.id);
+    const removing = `(${ids.map(() => "?").join(",")})`;
+    let sources;
+    this.project.transaction(() => {
+      for (const id of plan.jobs) {
+        db.prepare("DELETE FROM job_recordings WHERE job_id=?").run(id);
+        db.prepare("DELETE FROM jobs WHERE id=?").run(id);
+      }
+      // A job that also processed other sessions keeps them.
+      db.prepare(
+        `DELETE FROM job_recordings WHERE recording_id IN ${removing}`,
+      ).run(...ids);
+      db.prepare(
+        `UPDATE jobs SET recording_id=(SELECT recording_id FROM job_recordings l WHERE l.job_id=jobs.id LIMIT 1) WHERE recording_id IN ${removing}`,
+      ).run(...ids);
+      db.prepare(
+        `DELETE FROM recording_messages WHERE recording_id IN ${removing}`,
+      ).run(...ids);
+      db.prepare("DELETE FROM recordings WHERE session=?").run(session);
+      for (const subject of plan.emptied)
+        db.prepare("DELETE FROM subjects WHERE id=?").run(subject);
+      sources = this.project.removeSession(session);
+    });
+    const removed = new Set(ids);
+    this.messageQueue = this.messageQueue.filter((r) => !removed.has(r.id));
+    this.batch = this.batch.filter((id) => !plan.jobs.includes(id));
+    // Files go last, so one that cannot be deleted (such as a file another
+    // program has open) leaves only that file behind.
+    const leftover = [];
+    const remove = (file) =>
+      rm(path.join(directory, file), { recursive: true, force: true }).catch(
+        () => leftover.push(file),
+      );
+    for (const r of plan.recordings) await remove(r.file);
+    for (const subject of plan.subjects) {
+      await remove(path.join("sourcedata", `sub-${subject}`, `ses-${session}`));
+      await remove(
+        path.join("bids", "derivatives", `sub-${subject}`, `ses-${session}`),
+      );
+    }
+    for (const id of plan.jobs) await remove(path.join("processing", id));
+    for (const id of sources) await remove(path.join("sources", `${id}.rds`));
+    this.lastRemoval = {
+      id: randomUUID(),
+      session,
+      recordings: plan.recordings.length,
+      subjects: plan.emptied.length,
+      leftover,
+    };
+    return this.snapshot();
   }
   validate(settings) {
     if (

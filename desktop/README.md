@@ -162,6 +162,19 @@ of being treated as a conflicting file. The merge happens in a copy that
 replaces the database only when it succeeds, and tables that already exist (the
 same published run) are left unchanged.
 
+When a project holds more than one session, **All subjects** lists them under
+**Sessions**. One set of pipeline and epoch settings applies to the whole
+project, so a session with different event messages (such as a retrieval session
+beside an encoding session) belongs in a project of its own. **Remove ses-…**
+first lists what will go: the session's recordings and their copies under
+`sourcedata/`, the processing runs of only those recordings (a run that also
+processed other sessions keeps them), their published
+`bids/derivatives/sub-*/ses-*/` folders and DuckDB tables, the session's epochs
+with their review decisions and undo history, its linked behavioral rows, and
+subjects left without recordings. It cannot run while processing or importing,
+and it cannot be undone. The original `.asc` files are never touched, so the
+session can then be imported into a new project with **Import BIDS folder**.
+
 Project layout:
 
 ```text

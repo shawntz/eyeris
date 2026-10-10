@@ -36,6 +36,8 @@ contextBridge.exposeInMainWorld(
       "addRecording",
       "chooseBids",
       "importBids",
+      "sessionRemoval",
+      "removeSession",
       "cancelImport",
       "startPipeline",
       "queuePipeline",

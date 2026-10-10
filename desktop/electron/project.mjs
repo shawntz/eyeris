@@ -514,6 +514,40 @@ export class Project {
     return null;
   }
   // Where review was last left, so a reopened project continues from there.
+  // Remove a session's epochs with their review history, its linked
+  // behavioral data, and the sources left without epochs. Returns the IDs of
+  // the removed sources, whose files the caller deletes after committing.
+  // The caller runs it in its transaction, with the recordings it removes.
+  removeSession(session) {
+    const sources = this.db
+      .prepare("SELECT DISTINCT source_id FROM epochs WHERE session=?")
+      .all(session)
+      .map((r) => r.source_id);
+    const position = this.reviewPosition();
+    if (
+      position?.epochId &&
+      this.db
+        .prepare("SELECT 1 FROM epochs WHERE id=? AND session=?")
+        .get(position.epochId, session)
+    )
+      this.db.prepare("DELETE FROM metadata WHERE key='review_position'").run();
+    this.db
+      .prepare(
+        "DELETE FROM actions WHERE epoch_id IN (SELECT id FROM epochs WHERE session=?)",
+      )
+      .run(session);
+    this.db.prepare("DELETE FROM epochs WHERE session=?").run(session);
+    this.db.prepare("DELETE FROM behavior WHERE session=?").run(session);
+    const removed = sources.filter(
+      (id) =>
+        !this.db.prepare("SELECT 1 FROM epochs WHERE source_id=?").get(id),
+    );
+    for (const id of removed) {
+      this.db.prepare("DELETE FROM sources WHERE id=?").run(id);
+      this.verified.delete(id);
+    }
+    return removed;
+  }
   reviewPosition() {
     const saved = this.db
       .prepare("SELECT value FROM metadata WHERE key='review_position'")
