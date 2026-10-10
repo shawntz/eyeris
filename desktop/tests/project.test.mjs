@@ -756,6 +756,11 @@ test("epochs split by event fields or by joined behavioral data", async (t) => {
       "trial\taccuracy\n7\t0\n8\t0\n8\t1\n",
     ],
     ["sub-002/beh/notes.txt", "ignored"],
+    // macOS metadata beside a table is hidden and ignored.
+    [
+      "sub-001/beh/._sub-001_task-memory_beh.tsv",
+      Buffer.from([0x00, 0x05, 0x16, 0x07, 0x00, 0x02, 0x00, 0x00, 0x09]),
+    ],
   ]) {
     await mkdir(path.dirname(path.join(bids, file)), { recursive: true });
     await writeFile(path.join(bids, file), text);

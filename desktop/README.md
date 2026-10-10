@@ -70,7 +70,12 @@ does not automatically run any processing.
    are numbered after the existing runs. Files without a `task-` entity, with
    mismatched entities, or whose run is already in the project are skipped and
    listed. Recordings already imported are skipped, so importing the folder again
-   adds only new files. Files are copied in the background with a progress bar;
+   adds only new files. Hidden files are ignored, including the `._` metadata
+   files macOS writes beside every file on drives such as exFAT. Versions up to
+   0.4.1 imported those as recordings and skipped the real files as duplicate
+   runs; importing the same folder again replaces each of them with its real
+   recording, keeping its run number and processing history. **Add ASC files**
+   also rejects `._` metadata files. Files are copied in the background with a progress bar;
    each recording is added once its copy completes, and **Cancel** keeps the
    recordings already copied.
 3. Configure the glassbox steps. The interface provides the package's default

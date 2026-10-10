@@ -1,9 +1,24 @@
-import { readdir, stat } from "node:fs/promises";
+import { open, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
 const label = /^[a-zA-Z0-9]{1,64}$/;
 const entity = (name, key) =>
   new RegExp(`(?:^|_)${key}-([^_.]+)`, "i").exec(name)?.[1];
+// macOS writes an AppleDouble file, "._" plus the name, beside each file it
+// copies to a drive without native metadata support (exFAT, FAT, network
+// shares). It holds Finder metadata, not data, and starts with these bytes.
+const appleDouble = Buffer.from([0x00, 0x05, 0x16, 0x07]);
+export async function isAppleDouble(file) {
+  const handle = await open(file, "r");
+  try {
+    const { buffer, bytesRead } = await handle.read(Buffer.alloc(4), 0, 4, 0);
+    return bytesRead === 4 && buffer.equals(appleDouble);
+  } finally {
+    await handle.close();
+  }
+}
+// Hidden files, including AppleDouble files, are never recordings or tables.
+const hidden = (name) => name.startsWith(".");
 async function directories(dir, prefix) {
   return (await readdir(dir, { withFileTypes: true }))
     .filter((e) => e.isDirectory() && e.name.toLowerCase().startsWith(prefix))
@@ -40,8 +55,11 @@ export async function scanBids(root) {
         if (error.code === "ENOENT" || error.code === "ENOTDIR") continue;
         throw error;
       }
+      entries.sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { numeric: true }),
+      );
       for (const e of entries) {
-        if (!e.isFile() || !/\.asc$/i.test(e.name)) continue;
+        if (!e.isFile() || hidden(e.name) || !/\.asc$/i.test(e.name)) continue;
         const file = path.join(dir, "eye", e.name);
         const relative = path.relative(base, file);
         const subject = subjectFolder.slice(4);
@@ -127,7 +145,7 @@ export async function scanBehavior(root) {
         throw error;
       }
       for (const e of entries) {
-        if (!e.isFile() || !/\.tsv$/i.test(e.name)) continue;
+        if (!e.isFile() || hidden(e.name) || !/\.tsv$/i.test(e.name)) continue;
         const subject = subjectFolder.slice(4);
         if ((entity(e.name, "sub") ?? subject) !== subject) continue;
         const run = entity(e.name, "run") ?? "";

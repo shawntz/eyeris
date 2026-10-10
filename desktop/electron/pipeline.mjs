@@ -18,7 +18,7 @@ import path from "node:path";
 import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
-import { scanBids } from "./bids.mjs";
+import { isAppleDouble, scanBids } from "./bids.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -278,6 +278,11 @@ export class Pipeline {
       selected.some((file) => path.extname(file).toLowerCase() !== ".asc")
     )
       throw new Error("Select EyeLink .asc files.");
+    for (const file of selected)
+      if (await isAppleDouble(file))
+        throw new Error(
+          `${path.basename(file)} is a macOS metadata file, not an EyeLink recording. Select the file without the "._" prefix.`,
+        );
     const existing = db
       .prepare(
         "SELECT run FROM recordings WHERE subject=? AND session=? AND task=?",
@@ -381,25 +386,50 @@ export class Pipeline {
     );
     for (const files of groups.values()) {
       const { subject, session, task } = files[0];
-      const existing = db
+      const recorded = db
         .prepare(
-          "SELECT run, name FROM recordings WHERE subject=? AND session=? AND task=?",
+          "SELECT id, run, name, file FROM recordings WHERE subject=? AND session=? AND task=?",
         )
         .all(subject, session, task);
-      const runs = new Set(existing.map((r) => r.run));
+      // Versions up to 0.4.1 imported macOS metadata files (._*) as recordings
+      // and skipped the real files as duplicates. Each is replaced by the file
+      // it was written beside, and keeps its run until then.
+      const stale = new Map();
+      for (const e of recorded)
+        if (
+          e.name.startsWith("._") &&
+          (await isAppleDouble(path.join(this.project.directory, e.file)).catch(
+            () => false,
+          ))
+        )
+          stale.set(e.name.slice(2), e);
+      const existing = recorded.filter((e) => stale.get(e.name.slice(2)) !== e);
+      const runs = new Set(recorded.map((r) => r.run));
+      const planned = new Map();
       const pending = [];
       for (const r of files) {
+        const replaces = stale.get(r.name);
         if (
           existing.some((e) => e.name === r.name && (!r.run || e.run === r.run))
         )
           skipped.push({ file: r.relative, reason: "already in this project" });
-        else if (runs.has(r.run))
+        else if (planned.has(r.run))
+          skipped.push({
+            file: r.relative,
+            reason: `${planned.get(r.run)} is also run ${r.run} of sub-${subject} ses-${session} task-${task}`,
+          });
+        else if (r.run && replaces?.run === r.run) {
+          stale.delete(r.name);
+          planned.set(r.run, r.relative);
+          plan.push({ ...r, replaces });
+        } else if (runs.has(r.run))
           skipped.push({
             file: r.relative,
             reason: `sub-${subject} already has run ${r.run} for ses-${session} task-${task}`,
           });
         else if (r.run) {
           runs.add(r.run);
+          planned.set(r.run, r.relative);
           plan.push(r);
         } else pending.push(r);
       }
@@ -408,6 +438,12 @@ export class Pipeline {
       for (const r of pending.sort((a, b) =>
         a.name.localeCompare(b.name, undefined, { numeric: true }),
       )) {
+        const replaces = stale.get(r.name);
+        if (replaces) {
+          stale.delete(r.name);
+          plan.push({ ...r, run: replaces.run, replaces });
+          continue;
+        }
         next += 1;
         if (next > 999)
           skipped.push({ file: r.relative, reason: "run numbers end at 999" });
@@ -431,6 +467,7 @@ export class Pipeline {
     };
     this.importing = importing;
     const subjects = new Set();
+    let replaced = 0;
     let error = null;
     importing.finished = (async () => {
       for (const r of plan) {
@@ -450,19 +487,33 @@ export class Pipeline {
               r.subject,
               new Date().toISOString(),
             );
-            db.prepare(
-              "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?,?,?,?,?,?,?,?)",
-            ).run(
-              randomUUID(),
-              r.subject,
-              r.session,
-              r.task,
-              r.run,
-              r.name,
-              file,
-              new Date().toISOString(),
-            );
+            // A replaced recording keeps its ID, and so its processing history.
+            if (r.replaces)
+              db.prepare("UPDATE recordings SET name=?, file=? WHERE id=?").run(
+                r.name,
+                file,
+                r.replaces.id,
+              );
+            else
+              db.prepare(
+                "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?,?,?,?,?,?,?,?)",
+              ).run(
+                randomUUID(),
+                r.subject,
+                r.session,
+                r.task,
+                r.run,
+                r.name,
+                file,
+                new Date().toISOString(),
+              );
           });
+          if (r.replaces) {
+            await rm(path.join(this.project.directory, r.replaces.file), {
+              force: true,
+            });
+            replaced += 1;
+          }
           subjects.add(r.subject);
           importing.completed += 1;
         } catch (e) {
@@ -475,7 +526,8 @@ export class Pipeline {
       this.lastImport = {
         id: randomUUID(),
         root,
-        added: importing.completed,
+        added: importing.completed - replaced,
+        replaced,
         subjects: subjects.size,
         skipped,
         cancelled: importing.cancel.signal.aborted,
