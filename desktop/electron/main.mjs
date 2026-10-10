@@ -89,16 +89,16 @@ const methods = {
   async addRecording(input) {
     requireProject();
     const result = await dialog.showOpenDialog(window, {
-      title: "Add EyeLink recording",
+      title: "Add EyeLink recordings, one per run",
       filters: [{ name: "EyeLink ASC", extensions: ["asc"] }],
-      properties: ["openFile"],
+      properties: ["openFile", "multiSelections"],
     });
     if (result.canceled) return null;
-    return pipeline.addRecording(input, result.filePaths[0]);
+    return pipeline.addRecording(input, result.filePaths);
   },
-  startPipeline(id, settings) {
+  startPipeline(ids, settings) {
     requireProject();
-    return pipeline.start(id, settings);
+    return pipeline.start(ids, settings);
   },
   cancelPipeline() {
     requireProject();
@@ -310,7 +310,7 @@ app.on("before-quit", () => {
       )
       .run(pipeline.active.id);
     pipeline.disposed = true;
-    pipeline.active.child.kill();
+    pipeline.active.child?.kill();
   }
   demoChild?.kill();
   worker.close();

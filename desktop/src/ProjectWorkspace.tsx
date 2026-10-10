@@ -12,7 +12,12 @@ import {
   X,
   LoaderCircle,
 } from "lucide-react";
-import type { Summary, PipelineState, PipelineSettings } from "./types";
+import type {
+  Summary,
+  PipelineState,
+  PipelineSettings,
+  Recording,
+} from "./types";
 const steps = [
   {
     key: "resample",
@@ -87,6 +92,8 @@ const defaults: PipelineSettings = {
   report: true,
   database: false,
 };
+const bidsName = (r: Recording) =>
+  `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}`;
 const names: Record<string, string> = {
   extend: "Blink padding (ms)",
   n: "Window samples",
@@ -112,7 +119,7 @@ export function ProjectWorkspace({
   project: Summary;
   pipeline: PipelineState;
   onPipeline: (p: PipelineState) => void;
-  onReview: () => void;
+  onReview: (participant?: string) => void;
   onClose: () => void;
   onProject: (p: Summary) => void;
 }) {
@@ -120,7 +127,9 @@ export function ProjectWorkspace({
   const [newSubject, setNewSubject] = useState("");
   const [session, setSession] = useState("01");
   const [task, setTask] = useState("");
+  const [run, setRun] = useState("");
   const [recording, setRecording] = useState("");
+  const [checked, setChecked] = useState<string[]>([]);
   const [settings, setSettings] = useState<PipelineSettings>(
     structuredClone(defaults),
   );
@@ -130,15 +139,50 @@ export function ProjectWorkspace({
   const [busy, setBusy] = useState(false);
   const [showLog, setShowLog] = useState(false);
   const records = pipeline.recordings.filter((r) => r.subject === subject);
-  const jobs = pipeline.jobs.filter((j) => j.recording_id === recording);
+  const latestJob = (id: string) =>
+    pipeline.jobs.find((j) => j.recordings.includes(id));
+  const jobs = pipeline.jobs.filter((j) => j.recordings.includes(recording));
   const latest = jobs[0];
-  const running = !!pipeline.active;
+  const active = pipeline.active;
+  const running = !!active;
+  const selected = records.filter((r) => checked.includes(r.id));
+  const named = (id: string) =>
+    pipeline.recordings.find((r) => r.id === id) as Recording | undefined;
+  // Runs left out of a session's job are missing from its report and database.
+  const partial = [...new Set(selected.map((r) => `${r.session}/${r.task}`))]
+    .map((key) => {
+      const all = records.filter((r) => `${r.session}/${r.task}` === key);
+      const [ses, tsk] = key.split("/");
+      const count = selected.filter((r) => all.includes(r)).length;
+      return count < all.length
+        ? `ses-${ses} task-${tsk}: ${count} of ${all.length} runs selected.`
+        : "";
+    })
+    .filter(Boolean);
+  const nextRun = String(
+    Math.max(
+      0,
+      ...records
+        .filter((r) => r.session === session && r.task === task)
+        .map((r) => Number(r.run) || 1),
+    ) + 1,
+  ).padStart(2, "0");
   useEffect(() => {
     if (!subject && pipeline.subjects[0]) setSubject(pipeline.subjects[0].id);
   }, [pipeline.subjects.length]);
   useEffect(() => {
+    // Start with this subject's recordings that have not been processed.
+    setChecked(
+      records
+        .filter((r) => latestJob(r.id)?.status !== "completed")
+        .map((r) => r.id),
+    );
     setRecording(records[0]?.id || "");
-  }, [subject, records.length]);
+  }, [subject]);
+  useEffect(() => {
+    if (!records.some((r) => r.id === recording))
+      setRecording(records[0]?.id || "");
+  }, [records.length]);
   useEffect(() => {
     if (pipeline.active) setLog(pipeline.active.log);
   }, [pipeline.active?.log]);
@@ -189,7 +233,7 @@ export function ProjectWorkspace({
         <div className="nav-item active">
           <Database size={17} /> Subjects & processing
         </div>
-        <button className="nav-item" onClick={onReview}>
+        <button className="nav-item" onClick={() => onReview()}>
           <Layers3 size={17} /> Epoch review{" "}
           <span className="nav-count">{project.counts.total}</span>
         </button>
@@ -300,29 +344,76 @@ export function ProjectWorkspace({
                 <div className="section-heading">
                   <h2>Recordings</h2>
                   <small>
-                    One ASC per session and task; blocks become runs.
+                    Add one ASC per run. Select several files to add consecutive
+                    runs.
                   </small>
                 </div>
                 {!!records.length && (
                   <table className="recordings-table">
                     <thead>
                       <tr>
+                        <th className="select-column">
+                          <input
+                            type="checkbox"
+                            aria-label="Select all recordings"
+                            disabled={running}
+                            checked={selected.length === records.length}
+                            ref={(el) => {
+                              if (el)
+                                el.indeterminate =
+                                  !!selected.length &&
+                                  selected.length < records.length;
+                            }}
+                            onChange={(e) =>
+                              setChecked(
+                                e.target.checked
+                                  ? records.map((r) => r.id)
+                                  : [],
+                              )
+                            }
+                          />
+                        </th>
                         <th>Recording</th>
                         <th>Session</th>
                         <th>Task</th>
+                        <th>Run</th>
                         <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       {records.map((r) => {
-                        const job = pipeline.jobs.find(
-                          (j) => j.recording_id === r.id,
-                        );
+                        const position = active
+                          ? active.recordings.indexOf(r.id)
+                          : -1;
+                        const status =
+                          !active || position < 0
+                            ? latestJob(r.id)?.status || "ready"
+                            : r.id === active.current
+                              ? "running"
+                              : position <
+                                  active.recordings.indexOf(active.current)
+                                ? "processed"
+                                : "queued";
                         return (
                           <tr
                             key={r.id}
                             className={recording === r.id ? "selected" : ""}
                           >
+                            <td className="select-column">
+                              <input
+                                type="checkbox"
+                                aria-label={`Process ${bidsName(r)}`}
+                                disabled={running}
+                                checked={checked.includes(r.id)}
+                                onChange={(e) =>
+                                  setChecked((c) =>
+                                    e.target.checked
+                                      ? [...c, r.id]
+                                      : c.filter((id) => id !== r.id),
+                                  )
+                                }
+                              />
+                            </td>
                             <td>
                               <button onClick={() => setRecording(r.id)}>
                                 <FileText size={15} />
@@ -332,10 +423,15 @@ export function ProjectWorkspace({
                             <td>{r.session}</td>
                             <td>{r.task}</td>
                             <td>
-                              <span
-                                className={`job-status ${job?.status || "ready"}`}
-                              >
-                                {job?.status || "Ready"}
+                              {r.run || (
+                                <span title="eyeris numbers the blocks in this ASC as runs">
+                                  Blocks
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              <span className={`job-status ${status}`}>
+                                {status}
                               </span>
                             </td>
                           </tr>
@@ -349,14 +445,23 @@ export function ProjectWorkspace({
                   onSubmit={(e) => {
                     e.preventDefault();
                     void act(async () => {
+                      const before = new Set(
+                        pipeline.recordings.map((r) => r.id),
+                      );
                       const r = await window.eyeris.addRecording({
                         subject,
                         session,
                         task,
+                        run,
                       });
                       if (r) {
                         onPipeline(r);
-                        setRecording(r.recordings.at(-1)!.id);
+                        const added = r.recordings
+                          .filter((x) => !before.has(x.id))
+                          .map((x) => x.id);
+                        setChecked((c) => [...c, ...added]);
+                        setRecording(added[0]);
+                        setRun("");
                       }
                     });
                   }}
@@ -382,12 +487,23 @@ export function ProjectWorkspace({
                       required
                     />
                   </label>
+                  <label className="run-field">
+                    First run
+                    <input
+                      aria-label="First run"
+                      placeholder={nextRun}
+                      value={run}
+                      onChange={(e) => setRun(e.target.value)}
+                      pattern="[0-9]{1,3}"
+                      inputMode="numeric"
+                    />
+                  </label>
                   <button className="button" disabled={busy || running}>
-                    <Plus size={16} /> Add ASC file
+                    <Plus size={16} /> Add ASC files
                   </button>
                 </form>
               </section>
-              {!!recording && (
+              {!!records.length && (
                 <div className="pipeline-layout">
                   <section className="pipeline-config">
                     <div className="section-heading">
@@ -781,30 +897,49 @@ export function ProjectWorkspace({
                           className="button primary"
                           disabled={
                             busy ||
+                            !selected.length ||
                             (!!settings.epoch && !settings.epoch.events.trim())
                           }
                           onClick={() =>
                             void act(async () => {
                               onPipeline(
                                 await window.eyeris.startPipeline(
-                                  recording,
+                                  selected.map((r) => r.id),
                                   settings,
                                 ),
                               );
+                              if (!checked.includes(recording))
+                                setRecording(selected[0].id);
                               setShowLog(true);
                             })
                           }
                         >
-                          <Play size={15} /> Run pipeline
+                          <Play size={15} />{" "}
+                          {selected.length > 1
+                            ? `Run pipeline on ${selected.length} recordings`
+                            : "Run pipeline"}
                         </button>
                       )}
                     </div>
+                    {!running && (
+                      <p className="run-note">
+                        {!selected.length
+                          ? "Select the recordings to process."
+                          : partial.length
+                            ? `${partial.join(" ")} Its report and database will include only the selected runs.`
+                            : selected.length > 1
+                              ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
+                              : ""}
+                      </p>
+                    )}
                     {running && (
                       <div className="run-progress">
                         <LoaderCircle size={15} className="spin" />{" "}
-                        {pipeline.active?.phase === "starting"
+                        {active.recordings.length > 1 &&
+                          `${active.recordings.indexOf(active.current) + 1} of ${active.recordings.length} · ${bidsName(named(active.current)!)} · `}
+                        {active.phase === "starting"
                           ? "Starting R…"
-                          : `Running ${pipeline.active?.phase}…`}
+                          : `Running ${active.phase}…`}
                       </div>
                     )}
                     {latest && !running && (
@@ -814,6 +949,16 @@ export function ProjectWorkspace({
                             ? "Processing complete"
                             : latest.status}
                         </strong>
+                        {latest.recordings.length > 1 && (
+                          <p>
+                            {latest.recordings.length} recordings in this job:{" "}
+                            {latest.recordings
+                              .map((id) => named(id))
+                              .filter(Boolean)
+                              .map((r) => bidsName(r!))
+                              .join(", ")}
+                          </p>
+                        )}
                         {latest.error && (
                           <p role="alert">{latest.error.slice(-1500)}</p>
                         )}
@@ -840,7 +985,7 @@ export function ProjectWorkspace({
                             {latest.config.epoch && (
                               <button
                                 className="button primary"
-                                onClick={onReview}
+                                onClick={() => onReview(subject)}
                               >
                                 Review epochs
                               </button>
@@ -857,6 +1002,8 @@ export function ProjectWorkspace({
                             <span>
                               {new Date(j.started_at).toLocaleString()} ·{" "}
                               {j.status}
+                              {j.recordings.length > 1 &&
+                                ` · ${j.recordings.length} recordings`}
                             </span>
                             <button
                               onClick={() =>

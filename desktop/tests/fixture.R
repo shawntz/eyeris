@@ -18,6 +18,10 @@ x <- make()
 saveRDS(x, file.path(args[1], 'sub-001_task-memory.rds'))
 x$epoch_probe$block_1$pupil_raw[1] <- -200
 saveRDS(x, file.path(args[1], 'sub-002_task-memory.rds'))
+# BIDS entities in the filename give the session, task and run.
+y <- x
+y$epoch_probe$block_1$pupil_raw[2] <- -300
+saveRDS(y, file.path(args[1], 'sub-002_ses-02_task-memory_run-3.rds'))
 # A run and label with overlapping trial numbers must not collide.
 x$epoch_second <- x$epoch_probe
 x$epoch_probe$block_7 <- x$epoch_probe$block_1

@@ -7,7 +7,7 @@ import path from "node:path";
 export async function runWithWindowsRecovery({
   run,
   directory,
-  output,
+  outputs,
   isCancelled,
   onRetry = () => {},
   platform = process.platform,
@@ -28,7 +28,7 @@ export async function runWithWindowsRecovery({
   await mkdir(archive);
   for (const name of [
     "bids",
-    path.basename(output),
+    ...outputs.map((output) => path.basename(output)),
     "runtime.json",
     "process.log",
   ]) {

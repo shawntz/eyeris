@@ -37,6 +37,7 @@ import {
 const defaults: Filters = {
   status: "all",
   participant: "",
+  run: "",
   search: "",
   stage: "final",
   sort: "natural",
@@ -61,17 +62,22 @@ function StatusIcon({ status }: { status: Status }) {
 export function ReviewWorkspace({
   initialProject,
   reviewer: initialReviewer,
+  participant = "",
   onSubjects,
   onClose,
 }: {
   initialProject: Summary;
   reviewer: string;
+  participant?: string;
   onSubjects: () => void;
   onClose: () => void;
 }) {
   const [project, setProject] = useState<Summary | null>(initialProject);
   const [reviewer, setReviewer] = useState(initialReviewer);
-  const [filters, setFilters] = useState<Filters>(defaults);
+  const [filters, setFilters] = useState<Filters>({
+    ...defaults,
+    participant,
+  });
   const [queue, setQueue] = useState<Queue>({ rows: [], total: 0, offset: 0 });
   const [selected, setSelected] = useState<Epoch | null>(null);
   const [trace, setTrace] = useState<(Trace & { epochId: string }) | null>(
@@ -522,6 +528,22 @@ export function ReviewWorkspace({
                     ))}
                   </select>
                 </label>
+                {project.runs.length > 1 && (
+                  <label className="select-field">
+                    <select
+                      aria-label="Run filter"
+                      value={filters.run}
+                      onChange={(e) => filter({ run: e.target.value })}
+                    >
+                      <option value="">All runs</option>
+                      {project.runs.map((r) => (
+                        <option key={r} value={r}>
+                          Run {r}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <label className="select-field">
                   <select
                     aria-label="Sort epochs"
@@ -582,7 +604,7 @@ export function ReviewWorkspace({
                           </strong>
                           <span>{e.event}</span>
                           <small>
-                            {e.block.replace("block_", "Run ")} ·{" "}
+                            {e.run ? `Run ${e.run}` : e.block} ·{" "}
                             {e.label.replace("epoch_", "")}
                             {e.eye !== "main" ? ` · ${e.eye}` : ""}
                           </small>
@@ -634,7 +656,7 @@ export function ReviewWorkspace({
                       <div>
                         <div className="eyebrow">
                           {selected
-                            ? `SUB-${selected.participant} / ${selected.block.replace("block_", "RUN ")}`
+                            ? `SUB-${selected.participant} / ${selected.run ? `RUN ${selected.run}` : selected.block}`
                             : "SIGNAL INSPECTOR"}
                         </div>
                         <h2>
@@ -649,8 +671,17 @@ export function ReviewWorkspace({
                           )}
                         </h2>
                         <p>
-                          {selected?.event ||
-                            "Choose a trial from the queue to inspect its signal."}
+                          {selected
+                            ? [
+                                selected.event,
+                                `sub-${selected.participant}`,
+                                selected.session && `ses-${selected.session}`,
+                                selected.task && `task-${selected.task}`,
+                                selected.run && `Run ${selected.run}`,
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")
+                            : "Choose a trial from the queue to inspect its signal."}
                         </p>
                       </div>
                       <div className="navigation">

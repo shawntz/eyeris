@@ -15,6 +15,7 @@ export function App() {
   const [reviewer, setReviewer] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
   const [screen, setScreen] = useState<"subjects" | "review">("subjects");
+  const [reviewParticipant, setReviewParticipant] = useState("");
   const [error, setError] = useState("");
   const [runtimeReady, setRuntimeReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -164,6 +165,7 @@ export function App() {
         <ReviewWorkspace
           initialProject={project}
           reviewer={reviewer}
+          participant={reviewParticipant}
           onSubjects={() => setScreen("subjects")}
           onClose={() => void close()}
         />
@@ -172,7 +174,10 @@ export function App() {
           project={project}
           pipeline={pipeline}
           onPipeline={setPipeline}
-          onReview={() => setScreen("review")}
+          onReview={(participant = "") => {
+            setReviewParticipant(participant);
+            setScreen("review");
+          }}
           onClose={() => void close()}
           onProject={setProject}
         />
