@@ -5,7 +5,12 @@ import {
   type SetStateAction,
 } from "react";
 import { ChevronDown, Check, Plus, X } from "lucide-react";
-import { epochsOf, type EpochSetting, type PipelineSettings } from "./types";
+import {
+  epochsOf,
+  type EpochSetting,
+  type EyeSummary,
+  type PipelineSettings,
+} from "./types";
 const steps = [
   {
     key: "resample",
@@ -103,6 +108,8 @@ export function PipelineSettingsPanel({
   disabled,
   onError,
   epochExtras,
+  eyes,
+  onRecheckEyes,
   children,
 }: {
   settings: PipelineSettings;
@@ -111,6 +118,9 @@ export function PipelineSettingsPanel({
   onError: (message: string) => void;
   // Shown with the epoch options, such as the automatic exclusion rule.
   epochExtras?: ReactNode;
+  // Which eyes the recordings to be processed have.
+  eyes?: EyeSummary;
+  onRecheckEyes?: () => void;
   children: ReactNode;
 }) {
   const [openStep, setOpenStep] = useState("");
@@ -164,27 +174,95 @@ export function PipelineSettingsPanel({
         </div>
         <fieldset disabled={disabled}>
           <div className="load-options">
-            <label>
-              Eye
-              <select
-                aria-label="Eye"
-                value={String(
-                  (settings.glassbox.load_asc as Record<string, unknown>)
-                    .binocular_mode,
-                )}
-                onChange={(e) =>
-                  setStep("load_asc", {
-                    ...(settings.glassbox.load_asc as object),
-                    binocular_mode: e.target.value,
-                  })
-                }
-              >
-                <option value="average">Average</option>
-                <option value="left">Left</option>
-                <option value="right">Right</option>
-                <option value="both">Both, separately</option>
-              </select>
-            </label>
+            {(() => {
+              const mono = eyes ? eyes.left + eyes.right : 0;
+              const plural = (n: number) => (n === 1 ? "" : "s");
+              // One-eye recordings are processed from that eye whatever the
+              // mode, so only binocular recordings offer a choice.
+              const choice = !eyes || eyes.both > 0 || (!mono && !eyes.pending);
+              return (
+                <div className="eye-field">
+                  {choice ? (
+                    <label>
+                      Eye
+                      <select
+                        aria-label="Eye"
+                        value={String(
+                          (
+                            settings.glassbox.load_asc as Record<
+                              string,
+                              unknown
+                            >
+                          ).binocular_mode,
+                        )}
+                        onChange={(e) =>
+                          setStep("load_asc", {
+                            ...(settings.glassbox.load_asc as object),
+                            binocular_mode: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="average">Average</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                        <option value="both">Both, separately</option>
+                      </select>
+                    </label>
+                  ) : (
+                    <label>
+                      Eye
+                      <output aria-label="Eye" className="eye-fixed">
+                        {!mono
+                          ? "Checking which eyes were recorded…"
+                          : eyes.left && eyes.right
+                            ? "Each recording's only eye"
+                            : eyes.left
+                              ? "Left, the only eye recorded"
+                              : "Right, the only eye recorded"}
+                      </output>
+                    </label>
+                  )}
+                  {eyes && choice && eyes.both > 0 && mono > 0 && (
+                    <small>
+                      Applies to {eyes.both} binocular recording
+                      {plural(eyes.both)}. {mono} recording{plural(mono)} from
+                      one eye use{mono === 1 ? "s" : ""} that eye.
+                    </small>
+                  )}
+                  {eyes && !choice && eyes.left > 0 && eyes.right > 0 && (
+                    <small>
+                      {eyes.left} left-eye and {eyes.right} right-eye
+                      recordings, each processed from its recorded eye.
+                    </small>
+                  )}
+                  {!!eyes?.pending && (
+                    <small>
+                      Reading {eyes.pending} recording{plural(eyes.pending)}{" "}
+                      with eyeris to check which eyes were recorded…
+                    </small>
+                  )}
+                  {!!eyes?.unknown.length && (
+                    <small className="field-error">
+                      eyeris could not read {eyes.unknown.length} recording
+                      {plural(eyes.unknown.length)}: {eyes.unknown[0].name} (
+                      {eyes.unknown[0].error})
+                      {onRecheckEyes && (
+                        <>
+                          {" "}
+                          <button
+                            type="button"
+                            className="link-button inline"
+                            onClick={onRecheckEyes}
+                          >
+                            Check again
+                          </button>
+                        </>
+                      )}
+                    </small>
+                  )}
+                </div>
+              );
+            })()}
             <label>
               Random seed
               <input

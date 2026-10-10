@@ -77,6 +77,7 @@ test("projects from earlier versions gain run labels and several runs per task",
   const pipeline = new Pipeline(project);
   let state = pipeline.snapshot();
   assert.equal(state.recordings[0].run, "", "earlier recordings keep blocks");
+  assert.equal(state.recordings[0].eyes, "", "eyes are checked after opening");
   assert.deepEqual(state.jobs[0].recordings, ["rec"]);
   assert.equal(project.db.prepare("PRAGMA foreign_keys").get().foreign_keys, 1);
   assert.throws(

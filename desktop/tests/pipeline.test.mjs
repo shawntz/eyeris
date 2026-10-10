@@ -662,3 +662,94 @@ test(
     assert.equal(legacy.config.epoch, undefined);
   },
 );
+
+test(
+  "recorded eyes are read with eyeris::load_asc so only real choices are offered",
+  { timeout: 240000 },
+  async (t) => {
+    const dir = await mkdtemp(path.join(tmpdir(), "eyeris-eyes-"));
+    const worker = new RWorker();
+    const project = await Project.open(
+      path.join(dir, "Eyes.eyeris"),
+      worker,
+      true,
+    );
+    let pipeline = new Pipeline(project, { parallel: 1, detectEyes: true });
+    t.after(async () => {
+      pipeline.dispose();
+      worker.close();
+      project.close();
+      await rm(dir, { recursive: true, force: true });
+    });
+    const checked = async () => {
+      for (let i = 0; i < 600; i++) {
+        const state = pipeline.snapshot();
+        if (
+          !state.detecting &&
+          state.recordings.every((r) => r.eyes_file === r.file)
+        )
+          return state;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw new Error("The eye check did not finish.");
+    };
+    const mono = execFileSync(
+      resolveRscript(),
+      ["-e", "cat(eyeris::eyelink_asc_demo_dataset())"],
+      { encoding: "utf8" },
+    ).trim();
+    const binocular = path.resolve("..", "inst", "extdata", "binocular.asc");
+    const unreadable = path.join(dir, "unreadable.asc");
+    await writeFile(unreadable, "not an EyeLink recording");
+    pipeline.addSubject("001");
+    for (const file of [mono, binocular, unreadable]) {
+      const state = await pipeline.addRecording(
+        { subject: "001", session: "01", task: "memory" },
+        file,
+      );
+      assert.ok(state.detecting, "the check starts in the background");
+    }
+    let state = await checked();
+    const byRun = Object.fromEntries(state.recordings.map((r) => [r.run, r]));
+    assert.equal(byRun["01"].eyes, "right");
+    assert.equal(byRun["02"].eyes, "both");
+    assert.equal(byRun["03"].eyes, "unknown");
+    assert.notEqual(byRun["03"].eyes_error, "");
+    // If R cannot start, recordings are marked unknown instead of waiting.
+    const previous = process.env.EYERIS_RSCRIPT;
+    process.env.EYERIS_RSCRIPT = path.join(dir, "missing-Rscript");
+    try {
+      state = pipeline.recheckEyes();
+      assert.equal(state.recordings.find((r) => r.run === "03").eyes_file, "");
+      state = await checked();
+    } finally {
+      if (previous === undefined) delete process.env.EYERIS_RSCRIPT;
+      else process.env.EYERIS_RSCRIPT = previous;
+    }
+    assert.match(
+      state.recordings.find((r) => r.run === "03").eyes_error,
+      /stopped before this recording/,
+    );
+    // Checks are kept with the project and not repeated when it is reopened.
+    pipeline.dispose();
+    pipeline = new Pipeline(project, { parallel: 1, detectEyes: true });
+    assert.equal(pipeline.snapshot().detecting, null);
+    // Each job records the eyes of its recordings.
+    await pipeline.start(byRun["01"].id, {
+      glassbox: { load_asc: { block: "auto", binocular_mode: "average" } },
+      epochs: [],
+      report: false,
+      database: false,
+    });
+    await pipeline.idle();
+    const [job] = pipeline.snapshot().jobs;
+    assert.equal(job.status, "completed", job.error);
+    const config = JSON.parse(
+      await readFile(
+        path.join(project.directory, "processing", job.id, "config.json"),
+        "utf8",
+      ),
+    );
+    assert.equal(config.recordings[0].eyes, "right");
+  },
+);

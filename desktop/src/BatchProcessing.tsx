@@ -13,6 +13,8 @@ import {
   type Recording,
   epochsOf,
   epochProblem,
+  eyeSummary,
+  eyeProblem,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 
@@ -97,6 +99,10 @@ export function BatchProcessing({
     (s) => checked.includes(s.id) && available(s),
   );
   const recordings = selected.reduce((n, s) => n + s.records.length, 0);
+  // The eyes of the recordings that will be processed.
+  const eyes = eyeSummary(
+    (selected.length ? selected : subjects).flatMap((s) => s.records),
+  );
   const batch = pipeline.batch;
   const finished = batch.filter((id) => !pending.some((j) => j.id === id));
   const results = pipeline.jobs.filter((j) => batch.includes(j.id));
@@ -277,6 +283,10 @@ export function BatchProcessing({
           disabled={busy}
           onError={onError}
           epochExtras={epochExtras}
+          eyes={eyes}
+          onRecheckEyes={() =>
+            void act(async () => onPipeline(await window.eyeris.recheckEyes()))
+          }
         >
           <label className="parallel-field">
             Subjects at a time
@@ -313,7 +323,8 @@ export function BatchProcessing({
                 busy ||
                 !!pipeline.importing ||
                 !selected.length ||
-                !!epochProblem(settings)
+                !!epochProblem(settings) ||
+                !!eyeProblem(eyes)
               }
               onClick={() =>
                 void act(async () => {
@@ -338,6 +349,7 @@ export function BatchProcessing({
           </div>
           <p className="run-note">
             {epochProblem(settings) ||
+              eyeProblem(eyes) ||
               (selected.length
                 ? `${plural(recordings, "recording")} in ${plural(selected.length, "job")}, processed ${
                     pipeline.parallel.jobs === 1

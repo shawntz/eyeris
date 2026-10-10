@@ -80,7 +80,17 @@ does not automatically run any processing.
    recordings already copied.
 3. Configure the glassbox steps. The interface provides the package's default
    pipeline, individual step switches, common parameters, eye selection, and a
-   random seed. Advanced JSON exposes additional supported step parameters.
+   random seed. Each recording is loaded once with `eyeris::load_asc()` in the
+   background when it is added (and, for older projects, when the project
+   opens) to read which eyes it has. Eye selection then offers only what the
+   recordings to be processed support: binocular recordings can be averaged,
+   reduced to one eye, or kept as both; a recording of one eye is always
+   processed from that eye (eyeris ignores the eye mode for one-eye data), so
+   the app shows the recorded eye instead of a choice. When binocular and
+   one-eye recordings are processed together, the note says which recordings
+   the choice applies to. Processing waits until the selected recordings have
+   been checked, and a recording eyeris cannot read must be deselected or
+   checked again first. Each job's `config.json` records the eyes found. Advanced JSON exposes additional supported step parameters.
    Binning and downsampling are mutually exclusive.
 4. Optionally enable epoch extraction with an event pattern and time limits. Add
    baseline correction if needed, measured from a baseline event pattern (by

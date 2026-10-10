@@ -29,6 +29,8 @@ import {
   epochsOf,
   epochProblem,
   normalizeSettings,
+  eyeSummary,
+  eyeProblem,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
@@ -89,6 +91,10 @@ export function ProjectWorkspace({
   const imported =
     pipeline.lastImport?.id !== dismissedImport ? pipeline.lastImport : null;
   const selected = records.filter((r) => checked.includes(r.id));
+  // The eyes of the recordings that will be processed.
+  const eyes = eyeSummary(selected.length ? selected : records);
+  const recheckEyes = () =>
+    void act(async () => onPipeline(await window.eyeris.recheckEyes()));
   const named = (id: string) =>
     pipeline.recordings.find((r) => r.id === id) as Recording | undefined;
   // Runs left out of a session's job are missing from its report and database.
@@ -621,6 +627,8 @@ export function ProjectWorkspace({
                   disabled={busy}
                   onError={setError}
                   epochExtras={exclusion}
+                  eyes={eyes}
+                  onRecheckEyes={recheckEyes}
                 >
                   <div className="run-actions">
                     {running ? (
@@ -651,7 +659,8 @@ export function ProjectWorkspace({
                           busy ||
                           !!importing ||
                           !selected.length ||
-                          !!epochProblem(settings)
+                          !!epochProblem(settings) ||
+                          !!eyeProblem(eyes)
                         }
                         onClick={() =>
                           void act(async () => {
@@ -677,6 +686,7 @@ export function ProjectWorkspace({
                   {!running && (
                     <p className="run-note">
                       {epochProblem(settings) ||
+                        eyeProblem(eyes) ||
                         (!selected.length
                           ? "Select the recordings to process."
                           : partial.length

@@ -727,6 +727,34 @@ main {
 .load-options label {
   flex: 1;
 }
+.eye-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eye-field small {
+  font-size: 11px;
+  color: #6f6f6f;
+  line-height: 1.5;
+}
+.eye-field .field-error {
+  color: #9a3119;
+}
+.eye-fixed {
+  display: block;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 13px;
+}
+.link-button.inline {
+  display: inline;
+  margin: 0;
+  font-size: inherit;
+}
 .pipeline-steps {
   border-top: 1px solid #ddd;
 }

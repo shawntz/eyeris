@@ -109,7 +109,7 @@ const sourcePath = (r) =>
     r.name,
   );
 export class Pipeline {
-  constructor(project, { parallel = "auto" } = {}) {
+  constructor(project, { parallel = "auto", detectEyes = false } = {}) {
     this.project = project;
     this.running = new Map();
     this.queue = [];
@@ -126,11 +126,115 @@ export class Pipeline {
       CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY, recording_id TEXT NOT NULL REFERENCES recordings(id), status TEXT NOT NULL, phase TEXT NOT NULL, config TEXT NOT NULL, started_at TEXT NOT NULL, finished_at TEXT, error TEXT, outputs TEXT NOT NULL DEFAULT '[]');
       CREATE TABLE IF NOT EXISTS job_recordings(job_id TEXT NOT NULL REFERENCES jobs(id), recording_id TEXT NOT NULL REFERENCES recordings(id), PRIMARY KEY(job_id, recording_id));`);
     this.migrate();
+    // Which eyes each recording has: "left", "right" or "both", or "unknown"
+    // with the reason when eyeris could not read it. eyes_file is the file
+    // that was checked, so a replaced file is checked again.
+    const columns = project.db
+      .prepare("SELECT name FROM pragma_table_info('recordings')")
+      .all()
+      .map((c) => c.name);
+    for (const column of ["eyes", "eyes_error", "eyes_file"])
+      if (!columns.includes(column))
+        project.db.exec(
+          `ALTER TABLE recordings ADD COLUMN ${column} TEXT NOT NULL DEFAULT ''`,
+        );
     project.db
       .prepare(
         "UPDATE jobs SET status='interrupted', phase='interrupted', error='Processing was interrupted. Run this recording again.' WHERE status IN ('running','publishing')",
       )
       .run();
+    this.detecting = null;
+    this.autoDetect = detectEyes;
+    if (detectEyes) this.detectEyes();
+  }
+  // Check again the recordings eyeris could not read, such as after R failed
+  // to start or a file was restored.
+  recheckEyes() {
+    this.project.db
+      .prepare("UPDATE recordings SET eyes_file='' WHERE eyes='unknown'")
+      .run();
+    this.detectEyes();
+    return this.snapshot();
+  }
+  // Check which eyes each new or changed recording has by loading it with
+  // eyeris::load_asc() in one background R process, one recording at a time.
+  detectEyes() {
+    if (this.disposed) return;
+    if (this.detecting) {
+      this.detecting.again = true;
+      return;
+    }
+    const db = this.project.db;
+    const pending = db
+      .prepare(
+        `SELECT id, file FROM recordings WHERE eyes_file IS NOT file ORDER BY ${runOrder}`,
+      )
+      .all();
+    if (!pending.length) return;
+    const detecting = { total: pending.length, done: 0, again: false };
+    this.detecting = detecting;
+    const child = spawn(
+      resolveRscript(),
+      ["--vanilla", path.join(rDirectory(), "detect-eyes.R")],
+      {
+        env: rEnvironment(),
+        stdio: ["pipe", "pipe", "pipe"],
+        windowsHide: true,
+      },
+    );
+    detecting.child = child;
+    const record = db.prepare(
+      "UPDATE recordings SET eyes=?, eyes_error=?, eyes_file=? WHERE id=? AND file=?",
+    );
+    let stdout = "";
+    let log = "";
+    child.stdout.on("data", (data) => {
+      stdout += data;
+      const lines = stdout.split("\n");
+      stdout = lines.pop();
+      for (const line of lines)
+        if (line.startsWith("@@EYES@@") && !this.disposed) {
+          try {
+            const result = JSON.parse(line.slice(8));
+            const file = pending.find((r) => r.id === result.id)?.file;
+            record.run(result.eyes, result.error ?? "", file, result.id, file);
+            detecting.done += 1;
+          } catch {}
+        }
+    });
+    child.stderr.on("data", (data) => (log = (log + data).slice(-2000)));
+    child.on("error", (error) => (log = error.message));
+    child.on("close", () => {
+      if (this.disposed) return;
+      // Recordings the process never reached are marked unknown rather than
+      // left waiting, for example when R cannot start.
+      for (const r of pending)
+        if (
+          db
+            .prepare(
+              "SELECT 1 FROM recordings WHERE id=? AND eyes_file IS NOT file",
+            )
+            .get(r.id)
+        )
+          record.run(
+            "unknown",
+            `The eye check stopped before this recording. ${log}`.trim(),
+            r.file,
+            r.id,
+            r.file,
+          );
+      this.detecting = null;
+      if (detecting.again) this.detectEyes();
+    });
+    child.stdin.on("error", () => {});
+    child.stdin.end(
+      JSON.stringify(
+        pending.map((r) => ({
+          id: r.id,
+          path: path.join(this.project.directory, r.file),
+        })),
+      ),
+    );
   }
   // Projects created before run numbers allowed one ASC per subject, session and
   // task. SQLite cannot change a UNIQUE constraint in place, so rebuild the
@@ -210,6 +314,10 @@ export class Pipeline {
         current: this.importing.current,
       },
       lastImport: this.lastImport,
+      detecting: this.detecting && {
+        total: this.detecting.total,
+        done: this.detecting.done,
+      },
     };
   }
   // Pipeline settings are saved with the project, so they are set once for every
@@ -239,6 +347,7 @@ export class Pipeline {
   // Called when the app quits: unfinished jobs are recorded as interrupted.
   dispose() {
     this.disposed = true;
+    this.detecting?.child.kill();
     this.queue = [];
     this.cancelImport();
     for (const active of this.running.values()) {
@@ -359,6 +468,7 @@ export class Pipeline {
       for (const file of copied) await rm(file, { force: true });
       throw error;
     }
+    if (this.autoDetect) this.detectEyes();
     return this.snapshot();
   }
   // Add every recording in a BIDS dataset. Files are copied in the background so
@@ -534,6 +644,7 @@ export class Pipeline {
         error,
       };
       this.importing = null;
+      if (this.autoDetect) this.detectEyes();
     })();
     return this.snapshot();
   }
@@ -755,6 +866,8 @@ export class Pipeline {
       session: r.session,
       task: r.task,
       run: r.run || null,
+      // Recorded by eyeris::load_asc() when the recording was added.
+      eyes: r.eyes || null,
       output: path.join(
         dir,
         `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}.rds`,
