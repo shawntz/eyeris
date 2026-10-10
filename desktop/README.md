@@ -498,7 +498,7 @@ metadata last. A failed platform build leaves the existing channel untouched.
 To roll back an application bug, publish the corrected code under a higher
 desktop version; clients intentionally do not downgrade.
 
-### Automatic patch releases from dev
+### Automatic releases from dev
 
 After the initial `desktop-v0.3.0` release, merge the automatic-release workflow
 follow-up PR. Each push to `dev` checks for changes under `desktop/` or to the
@@ -518,6 +518,19 @@ For a relevant change, the workflow:
 4. Tags the resulting version commit as `desktop-v0.3.1` and directly calls the
    signed release workflow, which builds and validates that exact tag before
    publishing its installers and update feeds.
+
+To release a minor or major version instead, set it in a PR:
+
+```sh
+cd desktop
+npm version 0.4.0 --no-git-tag-version   # package.json and package-lock.json
+```
+
+When that PR reaches `dev`, the manifest is newer than the latest desktop tag, so
+the workflow treats it as a planned release: it runs the same native CI against
+that commit and tags the commit itself as `desktop-v0.4.0`, with no version PR,
+before publishing. The package and lockfile versions must agree. Later desktop
+changes resume patch releases (`0.4.1`, and so on).
 
 This uses the built-in `GITHUB_TOKEN`; no extra PAT or GitHub App is needed.
 GitHub does not start push workflows for commits/tags made by that token, so
