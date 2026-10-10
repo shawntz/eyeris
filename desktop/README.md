@@ -61,6 +61,18 @@ does not automatically run any processing.
    of that session and task, or at **First run** if it is set. The run number is
    passed to `eyeris::bidsify(run_num = ...)`. As in the package, an ASC that
    contains several recording blocks has its blocks numbered as runs instead.
+   To add a whole study at once, choose **Import BIDS folder** and select the
+   dataset root (or one `sub-*` folder). Every `.asc` file in
+   `sub-<label>/[ses-<label>/]eye/` is added in one step, creating subjects as
+   needed. The subject comes from the folder, and the session, task and run from
+   the filename's `ses-`, `task-` and `run-` entities, which must agree with the
+   folders. Datasets without sessions use session `01`, and files without a run
+   are numbered after the existing runs. Files without a `task-` entity, with
+   mismatched entities, or whose run is already in the project are skipped and
+   listed. Recordings already imported are skipped, so importing the folder again
+   adds only new files. Files are copied in the background with a progress bar;
+   each recording is added once its copy completes, and **Cancel** keeps the
+   recordings already copied.
 3. Configure the glassbox steps. The interface provides the package's default
    pipeline, individual step switches, common parameters, eye selection, and a
    random seed. Advanced JSON exposes additional supported step parameters.

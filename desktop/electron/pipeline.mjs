@@ -1,7 +1,7 @@
 import { resolveRscript } from "./rscript.mjs";
 import { spawn } from "node:child_process";
-import { constants, createWriteStream } from "node:fs";
-import { finished } from "node:stream/promises";
+import { constants, createReadStream, createWriteStream } from "node:fs";
+import { finished, pipeline as copyStream } from "node:stream/promises";
 import {
   mkdir,
   copyFile,
@@ -17,6 +17,7 @@ import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
+import { scanBids } from "./bids.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -32,10 +33,21 @@ async function files(dir, base = dir) {
 const recordingsTable = (name) =>
   `CREATE TABLE ${name}(id TEXT PRIMARY KEY, subject TEXT NOT NULL REFERENCES subjects(id), session TEXT NOT NULL, task TEXT NOT NULL, run TEXT NOT NULL DEFAULT '', name TEXT NOT NULL, file TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(subject,session,task,run))`;
 const runOrder = "subject, session, task, length(run), run";
+const sourcePath = (r) =>
+  path.join(
+    "sourcedata",
+    `sub-${r.subject}`,
+    `ses-${r.session}`,
+    `task-${r.task}`,
+    `run-${r.run}`,
+    r.name,
+  );
 export class Pipeline {
   constructor(project) {
     this.project = project;
     this.active = null;
+    this.importing = null;
+    this.lastImport = null;
     project.db
       .exec(`CREATE TABLE IF NOT EXISTS subjects(id TEXT PRIMARY KEY, created_at TEXT NOT NULL);
       ${recordingsTable("IF NOT EXISTS recordings")};
@@ -109,6 +121,14 @@ export class Pipeline {
             current: this.active.current,
           }
         : null,
+      importing: this.importing && {
+        total: this.importing.total,
+        completed: this.importing.completed,
+        bytes: this.importing.bytes,
+        totalBytes: this.importing.totalBytes,
+        current: this.importing.current,
+      },
+      lastImport: this.lastImport,
     };
   }
   addSubject(id) {
@@ -125,6 +145,7 @@ export class Pipeline {
   // numbered consecutively in filename order, after any existing runs unless a
   // first run is given.
   async addRecording(input, originals) {
+    if (this.importing) throw new Error("Wait for the BIDS import to finish.");
     const db = this.project.db;
     const selected = [originals].flat();
     if (!entity(input.subject) || !entity(input.session) || !entity(input.task))
@@ -166,14 +187,7 @@ export class Pipeline {
           run,
           original,
           name: path.basename(original),
-          file: path.join(
-            "sourcedata",
-            `sub-${input.subject}`,
-            `ses-${input.session}`,
-            `task-${input.task}`,
-            `run-${run}`,
-            path.basename(original),
-          ),
+          file: sourcePath({ ...input, run, name: path.basename(original) }),
         };
       });
     const taken = rows.filter((r) => existing.includes(r.run));
@@ -222,6 +236,134 @@ export class Pipeline {
       throw error;
     }
     return this.snapshot();
+  }
+  // Add every recording in a BIDS dataset. Files are copied in the background so
+  // the window keeps updating; each recording is committed once its copy is
+  // complete. Files already in the project are skipped, so importing a dataset
+  // again adds only its new recordings.
+  async importBids(root) {
+    if (this.active || this.importing)
+      throw new Error("Wait for processing or the current import to finish.");
+    const db = this.project.db;
+    const scan = await scanBids(root);
+    if (!scan.recordings.length && !scan.skipped.length)
+      throw new Error(
+        "No EyeLink .asc files were found in sub-*/eye or sub-*/ses-*/eye folders.",
+      );
+    const skipped = [...scan.skipped];
+    const plan = [];
+    const groups = Map.groupBy(
+      scan.recordings,
+      (r) => `${r.subject}/${r.session}/${r.task}`,
+    );
+    for (const files of groups.values()) {
+      const { subject, session, task } = files[0];
+      const existing = db
+        .prepare(
+          "SELECT run, name FROM recordings WHERE subject=? AND session=? AND task=?",
+        )
+        .all(subject, session, task);
+      const runs = new Set(existing.map((r) => r.run));
+      const pending = [];
+      for (const r of files) {
+        if (
+          existing.some((e) => e.name === r.name && (!r.run || e.run === r.run))
+        )
+          skipped.push({ file: r.relative, reason: "already in this project" });
+        else if (runs.has(r.run))
+          skipped.push({
+            file: r.relative,
+            reason: `sub-${subject} already has run ${r.run} for ses-${session} task-${task}`,
+          });
+        else if (r.run) {
+          runs.add(r.run);
+          plan.push(r);
+        } else pending.push(r);
+      }
+      // Files without a run entity follow the existing runs, in filename order.
+      let next = Math.max(0, ...[...runs].map((run) => Number(run) || 1));
+      for (const r of pending.sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { numeric: true }),
+      )) {
+        next += 1;
+        if (next > 999)
+          skipped.push({ file: r.relative, reason: "run numbers end at 999" });
+        else plan.push({ ...r, run: String(next).padStart(2, "0") });
+      }
+    }
+    plan.sort((a, b) =>
+      `${a.subject}/${a.session}/${a.task}/${a.run.padStart(3, "0")}`.localeCompare(
+        `${b.subject}/${b.session}/${b.task}/${b.run.padStart(3, "0")}`,
+        undefined,
+        { numeric: true },
+      ),
+    );
+    const importing = {
+      total: plan.length,
+      completed: 0,
+      bytes: 0,
+      totalBytes: plan.reduce((n, r) => n + r.size, 0),
+      current: "",
+      cancel: new AbortController(),
+    };
+    this.importing = importing;
+    const subjects = new Set();
+    let error = null;
+    importing.finished = (async () => {
+      for (const r of plan) {
+        if (importing.cancel.signal.aborted) break;
+        importing.current = r.relative;
+        const file = sourcePath(r);
+        const target = path.join(this.project.directory, file);
+        try {
+          await mkdir(path.dirname(target), { recursive: true });
+          const source = createReadStream(r.file);
+          source.on("data", (chunk) => (importing.bytes += chunk.length));
+          await copyStream(source, createWriteStream(target), {
+            signal: importing.cancel.signal,
+          });
+          this.project.transaction(() => {
+            db.prepare("INSERT OR IGNORE INTO subjects VALUES (?,?)").run(
+              r.subject,
+              new Date().toISOString(),
+            );
+            db.prepare(
+              "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?,?,?,?,?,?,?,?)",
+            ).run(
+              randomUUID(),
+              r.subject,
+              r.session,
+              r.task,
+              r.run,
+              r.name,
+              file,
+              new Date().toISOString(),
+            );
+          });
+          subjects.add(r.subject);
+          importing.completed += 1;
+        } catch (e) {
+          await rm(target, { force: true });
+          if (!importing.cancel.signal.aborted)
+            error = `${r.relative}: ${e.message}`;
+          break;
+        }
+      }
+      this.lastImport = {
+        id: randomUUID(),
+        root,
+        added: importing.completed,
+        subjects: subjects.size,
+        skipped,
+        cancelled: importing.cancel.signal.aborted,
+        error,
+      };
+      this.importing = null;
+    })();
+    return this.snapshot();
+  }
+  cancelImport() {
+    this.importing?.cancel.abort();
   }
   validate(settings) {
     if (
@@ -294,6 +436,7 @@ export class Pipeline {
   async start(recordingIds, settings) {
     if (this.active)
       throw new Error("A pipeline is already running in this project.");
+    if (this.importing) throw new Error("Wait for the BIDS import to finish.");
     this.validate(settings);
     const ids = [...new Set([recordingIds].flat())];
     if (!ids.length) throw new Error("Select at least one recording.");

@@ -117,6 +117,22 @@ export interface PipelineState {
     recordings: string[];
     current: string;
   } | null;
+  importing: {
+    total: number;
+    completed: number;
+    bytes: number;
+    totalBytes: number;
+    current: string;
+  } | null;
+  lastImport: {
+    id: string;
+    root: string;
+    added: number;
+    subjects: number;
+    skipped: { file: string; reason: string }[];
+    cancelled: boolean;
+    error: string | null;
+  } | null;
 }
 export interface UpdateState {
   status:
@@ -158,6 +174,8 @@ interface API {
     task: string;
     run: string;
   }): Promise<PipelineState | null>;
+  importBids(): Promise<PipelineState | null>;
+  cancelImport(): Promise<PipelineState>;
   startPipeline(
     ids: string[],
     settings: PipelineSettings,

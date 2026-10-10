@@ -513,6 +513,59 @@ main {
   color: #666;
   text-decoration: underline;
 }
+.import-progress {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.import-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+.import-progress strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+  flex: 1;
+}
+.import-progress span {
+  color: #666;
+  font-variant-numeric: tabular-nums;
+}
+.import-progress button {
+  font-size: 11px;
+  text-decoration: underline;
+}
+.import-progress .progress-track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.import-progress small {
+  display: block;
+  margin-top: 9px;
+  color: #777;
+  overflow-wrap: anywhere;
+}
+.message > div {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+}
+.message details {
+  margin-top: 6px;
+  font-size: 11px;
+}
+.message details ul {
+  margin: 6px 0 0 16px;
+  line-height: 1.6;
+}
 .recordings-section {
   border-top: 1px solid #d5d5d5;
   padding-top: 19px;
