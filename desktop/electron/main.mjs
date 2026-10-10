@@ -268,6 +268,21 @@ const methods = {
   },
   setAutoExclude: (rule) => requireProject().setAutoExclude(rule),
   list: (filters) => requireProject().list(filters),
+  behavior: () => requireProject().behavior(),
+  epochFields: () => requireProject().epochFields(),
+  split: (request) => requireProject().split(request),
+  async linkBehavior() {
+    requireProject();
+    const { root, bidsRoot } = project.behavior();
+    const result = await dialog.showOpenDialog(window, {
+      title: "Link behavioral data from a BIDS dataset",
+      buttonLabel: "Link behavioral data",
+      defaultPath: root ?? bidsRoot ?? undefined,
+      properties: ["openDirectory"],
+    });
+    if (result.canceled) return null;
+    return project.linkBehavior(result.filePaths[0]);
+  },
   diagnosticGroups: () => requireProject().diagnosticGroups(),
   average: (selection) => requireProject().average(selection),
   nextUnreviewed: (filters, fromId) =>

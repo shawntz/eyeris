@@ -346,6 +346,10 @@ export class Pipeline {
       throw new Error("Wait for processing or the current import to finish.");
     const db = this.project.db;
     const scan = await scanBids(root);
+    // Remembered so behavioral data can be linked from the same dataset.
+    db.prepare(
+      "INSERT INTO metadata VALUES ('bids_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+    ).run(root);
     if (!scan.recordings.length && !scan.skipped.length)
       throw new Error(
         "No EyeLink .asc files were found in sub-*/eye or sub-*/ses-*/eye folders.",

@@ -690,3 +690,149 @@ test("run diagnostics average a run's epochs and keep each trace", async (t) => 
     /selected stage/,
   );
 });
+
+test("epochs split by event fields or by joined behavioral data", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-split-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  const projectDir = path.join(dir, "split.eyeris");
+  project = await Project.open(projectDir, worker, true);
+  for (const name of ["sub-001_task-memory.rds", "sub-002_task-memory.rds"])
+    await project.importFile(path.join(dir, name));
+  const fields = await project.epochFields();
+  assert.ok(fields.includes("trial") && fields.includes("matched_event"));
+  assert.ok(!fields.includes("arbitrary_metadata"), "varies within an epoch");
+  assert.ok(!fields.includes("timebin") && !fields.includes("block"));
+  const key = project
+    .diagnosticGroups()
+    .find((g) => g.participant === "001").key;
+  const request = { key, scope: "run", stage: "pupil_raw", include: "all" };
+  let split = await project.split({
+    ...request,
+    by: { from: "epoch", column: "matched_event" },
+    join: null,
+  });
+  assert.deepEqual(
+    split.series.map((s) => [s.label, s.n]),
+    [
+      ["EVENT_OTHER", 1],
+      ["REPEATED_EVENT", 2],
+    ],
+  );
+  assert.equal(split.onset, true);
+  assert.ok(Math.abs(split.time[0] + 1) < 1e-12);
+  assert.equal(split.time.length, 600);
+  // Identical epochs: the group mean is their value, with no spread.
+  assert.equal(split.series[1].se.at(-1), 0);
+  assert.ok(
+    Math.abs(split.series[1].mean.at(-1) - split.series[0].mean.at(-1)) < 1e-9,
+  );
+
+  // Behavioral tables are joined within each subject's session, task and run.
+  const bids = path.join(dir, "dataset");
+  for (const [file, text] of [
+    [
+      "sub-001/beh/sub-001_task-memory_beh.tsv",
+      "trial\taccuracy\n7\t1\n8.0\t0\n",
+    ],
+    // Trial 8 appears twice, so it cannot be matched to one row.
+    [
+      "sub-002/beh/sub-002_task-memory_beh.tsv",
+      "trial\taccuracy\n7\t0\n8\t0\n8\t1\n",
+    ],
+    ["sub-002/beh/notes.txt", "ignored"],
+  ]) {
+    await mkdir(path.dirname(path.join(bids, file)), { recursive: true });
+    await writeFile(path.join(bids, file), text);
+  }
+  const linked = await project.linkBehavior(bids);
+  assert.deepEqual(
+    {
+      files: linked.files,
+      rows: linked.rows,
+      columns: linked.columns,
+      root: linked.root,
+    },
+    { files: 2, rows: 5, columns: ["accuracy", "trial"], root: bids },
+  );
+  const byAccuracy = {
+    by: { from: "behavior", column: "accuracy" },
+    join: { epoch: "trial", behavior: "trial" },
+  };
+  split = await project.split({ ...request, scope: "all", ...byAccuracy });
+  assert.deepEqual(
+    split.series.map((s) => [s.label, s.n]),
+    [
+      ["0", 3],
+      ["1", 2],
+    ],
+  );
+  assert.deepEqual(
+    [split.epochs, split.total, split.ambiguous, split.unmatched],
+    [5, 6, 1, 0],
+  );
+  // Pooled across sources: at the first sample, group 0 holds sub-001's
+  // 4100 and sub-002's -200 (its first epoch) and 4100.
+  const values = [4100, -200, 4100];
+  const mean = values.reduce((a, b) => a + b) / 3;
+  const sd = Math.sqrt(values.reduce((a, v) => a + (v - mean) ** 2, 0) / 2);
+  assert.ok(Math.abs(split.series[0].mean[0] - mean) < 1e-6);
+  assert.ok(Math.abs(split.series[0].se[0] - sd / Math.sqrt(3)) < 1e-6);
+  split = await project.split({ ...request, scope: "subject", ...byAccuracy });
+  assert.equal(split.total, 3);
+  assert.deepEqual(
+    split.series.map((s) => [s.label, s.n]),
+    [
+      ["0", 1],
+      ["1", 2],
+    ],
+  );
+  // Without a split, the scope's epochs are averaged together.
+  split = await project.split({
+    ...request,
+    scope: "all",
+    by: null,
+    join: null,
+  });
+  assert.deepEqual(
+    split.series.map((s) => [s.label, s.n]),
+    [["All epochs", 6]],
+  );
+  await assert.rejects(
+    () => project.split({ ...request, ...byAccuracy, join: null }),
+    /identify each trial/,
+  );
+  await assert.rejects(
+    () => project.linkBehavior(path.join(dir, "exports-missing")),
+    /ENOENT/,
+  );
+  // Behavioral data and fields of earlier epochs persist and are recomputed.
+  project.db
+    .prepare("UPDATE epochs SET meta = json_remove(meta, '$.fields')")
+    .run();
+  project.close();
+  project = await Project.open(projectDir, worker);
+  assert.equal(project.behavior().rows, 5);
+  assert.ok((await project.epochFields()).includes("trial"));
+  // At most eight groups.
+  await project.importFile(path.join(dir, "sub-large.rds"));
+  const large = project
+    .diagnosticGroups()
+    .find((g) => g.participant === "large");
+  await assert.rejects(
+    () =>
+      project.split({
+        ...request,
+        key: large.key,
+        by: { from: "epoch", column: "trial" },
+        join: null,
+      }),
+    /10001 values/,
+  );
+});

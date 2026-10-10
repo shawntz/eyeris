@@ -208,6 +208,29 @@ shared grid of up to 600 points, so missing samples stay missing rather than
 being interpolated, and the mean and standard error at each time use only the
 epochs with data there. **Run average** in review opens the selected epoch's run.
 
+**Splits and behavioral data.** Diagnostics can also split epochs into groups
+and pool them over **This run**, all runs of the subject, or **All subjects**
+(the same epoch label and eye). Each epoch contributes equally to its group's
+mean, and the standard error is pooled exactly across sources. Split by:
+
+- an **epoch field**: the event pattern's placeholders (such as `{trial}` or
+  `{stim}`), `matched_event`, and any other column with the same value at an
+  epoch's first and last sample; or
+- a **behavioral column**. **Link behavioral data…** reads every
+  `sub-<label>/[ses-<label>/]beh/*.tsv` in a BIDS dataset (by default the one
+  imported with **Import BIDS folder**); the subject comes from the folder and
+  the session, task and run from the filename. Choose the epoch field and the
+  behavioral column that identify each trial (fields that share a column's name,
+  preferably `trial`, are suggested). Each epoch is joined to the row of its own
+  subject, session, task and run with an equal value; a file without a session
+  or run matches any. Values match as text or as numbers (`7` matches `7.0`),
+  and `n/a` is missing.
+
+Groups are limited to eight values. Epochs without a matching row, matching more
+than one row, or without a value for the split column are left out and counted
+below the plot. Linked behavioral data is stored in the project; linking again
+replaces it.
+
 **Automatic exclusion** excludes epochs missing more than a chosen percentage of
 samples, measured at the final stage or at any stored stage (for example the raw
 signal, before interpolation fills gaps). Set it under **Automatic exclusion** in

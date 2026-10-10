@@ -1,7 +1,16 @@
 import { DatabaseSync } from "node:sqlite";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { mkdir, copyFile, rename, rm, writeFile, stat } from "node:fs/promises";
+import {
+  mkdir,
+  copyFile,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+  stat,
+} from "node:fs/promises";
+import { parseTsv, scanBehavior } from "./bids.mjs";
 import path from "node:path";
 import packageMetadata from "../package.json" with { type: "json" };
 
@@ -144,6 +153,10 @@ export class Project {
         session TEXT NOT NULL DEFAULT '', task TEXT NOT NULL DEFAULT '', run TEXT NOT NULL DEFAULT ''
       );
       CREATE INDEX IF NOT EXISTS epochs_queue ON epochs(status, participant, source_id, ordinal);
+      CREATE TABLE IF NOT EXISTS behavior (
+        file TEXT NOT NULL, participant TEXT NOT NULL, session TEXT NOT NULL, task TEXT NOT NULL, run TEXT NOT NULL,
+        ord INTEGER NOT NULL, data TEXT NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS actions (
         seq INTEGER PRIMARY KEY AUTOINCREMENT, epoch_id TEXT NOT NULL REFERENCES epochs(id),
         kind TEXT NOT NULL, before_json TEXT NOT NULL, after_json TEXT NOT NULL, at TEXT NOT NULL, undone INTEGER NOT NULL DEFAULT 0
@@ -334,7 +347,7 @@ export class Project {
       stage: rule.stage,
     };
     if (value.enabled && value.stage !== "final")
-      await this.backfillStageMissing();
+      await this.backfillMeta("stageMissing", "missing");
     this.db
       .prepare(
         "INSERT INTO metadata VALUES ('auto_exclude', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
@@ -343,17 +356,18 @@ export class Project {
     this.applyAutoExclude();
     return this.summary();
   }
-  // Epochs indexed by earlier versions store only the final stage's missing
-  // fraction. Compute every stage's from the source before applying a rule.
-  async backfillStageMissing() {
+  // Epochs indexed by earlier versions lack some per-epoch values, such as
+  // every stage's missing fraction or the epoch fields. Compute them from each
+  // source with the named worker method and store them.
+  async backfillMeta(property, method) {
     const rows = this.db
       .prepare(
-        "SELECT id, source_id, meta FROM epochs WHERE json_type(meta, '$.stageMissing') IS NULL ORDER BY source_id",
+        `SELECT id, source_id, meta FROM epochs WHERE json_type(meta, '$.${property}') IS NULL ORDER BY source_id`,
       )
       .all();
     for (const [source, epochs] of Map.groupBy(rows, (r) => r.source_id)) {
       const metas = epochs.map((e) => JSON.parse(e.meta));
-      const fractions = await this.worker.request("missing", {
+      const values = await this.worker.request(method, {
         path: await this.sourcePath(source),
         epochs: metas,
       });
@@ -361,13 +375,14 @@ export class Project {
       this.transaction(() =>
         epochs.forEach((e, i) =>
           update.run(
-            JSON.stringify({ ...metas[i], stageMissing: fractions[i] }),
+            JSON.stringify({ ...metas[i], [property]: values[i] }),
             e.id,
           ),
         ),
       );
     }
   }
+
   // Apply the missing-data rule to every epoch without a person's decision, in
   // one source or the whole project. Epochs that no longer exceed the threshold
   // return to unreviewed. Each change is recorded in the audit history.
@@ -674,6 +689,234 @@ export class Project {
       stage: resolved,
       epochs: rows.length,
       ids: rows.map((r) => r.id),
+    };
+  }
+  setting(key) {
+    return (
+      this.db.prepare("SELECT value FROM metadata WHERE key=?").get(key)
+        ?.value ?? null
+    );
+  }
+  // Link the behavioral tables of a BIDS dataset, replacing earlier ones, so
+  // epochs can be joined to trial-level behavior.
+  async linkBehavior(root) {
+    const files = await scanBehavior(root);
+    if (!files.length)
+      throw new Error(
+        "No behavioral .tsv files were found in sub-*/beh or sub-*/ses-*/beh folders.",
+      );
+    const tables = [];
+    for (const f of files)
+      tables.push({ ...f, ...parseTsv(await readFile(f.file, "utf8")) });
+    this.transaction(() => {
+      this.db.exec("DELETE FROM behavior");
+      const insert = this.db.prepare(
+        "INSERT INTO behavior VALUES (?, ?, ?, ?, ?, ?, ?)",
+      );
+      for (const t of tables)
+        t.rows.forEach((row, i) =>
+          insert.run(
+            t.relative,
+            t.participant,
+            t.session,
+            t.task,
+            t.run,
+            i,
+            JSON.stringify(row),
+          ),
+        );
+      this.db
+        .prepare(
+          "INSERT INTO metadata VALUES ('behavior_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        )
+        .run(root);
+    });
+    return this.behavior();
+  }
+  behavior() {
+    return {
+      root: this.setting("behavior_root"),
+      bidsRoot: this.setting("bids_root"),
+      files: this.db
+        .prepare("SELECT COUNT(DISTINCT file) AS n FROM behavior")
+        .get().n,
+      rows: this.db.prepare("SELECT COUNT(*) AS n FROM behavior").get().n,
+      columns: this.db
+        .prepare(
+          "SELECT DISTINCT j.key FROM behavior b, json_each(b.data) j ORDER BY j.key",
+        )
+        .all()
+        .map((r) => r.key),
+    };
+  }
+  async epochFields() {
+    await this.backfillMeta("fields", "fields");
+    return this.db
+      .prepare(
+        "SELECT DISTINCT j.key FROM epochs e, json_each(e.meta, '$.fields') j ORDER BY j.key",
+      )
+      .all()
+      .map((r) => r.key);
+  }
+  // Average epochs split into groups by an epoch field or a behavioral column,
+  // over one run, every run of its subject, or every subject. Behavioral rows
+  // are joined within the same subject, session, task and run (a file without a
+  // session or run matches any), on an epoch field equal to a behavioral column.
+  // Epochs are pooled: each contributes equally to its group's mean.
+  async split({
+    key,
+    scope = "run",
+    stage = "final",
+    include = "included",
+    by = null,
+    join = null,
+  }) {
+    const [source, label, eye, block] = String(key).split("|");
+    const statuses = {
+      all: states,
+      included: ["keep", "unreviewed"],
+      kept: ["keep"],
+    }[include];
+    if (!statuses) throw new Error("Choose which epochs to include.");
+    const participant = this.db
+      .prepare("SELECT participant FROM epochs WHERE source_id=? LIMIT 1")
+      .get(source)?.participant;
+    const where = {
+      run: [
+        "source_id=? AND label=? AND eye=? AND block=?",
+        [source, label, eye, block],
+      ],
+      subject: [
+        "participant=? AND label=? AND eye=?",
+        [participant, label, eye],
+      ],
+      all: ["label=? AND eye=?", [label, eye]],
+    }[scope];
+    if (!where) throw new Error("Choose what to average over.");
+    if (by && !["epoch", "behavior"].includes(by.from))
+      throw new Error("Choose a column to split by.");
+    if (by?.from === "behavior" && !(join?.epoch && join?.behavior))
+      throw new Error(
+        "Choose the epoch field and behavioral column that identify each trial.",
+      );
+    if (by || join) await this.backfillMeta("fields", "fields");
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE ${where[0]} AND status IN (${statuses.map(() => "?").join(",")})
+         ORDER BY participant, session, task, length(run), run, source_id, block, ordinal`,
+      )
+      .all(...where[1], ...statuses)
+      .map((row) => this.deserialize(row));
+    const behavior = Map.groupBy(
+      by?.from === "behavior"
+        ? this.db
+            .prepare("SELECT * FROM behavior")
+            .all()
+            .map((r) => ({ ...r, data: JSON.parse(r.data) }))
+        : [],
+      (b) => b.participant,
+    );
+    // Identifiers match as text, or as numbers (so 7 matches 7.0).
+    const same = (a, b) =>
+      a === b ||
+      (a !== undefined &&
+        b !== undefined &&
+        a.trim() !== "" &&
+        b.trim() !== "" &&
+        Number.isFinite(Number(a)) &&
+        Number(a) === Number(b));
+    const counts = { unmatched: 0, ambiguous: 0, missing: 0 };
+    const assigned = [];
+    for (const e of rows) {
+      let value = "All epochs";
+      if (by?.from === "epoch") value = e.meta.fields?.[by.column];
+      else if (by) {
+        const id = e.meta.fields?.[join.epoch];
+        const matches =
+          id === undefined
+            ? []
+            : (behavior.get(e.participant) ?? []).filter(
+                (b) =>
+                  (!b.session || b.session === e.session) &&
+                  (!b.task || b.task === e.task) &&
+                  (!b.run || b.run === e.run) &&
+                  same(b.data[join.behavior], id),
+              );
+        if (matches.length !== 1) {
+          counts[matches.length ? "ambiguous" : "unmatched"] += 1;
+          continue;
+        }
+        value = matches[0].data[by.column];
+      }
+      if (value === undefined) {
+        counts.missing += 1;
+        continue;
+      }
+      assigned.push({ epoch: e, value: String(value) });
+    }
+    const labels = [...new Set(assigned.map((a) => a.value))].sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true }),
+    );
+    if (labels.length > 8)
+      throw new Error(
+        `${by.column} has ${labels.length} values. Split by a column with at most 8.`,
+      );
+    const empty = { epochs: 0, total: rows.length, ...counts, series: [] };
+    if (!assigned.length) return { ...empty, stage };
+    const first = assigned[0].epoch.meta;
+    const resolved = stage === "final" ? first.finalStage : stage;
+    if (!assigned.every((a) => a.epoch.meta.stages.includes(resolved)))
+      throw new Error("These epochs do not all contain the selected stage.");
+    const points = 600;
+    const grid = Array.from(
+      { length: points },
+      (_, i) => (first.duration * i) / (points - 1),
+    );
+    // Each source's moments are combined with Chan's parallel update.
+    const mean = labels.map(() => new Float64Array(points));
+    const m2 = labels.map(() => new Float64Array(points));
+    const n = labels.map(() => new Float64Array(points));
+    for (const [id, group] of Map.groupBy(assigned, (a) => a.epoch.source_id)) {
+      const result = await this.worker.request("moments", {
+        path: await this.sourcePath(id),
+        epochs: group.map((a) => ({
+          ...a.epoch.meta,
+          group: labels.indexOf(a.value) + 1,
+        })),
+        stage: resolved,
+        grid,
+        groups: labels.length,
+      });
+      labels.forEach((_, g) => {
+        for (let i = 0; i < points; i++) {
+          const nb = result.n[g][i];
+          if (!nb) continue;
+          const na = n[g][i];
+          const total = na + nb;
+          const delta = result.mean[g][i] - mean[g][i];
+          mean[g][i] += (delta * nb) / total;
+          m2[g][i] += result.m2[g][i] + (delta * delta * na * nb) / total;
+          n[g][i] = total;
+        }
+      });
+    }
+    const limits = first.limits;
+    const offset =
+      Array.isArray(limits) && Number.isFinite(limits[0]) ? limits[0] : null;
+    return {
+      ...empty,
+      epochs: assigned.length,
+      stage: resolved,
+      onset: offset !== null,
+      time: grid.map((t) => t + (offset ?? 0)),
+      series: labels.map((label, g) => ({
+        label,
+        n: assigned.filter((a) => a.value === label).length,
+        mean: [...n[g]].map((k, i) => (k ? mean[g][i] : null)),
+        se: [...n[g]].map((k, i) =>
+          k > 1 ? Math.sqrt(m2[g][i] / (k - 1) / k) : null,
+        ),
+      })),
     };
   }
   // Export in the background, reporting progress in the summary.

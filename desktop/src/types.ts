@@ -105,6 +105,37 @@ export interface Average {
   n?: number[];
   ids?: string[];
 }
+export interface Behavior {
+  root: string | null;
+  bidsRoot: string | null;
+  files: number;
+  rows: number;
+  columns: string[];
+}
+export interface SplitRequest {
+  key: string;
+  scope: "run" | "subject" | "all";
+  stage: string;
+  include: Include;
+  by: { from: "epoch" | "behavior"; column: string } | null;
+  join: { epoch: string; behavior: string } | null;
+}
+export interface Split {
+  epochs: number;
+  total: number;
+  unmatched: number;
+  ambiguous: number;
+  missing: number;
+  stage: string;
+  onset?: boolean;
+  time?: number[];
+  series: {
+    label: string;
+    n: number;
+    mean: (number | null)[];
+    se: (number | null)[];
+  }[];
+}
 export interface Trace {
   time: number[];
   signal: (number | null)[];
@@ -272,6 +303,10 @@ interface API {
   setAutoExclude(rule: AutoExclude): Promise<Summary>;
   list(filters: Filters): Promise<Queue>;
   diagnosticGroups(): Promise<DiagnosticGroup[]>;
+  behavior(): Promise<Behavior>;
+  linkBehavior(): Promise<Behavior | null>;
+  epochFields(): Promise<string[]>;
+  split(request: SplitRequest): Promise<Split>;
   average(selection: {
     key: string;
     stage: string;

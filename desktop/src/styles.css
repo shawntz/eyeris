@@ -1193,9 +1193,38 @@ main {
   position: relative;
 }
 .diagnostics-panel .signal-metadata {
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 8px 22px;
   align-items: center;
+}
+.split-controls {
+  margin-top: -4px;
+}
+.split-controls label select {
+  min-width: 150px;
+}
+.behavior-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  color: #666;
+  font-size: 11px;
+}
+.behavior-status .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.split-legend i {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.split-dropped {
+  color: #6b5a16;
 }
 .legend-mean,
 .legend-trace {

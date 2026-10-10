@@ -8,6 +8,23 @@ review_objects <- function(x) {
   stop("Choose an RDS containing an epoched eyeris object. Run eyeris::epoch() before saving it.")
 }
 
+# Epoch-level variables, such as event-pattern placeholders ({trial}, {stim})
+# and matched_event: columns other than signals and timing whose value is the
+# same at an epoch's first and last sample.
+review_field_columns <- function(df) {
+  skip <- c("timebin", "block", "eye", "hz", "type", "text_unique", "template", "matching_pattern")
+  setdiff(names(df)[!grepl("^(pupil_|time|eye_)", names(df))], skip)
+}
+review_fields <- function(df, a, b, columns = review_field_columns(df)) {
+  out <- list()
+  for (col in columns) {
+    first <- df[[col]][a]
+    if (length(first) == 1 && !is.na(first) && identical(first, df[[col]][b]))
+      out[[col]] <- as.character(first)
+  }
+  if (length(out)) out else structure(list(), names = character())
+}
+
 review_index <- function(x) {
   objects <- review_objects(x)
   out <- list()
@@ -20,6 +37,7 @@ review_index <- function(x) {
         df <- object[[label]][[block]]
         if (!is.data.frame(df) || !nrow(df)) next
         stages <- names(df)[grepl("^pupil_", names(df)) & vapply(df, is.numeric, logical(1))]
+        field_columns <- review_field_columns(df)
         if (!length(stages) || !is.numeric(df$timebin) || any(!is.finite(df$timebin))) {
           stop(sprintf("%s/%s must contain numeric pupil_* stages and finite timebin values.", label, block))
         }
@@ -45,6 +63,7 @@ review_index <- function(x) {
             stages = unname(as.list(stages)), finalStage = final,
             samples = b - a + 1L, duration = df$timebin[b] - df$timebin[a],
             missing = mean(!is.finite(ys)), stageMissing = stage_missing, blocks = blocks,
+            fields = review_fields(df, a, b, field_columns),
             limits = object[[label]]$info[[block]]$epoch_limits
           )
         }
@@ -92,6 +111,39 @@ review_average <- function(x, epochs, stage, points = 600L) {
     traces = lapply(seq_len(ncol(traces)), function(i) unname(as.list(traces[, i]))),
     mean = unname(as.list(mean)), se = unname(as.list(se)), n = unname(as.list(n))
   )
+}
+
+# Epoch fields for epochs indexed before they were stored.
+review_epoch_fields <- function(x, epochs) {
+  lapply(epochs, function(epoch) {
+    df <- review_frame(x, epoch)
+    review_fields(df, 1L, nrow(df))
+  })
+}
+
+# Per-group means, sums of squared deviations and counts of finite values on a
+# time grid (seconds from each epoch's start), updated one epoch at a time
+# (Welford), so groups can be pooled across sources without losing precision.
+review_group_moments <- function(x, epochs, stage, grid, groups) {
+  grid <- unlist(grid)
+  means <- matrix(0, length(grid), groups)
+  m2 <- means
+  counts <- means
+  for (e in epochs) {
+    df <- review_frame(x, e)
+    if (!stage %in% names(df)) stop("An epoch does not contain the selected stage.")
+    t <- df$timebin - df$timebin[1]
+    nearest <- round(stats::approx(t, seq_along(t), grid, rule = 2, ties = "ordered")$y)
+    y <- df[[stage]][nearest]
+    ok <- is.finite(y) & grid <= max(t)
+    g <- e$group
+    counts[ok, g] <- counts[ok, g] + 1
+    delta <- y[ok] - means[ok, g]
+    means[ok, g] <- means[ok, g] + delta / counts[ok, g]
+    m2[ok, g] <- m2[ok, g] + delta * (y[ok] - means[ok, g])
+  }
+  columns <- function(m) lapply(seq_len(groups), function(g) unname(as.list(m[, g])))
+  list(mean = columns(means), m2 = columns(m2), n = columns(counts))
 }
 
 review_frame <- function(x, epoch) {

@@ -1,6 +1,6 @@
 import { resolveRscript } from "../electron/rscript.mjs";
 import { test, expect, _electron as electron } from "@playwright/test";
-import { mkdtemp, mkdir, copyFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, copyFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -27,6 +27,14 @@ test("a BIDS folder is imported and every subject processed in one batch", async
   ]) {
     await mkdir(path.dirname(path.join(root, file)), { recursive: true });
     await copyFile(asc, path.join(root, file));
+    // Trial-level behavior for each run, beside the eye-tracking data.
+    const beh = file.replace("/eye/", "/beh/").replace("_eye.asc", "_beh.tsv");
+    await mkdir(path.dirname(path.join(root, beh)), { recursive: true });
+    await writeFile(
+      path.join(root, beh),
+      "trial\taccuracy\n" +
+        Array.from({ length: 40 }, (_, i) => `${i}\t${i % 2}`).join("\n"),
+    );
   }
   const app = await electron.launch({ args: ["."], cwd: process.cwd(), env });
   try {
@@ -129,6 +137,29 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     ).toBeEnabled();
     const state = await page.evaluate(() => window.eyeris.projectState());
     expect(state.project.participants).toEqual(["001", "002"]);
+    // Link the dataset's behavior and split every subject's epochs by it.
+    await page.getByRole("button", { name: "Diagnostics" }).click();
+    await expect(page.locator(".average-plot canvas")).toBeVisible();
+    await page.getByRole("button", { name: "Link behavioral data…" }).click();
+    await expect(
+      page.getByText("Behavioral data: 120 rows in 3 files"),
+    ).toBeVisible();
+    await page
+      .getByRole("combobox", { name: "Split by" })
+      .selectOption("behavior:accuracy");
+    await expect(
+      page.getByRole("combobox", { name: "Epoch field to match" }),
+    ).toHaveValue("trial");
+    await expect(
+      page.getByRole("combobox", { name: "Behavioral column to match" }),
+    ).toHaveValue("trial");
+    await page
+      .getByRole("combobox", { name: "Average over" })
+      .selectOption("all");
+    await expect(page.getByText("15 of 15 epochs in 2 groups")).toBeVisible();
+    await expect(page.getByText(/accuracy = 0 \(n = \d+\)/)).toBeVisible();
+    await expect(page.getByText(/accuracy = 1 \(n = \d+\)/)).toBeVisible();
+    await captureScreenshot(page, { path: "test-results/behavior-split.png" });
     expect(state.pipeline.jobs.every((j) => j.status === "completed")).toBe(
       true,
     );
