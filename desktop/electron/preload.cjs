@@ -34,6 +34,7 @@ contextBridge.exposeInMainWorld(
       "projectState",
       "addSubject",
       "addRecording",
+      "chooseBids",
       "importBids",
       "cancelImport",
       "startPipeline",

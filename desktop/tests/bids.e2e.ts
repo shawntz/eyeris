@@ -44,6 +44,12 @@ test("a BIDS folder is imported and every subject processed in one batch", async
         Array.from({ length: 40 }, (_, i) => `${i}\t${i % 2}`).join("\n"),
     );
   }
+  // A second session, with its own event messages, for another project.
+  await mkdir(path.join(root, "sub-001/ses-02/eye"), { recursive: true });
+  await copyFile(
+    asc,
+    path.join(root, "sub-001/ses-02/eye/sub-001_ses-02_task-memory_eye.asc"),
+  );
   // A recording without a task- entity is listed as skipped.
   await writeFile(
     path.join(root, "sub-002/ses-01/eye/sub-002_ses-01_eye.asc"),
@@ -73,9 +79,40 @@ test("a BIDS folder is imported and every subject processed in one batch", async
       });
     }, root);
     await page.getByRole("button", { name: "Import BIDS folder" }).click();
+    // The dataset's sessions and tasks are listed, and none is chosen yet.
+    const choice = page.getByRole("region", { name: "Choose what to import" });
+    const first = choice.getByRole("checkbox", {
+      name: /ses-01 · task-memory/,
+    });
+    const second = choice.getByRole("checkbox", {
+      name: /ses-02 · task-memory/,
+    });
+    await expect(first).not.toBeChecked();
+    await expect(second).not.toBeChecked();
+    await expect(choice.locator("label").first()).toContainText(
+      "2 subjects · 3 files",
+    );
+    await expect(
+      choice.getByRole("button", { name: "Choose a session and task" }),
+    ).toBeDisabled();
+    await first.check();
+    await captureScreenshot(page, { path: "test-results/bids-choice.png" });
+    await choice.getByRole("button", { name: "Import 3 files" }).click();
     await expect(
       page.getByText("Added 3 recordings for 2 subjects."),
     ).toBeVisible({ timeout: 60_000 });
+    await expect(choice).toHaveCount(0);
+    // Choosing again starts from the session already in the project, and
+    // adding another one says so.
+    await page.getByRole("button", { name: "Import BIDS folder" }).click();
+    await expect(first).toBeChecked();
+    await expect(choice).toContainText("3 already in this project");
+    await second.check();
+    await expect(choice.getByRole("note")).toHaveText(
+      "This project already has ses-01 · task-memory. ses-02 · task-memory would be processed with the same settings.",
+    );
+    await choice.getByRole("button", { name: "Cancel" }).click();
+    await expect(choice).toHaveCount(0);
     await expect(
       page
         .locator(".subject-list")

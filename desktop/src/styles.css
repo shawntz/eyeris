@@ -594,6 +594,67 @@ main {
 .job-status.partial {
   color: #6b5a16;
 }
+.import-choice {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.import-choice-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.import-choice-heading strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+}
+.import-choice-heading small,
+.import-choice label small {
+  color: #777;
+  overflow-wrap: anywhere;
+}
+.import-choice p {
+  color: #555;
+  line-height: 1.45;
+}
+.import-choice ul {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  border-top: 1px solid #eee;
+}
+.import-choice li {
+  border-bottom: 1px solid #eee;
+}
+.import-choice label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 9px 2px;
+  color: #222;
+  cursor: pointer;
+}
+.import-choice label span {
+  font-weight: 500;
+  min-width: 180px;
+}
+.import-choice .import-choice-warning {
+  color: #8a5a00;
+  margin-bottom: 12px;
+}
+.import-choice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
 .import-progress {
   border: 1px solid #ddd;
   background: #fff;

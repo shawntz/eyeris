@@ -62,22 +62,29 @@ does not automatically run any processing.
    passed to `eyeris::bidsify(run_num = ...)`. As in the package, an ASC that
    contains several recording blocks has its blocks numbered as runs instead.
    To add a whole study at once, choose **Import BIDS folder** and select the
-   dataset root (or one `sub-*` folder). Every `.asc` file in
-   `sub-<label>/[ses-<label>/]eye/` is added in one step, creating subjects as
+   dataset root (or one `sub-*` folder). The `.asc` files in
+   `sub-<label>/[ses-<label>/]eye/` are added in one step, creating subjects as
    needed. The subject comes from the folder, and the session, task and run from
    the filename's `ses-`, `task-` and `run-` entities, which must agree with the
    folders. Datasets without sessions use session `01`, and files without a run
-   are numbered after the existing runs. Files without a `task-` entity, with
-   mismatched entities, or whose run is already in the project are skipped and
-   listed. Recordings already imported are skipped, so importing the folder again
-   adds only new files. Hidden files are ignored, including the `._` metadata
-   files macOS writes beside every file on drives such as exFAT. Versions up to
-   0.4.1 imported those as recordings and skipped the real files as duplicate
-   runs; importing the same folder again replaces each of them with its real
-   recording, keeping its run number and processing history. **Add ASC files**
-   also rejects `._` metadata files. Files are copied in the background with a progress bar;
-   each recording is added once its copy completes, and **Cancel** keeps the
-   recordings already copied.
+   are numbered after the existing runs. When the dataset has more than one
+   combination of session and task, the app lists each with its subjects, files
+   and size, and imports only the ones you check. One set of pipeline and epoch
+   settings applies to a whole project, so sessions or tasks with different
+   event messages (such as an encoding and a retrieval session) are best
+   imported into separate projects, one each. The sessions and tasks a project
+   already has are checked to begin with, and adding a different one says so. A
+   dataset with a single session and task is imported without asking. Files
+   without a `task-` entity, with mismatched entities, or whose run is already
+   in the project are skipped and listed. Recordings already imported are
+   skipped, so importing the folder again adds only new files. Hidden files are
+   ignored, including the `._` metadata files macOS writes beside every file on
+   drives such as exFAT. Versions up to 0.4.1 imported those as recordings and
+   skipped the real files as duplicate runs; importing the same folder again
+   replaces each of them with its real recording, keeping its run number and
+   processing history. **Add ASC files** also rejects `._` metadata files. Files
+   are copied in the background with a progress bar; each recording is added
+   once its copy completes, and **Cancel** keeps the recordings already copied.
 3. Configure the glassbox steps. The interface provides the package's default
    pipeline, individual step switches, common parameters, eye selection, and a
    random seed. Each recording is loaded once with `eyeris::load_asc()` in the

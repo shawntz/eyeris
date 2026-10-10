@@ -544,20 +544,62 @@ export class Pipeline {
   // the window keeps updating; each recording is committed once its copy is
   // complete. Files already in the project are skipped, so importing a dataset
   // again adds only its new recordings.
-  async importBids(root) {
-    if (this.busy || this.importing)
-      throw new Error("Wait for processing or the current import to finish.");
-    const db = this.project.db;
+  async scanDataset(root) {
     const scan = await scanBids(root);
-    // Remembered so behavioral data can be linked from the same dataset.
-    db.prepare(
-      "INSERT INTO metadata VALUES ('bids_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
-    ).run(root);
     if (!scan.recordings.length && !scan.skipped.length)
       throw new Error(
         "No EyeLink .asc files were found in sub-*/eye or sub-*/ses-*/eye folders.",
       );
-    const skipped = [...scan.skipped];
+    return scan;
+  }
+  // What a BIDS dataset holds, by session and task, so an import can take only
+  // some of them: sessions or tasks with different event messages belong in
+  // separate projects.
+  async previewBids(root) {
+    const scan = await this.scanDataset(root);
+    const count = this.project.db.prepare(
+      "SELECT COUNT(*) AS n FROM recordings WHERE session=? AND task=?",
+    );
+    const groups = [
+      ...Map.groupBy(scan.recordings, (r) => `${r.session}/${r.task}`).values(),
+    ]
+      .map((files) => ({
+        session: files[0].session,
+        task: files[0].task,
+        subjects: new Set(files.map((r) => r.subject)).size,
+        files: files.length,
+        bytes: files.reduce((n, r) => n + r.size, 0),
+        inProject: count.get(files[0].session, files[0].task).n,
+      }))
+      .sort(
+        (a, b) =>
+          a.session.localeCompare(b.session, undefined, { numeric: true }) ||
+          a.task.localeCompare(b.task, undefined, { numeric: true }),
+      );
+    return { root, groups, skipped: scan.skipped.length };
+  }
+  // Import a BIDS dataset, or only the given sessions and tasks of it.
+  async importBids(root, only) {
+    if (this.busy || this.importing)
+      throw new Error("Wait for processing or the current import to finish.");
+    const db = this.project.db;
+    const scan = await this.scanDataset(root);
+    // Remembered so behavioral data can be linked from the same dataset.
+    db.prepare(
+      "INSERT INTO metadata VALUES ('bids_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+    ).run(root);
+    if (only) {
+      const chosen = new Set(only.map((g) => `${g.session}/${g.task}`));
+      const sessions = new Set(only.map((g) => g.session));
+      scan.recordings = scan.recordings.filter((r) =>
+        chosen.has(`${r.session}/${r.task}`),
+      );
+      // A skipped file without a task is listed with its chosen session.
+      scan.skipped = scan.skipped.filter((f) =>
+        f.task ? chosen.has(`${f.session}/${f.task}`) : sessions.has(f.session),
+      );
+    }
+    const skipped = scan.skipped.map(({ file, reason }) => ({ file, reason }));
     const plan = [];
     const groups = Map.groupBy(
       scan.recordings,
