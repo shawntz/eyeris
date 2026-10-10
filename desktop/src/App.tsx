@@ -20,6 +20,7 @@ const emptyPipeline: PipelineState = {
   settings: null,
   parallel: { setting: "auto", jobs: 1, cores: 1, automatic: 1 },
   importing: null,
+  detecting: null,
   lastImport: null,
 };
 export function App() {

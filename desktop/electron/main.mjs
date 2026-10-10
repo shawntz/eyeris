@@ -52,7 +52,7 @@ async function activate(directory, create) {
   const next = await Project.open(directory, worker, create);
   project?.close();
   project = next;
-  pipeline = new Pipeline(project);
+  pipeline = new Pipeline(project, { detectEyes: true });
   try {
     pipeline.setParallel((await appSettings()).parallelJobs ?? "auto");
   } catch {
@@ -149,6 +149,10 @@ const methods = {
     pipeline.setParallel(value);
     await saveAppSettings({ parallelJobs: value });
     return pipeline.snapshot();
+  },
+  recheckEyes() {
+    requireProject();
+    return pipeline.recheckEyes();
   },
   saveSettings(settings) {
     requireProject();
