@@ -1,0 +1,85 @@
+import { readdir, stat } from "node:fs/promises";
+import path from "node:path";
+
+const label = /^[a-zA-Z0-9]{1,64}$/;
+const entity = (name, key) =>
+  new RegExp(`(?:^|_)${key}-([^_.]+)`, "i").exec(name)?.[1];
+async function directories(dir, prefix) {
+  return (await readdir(dir, { withFileTypes: true }))
+    .filter((e) => e.isDirectory() && e.name.toLowerCase().startsWith(prefix))
+    .map((e) => e.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+}
+
+// Find EyeLink recordings in a BIDS dataset, in sub-<label>/[ses-<label>/]eye/.
+// The root may also be a single sub-<label> folder. Entities come from the
+// folders and the filename, which must agree. Datasets without sessions use
+// session 01. Runs are optional; the caller numbers files without one.
+export async function scanBids(root) {
+  const single = /^sub-/i.test(path.basename(root));
+  const base = single ? path.dirname(root) : root;
+  const subjects = single
+    ? [path.basename(root)]
+    : await directories(base, "sub-");
+  const recordings = [];
+  const skipped = [];
+  for (const subjectFolder of subjects) {
+    const subjectDir = path.join(base, subjectFolder);
+    const folders = [
+      { dir: subjectDir, session: undefined },
+      ...(await directories(subjectDir, "ses-")).map((name) => ({
+        dir: path.join(subjectDir, name),
+        session: name.slice(4),
+      })),
+    ];
+    for (const { dir, session: folderSession } of folders) {
+      let entries;
+      try {
+        entries = await readdir(path.join(dir, "eye"), { withFileTypes: true });
+      } catch (error) {
+        if (error.code === "ENOENT" || error.code === "ENOTDIR") continue;
+        throw error;
+      }
+      for (const e of entries) {
+        if (!e.isFile() || !/\.asc$/i.test(e.name)) continue;
+        const file = path.join(dir, "eye", e.name);
+        const relative = path.relative(base, file);
+        const subject = subjectFolder.slice(4);
+        const named = {
+          subject: entity(e.name, "sub"),
+          session: entity(e.name, "ses"),
+        };
+        const session = named.session ?? folderSession ?? "01";
+        const task = entity(e.name, "task");
+        const run = entity(e.name, "run") ?? "";
+        const reason =
+          named.subject !== undefined && named.subject !== subject
+            ? `the filename's sub-${named.subject} does not match its folder`
+            : named.session !== undefined &&
+                folderSession !== undefined &&
+                named.session !== folderSession
+              ? `the filename's ses-${named.session} does not match its folder`
+              : !task
+                ? "the filename has no task- entity"
+                : ![subject, session, task].every((v) => label.test(v))
+                  ? "subject, session and task labels must be letters and digits"
+                  : run && !(/^\d{1,3}$/.test(run) && Number(run) > 0)
+                    ? `run-${run} is not a run number from 1 to 999`
+                    : "";
+        if (reason) skipped.push({ file: relative, reason });
+        else
+          recordings.push({
+            file,
+            relative,
+            name: e.name,
+            subject,
+            session,
+            task,
+            run: run && String(Number(run)).padStart(2, "0"),
+            size: (await stat(file)).size,
+          });
+      }
+    }
+  }
+  return { recordings, skipped };
+}

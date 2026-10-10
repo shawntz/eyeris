@@ -11,6 +11,8 @@ export function App() {
     recordings: [],
     jobs: [],
     active: null,
+    importing: null,
+    lastImport: null,
   });
   const [reviewer, setReviewer] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
@@ -79,7 +81,14 @@ export function App() {
     try {
       await window.eyeris.closeProject();
       setProject(null);
-      setPipeline({ subjects: [], recordings: [], jobs: [], active: null });
+      setPipeline({
+        subjects: [],
+        recordings: [],
+        jobs: [],
+        active: null,
+        importing: null,
+        lastImport: null,
+      });
       setError("");
     } catch (e) {
       setError(String(e));

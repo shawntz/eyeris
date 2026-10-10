@@ -29,9 +29,9 @@ const requireProject = () => {
 };
 async function activate(directory, create) {
   await ensureRuntime();
-  if (pipeline?.active)
+  if (pipeline?.active || pipeline?.importing)
     throw new Error(
-      "Wait for processing to finish or cancel it before switching projects.",
+      "Wait for processing or importing to finish, or cancel it, before switching projects.",
     );
   const next = await Project.open(directory, worker, create);
   project?.close();
@@ -70,9 +70,9 @@ const methods = {
     return activate(settings.lastProject, false);
   },
   closeProject() {
-    if (pipeline?.active)
+    if (pipeline?.active || pipeline?.importing)
       throw new Error(
-        "Wait for processing to finish or cancel it before closing the project.",
+        "Wait for processing or importing to finish, or cancel it, before closing the project.",
       );
     project?.close();
     project = null;
@@ -95,6 +95,21 @@ const methods = {
     });
     if (result.canceled) return null;
     return pipeline.addRecording(input, result.filePaths);
+  },
+  async importBids() {
+    requireProject();
+    const result = await dialog.showOpenDialog(window, {
+      title: "Import a BIDS dataset of EyeLink recordings",
+      buttonLabel: "Import recordings",
+      properties: ["openDirectory"],
+    });
+    if (result.canceled) return null;
+    return pipeline.importBids(result.filePaths[0]);
+  },
+  cancelImport() {
+    requireProject();
+    pipeline.cancelImport();
+    return pipeline.snapshot();
   },
   startPipeline(ids, settings) {
     requireProject();
@@ -240,7 +255,13 @@ app.whenReady().then(async () => {
       app.isPackaged &&
       !process.env.EYERIS_TEST_USER_DATA &&
       (process.platform !== "linux" || Boolean(process.env.APPIMAGE)),
-    busy: () => Boolean(pipeline?.active || demoChild || worker.pending.size),
+    busy: () =>
+      Boolean(
+        pipeline?.active ||
+        pipeline?.importing ||
+        demoChild ||
+        worker.pending.size,
+      ),
   });
   if (app.isPackaged) process.env.EYERIS_RESOURCE_DIR = process.resourcesPath;
   if (!app.isPackaged) process.env.EYERIS_RSCRIPT = resolveRscript();
@@ -303,6 +324,7 @@ app.whenReady().then(async () => {
 app.on("window-all-closed", () => app.quit());
 app.on("before-quit", () => {
   updates?.stop();
+  pipeline?.cancelImport();
   if (pipeline?.active) {
     project.db
       .prepare(

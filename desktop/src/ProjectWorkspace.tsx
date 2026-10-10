@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Plus,
   FolderOpen,
@@ -11,6 +11,7 @@ import {
   Check,
   X,
   LoaderCircle,
+  FolderInput,
 } from "lucide-react";
 import type {
   Summary,
@@ -92,6 +93,10 @@ const defaults: PipelineSettings = {
   report: true,
   database: false,
 };
+const megabytes = (n: number) => `${(n / 1e6).toFixed(n < 1e7 ? 1 : 0)} MB`;
+// Kept outside the component so a dismissed summary stays dismissed when the
+// workspace is reopened.
+let dismissedImport = "";
 const bidsName = (r: Recording) =>
   `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}`;
 const names: Record<string, string> = {
@@ -138,6 +143,7 @@ export function ProjectWorkspace({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [showLog, setShowLog] = useState(false);
+  const [, setDismissed] = useState(dismissedImport);
   const records = pipeline.recordings.filter((r) => r.subject === subject);
   const latestJob = (id: string) =>
     pipeline.jobs.find((j) => j.recordings.includes(id));
@@ -145,6 +151,9 @@ export function ProjectWorkspace({
   const latest = jobs[0];
   const active = pipeline.active;
   const running = !!active;
+  const importing = pipeline.importing;
+  const imported =
+    pipeline.lastImport?.id !== dismissedImport ? pipeline.lastImport : null;
   const selected = records.filter((r) => checked.includes(r.id));
   const named = (id: string) =>
     pipeline.recordings.find((r) => r.id === id) as Recording | undefined;
@@ -183,6 +192,22 @@ export function ProjectWorkspace({
     if (!records.some((r) => r.id === recording))
       setRecording(records[0]?.id || "");
   }, [records.length]);
+  // Recordings added since the subject was opened, by hand or by a BIDS import
+  // still in progress, are selected for processing.
+  const seen = useRef(new Set<string>());
+  useEffect(() => {
+    const fresh = records.filter((r) => !seen.current.has(r.id));
+    for (const r of fresh) seen.current.add(r.id);
+    if (fresh.length)
+      setChecked((c) => [
+        ...new Set([
+          ...c,
+          ...fresh
+            .filter((r) => latestJob(r.id)?.status !== "completed")
+            .map((r) => r.id),
+        ]),
+      ]);
+  }, [records.map((r) => r.id).join()]);
   useEffect(() => {
     if (pipeline.active) setLog(pipeline.active.log);
   }, [pipeline.active?.log]);
@@ -210,6 +235,12 @@ export function ProjectWorkspace({
   }
   function epoch(change: Partial<NonNullable<PipelineSettings["epoch"]>>) {
     setSettings((s) => ({ ...s, epoch: { ...s.epoch!, ...change } }));
+  }
+  function importBids() {
+    void act(async () => {
+      const r = await window.eyeris.importBids();
+      if (r) onPipeline(r);
+    });
   }
   async function importProcessed() {
     await act(async () => {
@@ -311,14 +342,111 @@ export function ProjectWorkspace({
                   : "Create a subject to add an EyeLink recording."}
               </p>
             </div>
-            <button
-              className="button"
-              disabled={busy}
-              onClick={() => void importProcessed()}
-            >
-              Import processed RDS
-            </button>
+            <div className="heading-actions">
+              <button
+                className="button"
+                disabled={busy || running || !!importing}
+                onClick={importBids}
+              >
+                <FolderInput size={16} /> Import BIDS folder
+              </button>
+              <button
+                className="button"
+                disabled={busy}
+                onClick={() => void importProcessed()}
+              >
+                Import processed RDS
+              </button>
+            </div>
           </div>
+          {importing && (
+            <section className="import-progress" role="status">
+              <div>
+                <strong>
+                  <LoaderCircle size={15} className="spin" /> Importing BIDS
+                  recordings
+                </strong>
+                <span>
+                  {importing.completed} of {importing.total} files ·{" "}
+                  {megabytes(importing.bytes)} of{" "}
+                  {megabytes(importing.totalBytes)}
+                </span>
+                <button
+                  onClick={() =>
+                    void act(async () =>
+                      onPipeline(await window.eyeris.cancelImport()),
+                    )
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-label="Import progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(
+                  (100 * importing.bytes) / (importing.totalBytes || 1),
+                )}
+              >
+                <span
+                  style={{
+                    width: `${(100 * importing.bytes) / (importing.totalBytes || 1)}%`,
+                  }}
+                />
+              </div>
+              <small>{importing.current}</small>
+            </section>
+          )}
+          {imported && !importing && (
+            <div
+              className={`message ${imported.error ? "error" : "notice"}`}
+              role="status"
+            >
+              <div>
+                <strong>
+                  {imported.cancelled
+                    ? "Import cancelled. "
+                    : imported.error
+                      ? "Import stopped. "
+                      : ""}
+                  Added {imported.added} recording
+                  {imported.added === 1 ? "" : "s"}
+                  {imported.added
+                    ? ` for ${imported.subjects} subject${imported.subjects === 1 ? "" : "s"}`
+                    : ""}
+                  .
+                </strong>
+                {imported.error && <p>{imported.error}</p>}
+                {!!imported.skipped.length && (
+                  <details>
+                    <summary>
+                      {imported.skipped.length} file
+                      {imported.skipped.length === 1 ? "" : "s"} skipped
+                    </summary>
+                    <ul>
+                      {imported.skipped.map((f) => (
+                        <li key={f.file}>
+                          {f.file}: {f.reason}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+              <button
+                aria-label="Dismiss import summary"
+                onClick={() => {
+                  dismissedImport = imported.id;
+                  setDismissed(imported.id);
+                }}
+              >
+                <X size={15} />
+              </button>
+            </div>
+          )}
           {error && (
             <div className="message error" role="alert">
               {error}
@@ -331,7 +459,12 @@ export function ProjectWorkspace({
             <div className="project-empty">
               <h2>Start with a subject</h2>
               <p>
-                Enter a subject ID in the sidebar, then add its .asc recording.
+                Enter a subject ID in the sidebar, then add its .asc recordings.
+              </p>
+              <p>
+                To add a whole study at once, import a BIDS folder. Every
+                sub-*/[ses-*/]eye/*.asc file is added with its subject, session,
+                task and run.
               </p>
               <p>
                 You can also import an already processed eyeris object for epoch
@@ -459,7 +592,6 @@ export function ProjectWorkspace({
                         const added = r.recordings
                           .filter((x) => !before.has(x.id))
                           .map((x) => x.id);
-                        setChecked((c) => [...c, ...added]);
                         setRecording(added[0]);
                         setRun("");
                       }
@@ -498,7 +630,10 @@ export function ProjectWorkspace({
                       inputMode="numeric"
                     />
                   </label>
-                  <button className="button" disabled={busy || running}>
+                  <button
+                    className="button"
+                    disabled={busy || running || !!importing}
+                  >
                     <Plus size={16} /> Add ASC files
                   </button>
                 </form>
@@ -897,6 +1032,7 @@ export function ProjectWorkspace({
                           className="button primary"
                           disabled={
                             busy ||
+                            !!importing ||
                             !selected.length ||
                             (!!settings.epoch && !settings.epoch.events.trim())
                           }
