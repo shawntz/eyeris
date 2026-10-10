@@ -8,11 +8,43 @@
 
 name: R CMD check/build
 
+# Only changes to the R package's own files (those R CMD build puts in the
+# package, see .Rbuildignore) are checked; the desktop app has its own CI.
 on:
   push:
     branches: dev
+    paths:
+      - 'R/**'
+      - 'src/**'
+      - 'man/**'
+      - 'inst/**'
+      - 'data/**'
+      - 'tests/**'
+      - 'vignettes/**'
+      - 'DESCRIPTION'
+      - 'NAMESPACE'
+      - 'LICENSE'
+      - 'NEWS.md'
+      - 'README.md'
+      - '.Rbuildignore'
+      - '.github/workflows/build.yml'
   pull_request:
     branches: [ dev, release/** ]
+    paths:
+      - 'R/**'
+      - 'src/**'
+      - 'man/**'
+      - 'inst/**'
+      - 'data/**'
+      - 'tests/**'
+      - 'vignettes/**'
+      - 'DESCRIPTION'
+      - 'NAMESPACE'
+      - 'LICENSE'
+      - 'NEWS.md'
+      - 'README.md'
+      - '.Rbuildignore'
+      - '.github/workflows/build.yml'
 
 permissions: read-all
 
