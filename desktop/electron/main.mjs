@@ -154,6 +154,11 @@ const methods = {
     requireProject();
     return pipeline.recheckEyes();
   },
+  eventPatterns(ids) {
+    requireProject();
+    if (!Array.isArray(ids)) throw new Error("Invalid recordings.");
+    return pipeline.eventPatterns(ids);
+  },
   saveSettings(settings) {
     requireProject();
     return pipeline.saveSettings(settings);

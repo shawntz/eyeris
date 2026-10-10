@@ -9,6 +9,7 @@ import {
   epochsOf,
   type EpochSetting,
   type EyeSummary,
+  type EventPatterns,
   type PipelineSettings,
 } from "./types";
 const steps = [
@@ -101,6 +102,45 @@ const names: Record<string, string> = {
   spline_df: "Spline degrees of freedom",
 };
 
+// A menu of event patterns found in the recordings' messages; choosing one
+// fills in the field above it, which can still be edited.
+function PatternSuggestions({
+  label,
+  patterns,
+  onPick,
+}: {
+  label: string;
+  patterns?: EventPatterns | null;
+  onPick: (pattern: string) => void;
+}) {
+  if (!patterns) return null;
+  const found = patterns.patterns;
+  const plural = (n: number) => (n === 1 ? "" : "s");
+  return (
+    <select
+      aria-label={label}
+      className="pattern-suggestions"
+      value=""
+      disabled={!found.length}
+      onChange={(e) => e.target.value && onPick(e.target.value)}
+    >
+      <option value="">
+        {found.length
+          ? `Use a pattern found in ${patterns.read} recording${plural(patterns.read)}${patterns.pending ? " (reading more…)" : ""}`
+          : patterns.pending
+            ? "Reading event messages from the recordings…"
+            : "No repeated event messages found"}
+      </option>
+      {found.map((p) => (
+        <option key={p.pattern} value={p.pattern}>
+          {p.pattern} · {p.count} message{plural(p.count)}
+          {p.pattern !== p.example ? ` · e.g. ${p.example}` : ""}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 // The glassbox, epoch and output settings shared by every subject and run.
 export function PipelineSettingsPanel({
   settings,
@@ -110,6 +150,7 @@ export function PipelineSettingsPanel({
   epochExtras,
   eyes,
   onRecheckEyes,
+  eventPatterns,
   children,
 }: {
   settings: PipelineSettings;
@@ -121,6 +162,8 @@ export function PipelineSettingsPanel({
   // Which eyes the recordings to be processed have.
   eyes?: EyeSummary;
   onRecheckEyes?: () => void;
+  // Patterns found in the messages of the recordings to be processed.
+  eventPatterns?: EventPatterns | null;
   children: ReactNode;
 }) {
   const [openStep, setOpenStep] = useState("");
@@ -448,6 +491,11 @@ export function PipelineSettingsPanel({
                     onChange={(e) => epoch(i, { events: e.target.value })}
                   />
                 </label>
+                <PatternSuggestions
+                  label={name("Suggested event patterns")}
+                  patterns={eventPatterns}
+                  onPick={(events) => epoch(i, { events })}
+                />
                 <label>
                   Epoch label
                   <input
@@ -528,6 +576,13 @@ export function PipelineSettingsPanel({
                         as -1 to 0 s before the same event as this segment.
                       </small>
                     </label>
+                    <PatternSuggestions
+                      label={name("Suggested baseline event patterns")}
+                      patterns={eventPatterns}
+                      onPick={(baseline_events) =>
+                        epoch(i, { baseline_events })
+                      }
+                    />
                     <label>
                       Method
                       <select

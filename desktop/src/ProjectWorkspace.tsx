@@ -34,6 +34,7 @@ import {
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
+import { useEventPatterns } from "./useEventPatterns";
 import { AutoExcludeControl } from "./AutoExcludeControl";
 // The subject list entry that opens batch processing for every subject.
 const ALL = "*";
@@ -95,6 +96,10 @@ export function ProjectWorkspace({
   const eyes = eyeSummary(selected.length ? selected : records);
   const recheckEyes = () =>
     void act(async () => onPipeline(await window.eyeris.recheckEyes()));
+  const eventPatterns = useEventPatterns(
+    (selected.length ? selected : records).map((r) => r.id),
+    epochsOf(settings).length > 0,
+  );
   const named = (id: string) =>
     pipeline.recordings.find((r) => r.id === id) as Recording | undefined;
   // Runs left out of a session's job are missing from its report and database.
@@ -629,6 +634,7 @@ export function ProjectWorkspace({
                   epochExtras={exclusion}
                   eyes={eyes}
                   onRecheckEyes={recheckEyes}
+                  eventPatterns={eventPatterns}
                 >
                   <div className="run-actions">
                     {running ? (

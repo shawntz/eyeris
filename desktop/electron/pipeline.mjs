@@ -19,6 +19,7 @@ import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { isAppleDouble, scanBids } from "./bids.mjs";
+import { inferPatterns, summarizeMessages } from "./events.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -138,6 +139,12 @@ export class Pipeline {
         project.db.exec(
           `ALTER TABLE recordings ADD COLUMN ${column} TEXT NOT NULL DEFAULT ''`,
         );
+    // Each recording's event messages, summarized for pattern suggestions.
+    project.db.exec(
+      "CREATE TABLE IF NOT EXISTS recording_messages(recording_id TEXT PRIMARY KEY REFERENCES recordings(id), file TEXT NOT NULL, summary TEXT NOT NULL)",
+    );
+    this.messageQueue = [];
+    this.readingMessages = null;
     project.db
       .prepare(
         "UPDATE jobs SET status='interrupted', phase='interrupted', error='Processing was interrupted. Run this recording again.' WHERE status IN ('running','publishing')",
@@ -358,6 +365,68 @@ export class Pipeline {
         .run(active.id);
       active.child?.kill();
     }
+  }
+  // Event patterns found in the messages of some of these recordings, to offer
+  // as epoch and baseline events. Experiments usually log the same messages
+  // for every subject, so up to eight recordings spread across subjects are
+  // read, in the background and once each; until then the result is partial.
+  eventPatterns(recordingIds) {
+    const db = this.project.db;
+    const ids = [...new Set([recordingIds].flat())];
+    const rows = ids.length
+      ? db
+          .prepare(
+            `SELECT id, subject, file FROM recordings WHERE id IN (${ids.map(() => "?").join(",")}) ORDER BY ${runOrder}`,
+          )
+          .all(...ids)
+      : [];
+    const subjects = [...Map.groupBy(rows, (r) => r.subject).values()];
+    const sample = [];
+    for (let i = 0; sample.length < 8 && subjects.some((s) => s[i]); i++)
+      for (const list of subjects)
+        if (list[i] && sample.length < 8) sample.push(list[i]);
+    const read = [];
+    for (const r of sample) {
+      const cached = db
+        .prepare(
+          "SELECT summary FROM recording_messages WHERE recording_id=? AND file=?",
+        )
+        .get(r.id, r.file);
+      if (cached) read.push(JSON.parse(cached.summary));
+      else this.readMessages(r);
+    }
+    return {
+      patterns: inferPatterns(read),
+      read: read.length,
+      pending: sample.length - read.length,
+      total: rows.length,
+    };
+  }
+  // Queue a recording's messages to be read in the background.
+  readMessages(recording) {
+    if (this.disposed) return;
+    if (!this.messageQueue.some((r) => r.id === recording.id))
+      this.messageQueue.push(recording);
+    this.readingMessages ??= (async () => {
+      const db = this.project.db;
+      while (this.messageQueue.length && !this.disposed) {
+        const r = this.messageQueue[0];
+        let summary = {};
+        try {
+          summary = await summarizeMessages(
+            path.join(this.project.directory, r.file),
+          );
+        } catch {
+          // An unreadable file has no messages to suggest.
+        }
+        if (this.disposed) break;
+        db.prepare(
+          "INSERT INTO recording_messages VALUES (?,?,?) ON CONFLICT(recording_id) DO UPDATE SET file=excluded.file, summary=excluded.summary",
+        ).run(r.id, r.file, JSON.stringify(summary));
+        this.messageQueue.shift();
+      }
+      this.readingMessages = null;
+    })();
   }
   addSubject(id) {
     if (!entity(id))
