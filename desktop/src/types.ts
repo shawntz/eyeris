@@ -172,6 +172,20 @@ export interface EpochSetting {
   baseline_period?: number[];
   baseline_events?: string;
 }
+// Event patterns inferred from recordings' messages, such as
+// PROBE_START_{trial}, most frequent first.
+export interface EventPatterns {
+  patterns: {
+    pattern: string;
+    count: number;
+    recordings: number;
+    example: string;
+  }[];
+  // Recordings read so far, and those still being read, of the sample.
+  read: number;
+  pending: number;
+  total: number;
+}
 export interface PipelineSettings {
   glassbox: Record<string, boolean | number | Record<string, unknown>>;
   // Every segment is cut from the same preprocessed recording. Empty when
@@ -362,6 +376,7 @@ interface API {
   ): Promise<PipelineState>;
   saveSettings(settings: PipelineSettings): Promise<PipelineState>;
   recheckEyes(): Promise<PipelineState>;
+  eventPatterns(recordingIds: string[]): Promise<EventPatterns>;
   setParallelJobs(value: "auto" | number): Promise<PipelineState>;
   cancelPipeline(id?: string): Promise<PipelineState>;
   pipelineLog(id: string): Promise<string>;

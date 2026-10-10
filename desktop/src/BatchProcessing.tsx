@@ -17,6 +17,7 @@ import {
   eyeProblem,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
+import { useEventPatterns } from "./useEventPatterns";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 const bidsName = (r: Recording) =>
@@ -102,6 +103,12 @@ export function BatchProcessing({
   // The eyes of the recordings that will be processed.
   const eyes = eyeSummary(
     (selected.length ? selected : subjects).flatMap((s) => s.records),
+  );
+  const eventPatterns = useEventPatterns(
+    (selected.length ? selected : subjects).flatMap((s) =>
+      s.records.map((r) => r.id),
+    ),
+    epochsOf(settings).length > 0,
   );
   const batch = pipeline.batch;
   const finished = batch.filter((id) => !pending.some((j) => j.id === id));
@@ -287,6 +294,7 @@ export function BatchProcessing({
           onRecheckEyes={() =>
             void act(async () => onPipeline(await window.eyeris.recheckEyes()))
           }
+          eventPatterns={eventPatterns}
         >
           <label className="parallel-field">
             Subjects at a time

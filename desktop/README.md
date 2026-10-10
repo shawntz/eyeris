@@ -103,6 +103,17 @@ does not automatically run any processing.
    previous one's events and the window of the same length right after it. Each
    segment calls `eyeris::epoch()` in turn, needs its own label, and becomes its
    own group of epochs (`epoch_<label>`) to review, filter, diagnose and export.
+   Below each event pattern field, a menu suggests patterns found in the
+   recordings' own event messages: the app reads the `MSG` lines that eyeris
+   would see (those inside a recording block, leaving out EyeLink's
+   configuration and calibration messages) from up to eight of the selected
+   recordings, spread across subjects. Numbers that change from message to
+   message become placeholders (`TRIALID 1`, `TRIALID 2`: `TRIALID {trial}`),
+   numbers that never change stay as they are, and messages that differ only in
+   their last word are grouped (`STIM face`, `STIM house`: `STIM {stim}`). Each
+   suggestion shows how many messages it matches and an example; picking one
+   fills in the field, which can still be edited. Messages are read once per
+   file and remembered in the project.
 5. Optionally select HTML reports (off by default) and/or a DuckDB database,
    check the recordings to process, then run the pipeline. It calls
    `eyeris::glassbox()`, optional `eyeris::epoch()`, and `eyeris::bidsify()`

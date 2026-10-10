@@ -58,9 +58,22 @@ test("splash → subject → ASC runs → glassbox and BIDS → epoch review", a
       }),
     ).toBeChecked();
     await page.getByRole("checkbox", { name: "Extract epochs" }).check();
-    await page
-      .getByRole("textbox", { name: "Event pattern" })
-      .fill("PROBE_START_{trial}");
+    // Patterns are suggested from the recordings' own event messages.
+    const suggestions = page.getByRole("combobox", {
+      name: "Suggested event patterns",
+      exact: true,
+    });
+    await expect(
+      suggestions.locator("option", { hasText: "PROBE_START_{trial}" }),
+    ).toHaveText(
+      /PROBE_START_\{trial\} · 10 messages · e\.g\. PROBE_START_\d+/,
+    );
+    await captureScreenshot(page, { path: "test-results/event-patterns.png" });
+    await suggestions.selectOption("PROBE_START_{trial}");
+    await expect(
+      page.getByRole("textbox", { name: "Event pattern", exact: true }),
+    ).toHaveValue("PROBE_START_{trial}");
+    await expect(suggestions).toHaveValue("");
     // The HTML report is optional and off unless chosen.
     const report = page.getByRole("checkbox", {
       name: "HTML diagnostic report",
