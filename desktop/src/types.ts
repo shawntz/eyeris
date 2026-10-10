@@ -306,6 +306,19 @@ export interface BidsPreview {
   // Files that cannot be imported, listed after the import.
   skipped: number;
 }
+// What removing a session from the project takes out of it.
+export interface SessionRemoval {
+  session: string;
+  recordings: number;
+  subjects: number;
+  // Subjects with no other recordings, which are removed too.
+  emptied: string[];
+  // Processing runs of only this session's recordings.
+  jobs: number;
+  epochs: number;
+  // Epochs already kept or excluded.
+  reviewed: number;
+}
 export interface PipelineState {
   subjects: { id: string }[];
   recordings: Recording[];
@@ -331,6 +344,15 @@ export interface PipelineState {
   } | null;
   // The background check of which eyes recordings have.
   detecting: { total: number; done: number } | null;
+  lastRemoval: {
+    id: string;
+    session: string;
+    recordings: number;
+    // Subjects removed because they had no other recordings.
+    subjects: number;
+    // Files that could not be deleted, relative to the project.
+    leftover: string[];
+  } | null;
   lastImport: {
     id: string;
     root: string;
@@ -385,6 +407,10 @@ interface API {
   }): Promise<PipelineState | null>;
   chooseBids(): Promise<BidsPreview | null>;
   importBids(groups: BidsGroupKey[]): Promise<PipelineState>;
+  sessionRemoval(session: string): Promise<SessionRemoval>;
+  removeSession(
+    session: string,
+  ): Promise<{ project: Summary; pipeline: PipelineState }>;
   cancelImport(): Promise<PipelineState>;
   startPipeline(
     ids: string[],

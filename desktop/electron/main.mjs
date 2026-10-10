@@ -147,6 +147,17 @@ const methods = {
       throw new Error("Invalid sessions and tasks to import.");
     return pipeline.importBids(bidsChoice.root, groups);
   },
+  sessionRemoval(session) {
+    requireProject();
+    if (typeof session !== "string") throw new Error("Invalid session.");
+    return pipeline.sessionRemoval(session);
+  },
+  async removeSession(session) {
+    requireProject();
+    if (typeof session !== "string") throw new Error("Invalid session.");
+    const state = await pipeline.removeSession(session);
+    return { project: project.summary(), pipeline: state };
+  },
   cancelImport() {
     requireProject();
     pipeline.cancelImport();

@@ -11,6 +11,7 @@ import {
   type PipelineSettings,
   type PipelineState,
   type Recording,
+  type Summary,
   epochsOf,
   epochProblem,
   eyeSummary,
@@ -18,6 +19,7 @@ import {
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { useEventPatterns } from "./useEventPatterns";
+import { ProjectSessions } from "./ProjectSessions";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 const bidsName = (r: Recording) =>
@@ -32,6 +34,7 @@ export function BatchProcessing({
   busy,
   act,
   onPipeline,
+  onProject,
   onReview,
   onSubject,
   onError,
@@ -43,6 +46,7 @@ export function BatchProcessing({
   busy: boolean;
   act: (fn: () => Promise<void>) => Promise<void>;
   onPipeline: (p: PipelineState) => void;
+  onProject: (p: Summary) => void;
   onReview: () => void;
   onSubject: (id: string) => void;
   onError: (message: string) => void;
@@ -283,6 +287,15 @@ export function BatchProcessing({
           </p>
         )}
       </section>
+      <ProjectSessions
+        pipeline={pipeline}
+        disabled={busy}
+        act={act}
+        onRemoved={(r) => {
+          onPipeline(r.pipeline);
+          onProject(r.project);
+        }}
+      />
       {!!subjects.length && (
         <PipelineSettingsPanel
           settings={settings}

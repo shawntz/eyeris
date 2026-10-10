@@ -476,6 +476,7 @@ export function ProjectWorkspace({
               busy={busy}
               act={act}
               onPipeline={onPipeline}
+              onProject={onProject}
               onReview={() => onReview()}
               onSubject={setSubject}
               onError={setError}
