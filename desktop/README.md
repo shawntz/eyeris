@@ -88,7 +88,8 @@ does not automatically run any processing.
    previous one's events and the window of the same length right after it. Each
    segment calls `eyeris::epoch()` in turn, needs its own label, and becomes its
    own group of epochs (`epoch_<label>`) to review, filter, diagnose and export.
-5. Select HTML reports and/or a DuckDB database, check the recordings to process,
+5. Optionally select HTML reports (off by default) and/or a DuckDB database, check
+   the recordings to process,
    then run the pipeline. It calls `eyeris::glassbox()`, optional `eyeris::epoch()`,
    and `eyeris::bidsify()` directly for each recording, in run order, in one R
    session that writes one BIDS folder. Each session-level report and database
