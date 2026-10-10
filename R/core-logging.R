@@ -71,6 +71,9 @@ log_message <- function(
     paste0("[", level, "]"),
     message_text
   )
+  # braces left after interpolation are literal text, such as an event pattern
+  # like "STIM_{trial}"; escape them so cli does not evaluate them
+  cli_message <- gsub("([{}])", "\\1\\1", full_message)
 
   # if glue failed, use plain text output to avoid CLI expression parsing
   if (glue_failed) {
@@ -85,11 +88,11 @@ log_message <- function(
   } else {
     switch(
       level,
-      "INFO" = cli::cli_alert_info(full_message, wrap = wrap),
-      "OKAY" = cli::cli_alert_success(full_message, wrap = wrap),
-      "WARN" = cli::cli_alert_warning(full_message, wrap = wrap),
-      "EXIT" = cli::cli_abort(full_message, wrap = wrap),
-      cli::cli_alert_info(full_message, wrap = wrap) # fallback
+      "INFO" = cli::cli_alert_info(cli_message, wrap = wrap),
+      "OKAY" = cli::cli_alert_success(cli_message, wrap = wrap),
+      "WARN" = cli::cli_alert_warning(cli_message, wrap = wrap),
+      "EXIT" = cli::cli_abort(cli_message, wrap = wrap),
+      cli::cli_alert_info(cli_message, wrap = wrap) # fallback
     )
   }
 }

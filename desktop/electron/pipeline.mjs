@@ -15,12 +15,78 @@ import {
 } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
+import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { scanBids } from "./bids.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
+// Epoch segments of a settings object. Settings saved before several segments
+// were supported have a single `epoch` (or null) instead of `epochs`.
+export function epochsOf(settings) {
+  if (Array.isArray(settings?.epochs)) return settings.epochs;
+  return settings?.epoch ? [settings.epoch] : [];
+}
+// eyeris::epoch() requires baseline events for a baseline; measure it from the
+// segment's own events unless others are given.
+export function normalizeSettings(settings) {
+  const { epoch, ...rest } = settings;
+  return {
+    ...rest,
+    epochs: epochsOf(settings).map((e) =>
+      e.baseline && !e.baseline_events
+        ? { ...e, baseline_events: e.events }
+        : e,
+    ),
+  };
+}
+// Subjects processed at once by default: leave a core for the app and allow
+// about 2 GiB per R process, which holds a long recording several times over
+// while it is preprocessed.
+export function automaticJobs(
+  cores = availableParallelism(),
+  memory = totalmem(),
+) {
+  return Math.max(1, Math.min(8, cores - 1, Math.floor(memory / 2 ** 31)));
+}
+// Share the cores between parallel R processes. data.table and OpenMP would
+// otherwise each start threads for the whole machine.
+export function threadLimits(jobs, cores = availableParallelism()) {
+  if (jobs <= 1) return {};
+  const threads = String(Math.max(1, Math.floor(cores / jobs)));
+  return { R_DATATABLE_NUM_THREADS: threads, OMP_NUM_THREADS: threads };
+}
+// Copy the tables of a job's DuckDB database into the project's database. Tables
+// are named by subject, session, task and run, so existing tables are the same
+// published run and are kept.
+function mergeDatabase(source, target) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(
+      resolveRscript(),
+      [
+        "--vanilla",
+        path.join(rDirectory(), "merge-database.R"),
+        source,
+        target,
+      ],
+      {
+        env: rEnvironment(),
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      },
+    );
+    let log = "";
+    for (const stream of [child.stdout, child.stderr])
+      stream.on("data", (data) => (log = (log + data).slice(-3000)));
+    child.on("error", reject);
+    child.on("close", (code) =>
+      code === 0
+        ? resolve()
+        : reject(new Error(`The DuckDB database could not be merged. ${log}`)),
+    );
+  });
+}
 async function files(dir, base = dir) {
   const result = [];
   for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -43,9 +109,15 @@ const sourcePath = (r) =>
     r.name,
   );
 export class Pipeline {
-  constructor(project) {
+  constructor(project, { parallel = "auto" } = {}) {
     this.project = project;
-    this.active = null;
+    this.running = new Map();
+    this.queue = [];
+    this.setParallel(parallel);
+    this.waiters = [];
+    // The jobs queued since processing was last idle, for overall progress.
+    this.batch = [];
+    this.publishing = Promise.resolve();
     this.importing = null;
     this.lastImport = null;
     project.db
@@ -112,15 +184,24 @@ export class Pipeline {
           config: JSON.parse(j.config),
           recordings: links.get(j.id) || [j.recording_id],
         })),
-      active: this.active
-        ? {
-            id: this.active.id,
-            log: this.active.log,
-            phase: this.active.phase,
-            recordings: this.active.recordings,
-            current: this.active.current,
-          }
-        : null,
+      running: [...this.running.values()].map(
+        ({ id, log, phase, recordings, current }) => ({
+          id,
+          log,
+          phase,
+          recordings,
+          current,
+        }),
+      ),
+      queued: this.queue.map(({ id, recordings }) => ({ id, recordings })),
+      batch: this.batch,
+      parallel: {
+        setting: this.parallel,
+        jobs: this.concurrency,
+        cores: availableParallelism(),
+        automatic: automaticJobs(),
+      },
+      settings: this.settings(),
       importing: this.importing && {
         total: this.importing.total,
         completed: this.importing.completed,
@@ -130,6 +211,44 @@ export class Pipeline {
       },
       lastImport: this.lastImport,
     };
+  }
+  // Pipeline settings are saved with the project, so they are set once for every
+  // subject and run, and kept when the project is reopened.
+  settings() {
+    const saved = this.project.db
+      .prepare("SELECT value FROM metadata WHERE key='pipeline_settings'")
+      .get();
+    return saved ? JSON.parse(saved.value) : null;
+  }
+  saveSettings(settings) {
+    const value = JSON.stringify(settings);
+    if (
+      !settings ||
+      typeof settings !== "object" ||
+      Array.isArray(settings) ||
+      value.length > 100_000
+    )
+      throw new Error("Invalid pipeline settings.");
+    this.project.db
+      .prepare(
+        "INSERT INTO metadata VALUES ('pipeline_settings', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      )
+      .run(value);
+    return this.snapshot();
+  }
+  // Called when the app quits: unfinished jobs are recorded as interrupted.
+  dispose() {
+    this.disposed = true;
+    this.queue = [];
+    this.cancelImport();
+    for (const active of this.running.values()) {
+      this.project.db
+        .prepare(
+          "UPDATE jobs SET status='interrupted', phase='interrupted' WHERE id=?",
+        )
+        .run(active.id);
+      active.child?.kill();
+    }
   }
   addSubject(id) {
     if (!entity(id))
@@ -242,10 +361,14 @@ export class Pipeline {
   // complete. Files already in the project are skipped, so importing a dataset
   // again adds only its new recordings.
   async importBids(root) {
-    if (this.active || this.importing)
+    if (this.busy || this.importing)
       throw new Error("Wait for processing or the current import to finish.");
     const db = this.project.db;
     const scan = await scanBids(root);
+    // Remembered so behavioral data can be linked from the same dataset.
+    db.prepare(
+      "INSERT INTO metadata VALUES ('bids_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+    ).run(root);
     if (!scan.recordings.length && !scan.skipped.length)
       throw new Error(
         "No EyeLink .asc files were found in sub-*/eye or sub-*/ses-*/eye folders.",
@@ -391,39 +514,53 @@ export class Pipeline {
         throw new Error(`Unsupported glassbox option: ${key}`);
     if (settings.glassbox.downsample && settings.glassbox.bin)
       throw new Error("Choose downsampling or binning, not both.");
-    if (settings.epoch) {
-      const allowedEpoch = [
-        "events",
-        "limits",
-        "label",
-        "baseline",
-        "baseline_type",
-        "baseline_events",
-        "baseline_period",
-        "hz",
-      ];
+    if (
+      settings.epochs !== undefined &&
+      (!Array.isArray(settings.epochs) || settings.epochs.length > 10)
+    )
+      throw new Error("Invalid epoch settings.");
+    const epochs = epochsOf(settings);
+    const allowedEpoch = [
+      "events",
+      "limits",
+      "label",
+      "baseline",
+      "baseline_type",
+      "baseline_events",
+      "baseline_period",
+      "hz",
+    ];
+    for (const epoch of epochs) {
       if (
-        typeof settings.epoch !== "object" ||
-        Array.isArray(settings.epoch) ||
-        Object.keys(settings.epoch).some((k) => !allowedEpoch.includes(k))
+        !epoch ||
+        typeof epoch !== "object" ||
+        Array.isArray(epoch) ||
+        Object.keys(epoch).some((k) => !allowedEpoch.includes(k))
       )
         throw new Error("Invalid epoch settings.");
+      if (typeof epoch.events !== "string" || !epoch.events.trim())
+        throw new Error("Enter an event pattern for every epoch segment.");
       if (
-        typeof settings.epoch.events !== "string" ||
-        !settings.epoch.events.trim()
+        epoch.baseline_events !== undefined &&
+        (typeof epoch.baseline_events !== "string" ||
+          !epoch.baseline_events.trim())
       )
-        throw new Error("Enter an epoch event pattern or turn epoching off.");
-      if (!entity(settings.epoch.label))
+        throw new Error("Enter the baseline's event pattern.");
+      if (!entity(epoch.label))
         throw new Error("Epoch labels must contain only letters and digits.");
       if (
-        settings.epoch.limits !== null &&
-        (!Array.isArray(settings.epoch.limits) ||
-          settings.epoch.limits.length !== 2 ||
-          !settings.epoch.limits.every(Number.isFinite) ||
-          settings.epoch.limits[0] >= settings.epoch.limits[1])
+        epoch.limits !== null &&
+        (!Array.isArray(epoch.limits) ||
+          epoch.limits.length !== 2 ||
+          !epoch.limits.every(Number.isFinite) ||
+          epoch.limits[0] >= epoch.limits[1])
       )
         throw new Error("Epoch start must be earlier than epoch end.");
     }
+    // Each segment is stored as epoch_<label>, so labels must differ.
+    const labels = epochs.map((e) => e.label.toLowerCase());
+    if (new Set(labels).size !== labels.length)
+      throw new Error("Give each epoch segment a different label.");
     if (
       typeof settings.report !== "boolean" ||
       typeof settings.database !== "boolean"
@@ -434,14 +571,45 @@ export class Pipeline {
   // folder, as a script looping over runs would. Session-level reports and the
   // database then include every run instead of conflicting between jobs.
   async start(recordingIds, settings) {
-    if (this.active)
-      throw new Error("A pipeline is already running in this project.");
+    return this.enqueue([recordingIds], settings);
+  }
+  // Queue one job per group of recordings, all with the same settings. Jobs run
+  // in order, up to `concurrency` at a time, each in its own R process.
+  async enqueue(groups, requested) {
     if (this.importing) throw new Error("Wait for the BIDS import to finish.");
-    this.validate(settings);
+    this.validate(requested);
+    const settings = normalizeSettings(requested);
+    const jobs = groups.map((ids) => this.prepare(ids));
+    if (!jobs.length) throw new Error("Select at least one recording.");
+    const taken = new Set(
+      [...this.running.values(), ...this.queue].flatMap((j) => j.recordings),
+    );
+    for (const records of jobs)
+      for (const r of records) {
+        if (taken.has(r.id))
+          throw new Error(
+            `${r.name} is already being processed. Wait for it to finish, or cancel it.`,
+          );
+        taken.add(r.id);
+      }
+    if (!this.busy) this.batch = [];
+    for (const records of jobs) {
+      const id = randomUUID();
+      this.queue.push({
+        id,
+        records,
+        recordings: records.map((r) => r.id),
+        settings,
+      });
+      this.batch.push(id);
+    }
+    this.schedule();
+    return this.snapshot();
+  }
+  prepare(recordingIds) {
     const ids = [...new Set([recordingIds].flat())];
     if (!ids.length) throw new Error("Select at least one recording.");
-    const db = this.project.db;
-    const records = db
+    const records = this.project.db
       .prepare(
         `SELECT * FROM recordings WHERE id IN (${ids.map(() => "?").join(",")}) ORDER BY ${runOrder}`,
       )
@@ -459,29 +627,62 @@ export class Pipeline {
       throw new Error(
         `${unnumbered.name} has no run number, so eyeris numbers its blocks as runs. Process it separately from other runs of sub-${unnumbered.subject} ses-${unnumbered.session} task-${unnumbered.task}.`,
       );
-    const id = randomUUID();
+    return records;
+  }
+  // How many subjects run at once, each in its own R process. A subject's runs
+  // always stay in one process, in order.
+  setParallel(setting) {
+    const cores = availableParallelism();
+    if (
+      setting !== "auto" &&
+      !(Number.isInteger(setting) && setting >= 1 && setting <= cores)
+    )
+      throw new Error(
+        `Choose automatic or from 1 to ${cores} subjects at a time.`,
+      );
+    this.parallel = setting;
+    this.concurrency = setting === "auto" ? automaticJobs() : setting;
+    this.schedule();
+  }
+  get busy() {
+    return this.running.size > 0 || this.queue.length > 0;
+  }
+  // Resolves once every queued and running job has finished.
+  idle() {
+    return this.busy
+      ? new Promise((resolve) => this.waiters.push(resolve))
+      : Promise.resolve();
+  }
+  schedule() {
+    while (
+      !this.disposed &&
+      this.running.size < this.concurrency &&
+      this.queue.length
+    ) {
+      const job = this.queue.shift();
+      const active = {
+        id: job.id,
+        recordings: job.recordings,
+        current: job.recordings[0],
+        child: null,
+        log: "",
+        phase: "starting",
+        cancelled: false,
+      };
+      this.running.set(job.id, active);
+      active.done = this.run(job, active)
+        .catch(() => {})
+        .finally(() => {
+          this.running.delete(job.id);
+          this.schedule();
+          if (!this.busy)
+            for (const resolve of this.waiters.splice(0)) resolve();
+        });
+    }
+  }
+  async run({ id, records, settings }, active) {
+    const db = this.project.db;
     const dir = path.join(this.project.directory, "processing", id);
-    await mkdir(path.join(dir, "bids"), { recursive: true });
-    const recordings = records.map((r) => ({
-      input: path.join(this.project.directory, r.file),
-      subject: r.subject,
-      session: r.session,
-      task: r.task,
-      run: r.run || null,
-      output: path.join(
-        dir,
-        `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}.rds`,
-      ),
-    }));
-    const config = { ...settings, bids: path.join(dir, "bids"), recordings };
-    await writeFile(
-      path.join(dir, "config.json"),
-      JSON.stringify(config, null, 2),
-    );
-    await writeFile(
-      path.join(dir, "reproduce.R"),
-      `# Run with the eyeris version recorded in runtime.json.\n# The JSON configuration preserves every selected parameter.\ncfg <- jsonlite::fromJSON("config.json", simplifyDataFrame=FALSE)\nfor (rec in cfg$recordings) {\n  x <- do.call(eyeris::glassbox, c(list(file=rec$input, interactive_preview=FALSE), cfg$glassbox))\n  if (!is.null(cfg$epoch)) x <- do.call(eyeris::epoch, c(list(eyeris=x), cfg$epoch))\n  eyeris::bidsify(x, bids_dir=cfg$bids, participant_id=rec$subject, session_num=rec$session, task_name=rec$task, run_num=rec$run, html_report=cfg$report, db_enabled=cfg$database, db_path="eyeris")\n  saveRDS(x, rec$output)\n}\n`,
-    );
     this.project.transaction(() => {
       db.prepare(
         "INSERT INTO jobs(id,recording_id,status,phase,config,started_at) VALUES (?,?,?,?,?,?)",
@@ -496,16 +697,18 @@ export class Pipeline {
       const link = db.prepare("INSERT INTO job_recordings VALUES (?,?)");
       for (const r of records) link.run(id, r.id);
     });
-    const active = {
-      id,
-      recordings: records.map((r) => r.id),
-      current: records[0].id,
-      child: null,
-      log: "",
-      phase: "starting",
-      cancelled: false,
-    };
-    this.active = active;
+    const recordings = records.map((r) => ({
+      input: path.join(this.project.directory, r.file),
+      subject: r.subject,
+      session: r.session,
+      task: r.task,
+      run: r.run || null,
+      output: path.join(
+        dir,
+        `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}.rds`,
+      ),
+    }));
+    const config = { ...settings, bids: path.join(dir, "bids"), recordings };
     const run = (attempt) =>
       new Promise((resolve) => {
         const stream = createWriteStream(path.join(dir, "process.log"));
@@ -521,7 +724,7 @@ export class Pipeline {
             path.join(dir, "config.json"),
           ],
           {
-            env: rEnvironment(),
+            env: { ...rEnvironment(), ...threadLimits(this.concurrency) },
             stdio: ["ignore", "pipe", "pipe"],
             windowsHide: true,
           },
@@ -571,70 +774,84 @@ export class Pipeline {
           resolve({ code, signal, spawnError });
         });
       });
-    active.done = (async () => {
-      let result;
-      try {
-        result = await runWithWindowsRecovery({
-          run,
-          directory: dir,
-          outputs: recordings.map((r) => r.output),
-          isCancelled: () => active.cancelled || this.disposed,
-          onRetry: () => {
-            active.phase = "restarting";
-          },
-        });
-      } catch (error) {
-        result = { code: null, spawnError: error };
-      }
-      const { code, signal, spawnError } = result;
-      if (this.disposed) {
-        return;
-      }
-      let status = active.cancelled
-        ? "cancelled"
-        : code === 0 && !spawnError
-          ? "completed"
-          : "failed";
-      let error =
-        spawnError?.message ||
-        (status === "failed"
-          ? `R processing terminated ${signal ? `by signal ${signal}` : `with exit code ${code}`}.\n${active.log.slice(-3000)}`
-          : null);
-      try {
-        if (status === "completed") {
-          active.phase = "publishing";
-          this.project.db
-            .prepare(
-              "UPDATE jobs SET status='publishing', phase='publishing' WHERE id=?",
-            )
-            .run(id);
-          const outputs = await this.publishBids(dir);
-          if (settings.epoch)
+    let result;
+    try {
+      await mkdir(path.join(dir, "bids"), { recursive: true });
+      await writeFile(
+        path.join(dir, "config.json"),
+        JSON.stringify(config, null, 2),
+      );
+      await writeFile(
+        path.join(dir, "reproduce.R"),
+        `# Run with the eyeris version recorded in runtime.json.\n# The JSON configuration preserves every selected parameter.\ncfg <- jsonlite::fromJSON("config.json", simplifyDataFrame=FALSE)\nfor (rec in cfg$recordings) {\n  x <- do.call(eyeris::glassbox, c(list(file=rec$input, interactive_preview=FALSE), cfg$glassbox))\n  for (ep in cfg$epochs) x <- do.call(eyeris::epoch, c(list(eyeris=x), ep))\n  eyeris::bidsify(x, bids_dir=cfg$bids, participant_id=rec$subject, session_num=rec$session, task_name=rec$task, run_num=rec$run, html_report=cfg$report, db_enabled=cfg$database, db_path="eyeris")\n  saveRDS(x, rec$output)\n}\n`,
+      );
+      result =
+        active.cancelled || this.disposed
+          ? { code: null }
+          : await runWithWindowsRecovery({
+              run,
+              directory: dir,
+              outputs: recordings.map((r) => r.output),
+              isCancelled: () => active.cancelled || this.disposed,
+              onRetry: () => {
+                active.phase = "restarting";
+              },
+            });
+    } catch (error) {
+      result = { code: null, spawnError: error };
+    }
+    const { code, signal, spawnError } = result;
+    if (this.disposed) {
+      return;
+    }
+    let status = active.cancelled
+      ? "cancelled"
+      : code === 0 && !spawnError
+        ? "completed"
+        : "failed";
+    let error =
+      spawnError?.message ||
+      (status === "failed"
+        ? `R processing terminated ${signal ? `by signal ${signal}` : `with exit code ${code}`}.\n${active.log.slice(-3000)}`
+        : null);
+    try {
+      if (status === "completed") {
+        active.phase = "publishing";
+        db.prepare(
+          "UPDATE jobs SET status='publishing', phase='publishing' WHERE id=?",
+        ).run(id);
+        // Jobs finish in any order; publish and index them one at a time.
+        const outputs = await this.exclusive(async () => {
+          const published = await this.publishBids(dir);
+          if (settings.epochs.length)
             for (const r of recordings)
               try {
                 await this.project.importFile(r.output);
               } catch (e) {
                 throw new Error(`${path.basename(r.output)}: ${e.message}`);
               }
-          this.project.db
-            .prepare("UPDATE jobs SET outputs=? WHERE id=?")
-            .run(JSON.stringify(outputs), id);
-        }
-      } catch (e) {
-        status = "failed";
-        error = e.message;
-        await appendFile(path.join(dir, "process.log"), `\n${error}\n`).catch(
-          () => {},
+          return published;
+        });
+        db.prepare("UPDATE jobs SET outputs=? WHERE id=?").run(
+          JSON.stringify(outputs),
+          id,
         );
       }
-      this.project.db
-        .prepare(
-          "UPDATE jobs SET status=?,phase=?,error=?,finished_at=? WHERE id=?",
-        )
-        .run(status, status, error, new Date().toISOString(), id);
-      this.active = null;
-    })();
-    return this.snapshot();
+    } catch (e) {
+      status = "failed";
+      error = e.message;
+      await appendFile(path.join(dir, "process.log"), `\n${error}\n`).catch(
+        () => {},
+      );
+    }
+    db.prepare(
+      "UPDATE jobs SET status=?,phase=?,error=?,finished_at=? WHERE id=?",
+    ).run(status, status, error, new Date().toISOString(), id);
+  }
+  exclusive(fn) {
+    const result = this.publishing.then(fn, fn);
+    this.publishing = result.catch(() => {});
+    return result;
   }
   async publishBids(dir) {
     const source = path.join(dir, "bids");
@@ -643,8 +860,12 @@ export class Pipeline {
     // Each immutable processing folder retains the exact BIDS output of that run.
     // The common bids/ tree receives only non-conflicting files. A re-run remains
     // available under processing/<id>/bids rather than overwriting an earlier run.
+    // The DuckDB database is shared by every subject but holds one table per
+    // subject, session, task and run, so it is merged rather than compared.
+    const databases = names.filter((name) => name.endsWith(".eyerisdb"));
     const pending = [];
     for (const name of names) {
+      if (databases.includes(name)) continue;
       const dest = path.join(target, name);
       try {
         await access(dest);
@@ -663,24 +884,46 @@ export class Pipeline {
       }
     }
     const installed = [];
+    const merged = [];
     try {
+      for (const name of databases) {
+        const dest = path.join(target, name);
+        const staged = `${dest}.${randomUUID()}.tmp`;
+        try {
+          await copyFile(dest, staged);
+        } catch (e) {
+          if (e.code !== "ENOENT") throw e;
+          pending.push(name);
+          continue;
+        }
+        merged.push({ staged, dest });
+        await mergeDatabase(path.join(source, name), staged);
+      }
       for (const name of pending) {
         const dest = path.join(target, name);
         await mkdir(path.dirname(dest), { recursive: true });
         await copyFile(path.join(source, name), dest);
         installed.push(dest);
       }
+      for (const { staged, dest } of merged) await rename(staged, dest);
     } catch (e) {
       for (const file of installed) await rm(file, { force: true });
+      for (const { staged } of merged) await rm(staged, { force: true });
       throw e;
     }
     return names;
   }
-  cancel() {
-    if (this.active && this.active.phase !== "publishing") {
-      this.active.cancelled = true;
-      this.active.child.kill();
-    }
+  // Cancel one queued or running job, or everything when no ID is given.
+  cancel(id) {
+    const removed = this.queue.filter((job) => !id || job.id === id);
+    this.queue = this.queue.filter((job) => !removed.includes(job));
+    this.batch = this.batch.filter((job) => !removed.some((r) => r.id === job));
+    for (const active of this.running.values())
+      if ((!id || active.id === id) && active.phase !== "publishing") {
+        active.cancelled = true;
+        active.child?.kill();
+      }
+    if (!this.busy) for (const resolve of this.waiters.splice(0)) resolve();
   }
   async log(id) {
     if (!this.project.db.prepare("SELECT 1 FROM jobs WHERE id=?").get(id))

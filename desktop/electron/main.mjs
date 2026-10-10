@@ -23,13 +23,29 @@ if (process.env.EYERIS_TEST_USER_DATA)
   app.setPath("userData", process.env.EYERIS_TEST_USER_DATA);
 const settingsFile = () =>
   path.join(app.getPath("userData"), "review-settings.json");
+// App settings are per machine: the recent project and how many subjects to
+// process at once.
+async function appSettings() {
+  try {
+    return JSON.parse(await readFile(settingsFile(), "utf8"));
+  } catch {
+    return {};
+  }
+}
+async function saveAppSettings(change) {
+  const settings = { ...(await appSettings()), ...change };
+  await mkdir(app.getPath("userData"), { recursive: true });
+  await writeFile(settingsFile(), JSON.stringify(settings));
+}
 const requireProject = () => {
   if (!project) throw new Error("Open a review project first.");
   return project;
 };
 async function activate(directory, create) {
   await ensureRuntime();
-  if (pipeline?.active || pipeline?.importing)
+  if (project?.exporting)
+    throw new Error("Wait for the export to finish before switching projects.");
+  if (pipeline?.busy || pipeline?.importing)
     throw new Error(
       "Wait for processing or importing to finish, or cancel it, before switching projects.",
     );
@@ -37,8 +53,12 @@ async function activate(directory, create) {
   project?.close();
   project = next;
   pipeline = new Pipeline(project);
-  await mkdir(app.getPath("userData"), { recursive: true });
-  await writeFile(settingsFile(), JSON.stringify({ lastProject: directory }));
+  try {
+    pipeline.setParallel((await appSettings()).parallelJobs ?? "auto");
+  } catch {
+    // A limit saved on a machine with more cores falls back to automatic.
+  }
+  await saveAppSettings({ lastProject: directory });
   return project.summary();
 }
 const methods = {
@@ -53,10 +73,7 @@ const methods = {
     } catch (error) {
       warning = error.message;
     }
-    let recent = null;
-    try {
-      recent = JSON.parse(await readFile(settingsFile(), "utf8")).lastProject;
-    } catch {}
+    const recent = (await appSettings()).lastProject ?? null;
     return {
       appVersion: packageMetadata.version,
       project: project?.summary() ?? null,
@@ -66,11 +83,16 @@ const methods = {
     };
   },
   async openRecent() {
-    const settings = JSON.parse(await readFile(settingsFile(), "utf8"));
-    return activate(settings.lastProject, false);
+    const { lastProject } = await appSettings();
+    if (!lastProject) throw new Error("There is no recent project.");
+    return activate(lastProject, false);
   },
   closeProject() {
-    if (pipeline?.active || pipeline?.importing)
+    if (project?.exporting)
+      throw new Error(
+        "Wait for the export to finish before closing the project.",
+      );
+    if (pipeline?.busy || pipeline?.importing)
       throw new Error(
         "Wait for processing or importing to finish, or cancel it, before closing the project.",
       );
@@ -115,9 +137,26 @@ const methods = {
     requireProject();
     return pipeline.start(ids, settings);
   },
-  cancelPipeline() {
+  // One job per group of recordings, such as each subject's runs.
+  queuePipeline(groups, settings) {
     requireProject();
-    pipeline.cancel();
+    if (!Array.isArray(groups) || !groups.every(Array.isArray))
+      throw new Error("Invalid processing request.");
+    return pipeline.enqueue(groups, settings);
+  },
+  async setParallelJobs(value) {
+    requireProject();
+    pipeline.setParallel(value);
+    await saveAppSettings({ parallelJobs: value });
+    return pipeline.snapshot();
+  },
+  saveSettings(settings) {
+    requireProject();
+    return pipeline.saveSettings(settings);
+  },
+  cancelPipeline(id) {
+    requireProject();
+    pipeline.cancel(id);
     return pipeline.snapshot();
   },
   pipelineLog(id) {
@@ -131,7 +170,9 @@ const methods = {
         ? path.join(project.directory, "processing", id)
         : kind === "bids"
           ? path.join(project.directory, "bids")
-          : project.directory;
+          : kind === "export" && project.lastExport?.directory
+            ? project.lastExport.directory
+            : project.directory;
     const error = await shell.openPath(target);
     if (error) throw new Error(error);
   },
@@ -225,7 +266,29 @@ const methods = {
     }
     return { project: project.summary(), results };
   },
+  setAutoExclude: (rule) => requireProject().setAutoExclude(rule),
   list: (filters) => requireProject().list(filters),
+  behavior: () => requireProject().behavior(),
+  epochFields: () => requireProject().epochFields(),
+  split: (request) => requireProject().split(request),
+  async linkBehavior() {
+    requireProject();
+    const { root, bidsRoot } = project.behavior();
+    const result = await dialog.showOpenDialog(window, {
+      title: "Link behavioral data from a BIDS dataset",
+      buttonLabel: "Link behavioral data",
+      defaultPath: root ?? bidsRoot ?? undefined,
+      properties: ["openDirectory"],
+    });
+    if (result.canceled) return null;
+    return project.linkBehavior(result.filePaths[0]);
+  },
+  diagnosticGroups: () => requireProject().diagnosticGroups(),
+  average: (selection) => requireProject().average(selection),
+  nextUnreviewed: (filters, fromId) =>
+    requireProject().nextUnreviewed(filters, fromId),
+  saveReviewPosition: (position) =>
+    requireProject().saveReviewPosition(position),
   trace: (id, stage, range) => requireProject().trace(id, stage, range),
   decide: (input) => {
     const epoch = requireProject().decision(input);
@@ -243,7 +306,7 @@ const methods = {
       properties: ["openDirectory", "createDirectory"],
     });
     if (result.canceled) return null;
-    return project.export(result.filePaths[0]);
+    return project.startExport(result.filePaths[0]);
   },
 };
 
@@ -257,7 +320,8 @@ app.whenReady().then(async () => {
       (process.platform !== "linux" || Boolean(process.env.APPIMAGE)),
     busy: () =>
       Boolean(
-        pipeline?.active ||
+        pipeline?.busy ||
+        project?.exporting ||
         pipeline?.importing ||
         demoChild ||
         worker.pending.size,
@@ -324,16 +388,7 @@ app.whenReady().then(async () => {
 app.on("window-all-closed", () => app.quit());
 app.on("before-quit", () => {
   updates?.stop();
-  pipeline?.cancelImport();
-  if (pipeline?.active) {
-    project.db
-      .prepare(
-        "UPDATE jobs SET status='interrupted', phase='interrupted' WHERE id=?",
-      )
-      .run(pipeline.active.id);
-    pipeline.disposed = true;
-    pipeline.active.child?.kill();
-  }
+  pipeline?.dispose();
   demoChild?.kill();
   worker.close();
   project?.close();

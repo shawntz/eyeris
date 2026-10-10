@@ -1,7 +1,16 @@
 import { DatabaseSync } from "node:sqlite";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { mkdir, copyFile, rename, rm, writeFile, stat } from "node:fs/promises";
+import {
+  mkdir,
+  copyFile,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+  stat,
+} from "node:fs/promises";
+import { parseTsv, scanBehavior } from "./bids.mjs";
 import path from "node:path";
 import packageMetadata from "../package.json" with { type: "json" };
 
@@ -9,6 +18,10 @@ const states = ["unreviewed", "keep", "exclude"];
 // Version 2 adds BIDS session, task and run labels to epochs and allows several
 // recordings, one per run, for a subject, session and task.
 const schemaVersion = "2";
+// Automatic exclusions are recorded under this reviewer name. They apply only
+// to epochs no person has decided on, and never change a person's decision.
+export const AUTO_REVIEWER = "eyeris auto-exclude";
+const autoDefaults = { enabled: false, threshold: 25, stage: "final" };
 const digest = (text) => createHash("sha256").update(text).digest("hex");
 async function fileHash(file) {
   const hash = createHash("sha256");
@@ -41,6 +54,49 @@ function entities(name) {
     task: entity(name, "task"),
     run: runLabel(entity(name, "run")),
   };
+}
+const safe = (value) => String(value).replace(/[^a-zA-Z0-9]/g, "") || "x";
+// Readable, BIDS-style paths for exported tables: one table per source run,
+// epoch label and eye, in sub-<label>/[ses-<label>/]. A run indexed from two
+// sources (processed twice) is distinguished by its source.
+function exportPaths(rows) {
+  const paths = new Map();
+  for (const r of rows) {
+    const key = `${r.source_id}/${r.eye}/${r.label}/${r.block}`;
+    if (paths.has(key)) continue;
+    const folder = [
+      `sub-${safe(r.participant)}`,
+      ...(r.session ? [`ses-${safe(r.session)}`] : []),
+    ].join("/");
+    const name = [
+      `sub-${safe(r.participant)}`,
+      r.session && `ses-${safe(r.session)}`,
+      r.task && `task-${safe(r.task)}`,
+      r.run
+        ? `run-${safe(r.run)}`
+        : `block-${safe(r.block.replace(/^block_/, ""))}`,
+      `epoch-${safe(r.label.replace(/^epoch_/, ""))}`,
+      r.eye !== "main" && `eye-${safe(r.eye)}`,
+    ]
+      .filter(Boolean)
+      .join("_");
+    paths.set(key, { source: r.source_id, file: `${folder}/${name}` });
+  }
+  const sources = new Map();
+  for (const p of paths.values())
+    sources.set(p.file, new Set([...(sources.get(p.file) ?? []), p.source]));
+  const used = new Set();
+  for (const [key, p] of paths) {
+    let file =
+      sources.get(p.file).size > 1
+        ? `${p.file}_source-${p.source.slice(0, 12)}`
+        : p.file;
+    // Labels that differ only in characters removed above keep distinct files.
+    if (used.has(file)) file += `_key-${digest(key).slice(0, 8)}`;
+    used.add(file);
+    paths.set(key, file);
+  }
+  return paths;
 }
 const csv = (rows) =>
   rows
@@ -97,6 +153,10 @@ export class Project {
         session TEXT NOT NULL DEFAULT '', task TEXT NOT NULL DEFAULT '', run TEXT NOT NULL DEFAULT ''
       );
       CREATE INDEX IF NOT EXISTS epochs_queue ON epochs(status, participant, source_id, ordinal);
+      CREATE TABLE IF NOT EXISTS behavior (
+        file TEXT NOT NULL, participant TEXT NOT NULL, session TEXT NOT NULL, task TEXT NOT NULL, run TEXT NOT NULL,
+        ord INTEGER NOT NULL, data TEXT NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS actions (
         seq INTEGER PRIMARY KEY AUTOINCREMENT, epoch_id TEXT NOT NULL REFERENCES epochs(id),
         kind TEXT NOT NULL, before_json TEXT NOT NULL, after_json TEXT NOT NULL, at TEXT NOT NULL, undone INTEGER NOT NULL DEFAULT 0
@@ -167,6 +227,11 @@ export class Project {
         .prepare("SELECT DISTINCT participant FROM epochs ORDER BY participant")
         .all()
         .map((r) => r.participant),
+      // Epoch segments, such as epoch_prestim and epoch_poststim.
+      labels: this.db
+        .prepare("SELECT DISTINCT label FROM epochs ORDER BY label")
+        .all()
+        .map((r) => r.label),
       runs: this.db
         .prepare(
           "SELECT DISTINCT run FROM epochs WHERE run != '' ORDER BY length(run), run",
@@ -179,6 +244,23 @@ export class Project {
         )
         .all()
         .map((r) => r.stage),
+      progress: this.db
+        .prepare(
+          "SELECT participant, COUNT(*) AS total, SUM(status='keep') AS keep, SUM(status='exclude') AS exclude, SUM(status='unreviewed') AS unreviewed FROM epochs GROUP BY participant ORDER BY participant",
+        )
+        .all()
+        .map((row) => ({ ...row })),
+      position: this.reviewPosition(),
+      exporting: this.exporting && {
+        total: this.exporting.total,
+        completed: this.exporting.completed,
+        current: this.exporting.current,
+      },
+      lastExport: this.lastExport ?? null,
+      autoExclude: this.autoExclude(),
+      autoExcluded: this.db
+        .prepare("SELECT COUNT(*) AS n FROM epochs WHERE reviewer=?")
+        .get(AUTO_REVIEWER).n,
       canUndo: !!this.db
         .prepare(
           "SELECT 1 FROM actions WHERE kind='decision' AND undone=0 LIMIT 1",
@@ -236,12 +318,132 @@ export class Project {
           ),
         );
       });
-      return { duplicate: false, count: epochs.length };
+      return {
+        duplicate: false,
+        count: epochs.length,
+        autoExcluded: this.applyAutoExclude(id),
+      };
     } finally {
       await rm(temporary, { force: true });
     }
   }
-  list(filters = {}) {
+  autoExclude() {
+    const saved = this.db
+      .prepare("SELECT value FROM metadata WHERE key='auto_exclude'")
+      .get();
+    return saved ? JSON.parse(saved.value) : { ...autoDefaults };
+  }
+  async setAutoExclude(rule) {
+    if (
+      !rule ||
+      typeof rule.enabled !== "boolean" ||
+      typeof rule.threshold !== "number" ||
+      !(rule.threshold >= 0 && rule.threshold < 100) ||
+      typeof rule.stage !== "string" ||
+      !rule.stage ||
+      rule.stage.length > 200
+    )
+      throw new Error(
+        "Enter a missing-data threshold from 0 to less than 100 percent.",
+      );
+    const value = {
+      enabled: rule.enabled,
+      threshold: rule.threshold,
+      stage: rule.stage,
+    };
+    if (value.enabled && value.stage !== "final")
+      await this.backfillMeta("stageMissing", "missing");
+    this.db
+      .prepare(
+        "INSERT INTO metadata VALUES ('auto_exclude', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      )
+      .run(JSON.stringify(value));
+    this.applyAutoExclude();
+    return this.summary();
+  }
+  // Epochs indexed by earlier versions lack some per-epoch values, such as
+  // every stage's missing fraction or the epoch fields. Compute them from each
+  // source with the named worker method and store them.
+  async backfillMeta(property, method) {
+    const rows = this.db
+      .prepare(
+        `SELECT id, source_id, meta FROM epochs WHERE json_type(meta, '$.${property}') IS NULL ORDER BY source_id`,
+      )
+      .all();
+    for (const [source, epochs] of Map.groupBy(rows, (r) => r.source_id)) {
+      const metas = epochs.map((e) => JSON.parse(e.meta));
+      const values = await this.worker.request(method, {
+        path: await this.sourcePath(source),
+        epochs: metas,
+      });
+      const update = this.db.prepare("UPDATE epochs SET meta=? WHERE id=?");
+      this.transaction(() =>
+        epochs.forEach((e, i) =>
+          update.run(
+            JSON.stringify({ ...metas[i], [property]: values[i] }),
+            e.id,
+          ),
+        ),
+      );
+    }
+  }
+
+  // Apply the missing-data rule to every epoch without a person's decision, in
+  // one source or the whole project. Epochs that no longer exceed the threshold
+  // return to unreviewed. Each change is recorded in the audit history.
+  applyAutoExclude(sourceId) {
+    const rule = this.autoExclude();
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE reviewer IN ('', ?)${sourceId ? " AND source_id=?" : ""}`,
+      )
+      .all(AUTO_REVIEWER, ...(sourceId ? [sourceId] : []));
+    const now = new Date().toISOString();
+    const fields = ["status", "reason", "reviewer", "stage", "updated_at"];
+    const record = this.db.prepare(
+      "INSERT INTO actions (epoch_id, kind, before_json, after_json, at) VALUES (?, 'auto', ?, ?, ?)",
+    );
+    let excluded = 0;
+    this.transaction(() => {
+      for (const row of rows) {
+        const meta = JSON.parse(row.meta);
+        const stage = rule.stage === "final" ? meta.finalStage : rule.stage;
+        const fraction = !meta.stages.includes(stage)
+          ? null
+          : (meta.stageMissing?.[stage] ??
+            (stage === meta.finalStage ? row.missing : null));
+        const after =
+          rule.enabled && fraction !== null && fraction * 100 > rule.threshold
+            ? {
+                status: "exclude",
+                reason: `Excessive missing data: ${(fraction * 100).toFixed(1)}% of samples missing in ${stage}, above the ${rule.threshold}% automatic exclusion threshold`,
+                reviewer: AUTO_REVIEWER,
+                stage,
+                updated_at: now,
+              }
+            : row.reviewer === AUTO_REVIEWER
+              ? {
+                  status: "unreviewed",
+                  reason: "",
+                  reviewer: "",
+                  stage: "",
+                  updated_at: now,
+                }
+              : null;
+        if (after?.status === "exclude") excluded += 1;
+        if (
+          !after ||
+          (row.status === after.status && row.reason === after.reason)
+        )
+          continue;
+        const before = Object.fromEntries(fields.map((key) => [key, row[key]]));
+        this.setDecision(row.id, after);
+        record.run(row.id, JSON.stringify(before), JSON.stringify(after), now);
+      }
+    });
+    return excluded;
+  }
+  query(filters = {}) {
     const where = [];
     const args = [];
     if (filters.status && filters.status !== "all") {
@@ -252,11 +454,15 @@ export class Project {
     }
     if (filters.participant) {
       where.push("participant = ?");
-      args.push(filters.participant);
+      args.push(String(filters.participant));
     }
     if (filters.run) {
       where.push("run = ?");
-      args.push(filters.run);
+      args.push(String(filters.run));
+    }
+    if (filters.label) {
+      where.push("label = ?");
+      args.push(String(filters.label));
     }
     if (filters.search) {
       const search = String(filters.search).slice(0, 200);
@@ -269,14 +475,20 @@ export class Project {
       where.push(
         "EXISTS (SELECT 1 FROM json_each(epochs.meta, '$.stages') WHERE value=?)",
       );
-      args.push(filters.stage);
+      args.push(String(filters.stage));
     }
-    const sql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+    return {
+      sql: where.length ? `WHERE ${where.join(" AND ")}` : "",
+      args,
+      sort:
+        filters.sort === "missing"
+          ? "missing DESC, source_id, label, block, ordinal"
+          : "participant, session, task, length(run), run, source_id, label, block, ordinal",
+    };
+  }
+  list(filters = {}) {
+    const { sql, args, sort } = this.query(filters);
     const offset = Math.max(0, Math.trunc(Number(filters.offset) || 0));
-    const sort =
-      filters.sort === "missing"
-        ? "missing DESC, source_id, label, block, ordinal"
-        : "participant, session, task, length(run), run, source_id, label, block, ordinal";
     const total = this.db
       .prepare(`SELECT COUNT(*) AS n FROM epochs ${sql}`)
       .get(...args).n;
@@ -285,6 +497,44 @@ export class Project {
       .all(...args, offset)
       .map((row) => this.deserialize(row));
     return { rows, total, offset };
+  }
+  // The next unreviewed epoch after `fromId` in queue order, wrapping around,
+  // with the offset of its page.
+  nextUnreviewed(filters = {}, fromId = null) {
+    const { sql, args, sort } = this.query(filters);
+    const rows = this.db
+      .prepare(`SELECT id, status FROM epochs ${sql} ORDER BY ${sort}`)
+      .all(...args);
+    const start = rows.findIndex((r) => r.id === fromId);
+    for (let step = 1; step <= rows.length; step++) {
+      const i = (start + step) % rows.length;
+      if (rows[i].status === "unreviewed")
+        return { id: rows[i].id, offset: Math.floor(i / 80) * 80 };
+    }
+    return null;
+  }
+  // Where review was last left, so a reopened project continues from there.
+  reviewPosition() {
+    const saved = this.db
+      .prepare("SELECT value FROM metadata WHERE key='review_position'")
+      .get();
+    return saved ? JSON.parse(saved.value) : null;
+  }
+  saveReviewPosition(position) {
+    const value = JSON.stringify(position);
+    if (
+      !position ||
+      typeof position !== "object" ||
+      (position.epochId !== null && typeof position.epochId !== "string") ||
+      typeof position.filters !== "object" ||
+      value.length > 5000
+    )
+      throw new Error("Invalid review position.");
+    this.db
+      .prepare(
+        "INSERT INTO metadata VALUES ('review_position', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      )
+      .run(value);
   }
   deserialize(row) {
     return { ...row, meta: JSON.parse(row.meta) };
@@ -330,6 +580,10 @@ export class Project {
       input.reviewer.length > 200
     )
       throw new Error("Enter a reviewer name.");
+    if (input.reviewer.trim() === AUTO_REVIEWER)
+      throw new Error(
+        "That reviewer name is reserved for automatic exclusions.",
+      );
     if (typeof input.reason !== "string" || input.reason.length > 2000)
       throw new Error("The note is too long.");
     const fields = ["status", "reason", "reviewer", "stage", "updated_at"];
@@ -390,7 +644,309 @@ export class Project {
     });
     return this.epoch(action.epoch_id);
   }
+  // Every run of every source, for run diagnostics. A run is one block of one
+  // epoch label and eye in a source, so its epochs share a time axis.
+  diagnosticGroups() {
+    return this.db
+      .prepare(
+        `SELECT e.source_id, s.name AS source_name, e.participant, e.session, e.task, e.run, e.label, e.eye, e.block,
+          COUNT(*) AS epochs, SUM(e.status='keep') AS keep, SUM(e.status='exclude') AS exclude, SUM(e.status='unreviewed') AS unreviewed
+        FROM epochs e JOIN sources s ON s.id = e.source_id
+        GROUP BY e.source_id, e.label, e.eye, e.block
+        ORDER BY e.participant, e.session, e.task, length(e.run), e.run, e.label, e.eye, s.imported_at`,
+      )
+      .all()
+      .map((row) => ({
+        ...row,
+        key: [row.source_id, row.label, row.eye, row.block].join("|"),
+      }));
+  }
+  // The average trace of a run's epochs at one stage, with each epoch's trace.
+  // `include` selects all epochs, those not excluded, or only kept epochs.
+  async average({ key, stage = "final", include = "included" }) {
+    const [source, label, eye, block] = String(key).split("|");
+    const statuses = {
+      all: states,
+      included: ["keep", "unreviewed"],
+      kept: ["keep"],
+    }[include];
+    if (!statuses) throw new Error("Choose which epochs to include.");
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE source_id=? AND label=? AND eye=? AND block=? AND status IN (${statuses.map(() => "?").join(",")}) ORDER BY ordinal`,
+      )
+      .all(source, label, eye, block, ...statuses)
+      .map((row) => this.deserialize(row));
+    if (!rows.length) return { epochs: 0, stage };
+    const resolved = stage === "final" ? rows[0].meta.finalStage : stage;
+    if (!rows.every((r) => r.meta.stages.includes(resolved)))
+      throw new Error("These epochs do not all contain the selected stage.");
+    const result = await this.worker.request("average", {
+      path: await this.sourcePath(source),
+      epochs: rows.map((r) => r.meta),
+      stage: resolved,
+      points: 600,
+    });
+    // Epoch time starts at the window's start; shift it so 0 is the event.
+    const limits = rows[0].meta.limits;
+    const offset =
+      Array.isArray(limits) && Number.isFinite(limits[0]) ? limits[0] : null;
+    return {
+      ...result,
+      time: offset === null ? result.time : result.time.map((t) => t + offset),
+      onset: offset !== null,
+      stage: resolved,
+      epochs: rows.length,
+      ids: rows.map((r) => r.id),
+    };
+  }
+  setting(key) {
+    return (
+      this.db.prepare("SELECT value FROM metadata WHERE key=?").get(key)
+        ?.value ?? null
+    );
+  }
+  // Link the behavioral tables of a BIDS dataset, replacing earlier ones, so
+  // epochs can be joined to trial-level behavior.
+  async linkBehavior(root) {
+    const files = await scanBehavior(root);
+    if (!files.length)
+      throw new Error(
+        "No behavioral .tsv files were found in sub-*/beh or sub-*/ses-*/beh folders.",
+      );
+    const tables = [];
+    for (const f of files)
+      tables.push({ ...f, ...parseTsv(await readFile(f.file, "utf8")) });
+    this.transaction(() => {
+      this.db.exec("DELETE FROM behavior");
+      const insert = this.db.prepare(
+        "INSERT INTO behavior VALUES (?, ?, ?, ?, ?, ?, ?)",
+      );
+      for (const t of tables)
+        t.rows.forEach((row, i) =>
+          insert.run(
+            t.relative,
+            t.participant,
+            t.session,
+            t.task,
+            t.run,
+            i,
+            JSON.stringify(row),
+          ),
+        );
+      this.db
+        .prepare(
+          "INSERT INTO metadata VALUES ('behavior_root', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        )
+        .run(root);
+    });
+    return this.behavior();
+  }
+  behavior() {
+    return {
+      root: this.setting("behavior_root"),
+      bidsRoot: this.setting("bids_root"),
+      files: this.db
+        .prepare("SELECT COUNT(DISTINCT file) AS n FROM behavior")
+        .get().n,
+      rows: this.db.prepare("SELECT COUNT(*) AS n FROM behavior").get().n,
+      columns: this.db
+        .prepare(
+          "SELECT DISTINCT j.key FROM behavior b, json_each(b.data) j ORDER BY j.key",
+        )
+        .all()
+        .map((r) => r.key),
+    };
+  }
+  async epochFields() {
+    await this.backfillMeta("fields", "fields");
+    return this.db
+      .prepare(
+        "SELECT DISTINCT j.key FROM epochs e, json_each(e.meta, '$.fields') j ORDER BY j.key",
+      )
+      .all()
+      .map((r) => r.key);
+  }
+  // Average epochs split into groups by an epoch field or a behavioral column,
+  // over one run, every run of its subject, or every subject. Behavioral rows
+  // are joined within the same subject, session, task and run (a file without a
+  // session or run matches any), on an epoch field equal to a behavioral column.
+  // Epochs are pooled: each contributes equally to its group's mean.
+  async split({
+    key,
+    scope = "run",
+    stage = "final",
+    include = "included",
+    by = null,
+    join = null,
+  }) {
+    const [source, label, eye, block] = String(key).split("|");
+    const statuses = {
+      all: states,
+      included: ["keep", "unreviewed"],
+      kept: ["keep"],
+    }[include];
+    if (!statuses) throw new Error("Choose which epochs to include.");
+    const participant = this.db
+      .prepare("SELECT participant FROM epochs WHERE source_id=? LIMIT 1")
+      .get(source)?.participant;
+    const where = {
+      run: [
+        "source_id=? AND label=? AND eye=? AND block=?",
+        [source, label, eye, block],
+      ],
+      subject: [
+        "participant=? AND label=? AND eye=?",
+        [participant, label, eye],
+      ],
+      all: ["label=? AND eye=?", [label, eye]],
+    }[scope];
+    if (!where) throw new Error("Choose what to average over.");
+    if (by && !["epoch", "behavior"].includes(by.from))
+      throw new Error("Choose a column to split by.");
+    if (by?.from === "behavior" && !(join?.epoch && join?.behavior))
+      throw new Error(
+        "Choose the epoch field and behavioral column that identify each trial.",
+      );
+    if (by || join) await this.backfillMeta("fields", "fields");
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE ${where[0]} AND status IN (${statuses.map(() => "?").join(",")})
+         ORDER BY participant, session, task, length(run), run, source_id, block, ordinal`,
+      )
+      .all(...where[1], ...statuses)
+      .map((row) => this.deserialize(row));
+    const behavior = Map.groupBy(
+      by?.from === "behavior"
+        ? this.db
+            .prepare("SELECT * FROM behavior")
+            .all()
+            .map((r) => ({ ...r, data: JSON.parse(r.data) }))
+        : [],
+      (b) => b.participant,
+    );
+    // Identifiers match as text, or as numbers (so 7 matches 7.0).
+    const same = (a, b) =>
+      a === b ||
+      (a !== undefined &&
+        b !== undefined &&
+        a.trim() !== "" &&
+        b.trim() !== "" &&
+        Number.isFinite(Number(a)) &&
+        Number(a) === Number(b));
+    const counts = { unmatched: 0, ambiguous: 0, missing: 0 };
+    const assigned = [];
+    for (const e of rows) {
+      let value = "All epochs";
+      if (by?.from === "epoch") value = e.meta.fields?.[by.column];
+      else if (by) {
+        const id = e.meta.fields?.[join.epoch];
+        const matches =
+          id === undefined
+            ? []
+            : (behavior.get(e.participant) ?? []).filter(
+                (b) =>
+                  (!b.session || b.session === e.session) &&
+                  (!b.task || b.task === e.task) &&
+                  (!b.run || b.run === e.run) &&
+                  same(b.data[join.behavior], id),
+              );
+        if (matches.length !== 1) {
+          counts[matches.length ? "ambiguous" : "unmatched"] += 1;
+          continue;
+        }
+        value = matches[0].data[by.column];
+      }
+      if (value === undefined) {
+        counts.missing += 1;
+        continue;
+      }
+      assigned.push({ epoch: e, value: String(value) });
+    }
+    const labels = [...new Set(assigned.map((a) => a.value))].sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true }),
+    );
+    if (labels.length > 8)
+      throw new Error(
+        `${by.column} has ${labels.length} values. Split by a column with at most 8.`,
+      );
+    const empty = { epochs: 0, total: rows.length, ...counts, series: [] };
+    if (!assigned.length) return { ...empty, stage };
+    const first = assigned[0].epoch.meta;
+    const resolved = stage === "final" ? first.finalStage : stage;
+    if (!assigned.every((a) => a.epoch.meta.stages.includes(resolved)))
+      throw new Error("These epochs do not all contain the selected stage.");
+    const points = 600;
+    const grid = Array.from(
+      { length: points },
+      (_, i) => (first.duration * i) / (points - 1),
+    );
+    // Each source's moments are combined with Chan's parallel update.
+    const mean = labels.map(() => new Float64Array(points));
+    const m2 = labels.map(() => new Float64Array(points));
+    const n = labels.map(() => new Float64Array(points));
+    for (const [id, group] of Map.groupBy(assigned, (a) => a.epoch.source_id)) {
+      const result = await this.worker.request("moments", {
+        path: await this.sourcePath(id),
+        epochs: group.map((a) => ({
+          ...a.epoch.meta,
+          group: labels.indexOf(a.value) + 1,
+        })),
+        stage: resolved,
+        grid,
+        groups: labels.length,
+      });
+      labels.forEach((_, g) => {
+        for (let i = 0; i < points; i++) {
+          const nb = result.n[g][i];
+          if (!nb) continue;
+          const na = n[g][i];
+          const total = na + nb;
+          const delta = result.mean[g][i] - mean[g][i];
+          mean[g][i] += (delta * nb) / total;
+          m2[g][i] += result.m2[g][i] + (delta * delta * na * nb) / total;
+          n[g][i] = total;
+        }
+      });
+    }
+    const limits = first.limits;
+    const offset =
+      Array.isArray(limits) && Number.isFinite(limits[0]) ? limits[0] : null;
+    return {
+      ...empty,
+      epochs: assigned.length,
+      stage: resolved,
+      onset: offset !== null,
+      time: grid.map((t) => t + (offset ?? 0)),
+      series: labels.map((label, g) => ({
+        label,
+        n: assigned.filter((a) => a.value === label).length,
+        mean: [...n[g]].map((k, i) => (k ? mean[g][i] : null)),
+        se: [...n[g]].map((k, i) =>
+          k > 1 ? Math.sqrt(m2[g][i] / (k - 1) / k) : null,
+        ),
+      })),
+    };
+  }
+  // Export in the background, reporting progress in the summary.
+  startExport(destination) {
+    if (this.exporting) throw new Error("An export is already running.");
+    if (!this.db.prepare("SELECT 1 FROM epochs LIMIT 1").get())
+      throw new Error("Import epochs before exporting.");
+    this.exporting = { total: 0, completed: 0, current: "" };
+    this.exporting.done = this.export(destination)
+      .then(
+        (result) => ({ ...result, error: null }),
+        (error) => ({ directory: null, counts: null, error: error.message }),
+      )
+      .then((result) => {
+        this.lastExport = { id: randomUUID(), ...result };
+        this.exporting = null;
+      });
+    return this.summary();
+  }
   async export(destination) {
+    const progress = this.exporting ?? {};
     const rows = this.db
       .prepare("SELECT * FROM epochs ORDER BY source_id, label, block, ordinal")
       .all()
@@ -402,14 +958,23 @@ export class Project {
     await mkdir(staging, { recursive: true });
     try {
       const sources = this.summary().sources;
+      const paths = exportPaths(rows);
+      const fileOf = (r) =>
+        paths.get(`${r.source_id}/${r.eye}/${r.label}/${r.block}`);
       const manifest = {
-        schemaVersion: 1,
+        schemaVersion: 2,
         exportedAt: new Date().toISOString(),
         application: `${packageMetadata.name}/${packageMetadata.version}`,
         policy:
           "Only explicitly kept epochs are retained. Unreviewed epochs are exported separately. All stored stages and original samples are preserved.",
+        // Exclusions made by this rule have the reviewer "eyeris auto-exclude".
+        autoExclude: this.autoExclude(),
         sources,
-        decisions: rows.map(({ meta, ...row }) => ({ ...row, locator: meta })),
+        decisions: rows.map(({ meta, ...row }) => ({
+          ...row,
+          file: fileOf(row),
+          locator: meta,
+        })),
         history: this.db.prepare("SELECT * FROM actions ORDER BY seq").all(),
       };
       await writeFile(
@@ -433,26 +998,95 @@ export class Project {
         "reviewer",
         "stage",
         "updated_at",
+        "file",
       ];
       await writeFile(
         path.join(staging, "decisions.csv"),
-        csv([cols, ...rows.map((r) => cols.map((c) => r[c]))]),
+        csv([
+          cols,
+          ...rows.map((r) =>
+            cols.map((c) => (c === "file" ? fileOf(r) : r[c])),
+          ),
+        ]),
       );
+      // Counts per subject, session, task and run, to check review is complete.
+      const groups = Map.groupBy(rows, (r) =>
+        JSON.stringify([r.participant, r.session, r.task, r.run]),
+      );
+      await writeFile(
+        path.join(staging, "summary.csv"),
+        csv([
+          [
+            "participant",
+            "session",
+            "task",
+            "run",
+            "epochs",
+            "kept",
+            "excluded",
+            "unreviewed",
+            "excluded_automatically",
+          ],
+          ...[...groups]
+            .sort(([a], [b]) =>
+              a.localeCompare(b, undefined, { numeric: true }),
+            )
+            .map(([key, group]) => [
+              ...JSON.parse(key),
+              group.length,
+              group.filter((r) => r.status === "keep").length,
+              group.filter((r) => r.status === "exclude").length,
+              group.filter((r) => r.status === "unreviewed").length,
+              group.filter((r) => r.reviewer === AUTO_REVIEWER).length,
+            ]),
+        ]),
+      );
+      progress.total = sources.length;
       for (const source of sources) {
+        progress.current = source.name;
         const epochs = rows
           .filter((r) => r.source_id === source.id)
-          .map((r) => ({ ...r.meta, id: r.id, status: r.status }));
+          .map((r) => ({
+            ...r.meta,
+            id: r.id,
+            status: r.status,
+            file: fileOf(r),
+          }));
         // Recheck before exporting even when this source was previously viewed.
         this.verified.delete(source.id);
         await this.worker.request("export", {
           path: await this.sourcePath(source.id),
           epochs,
-          destination: path.join(staging, source.id),
+          destination: staging,
         });
+        progress.completed = (progress.completed ?? 0) + 1;
       }
       await writeFile(
         path.join(staging, "README.txt"),
-        "eyeris review export\n\nEach source SHA-256 folder contains retained/, excluded/, and unreviewed/.\nEach table is saved as CSV and RDS, preserving all original columns and samples.\n.review_epoch_id joins samples to decisions.csv and manifest.json.\nTable filenames hex-encode eye/epoch-label/block to avoid naming collisions.\nThese are epoch tables, not complete eyeris pipeline objects. Continuous signals,\nbaseline lists and confounds are not filtered by this export.\nDecisions apply to individual epochs across all stored stages, not sibling\nepoch definitions or the other eye. No unreviewed epoch is treated as kept.\nRead an RDS with readRDS(); CSV missing values are empty fields.\n",
+        `eyeris review export
+
+retained/, excluded/ and unreviewed/ each hold a folder per subject and
+session, with one table per run, epoch label and eye, for example
+retained/sub-001/ses-01/sub-001_ses-01_task-memory_run-01_epoch-probe.csv.
+Analyze retained/ only: it contains exactly the epochs a reviewer kept.
+No unreviewed epoch is treated as kept.
+
+Each table is saved as CSV and RDS, preserving all original columns, stages and
+samples. .review_epoch_id joins samples to decisions.csv and manifest.json.
+decisions.csv lists every epoch's decision, reason, reviewer and table file;
+summary.csv counts epochs by subject, session, task and run; manifest.json adds
+the audit history, the automatic exclusion rule and each epoch's locator.
+
+To combine every kept epoch in R:
+  files <- list.files("retained", "[.]rds$", recursive = TRUE, full.names = TRUE)
+  kept <- do.call(rbind, lapply(files, readRDS))
+(rbind tables of one epoch label; labels and eyes can differ in columns.)
+
+These are epoch tables, not complete eyeris pipeline objects. Continuous
+signals, baseline lists and confounds are not filtered by this export.
+Decisions apply to individual epochs across all stored stages, not sibling
+epoch definitions or the other eye. CSV missing values are empty fields.
+`,
       );
       await rename(staging, target);
       return { directory: target, counts: this.summary().counts };

@@ -513,6 +513,87 @@ main {
   color: #666;
   text-decoration: underline;
 }
+.subject-list .all-subjects {
+  gap: 7px;
+  justify-content: flex-start;
+}
+.subject-list .all-subjects span {
+  margin-left: auto;
+}
+.link-button {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  text-decoration: underline;
+}
+.batch-table td button {
+  text-decoration: underline;
+}
+.batch-progress,
+.batch-result {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.batch-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.batch-result > strong {
+  font-size: 12px;
+  flex: 1;
+}
+.batch-result .batch-failures {
+  flex-basis: 100%;
+  order: 3;
+  margin-top: 0;
+}
+.batch-result .button {
+  font-size: 11px;
+}
+.batch-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.batch-progress strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+  color: #820000;
+}
+.batch-progress .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.batch-progress .progress-track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.batch-progress ul,
+.batch-failures {
+  margin: 10px 0 0 16px;
+  line-height: 1.7;
+  color: #555;
+  font-size: 11px;
+}
+.batch-failures button {
+  text-decoration: underline;
+  font-size: 11px;
+}
+.job-status.queued,
+.job-status.partial {
+  color: #6b5a16;
+}
 .import-progress {
   border: 1px solid #ddd;
   background: #fff;
@@ -725,6 +806,55 @@ main {
 .epoch-options .check-label {
   margin: 8px 0 0;
 }
+.epoch-segment {
+  border-top: 1px dashed #d5d5d5;
+  padding-top: 14px;
+}
+.epoch-segment:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.segment-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.segment-heading strong {
+  font-weight: 500;
+}
+.segment-heading button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #777;
+}
+.segment-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.segment-actions > .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.segment-actions > small {
+  font-size: 11px;
+  color: #6f6f6f;
+  line-height: 1.5;
+}
+.segment-actions > .auto-exclude {
+  align-self: stretch;
+}
+.field-error {
+  display: block;
+  margin-top: 4px;
+  color: #9a3119;
+  font-size: 11px;
+}
 .output-options {
   border-top: 1px solid #ddd;
   padding-top: 19px;
@@ -748,6 +878,22 @@ main {
 }
 .run-actions .button {
   width: 100%;
+}
+.parallel-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  font-size: 12px;
+  color: #393939;
+}
+.parallel-field select {
+  width: auto;
+  min-width: 140px;
+  margin: 0;
+  font-size: 12px;
+  padding: 6px 9px;
 }
 .run-note {
   margin-top: 12px;
@@ -890,6 +1036,266 @@ main {
   font-style: normal;
   font-size: 13px;
 }
+.auto-exclude {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 14px;
+  margin-top: 6px;
+}
+.auto-exclude .check-label {
+  margin: 0;
+}
+.auto-exclude label {
+  font-size: 11px;
+}
+.auto-exclude small {
+  color: #6f6f6f;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.auto-exclude-error {
+  color: #9a3119;
+  font-size: 11px;
+}
+.auto-exclude-panel {
+  margin-bottom: 14px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.auto-exclude-panel > summary {
+  cursor: pointer;
+  color: #555;
+}
+/* One row in review, so the signal keeps its height. */
+.auto-exclude-panel .auto-exclude {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px 18px;
+  border-top: 0;
+  padding-top: 10px;
+}
+.auto-exclude-panel .auto-exclude .check-label {
+  padding-bottom: 8px;
+}
+.auto-exclude-panel .paired-fields label:first-child {
+  flex: 0 0 120px;
+}
+.auto-exclude-panel .paired-fields label:last-child {
+  flex: 0 0 230px;
+}
+.auto-exclude-panel input,
+.auto-exclude-panel select {
+  font-size: 12px;
+  padding: 6px 9px;
+}
+.auto-exclude-panel small,
+.auto-exclude-panel .auto-exclude-error {
+  flex-basis: 100%;
+}
+.export-progress,
+.export-panel {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.export-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.export-progress strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+}
+.export-progress .progress-track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.export-progress small {
+  display: block;
+  margin-top: 8px;
+  color: #777;
+}
+.export-panel > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.export-panel h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.export-panel p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  max-width: 760px;
+}
+.export-panel .export-warning {
+  color: #6b5a16;
+}
+.export-panel .button {
+  margin-top: 4px;
+}
+.subject-progress {
+  margin-bottom: 14px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.subject-progress > summary {
+  cursor: pointer;
+  color: #555;
+}
+.subject-progress table {
+  width: 100%;
+  max-width: 860px;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.subject-progress th {
+  text-align: left;
+  font-weight: 500;
+  color: #747474;
+  font-size: 11px;
+  padding: 6px 10px 6px 0;
+}
+.subject-progress td {
+  padding: 6px 10px 6px 0;
+  border-top: 1px solid #e3e3e3;
+}
+.subject-progress td .progress-track {
+  display: inline-block;
+  width: 90px;
+  height: 4px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.subject-progress td button {
+  text-decoration: underline;
+  font-size: 11px;
+}
+.run-average {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #555;
+  margin-left: 12px;
+}
+.diagnostics-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 18px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.diagnostics-controls select {
+  font-size: 12px;
+  padding: 7px 9px;
+  margin: 0;
+}
+.diagnostics-controls .check-label {
+  margin: 0 0 8px;
+}
+.run-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 360px;
+}
+.run-picker select {
+  flex: 1;
+  min-width: 0;
+}
+.run-picker button {
+  padding: 6px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #fff;
+}
+.diagnostics-panel {
+  min-height: 320px;
+}
+.diagnostics-panel .plot-heading {
+  justify-content: space-between;
+}
+.average-plot {
+  flex: 1;
+  min-height: 200px;
+  padding: 0 16px;
+  position: relative;
+}
+.diagnostics-panel .signal-metadata {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  align-items: center;
+}
+/* Review pushes its last metadata item right and hides it in short windows;
+   here the last item can be a group in the legend, which must stay visible. */
+.diagnostics-panel .signal-metadata > span:last-child {
+  display: inline;
+  margin-left: 0;
+  font-size: inherit;
+}
+.split-controls {
+  margin-top: -4px;
+}
+.split-controls label select {
+  min-width: 150px;
+}
+.behavior-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  color: #666;
+  font-size: 11px;
+}
+.behavior-status .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.split-legend i {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.split-dropped {
+  color: #6b5a16;
+}
+.legend-mean,
+.legend-trace {
+  display: inline-block;
+  width: 16px;
+  height: 2px;
+  vertical-align: middle;
+  margin-right: 5px;
+  background: #820000;
+}
+.legend-trace {
+  background: rgba(96, 96, 96, 0.45);
+  height: 1px;
+  margin-left: 10px;
+}
 .filter-bar {
   display: flex;
   gap: 12px;
@@ -930,6 +1336,14 @@ main {
   gap: 20px;
   flex: 1;
   min-height: 0;
+}
+/* While an export or a details panel is open, it pushes the review area down
+   and the page scrolls, rather than shrinking the signal plot to nothing. */
+.content:has(.export-panel, .export-progress, details[open]) {
+  overflow-y: auto;
+}
+.content:has(.export-panel, .export-progress, details[open]) .review-workspace {
+  min-height: 560px;
 }
 .queue-panel {
   background: #fff;

@@ -78,8 +78,16 @@ does not automatically run any processing.
    random seed. Advanced JSON exposes additional supported step parameters.
    Binning and downsampling are mutually exclusive.
 4. Optionally enable epoch extraction with an event pattern and time limits. Add
-   baseline correction if needed. Epoching is optional for preprocessing but is
-   required to add the result to the trial-review queue.
+   baseline correction if needed, measured from a baseline event pattern (by
+   default the segment's own events) over a window such as -1 to 0 s. Epoching is
+   optional for preprocessing but is required to add the result to the
+   trial-review queue. **Add epoch segment** cuts further windows from the same
+   preprocessed recording, so glassbox runs once: for example `prestim` from -1
+   to 0 s and `poststim` from 0 to 2 s around each probe, with the poststimulus
+   segment baselined on the prestimulus second. A new segment starts with the
+   previous one's events and the window of the same length right after it. Each
+   segment calls `eyeris::epoch()` in turn, needs its own label, and becomes its
+   own group of epochs (`epoch_<label>`) to review, filter, diagnose and export.
 5. Select HTML reports and/or a DuckDB database, check the recordings to process,
    then run the pipeline. It calls `eyeris::glassbox()`, optional `eyeris::epoch()`,
    and `eyeris::bidsify()` directly for each recording, in run order, in one R
@@ -94,6 +102,31 @@ does not automatically run any processing.
 6. Open the completed job's files or go directly to epoch review, which opens on
    the subject with all of its runs. Each run's saved RDS and extracted epochs
    are indexed automatically.
+
+Pipeline settings belong to the project: they are saved as you edit them, apply
+to every subject, and are restored when the project is reopened. Each job keeps
+the settings it was started with. To process the whole study, choose **All
+subjects** in the sidebar (or **Process all subjects** after a BIDS import), set
+the glassbox, epoch and output options once, select the subjects, and choose
+**Process subjects**. Each subject becomes its own job containing all of its
+recordings, processed in run order in one R process. **Subjects at a time**
+runs separate subjects in parallel R processes; a subject's runs are never split
+across processes. **Automatic** leaves one core for the app, allows about 2 GiB
+of memory per process, and uses at most 8; any value up to the number of cores
+can be chosen. The choice is saved for this computer. When several subjects run
+at once, data.table and OpenMP threads are divided between the R processes.
+Finished jobs are published and indexed one at a time. The batch
+shows overall progress, the recording and step each job is on, and a summary
+with links to any subject that failed; **Cancel all** stops the running job and
+removes the waiting ones. Processing a single subject while a batch runs queues
+it behind the batch.
+
+When the DuckDB database is enabled, each job writes its own database. eyeris
+names its tables by subject, session, task and run, so on publication the job's
+tables are merged into the project's `bids/derivatives/eyeris.eyerisdb` instead
+of being treated as a conflicting file. The merge happens in a copy that
+replaces the database only when it succeeds, and tables that already exist (the
+same published run) are left unchanged.
 
 Project layout:
 
@@ -140,15 +173,88 @@ otherwise, and when the name has no run, block numbers name the runs.
 
 - Select the final available stage or an individual stored preprocessing column.
 - Search events, trials, participants or epoch labels; filter by review status,
-  participant or run. A participant's runs are listed together in session, task
+  participant, run or epoch segment. A participant's runs are listed together in session, task
   and run order. The queue pages 80 epochs at a time.
 - Hover to inspect, drag horizontally to zoom, and reset or double-click to unzoom.
 - `K` keeps, `X` excludes, arrow keys navigate, and `U` or Cmd/Ctrl-Z undoes the last
   decision outside text inputs. Decisions, reviewer, reason, and inspected stage
   are saved to SQLite immediately. Auto-advance can be disabled.
-- Export creates retained, excluded, and unreviewed tables, plus `decisions.csv`
-  (including session, task and run) and `manifest.json` with audit history. Only explicit keep decisions enter the
-  retained data. Existing exports are never overwritten.
+- Decisions are saved as they are made, and the queue position is saved with the
+  project, so reopening it continues where review was left. Without a saved
+  position, review opens at the first unreviewed epoch. **Next unreviewed** (`N`)
+  jumps to the next epoch without a decision in queue order. **Progress by
+  subject** shows each participant's reviewed, kept, excluded and remaining
+  epochs, with a link to continue that participant.
+- **Export review** exports every subject at once, in the background with a
+  progress bar, to a new folder (existing exports are never overwritten). It can
+  be run at any time; unreviewed epochs are exported separately and only explicit
+  keep decisions enter the retained data. The export contains:
+
+  ```text
+  eyeris-review-<time>/
+    retained/sub-001/ses-01/sub-001_ses-01_task-memory_run-01_epoch-probe.csv  (and .rds)
+    excluded/…
+    unreviewed/…
+    decisions.csv    # every epoch: decision, reason, reviewer and table file
+    summary.csv      # counts by subject, session, task and run
+    manifest.json    # sources, decisions, audit history, automatic exclusion rule
+    README.txt
+  ```
+
+  There is one table per run, epoch label and eye (`_eye-left` when both eyes
+  were processed). A run indexed from two sources, such as a recording processed
+  twice, adds `_source-<sha256 prefix>` to tell them apart.
+
+**Diagnostics** shows the average trace of a run's epochs, with every epoch's
+trace faded in gray behind it (a butterfly plot) and a standard-error band
+around the mean. Choose any run of any source, step through runs with the arrows,
+and pick the stage and which epochs to include: kept and unreviewed (the
+default), kept only, or all including excluded epochs. Time is measured from the
+event when the epoch window is known, with the onset marked; otherwise from the
+start of the epoch. Each epoch is sampled at its nearest stored sample on a
+shared grid of up to 600 points, so missing samples stay missing rather than
+being interpolated, and the mean and standard error at each time use only the
+epochs with data there. **Run average** in review opens the selected epoch's run.
+
+**Splits and behavioral data.** Diagnostics can also split epochs into groups
+and pool them over **This run**, all runs of the subject, or **All subjects**
+(the same epoch label and eye). Each epoch contributes equally to its group's
+mean, and the standard error is pooled exactly across sources. Split by:
+
+- an **epoch field**: the event pattern's placeholders (such as `{trial}` or
+  `{stim}`), `matched_event`, and any other column with the same value at an
+  epoch's first and last sample; or
+- a **behavioral column**. **Link behavioral data…** reads every
+  `sub-<label>/[ses-<label>/]beh/*.tsv` in a BIDS dataset (by default the one
+  imported with **Import BIDS folder**); the subject comes from the folder and
+  the session, task and run from the filename. Choose the epoch field and the
+  behavioral column that identify each trial (fields that share a column's name,
+  preferably `trial`, are suggested). Each epoch is joined to the row of its own
+  subject, session, task and run with an equal value; a file without a session
+  or run matches any. Values match as text or as numbers (`7` matches `7.0`),
+  and `n/a` is missing.
+
+Groups are limited to eight values. Epochs without a matching row, matching more
+than one row, or without a value for the split column are left out and counted
+below the plot. Linked behavioral data is stored in the project; linking again
+replaces it.
+
+**Automatic exclusion** excludes epochs missing more than a chosen percentage of
+samples, measured at the final stage or at any stored stage (for example the raw
+signal, before interpolation fills gaps). Set it under **Automatic exclusion** in
+review, or with the epoch options before processing. The rule applies to every
+epoch no reviewer has decided on: when it is changed, and to new epochs as they
+are indexed. Epochs that no longer exceed the threshold return to unreviewed.
+Each exclusion is recorded with the reviewer `eyeris auto-exclude` and a reason
+such as `Excessive missing data: 30.8% of samples missing in pupil_raw, above
+the 25% automatic exclusion threshold`, which appears as the exclusion reason and
+note in the decision panel and in `decisions.csv`. Every automatic change is in
+the export's audit history, and the rule is saved in `manifest.json`. A
+reviewer's decision, including marking an epoch unreviewed, is never changed by
+the rule, and undo applies only to reviewers' decisions. Missing fractions for
+every stage are stored when epochs are indexed; epochs indexed by earlier
+versions are recomputed from their source the first time a non-final stage is
+chosen.
 
 Decisions apply to an individual epoch across all stored stages, not other epoch
 labels or the other eye. Epoch identities combine a source SHA-256 with eye,
@@ -400,7 +506,7 @@ metadata last. A failed platform build leaves the existing channel untouched.
 To roll back an application bug, publish the corrected code under a higher
 desktop version; clients intentionally do not downgrade.
 
-### Automatic patch releases from dev
+### Automatic releases from dev
 
 After the initial `desktop-v0.3.0` release, merge the automatic-release workflow
 follow-up PR. Each push to `dev` checks for changes under `desktop/` or to the
@@ -420,6 +526,19 @@ For a relevant change, the workflow:
 4. Tags the resulting version commit as `desktop-v0.3.1` and directly calls the
    signed release workflow, which builds and validates that exact tag before
    publishing its installers and update feeds.
+
+To release a minor or major version instead, set it in a PR:
+
+```sh
+cd desktop
+npm version 0.4.0 --no-git-tag-version   # package.json and package-lock.json
+```
+
+When that PR reaches `dev`, the manifest is newer than the latest desktop tag, so
+the workflow treats it as a planned release: it runs the same native CI against
+that commit and tags the commit itself as `desktop-v0.4.0`, with no version PR,
+before publishing. The package and lockfile versions must agree. Later desktop
+changes resume patch releases (`0.4.1`, and so on).
 
 This uses the built-in `GITHUB_TOKEN`; no extra PAT or GitHub App is needed.
 GitHub does not start push workflows for commits/tags made by that token, so

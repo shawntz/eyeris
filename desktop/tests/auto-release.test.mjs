@@ -33,6 +33,17 @@ test("desktop changes get patch tags independently of CRAN; R-only changes do no
     true,
   );
   assert.throws(() => releasePlan("0.2.0", tags, ["desktop/foo"]), /older/);
+  // A version set ahead of the latest tag, such as a minor release, is
+  // released as it is; once tagged, later changes are patches again.
+  assert.deepEqual(releasePlan("0.4.0", tags, ["desktop/package.json"]), {
+    release: true,
+    version: "0.4.0",
+    tag: "desktop-v0.4.0",
+  });
+  assert.equal(
+    releasePlan("0.4.0", [...tags, "desktop-v0.4.0"], ["desktop/foo"]).version,
+    "0.4.1",
+  );
   assert.throws(
     () => releasePlan("0.3.1-beta.1", tags, ["desktop/foo"]),
     /stable/,
@@ -114,6 +125,15 @@ test("planning compares against the desktop tag and catches coalesced pushes", a
     assert.match(
       await plan(),
       /release=true\nversion=0.3.1\ntag=desktop-v0.3.1/,
+    );
+    await writeFile(
+      path.join(dir, "desktop/package.json"),
+      JSON.stringify({ version: "0.4.0" }),
+    );
+    git("commit", "-am", "Plan the 0.4.0 release");
+    assert.match(
+      await plan(),
+      /release=true\nversion=0.4.0\ntag=desktop-v0.4.0/,
     );
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -254,6 +274,101 @@ test("version PR preparation commits, merges, tags, and resumes without another 
     await prepare({ api: github });
     assert.equal(git("rev-parse", "origin/dev"), tag);
     assert.equal(git("rev-list", "--count", "origin/dev"), "2");
+  } finally {
+    process.chdir(previousCwd);
+    for (const name of variables) {
+      if (previousEnv[name] === undefined) delete process.env[name];
+      else process.env[name] = previousEnv[name];
+    }
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("a planned version is tagged on its validated commit without a version PR", async () => {
+  const { prepare } = await import("../scripts/auto-release.mjs");
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-planned-release-"));
+  const previousCwd = process.cwd();
+  const variables = [
+    "DESKTOP_SOURCE",
+    "DESKTOP_TAG",
+    "GITHUB_REPOSITORY",
+    "GITHUB_OUTPUT",
+  ];
+  const previousEnv = Object.fromEntries(
+    variables.map((name) => [name, process.env[name]]),
+  );
+  const remote = path.join(dir, "remote.git");
+  const checkout = path.join(dir, "checkout");
+  const gitAt = (cwd, ...args) =>
+    execFileSync("git", args, {
+      cwd,
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+    }).trim();
+  const git = (...args) => gitAt(checkout, ...args);
+  const commit = async (version, lockVersion = version) => {
+    const pkg = { name: "eyeris-desktop", version };
+    await writeFile(
+      path.join(checkout, "desktop/package.json"),
+      JSON.stringify(pkg, null, 2) + "\n",
+    );
+    await writeFile(
+      path.join(checkout, "desktop/package-lock.json"),
+      JSON.stringify(
+        {
+          version: lockVersion,
+          packages: { "": { ...pkg, version: lockVersion } },
+        },
+        null,
+        2,
+      ) + "\n",
+    );
+    git("add", ".");
+    git("commit", "-m", `Desktop ${version}`);
+    git("push", "origin", "dev");
+    return git("rev-parse", "HEAD");
+  };
+  const run = async (source, tag) => {
+    Object.assign(process.env, {
+      DESKTOP_SOURCE: source,
+      DESKTOP_TAG: tag,
+      GITHUB_REPOSITORY: "owner/repo",
+      GITHUB_OUTPUT: path.join(dir, "outputs"),
+    });
+    await writeFile(process.env.GITHUB_OUTPUT, "");
+    // No version PR is created or looked up.
+    await prepare({
+      api: (route, method = "GET") => {
+        throw new Error(`Unexpected API call: ${method} ${route}`);
+      },
+    });
+    return readFile(process.env.GITHUB_OUTPUT, "utf8");
+  };
+  try {
+    gitAt(dir, "init", "--bare", remote);
+    gitAt(dir, "clone", remote, checkout);
+    git("checkout", "-b", "dev");
+    git("config", "user.name", "Test");
+    git("config", "user.email", "test@example.com");
+    await mkdir(path.join(checkout, "desktop"));
+    const source = await commit("0.4.0");
+    process.chdir(checkout);
+    assert.match(
+      await run(source, "desktop-v0.4.0"),
+      /release=true\ntag=desktop-v0.4.0/,
+    );
+    assert.equal(git("rev-parse", "desktop-v0.4.0^{commit}"), source);
+    assert.match(git("ls-remote", "--tags", "origin"), /desktop-v0.4.0/);
+    assert.equal(git("rev-list", "--count", "origin/dev"), "1");
+    // Rerunning after a later failure keeps the same tag.
+    assert.match(await run(source, "desktop-v0.4.0"), /release=true/);
+    const mismatched = await commit("0.5.0", "0.4.0");
+    await assert.rejects(() => run(mismatched, "desktop-v0.5.0"), /agree/);
+    // A newer dev push is validated by its own run.
+    const obsolete = await commit("0.6.0");
+    await commit("0.6.0-dev");
+    assert.match(await run(obsolete, "desktop-v0.6.0"), /release=false/);
+    assert.equal(git("tag", "--list", "desktop-v0.6.0"), "");
   } finally {
     process.chdir(previousCwd);
     for (const name of variables) {

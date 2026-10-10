@@ -16,6 +16,15 @@ make <- function() {
 }
 x <- make()
 saveRDS(x, file.path(args[1], 'sub-001_task-memory.rds'))
+# Epochs with different amounts of missing data at each stage: 30.8% raw and
+# 5.8% final, 0.8% in both, and 60% in both.
+z <- make()
+rows <- function(i) seq.int((i - 1L) * 12000L + 1L, i * 12000L)
+z$epoch_probe$block_1$pupil_raw[rows(1)[1:3600]] <- NA
+z$epoch_probe$block_1$pupil_raw_lpfilt[rows(1)[1:600]] <- NA
+z$epoch_probe$block_1$pupil_raw[rows(3)[1:7200]] <- NA
+z$epoch_probe$block_1$pupil_raw_lpfilt[rows(3)[1:7200]] <- NA
+saveRDS(z, file.path(args[1], 'sub-005_task-memory.rds'))
 x$epoch_probe$block_1$pupil_raw[1] <- -200
 saveRDS(x, file.path(args[1], 'sub-002_task-memory.rds'))
 # BIDS entities in the filename give the session, task and run.

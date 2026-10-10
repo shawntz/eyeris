@@ -22,10 +22,15 @@ import {
   Keyboard,
   RotateCcw,
   LoaderCircle,
+  SkipForward,
+  LineChart,
 } from "lucide-react";
 import { TracePlot } from "./TracePlot";
+import { AutoExcludeControl } from "./AutoExcludeControl";
+import { groupKey } from "./DiagnosticsWorkspace";
 import {
   stageName,
+  AUTO_REVIEWER,
   type Epoch,
   type Summary,
   type Trace,
@@ -38,6 +43,7 @@ const defaults: Filters = {
   status: "all",
   participant: "",
   run: "",
+  label: "",
   search: "",
   stage: "final",
   sort: "natural",
@@ -49,6 +55,8 @@ const statusLabel = {
   exclude: "Exclude",
 };
 const number = (n: number) => n.toLocaleString();
+// Kept outside the component so a dismissed export result stays dismissed.
+let dismissedExport = "";
 function StatusIcon({ status }: { status: Status }) {
   return status === "keep" ? (
     <CheckCircle2 size={15} />
@@ -64,20 +72,36 @@ export function ReviewWorkspace({
   reviewer: initialReviewer,
   participant = "",
   onSubjects,
+  onDiagnostics,
   onClose,
 }: {
   initialProject: Summary;
   reviewer: string;
   participant?: string;
   onSubjects: () => void;
+  onDiagnostics: (key?: string) => void;
   onClose: () => void;
 }) {
   const [project, setProject] = useState<Summary | null>(initialProject);
   const [reviewer, setReviewer] = useState(initialReviewer);
-  const [filters, setFilters] = useState<Filters>({
-    ...defaults,
-    participant,
+  // Continue where review was left, unless a participant was chosen to review.
+  const [resumed] = useState(() => {
+    const saved = participant ? null : initialProject.position;
+    if (!saved) return null;
+    const f = { ...defaults, ...saved.filters };
+    if (f.participant && !initialProject.participants.includes(f.participant))
+      f.participant = "";
+    if (f.run && !initialProject.runs.includes(f.run)) f.run = "";
+    if (f.label && !initialProject.labels.includes(f.label)) f.label = "";
+    if (f.stage !== "final" && !initialProject.stages.includes(f.stage))
+      f.stage = "final";
+    return { epochId: saved.epochId, filters: f };
   });
+  const [filters, setFilters] = useState<Filters>(
+    resumed?.filters ?? { ...defaults, participant },
+  );
+  const [exportOpen, setExportOpen] = useState(false);
+  const [, setDismissed] = useState(dismissedExport);
   const [queue, setQueue] = useState<Queue>({ rows: [], total: 0, offset: 0 });
   const [selected, setSelected] = useState<Epoch | null>(null);
   const [trace, setTrace] = useState<(Trace & { epochId: string }) | null>(
@@ -93,7 +117,7 @@ export function ReviewWorkspace({
   const [note, setNote] = useState("");
   const [reason, setReason] = useState("Signal artifact");
   const [advance, setAdvance] = useState(true);
-  const preferred = useRef<string | null>(null);
+  const preferred = useRef<string | null>(resumed?.epochId ?? null);
   const listToken = useRef(0);
   const refresh = () => setRevision((x) => x + 1);
   const act = useCallback(async (label: string, fn: () => Promise<void>) => {
@@ -115,6 +139,43 @@ export function ReviewWorkspace({
     setProject(initialProject);
     refresh();
   }, [initialProject.sources.length]);
+  // Export runs in the background; follow its progress from the app's updates.
+  useEffect(() => {
+    setProject(
+      (p) =>
+        p && {
+          ...p,
+          exporting: initialProject.exporting,
+          lastExport: initialProject.lastExport,
+        },
+    );
+  }, [
+    JSON.stringify([initialProject.exporting, initialProject.lastExport?.id]),
+  ]);
+  // Without a saved position, start at the first epoch still to review.
+  useEffect(() => {
+    if (resumed) return;
+    window.eyeris
+      .nextUnreviewed(filters, null)
+      .then((next) => {
+        if (!next) return;
+        preferred.current = next.id;
+        setFilters((f) => ({ ...f, offset: next.offset }));
+      })
+      .catch(() => {});
+  }, []);
+  // Remember the position so a reopened project continues from here.
+  useEffect(() => {
+    if (!selected) return;
+    const timer = setTimeout(
+      () =>
+        void window.eyeris
+          .saveReviewPosition({ epochId: selected.id, filters })
+          .catch(() => {}),
+      500,
+    );
+    return () => clearTimeout(timer);
+  }, [selected?.id, filters]);
   useEffect(() => {
     if (!project) return;
     const token = ++listToken.current;
@@ -225,8 +286,12 @@ export function ReviewWorkspace({
         .map((r) => `${r.file}: ${r.error}`);
       if (errors.length) setError(errors.join("\n"));
       const count = result.results.reduce((n, r) => n + (r.count || 0), 0);
+      const auto = result.results.reduce(
+        (n, r) => n + (r.autoExcluded || 0),
+        0,
+      );
       setNotice(
-        `${number(count)} epochs imported.${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
+        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
       );
     });
   }
@@ -298,12 +363,33 @@ export function ReviewWorkspace({
     });
   }
   function exportData() {
-    void act("Exporting full-resolution epoch tables…", async () => {
+    void act("Starting export…", async () => {
       const result = await window.eyeris.exportData();
-      if (result)
-        setNotice(
-          `Exported ${number(result.counts.keep)} kept, ${number(result.counts.exclude)} excluded, and ${number(result.counts.unreviewed)} unreviewed epochs to ${result.directory}`,
-        );
+      if (result) {
+        setProject(result);
+        setExportOpen(false);
+      }
+    });
+  }
+  // Jump to the next epoch without a decision, in queue order.
+  function nextUnreviewed(
+    scope: Filters = filters,
+    from: string | null = selected?.id ?? null,
+  ) {
+    void act("Finding the next unreviewed epoch…", async () => {
+      const view = {
+        ...scope,
+        status: scope.status === "unreviewed" ? "unreviewed" : "all",
+      } as Filters;
+      const next = await window.eyeris.nextUnreviewed(view, from);
+      if (!next) {
+        setFilters(view);
+        setNotice("Every epoch in this view has been reviewed.");
+        return;
+      }
+      preferred.current = next.id;
+      setFilters({ ...view, offset: next.offset });
+      refresh();
     });
   }
   useEffect(() => {
@@ -324,6 +410,10 @@ export function ReviewWorkspace({
       if (event.key.toLowerCase() === "x") {
         event.preventDefault();
         void decide("exclude");
+      }
+      if (event.key.toLowerCase() === "n") {
+        event.preventDefault();
+        nextUnreviewed();
       }
       if (event.key === "ArrowDown" || event.key === "ArrowRight") {
         event.preventDefault();
@@ -365,6 +455,9 @@ export function ReviewWorkspace({
           <Layers3 size={17} /> Epoch review{" "}
           <span className="nav-count">{project?.counts.total}</span>
         </div>
+        <button className="nav-item" onClick={() => onDiagnostics()}>
+          <LineChart size={17} /> Diagnostics
+        </button>
         <button
           className="import-sidebar"
           disabled={!!busy}
@@ -411,6 +504,13 @@ export function ReviewWorkspace({
               <div className="heading-actions">
                 <button
                   className="button"
+                  disabled={!!busy || !project.counts.unreviewed}
+                  onClick={() => nextUnreviewed()}
+                >
+                  <SkipForward size={16} /> Next unreviewed <kbd>N</kbd>
+                </button>
+                <button
+                  className="button"
                   disabled={!!busy || !project.canUndo}
                   onClick={undo}
                 >
@@ -418,8 +518,10 @@ export function ReviewWorkspace({
                 </button>
                 <button
                   className="button primary"
-                  disabled={!!busy || !project.counts.total}
-                  onClick={exportData}
+                  disabled={
+                    !!busy || !project.counts.total || !!project.exporting
+                  }
+                  onClick={() => setExportOpen(!exportOpen)}
                 >
                   <ArrowDownToLine size={16} /> Export review
                 </button>
@@ -465,6 +567,123 @@ export function ReviewWorkspace({
             </section>
           ) : (
             <>
+              {project.exporting && (
+                <section className="export-progress" role="status">
+                  <div>
+                    <strong>
+                      <LoaderCircle size={15} className="spin" /> Exporting
+                      every subject
+                    </strong>
+                    <span>
+                      {project.exporting.completed} of{" "}
+                      {project.exporting.total || "…"} sources
+                    </span>
+                  </div>
+                  <div
+                    className="progress-track"
+                    role="progressbar"
+                    aria-label="Export progress"
+                    aria-valuemin={0}
+                    aria-valuemax={project.exporting.total || 1}
+                    aria-valuenow={project.exporting.completed}
+                  >
+                    <span
+                      style={{
+                        width: `${(100 * project.exporting.completed) / (project.exporting.total || 1)}%`,
+                      }}
+                    />
+                  </div>
+                  <small>{project.exporting.current}</small>
+                </section>
+              )}
+              {!project.exporting &&
+                project.lastExport &&
+                project.lastExport.id !== dismissedExport && (
+                  <div
+                    className={`message ${project.lastExport.error ? "error" : "notice"}`}
+                    role="status"
+                  >
+                    {project.lastExport.error ? (
+                      <AlertCircle size={17} />
+                    ) : (
+                      <CheckCircle2 size={16} />
+                    )}
+                    <div>
+                      {project.lastExport.error ? (
+                        <>Export failed: {project.lastExport.error}</>
+                      ) : (
+                        <>
+                          Exported {number(project.lastExport.counts!.keep)}{" "}
+                          kept, {number(project.lastExport.counts!.exclude)}{" "}
+                          excluded and{" "}
+                          {number(project.lastExport.counts!.unreviewed)}{" "}
+                          unreviewed epochs to {project.lastExport.directory}
+                          <button
+                            className="link-button"
+                            onClick={() =>
+                              void act("Opening export…", () =>
+                                window.eyeris.showProjectFiles("export"),
+                              )
+                            }
+                          >
+                            Show exported files
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      aria-label="Dismiss export result"
+                      onClick={() => {
+                        dismissedExport = project.lastExport!.id;
+                        setDismissed(dismissedExport);
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+              {exportOpen && !project.exporting && (
+                <section className="export-panel">
+                  <div>
+                    <h2>Export every subject</h2>
+                    <button
+                      aria-label="Close export"
+                      onClick={() => setExportOpen(false)}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                  <p>
+                    {number(project.counts.total)} epochs from{" "}
+                    {number(project.progress.length)} participant
+                    {project.progress.length === 1 ? "" : "s"}:{" "}
+                    {number(project.counts.keep)} kept,{" "}
+                    {number(project.counts.exclude)} excluded and{" "}
+                    {number(project.counts.unreviewed)} not yet reviewed.
+                  </p>
+                  {!!project.counts.unreviewed && (
+                    <p className="export-warning">
+                      Unreviewed epochs are exported separately and are never
+                      treated as kept. Decisions are saved as you go, so you can
+                      finish reviewing later and export again; every export is a
+                      new folder.
+                    </p>
+                  )}
+                  <p>
+                    The export holds retained/, excluded/ and unreviewed/
+                    folders by subject and session, with one table per run in
+                    CSV and RDS, plus decisions.csv, summary.csv and
+                    manifest.json.
+                  </p>
+                  <button
+                    className="button primary"
+                    disabled={!!busy}
+                    onClick={exportData}
+                  >
+                    <ArrowDownToLine size={16} /> Choose a folder and export
+                  </button>
+                </section>
+              )}
               <div className="stats-grid">
                 <div className="stat">
                   <span>
@@ -503,6 +722,80 @@ export function ReviewWorkspace({
                   <small>Never automatically kept</small>
                 </div>
               </div>
+              <details className="auto-exclude-panel">
+                <summary>
+                  Automatic exclusion ·{" "}
+                  {project.autoExclude.enabled
+                    ? `more than ${project.autoExclude.threshold}% missing in ${project.autoExclude.stage === "final" ? "the final stage" : project.autoExclude.stage} · ${number(project.autoExcluded)} excluded`
+                    : "off"}
+                </summary>
+                <AutoExcludeControl
+                  project={project}
+                  disabled={!!busy}
+                  onProject={(next) => {
+                    setProject(next);
+                    refresh();
+                  }}
+                />
+              </details>
+              {project.progress.length > 1 && (
+                <details className="subject-progress">
+                  <summary>
+                    Progress by subject ·{" "}
+                    {project.progress.filter((p) => !p.unreviewed).length} of{" "}
+                    {project.progress.length} complete
+                  </summary>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Participant</th>
+                        <th>Reviewed</th>
+                        <th>Kept</th>
+                        <th>Excluded</th>
+                        <th>To review</th>
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {project.progress.map((p) => (
+                        <tr key={p.participant}>
+                          <td>sub-{p.participant}</td>
+                          <td>
+                            <span className="progress-track">
+                              <span
+                                style={{
+                                  width: `${(100 * (p.total - p.unreviewed)) / p.total}%`,
+                                }}
+                              />
+                            </span>
+                            {number(p.total - p.unreviewed)} / {number(p.total)}
+                          </td>
+                          <td>{number(p.keep)}</td>
+                          <td>{number(p.exclude)}</td>
+                          <td>{number(p.unreviewed)}</td>
+                          <td>
+                            <button
+                              disabled={!!busy}
+                              onClick={() =>
+                                nextUnreviewed(
+                                  {
+                                    ...defaults,
+                                    stage: filters.stage,
+                                    participant: p.participant,
+                                  },
+                                  null,
+                                )
+                              }
+                            >
+                              {p.unreviewed ? "Continue" : "View"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </details>
+              )}
               <div className="filter-bar">
                 <label className="search">
                   <Search size={16} />
@@ -528,6 +821,22 @@ export function ReviewWorkspace({
                     ))}
                   </select>
                 </label>
+                {project.labels.length > 1 && (
+                  <label className="select-field">
+                    <select
+                      aria-label="Epoch segment filter"
+                      value={filters.label}
+                      onChange={(e) => filter({ label: e.target.value })}
+                    >
+                      <option value="">All epoch segments</option>
+                      {project.labels.map((l) => (
+                        <option key={l} value={l}>
+                          {l.replace(/^epoch_/, "")}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 {project.runs.length > 1 && (
                   <label className="select-field">
                     <select
@@ -607,6 +916,7 @@ export function ReviewWorkspace({
                             {e.run ? `Run ${e.run}` : e.block} ·{" "}
                             {e.label.replace("epoch_", "")}
                             {e.eye !== "main" ? ` · ${e.eye}` : ""}
+                            {e.reviewer === AUTO_REVIEWER && " · auto"}
                           </small>
                         </span>
                         <ChevronRight size={14} />
@@ -731,6 +1041,15 @@ export function ReviewWorkspace({
                         </select>
                         <ChevronDown size={14} />
                       </label>
+                      <button
+                        className="run-average"
+                        disabled={!selected}
+                        onClick={() =>
+                          selected && onDiagnostics(groupKey(selected))
+                        }
+                      >
+                        <LineChart size={14} /> Run average
+                      </button>
                     </div>
                     <div className="plot-heading">
                       <span>

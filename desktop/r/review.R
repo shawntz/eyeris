@@ -8,6 +8,23 @@ review_objects <- function(x) {
   stop("Choose an RDS containing an epoched eyeris object. Run eyeris::epoch() before saving it.")
 }
 
+# Epoch-level variables, such as event-pattern placeholders ({trial}, {stim})
+# and matched_event: columns other than signals and timing whose value is the
+# same at an epoch's first and last sample.
+review_field_columns <- function(df) {
+  skip <- c("timebin", "block", "eye", "hz", "type", "text_unique", "template", "matching_pattern")
+  setdiff(names(df)[!grepl("^(pupil_|time|eye_)", names(df))], skip)
+}
+review_fields <- function(df, a, b, columns = review_field_columns(df)) {
+  out <- list()
+  for (col in columns) {
+    first <- df[[col]][a]
+    if (length(first) == 1 && !is.na(first) && identical(first, df[[col]][b]))
+      out[[col]] <- as.character(first)
+  }
+  if (length(out)) out else structure(list(), names = character())
+}
+
 review_index <- function(x) {
   objects <- review_objects(x)
   out <- list()
@@ -20,6 +37,7 @@ review_index <- function(x) {
         df <- object[[label]][[block]]
         if (!is.data.frame(df) || !nrow(df)) next
         stages <- names(df)[grepl("^pupil_", names(df)) & vapply(df, is.numeric, logical(1))]
+        field_columns <- review_field_columns(df)
         if (!length(stages) || !is.numeric(df$timebin) || any(!is.finite(df$timebin))) {
           stop(sprintf("%s/%s must contain numeric pupil_* stages and finite timebin values.", label, block))
         }
@@ -34,6 +52,9 @@ review_index <- function(x) {
           }
           final <- tail(stages, 1)
           ys <- df[[final]][a:b]
+          # Missing samples per stored stage, for automatic exclusion rules.
+          stage_missing <- lapply(stages, function(s) mean(!is.finite(df[[s]][a:b])))
+          names(stage_missing) <- stages
           out[[length(out) + 1L]] <- list(
             key = paste(eye, label, block, a, b, sep = "/"), eye = eye,
             label = label, block = block, start = a, end = b, ordinal = i,
@@ -41,7 +62,8 @@ review_index <- function(x) {
             event = value(c("matched_event", "start_matched_event", "start_msg", "text_unique"), paste("Epoch", i)),
             stages = unname(as.list(stages)), finalStage = final,
             samples = b - a + 1L, duration = df$timebin[b] - df$timebin[a],
-            missing = mean(!is.finite(ys)), blocks = blocks,
+            missing = mean(!is.finite(ys)), stageMissing = stage_missing, blocks = blocks,
+            fields = review_fields(df, a, b, field_columns),
             limits = object[[label]]$info[[block]]$epoch_limits
           )
         }
@@ -50,6 +72,78 @@ review_index <- function(x) {
   }
   if (!length(out)) stop("No nonempty epoch tables found in this RDS.")
   out
+}
+
+# Recompute missing fractions per stage for epochs indexed before they were stored.
+review_missing <- function(x, epochs) {
+  lapply(epochs, function(epoch) {
+    df <- review_frame(x, epoch)
+    stages <- unlist(epoch$stages)
+    out <- lapply(stages, function(s) mean(!is.finite(df[[s]])))
+    names(out) <- stages
+    out
+  })
+}
+
+# Average epochs on a shared time grid, for run diagnostics. Each epoch is
+# sampled at the grid's nearest stored sample, so missing samples stay missing
+# instead of being interpolated. Returns every epoch's trace, and the mean,
+# standard error and number of finite values at each time.
+review_average <- function(x, epochs, stage, points = 600L) {
+  frames <- lapply(epochs, function(e) review_frame(x, e))
+  t0 <- frames[[1]]$timebin
+  grid <- seq(min(t0), max(t0), length.out = min(length(t0), as.integer(points)))
+  traces <- vapply(frames, function(df) {
+    t <- df$timebin
+    if (!stage %in% names(df)) stop("An epoch does not contain the selected stage.")
+    nearest <- round(stats::approx(t, seq_along(t), grid, rule = 2, ties = "ordered")$y)
+    y <- df[[stage]][nearest]
+    y[!is.finite(y) | grid < min(t) | grid > max(t)] <- NA_real_
+    y
+  }, numeric(length(grid)))
+  traces <- matrix(traces, nrow = length(grid))
+  n <- rowSums(is.finite(traces))
+  mean <- ifelse(n > 0, rowSums(traces, na.rm = TRUE) / pmax(n, 1), NA_real_)
+  sd <- apply(traces, 1, stats::sd, na.rm = TRUE)
+  se <- ifelse(n > 1, sd / sqrt(n), NA_real_)
+  list(
+    time = unname(as.list(grid)),
+    traces = lapply(seq_len(ncol(traces)), function(i) unname(as.list(traces[, i]))),
+    mean = unname(as.list(mean)), se = unname(as.list(se)), n = unname(as.list(n))
+  )
+}
+
+# Epoch fields for epochs indexed before they were stored.
+review_epoch_fields <- function(x, epochs) {
+  lapply(epochs, function(epoch) {
+    df <- review_frame(x, epoch)
+    review_fields(df, 1L, nrow(df))
+  })
+}
+
+# Per-group means, sums of squared deviations and counts of finite values on a
+# time grid (seconds from each epoch's start), updated one epoch at a time
+# (Welford), so groups can be pooled across sources without losing precision.
+review_group_moments <- function(x, epochs, stage, grid, groups) {
+  grid <- unlist(grid)
+  means <- matrix(0, length(grid), groups)
+  m2 <- means
+  counts <- means
+  for (e in epochs) {
+    df <- review_frame(x, e)
+    if (!stage %in% names(df)) stop("An epoch does not contain the selected stage.")
+    t <- df$timebin - df$timebin[1]
+    nearest <- round(stats::approx(t, seq_along(t), grid, rule = 2, ties = "ordered")$y)
+    y <- df[[stage]][nearest]
+    ok <- is.finite(y) & grid <= max(t)
+    g <- e$group
+    counts[ok, g] <- counts[ok, g] + 1
+    delta <- y[ok] - means[ok, g]
+    means[ok, g] <- means[ok, g] + delta / counts[ok, g]
+    m2[ok, g] <- m2[ok, g] + delta * (y[ok] - means[ok, g])
+  }
+  columns <- function(m) lapply(seq_len(groups), function(g) unname(as.list(m[, g])))
+  list(mean = columns(means), m2 = columns(m2), n = columns(counts))
 }
 
 review_frame <- function(x, epoch) {
@@ -90,31 +184,23 @@ review_trace <- function(x, epoch, stage, range = NULL) {
        missing = mean(!is.finite(df[[stage]])), stage = stage)
 }
 
+# Write each table to <status>/<file>.rds and .csv. `file` is a relative path
+# chosen by the app; only statuses with epochs are written.
 review_export_source <- function(x, epochs, destination) {
-  groups <- split(epochs, vapply(epochs, function(e) paste(e$eye, e$label, e$block, sep = "/"), character(1)))
-  for (key in names(groups)) {
-    group <- groups[[key]]
-    for (status in c("keep", "exclude", "unreviewed")) {
-      selected <- Filter(function(e) identical(e$status, status), group)
-      frames <- lapply(selected, function(e) {
-        df <- review_frame(x, e)
-        if (".review_epoch_id" %in% names(df)) stop("Reserved column .review_epoch_id already exists.")
-        df$.review_epoch_id <- e$id
-        df
-      })
-      if (length(frames)) {
-        df <- do.call(rbind, frames)
-      } else {
-        df <- review_frame(x, group[[1]])[FALSE, , drop = FALSE]
-        df$.review_epoch_id <- character(0)
-      }
-      folder <- file.path(destination, switch(status, keep = "retained", exclude = "excluded", unreviewed = "unreviewed"))
-      dir.create(folder, recursive = TRUE, showWarnings = FALSE)
-      # Encode all non-portable bytes; avoid collisions from lossy sanitization.
-      safe <- paste(vapply(charToRaw(enc2utf8(key)), function(b) sprintf("%02x", as.integer(b)), character(1)), collapse = "")
-      saveRDS(df, file.path(folder, paste0(safe, ".rds")))
-      utils::write.csv(df, file.path(folder, paste0(safe, ".csv")), row.names = FALSE, na = "")
-    }
+  groups <- split(epochs, vapply(epochs, function(e) paste(e$status, e$file, sep = "\r"), character(1)))
+  for (group in groups) {
+    frames <- lapply(group, function(e) {
+      df <- review_frame(x, e)
+      if (".review_epoch_id" %in% names(df)) stop("Reserved column .review_epoch_id already exists.")
+      df$.review_epoch_id <- e$id
+      df
+    })
+    df <- do.call(rbind, frames)
+    folder <- switch(group[[1]]$status, keep = "retained", exclude = "excluded", unreviewed = "unreviewed")
+    file <- file.path(destination, folder, group[[1]]$file)
+    dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+    saveRDS(df, paste0(file, ".rds"))
+    utils::write.csv(df, paste0(file, ".csv"), row.names = FALSE, na = "")
   }
   TRUE
 }

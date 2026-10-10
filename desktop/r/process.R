@@ -29,9 +29,10 @@ tryCatch({
         basename(recording$input), blocks(x), recording$task
       ))
     }
-    if (!is.null(config$epoch)) {
+    # Every epoch segment is cut from the same preprocessed signal.
+    for (segment in config$epochs) {
       emit("epoch", i)
-      x <- do.call(eyeris::epoch, c(list(eyeris = x, verbose = TRUE), config$epoch))
+      x <- do.call(eyeris::epoch, c(list(eyeris = x, verbose = TRUE), segment))
     }
     emit("bidsify", i)
     do.call(eyeris::bidsify, list(eyeris = x, bids_dir = config$bids,

@@ -83,3 +83,64 @@ export async function scanBids(root) {
   }
   return { recordings, skipped };
 }
+
+// Parse a BIDS tab-separated file. "n/a" and empty cells are missing values.
+export function parseTsv(text) {
+  const lines = text.replace(/^﻿/, "").split(/\r?\n/).filter(Boolean);
+  if (!lines.length) return { columns: [], rows: [] };
+  const columns = lines[0].split("\t").map((c) => c.trim());
+  const rows = lines.slice(1).map((line) => {
+    const cells = line.split("\t");
+    return Object.fromEntries(
+      columns.flatMap((c, i) => {
+        const v = (cells[i] ?? "").trim();
+        return v && v !== "n/a" ? [[c, v]] : [];
+      }),
+    );
+  });
+  return { columns, rows };
+}
+
+// Find behavioral tables in sub-<label>/[ses-<label>/]beh/*.tsv, with the
+// subject, session, task and run of each from its folders and filename.
+export async function scanBehavior(root) {
+  const single = /^sub-/i.test(path.basename(root));
+  const base = single ? path.dirname(root) : root;
+  const subjects = single
+    ? [path.basename(root)]
+    : await directories(base, "sub-");
+  const files = [];
+  for (const subjectFolder of subjects) {
+    const subjectDir = path.join(base, subjectFolder);
+    for (const { dir, session } of [
+      { dir: subjectDir, session: "" },
+      ...(await directories(subjectDir, "ses-")).map((name) => ({
+        dir: path.join(subjectDir, name),
+        session: name.slice(4),
+      })),
+    ]) {
+      let entries;
+      try {
+        entries = await readdir(path.join(dir, "beh"), { withFileTypes: true });
+      } catch (error) {
+        if (error.code === "ENOENT" || error.code === "ENOTDIR") continue;
+        throw error;
+      }
+      for (const e of entries) {
+        if (!e.isFile() || !/\.tsv$/i.test(e.name)) continue;
+        const subject = subjectFolder.slice(4);
+        if ((entity(e.name, "sub") ?? subject) !== subject) continue;
+        const run = entity(e.name, "run") ?? "";
+        files.push({
+          file: path.join(dir, "beh", e.name),
+          relative: path.relative(base, path.join(dir, "beh", e.name)),
+          participant: subject,
+          session: entity(e.name, "ses") ?? session,
+          task: entity(e.name, "task") ?? "",
+          run: /^\d+$/.test(run) ? String(Number(run)).padStart(2, "0") : run,
+        });
+      }
+    }
+  }
+  return files;
+}

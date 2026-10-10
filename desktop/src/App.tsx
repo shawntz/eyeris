@@ -1,22 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FolderOpen, Plus, ArrowRight, X } from "lucide-react";
-import type { Summary, PipelineState } from "./types";
+import {
+  normalizeSettings,
+  type Summary,
+  type PipelineState,
+  type PipelineSettings,
+} from "./types";
+import { defaults } from "./PipelineSettingsPanel";
 import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
+import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
+const emptyPipeline: PipelineState = {
+  subjects: [],
+  recordings: [],
+  jobs: [],
+  running: [],
+  queued: [],
+  batch: [],
+  settings: null,
+  parallel: { setting: "auto", jobs: 1, cores: 1, automatic: 1 },
+  importing: null,
+  lastImport: null,
+};
 export function App() {
   const [project, setProject] = useState<Summary | null>(null);
   const [version, setVersion] = useState("");
-  const [pipeline, setPipeline] = useState<PipelineState>({
-    subjects: [],
-    recordings: [],
-    jobs: [],
-    active: null,
-    importing: null,
-    lastImport: null,
-  });
+  const [pipeline, setPipeline] = useState<PipelineState>(emptyPipeline);
+  // Pipeline settings belong to the project and apply to every subject.
+  const [settings, setSettings] = useState<PipelineSettings>(
+    structuredClone(defaults),
+  );
+  const loadedSettings = useRef<PipelineSettings | null>(null);
   const [reviewer, setReviewer] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
-  const [screen, setScreen] = useState<"subjects" | "review">("subjects");
+  const [screen, setScreen] = useState<"subjects" | "review" | "diagnostics">(
+    "subjects",
+  );
+  const [diagnosticsKey, setDiagnosticsKey] = useState<string>();
+  const showDiagnostics = (key?: string) => {
+    setDiagnosticsKey(key);
+    setScreen("diagnostics");
+  };
+  const showReview = (participant = "") => {
+    setReviewParticipant(participant);
+    setScreen("review");
+  };
   const [reviewParticipant, setReviewParticipant] = useState("");
   const [error, setError] = useState("");
   const [runtimeReady, setRuntimeReady] = useState(false);
@@ -67,6 +95,10 @@ export function App() {
       if (r) {
         const state = await window.eyeris.projectState();
         setPipeline(state.pipeline);
+        loadedSettings.current = normalizeSettings(
+          structuredClone(state.pipeline.settings ?? defaults),
+        );
+        setSettings(loadedSettings.current);
         setProject(r);
         setRecent(r.directory);
         setScreen("subjects");
@@ -77,18 +109,28 @@ export function App() {
       setBusy(false);
     }
   }
+  // Save edits shortly after they are made, and before the project closes.
+  const unsaved = useRef<PipelineSettings | null>(null);
+  async function saveSettings() {
+    const pending = unsaved.current;
+    unsaved.current = null;
+    if (pending) setPipeline(await window.eyeris.saveSettings(pending));
+  }
+  useEffect(() => {
+    if (!project || settings === loadedSettings.current) return;
+    unsaved.current = settings;
+    const timer = setTimeout(
+      () => void saveSettings().catch((e) => setError(String(e))),
+      400,
+    );
+    return () => clearTimeout(timer);
+  }, [settings]);
   async function close() {
     try {
+      await saveSettings();
       await window.eyeris.closeProject();
       setProject(null);
-      setPipeline({
-        subjects: [],
-        recordings: [],
-        jobs: [],
-        active: null,
-        importing: null,
-        lastImport: null,
-      });
+      setPipeline(emptyPipeline);
       setError("");
     } catch (e) {
       setError(String(e));
@@ -170,23 +212,32 @@ export function App() {
           </button>
         </div>
       )}
-      {screen === "review" ? (
+      {screen === "diagnostics" ? (
+        <DiagnosticsWorkspace
+          project={project}
+          initialKey={diagnosticsKey}
+          onSubjects={() => setScreen("subjects")}
+          onReview={showReview}
+          onClose={() => void close()}
+        />
+      ) : screen === "review" ? (
         <ReviewWorkspace
           initialProject={project}
           reviewer={reviewer}
           participant={reviewParticipant}
           onSubjects={() => setScreen("subjects")}
+          onDiagnostics={showDiagnostics}
           onClose={() => void close()}
         />
       ) : (
         <ProjectWorkspace
           project={project}
           pipeline={pipeline}
+          settings={settings}
+          setSettings={setSettings}
           onPipeline={setPipeline}
-          onReview={(participant = "") => {
-            setReviewParticipant(participant);
-            setScreen("review");
-          }}
+          onReview={showReview}
+          onDiagnostics={() => showDiagnostics()}
           onClose={() => void close()}
           onProject={setProject}
         />

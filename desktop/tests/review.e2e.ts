@@ -94,9 +94,15 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
       });
     }, exportDir);
     await page.getByRole("button", { name: "Export review" }).click();
-    await expect(page.getByRole("status")).toContainText(
-      "Exported 1 kept, 1 excluded, and 1 unreviewed",
+    await expect(page.locator(".export-panel")).toContainText(
+      "1 not yet reviewed",
     );
+    await page
+      .getByRole("button", { name: "Choose a folder and export" })
+      .click();
+    await expect(
+      page.getByText("Exported 1 kept, 1 excluded and 1 unreviewed epochs"),
+    ).toBeVisible();
     const state = await page.evaluate(() => window.eyeris.init());
     expect(state.project?.counts).toEqual({
       total: 3,
@@ -104,7 +110,20 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
       exclude: 1,
       unreviewed: 1,
     });
-    await page.getByRole("button", { name: "Dismiss notification" }).click();
+    await page.getByRole("button", { name: "Dismiss export result" }).click();
+    // N jumps to the epoch still to review; reopening returns to it.
+    await page.locator("h1").click();
+    await page.keyboard.press("n");
+    const unreviewed = page.locator(".epoch-row").filter({
+      has: page.locator(".epoch-status.unreviewed"),
+    });
+    await expect(unreviewed).toHaveAttribute("aria-pressed", "true");
+    const resumeAt = await page
+      .locator(".epoch-row")
+      .evaluateAll((rows) =>
+        rows.findIndex((r) => r.getAttribute("aria-pressed") === "true"),
+      );
+    await page.waitForTimeout(700);
     const keepBox = await page
       .getByRole("button", { name: /Keep epoch/ })
       .boundingBox();
@@ -123,6 +142,10 @@ test("desktop review, stage changes, keyboard decisions, resume, and export", as
     await page.getByRole("button", { name: /Epoch review/ }).click();
     await expect(page.locator(".epoch-status.keep")).toHaveCount(1);
     await expect(page.locator(".epoch-status.exclude")).toHaveCount(1);
+    await expect(page.locator(".epoch-row").nth(resumeAt)).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     await page.getByRole("button", { name: "To review", exact: true }).click();
     await expect(page.locator(".epoch-row")).toHaveCount(1);
     const report = await page.evaluate(() =>

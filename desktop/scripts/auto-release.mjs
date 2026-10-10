@@ -19,11 +19,13 @@ export function releasePlan(version, tags, changedFiles) {
       file.startsWith("desktop/") ||
       /^\.github\/workflows\/desktop.*\.yml$/.test(file),
   );
-  return {
-    release: relevant,
-    version: semver.inc(version, "patch"),
-    tag: `desktop-v${semver.inc(version, "patch")}`,
-  };
+  // A manifest newer than the latest desktop tag was set in a PR, for example
+  // a minor version. Release that version as it is instead of a patch.
+  const next =
+    versions[0] && semver.gt(version, versions[0])
+      ? version
+      : semver.inc(version, "patch");
+  return { release: relevant, version: next, tag: `desktop-v${next}` };
 }
 export function bumpManifests(pkg, lock, version) {
   if (
@@ -114,6 +116,28 @@ export async function prepare({ api: suppliedApi } = {}) {
         ),
       ));
   git("fetch", "origin", releaseBranch, "--tags");
+  // A planned version is already in the validated commit's manifests: tag
+  // that commit itself, with no version PR.
+  const planned = JSON.parse(git("show", `${source}:desktop/package.json`));
+  if (planned.version === version) {
+    const lock = JSON.parse(git("show", `${source}:desktop/package-lock.json`));
+    if (lock.version !== version || lock.packages?.[""]?.version !== version)
+      throw new Error("Desktop package and lockfile versions must agree");
+    if (git("rev-parse", `origin/${releaseBranch}`) !== source) {
+      console.log("A newer dev push is queued; skip this obsolete candidate.");
+      await output({ release: false });
+      return;
+    }
+    if (lines(git("tag", "--list", tag)).length) {
+      if (git("rev-parse", `${tag}^{commit}`) !== source)
+        throw new Error("Desktop tag already points at a different commit");
+    } else {
+      git("tag", tag, source);
+      git("push", "origin", `refs/tags/${tag}`);
+    }
+    await output({ release: true, tag });
+    return;
+  }
   const prs = api(
     `pulls?state=all&base=${releaseBranch}&head=${repository.split("/")[0]}:${branch}`,
   );
