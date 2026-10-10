@@ -7,7 +7,13 @@ import {
   type ReactNode,
 } from "react";
 import { LoaderCircle, Play, Square } from "lucide-react";
-import type { PipelineSettings, PipelineState, Recording } from "./types";
+import {
+  type PipelineSettings,
+  type PipelineState,
+  type Recording,
+  epochsOf,
+  epochProblem,
+} from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -169,7 +175,9 @@ export function BatchProcessing({
               })}
             </ul>
           )}
-          {results.some((j) => j.status === "completed" && j.config.epoch) && (
+          {results.some(
+            (j) => j.status === "completed" && epochsOf(j.config).length,
+          ) && (
             <button className="button primary" onClick={onReview}>
               Review epochs
             </button>
@@ -305,7 +313,7 @@ export function BatchProcessing({
                 busy ||
                 !!pipeline.importing ||
                 !selected.length ||
-                (!!settings.epoch && !settings.epoch.events.trim())
+                !!epochProblem(settings)
               }
               onClick={() =>
                 void act(async () => {
@@ -329,13 +337,14 @@ export function BatchProcessing({
             </button>
           </div>
           <p className="run-note">
-            {selected.length
-              ? `${plural(recordings, "recording")} in ${plural(selected.length, "job")}, processed ${
-                  pipeline.parallel.jobs === 1
-                    ? "one subject at a time"
-                    : `up to ${pipeline.parallel.jobs} subjects at a time in separate R processes`
-                }. Each subject's runs stay in order in one process.`
-              : "Select the subjects to process."}
+            {epochProblem(settings) ||
+              (selected.length
+                ? `${plural(recordings, "recording")} in ${plural(selected.length, "job")}, processed ${
+                    pipeline.parallel.jobs === 1
+                      ? "one subject at a time"
+                      : `up to ${pipeline.parallel.jobs} subjects at a time in separate R processes`
+                  }. Each subject's runs stay in order in one process.`
+                : "Select the subjects to process.")}
             {!!pending.length &&
               " Setting changes apply to jobs started later."}
           </p>

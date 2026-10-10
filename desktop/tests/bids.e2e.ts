@@ -92,8 +92,46 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     // One set of settings, including the epochs, applies to every subject.
     await page.getByRole("checkbox", { name: "Extract epochs" }).check();
     await page
-      .getByRole("textbox", { name: "Event pattern" })
+      .getByRole("textbox", { name: "Event pattern", exact: true })
       .fill("PROBE_START_{trial}");
+    // Two segments from one preprocessing pass: the second second before each
+    // probe, and the two seconds after it, baselined on that prestimulus second.
+    const field = (name: string) =>
+      page.getByRole("textbox", { name, exact: true });
+    await field("Epoch label").fill("prestim");
+    await page
+      .getByRole("spinbutton", { name: "Epoch end", exact: true })
+      .fill("0");
+    await page.getByRole("button", { name: "Add epoch segment" }).click();
+    await expect(field("Event pattern (segment 2)")).toHaveValue(
+      "PROBE_START_{trial}",
+    );
+    // A new segment starts with the window right after the previous one.
+    for (const [name, value] of [
+      ["Epoch start (segment 2)", "0"],
+      ["Epoch end (segment 2)", "1"],
+    ])
+      await expect(page.getByRole("spinbutton", { name })).toHaveValue(value);
+    await field("Epoch label (segment 2)").fill("prestim");
+    await expect(
+      page.getByText("Give each epoch segment a different label."),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Process 2 subjects" }),
+    ).toBeDisabled();
+    await field("Epoch label (segment 2)").fill("poststim");
+    await page
+      .getByRole("spinbutton", { name: "Epoch start (segment 2)" })
+      .fill("0");
+    await page
+      .getByRole("spinbutton", { name: "Epoch end (segment 2)" })
+      .fill("2");
+    await page
+      .getByRole("checkbox", { name: "Baseline correction (segment 2)" })
+      .check();
+    await expect(field("Baseline event pattern (segment 2)")).toHaveValue(
+      "PROBE_START_{trial}",
+    );
     await page
       .getByRole("checkbox", { name: "HTML diagnostic report" })
       .uncheck();
@@ -102,9 +140,8 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     await page.getByRole("button", { name: /Epoch review/ }).click();
     await page.getByRole("button", { name: /Subjects & processing/ }).click();
     await page.getByRole("button", { name: /^All subjects/ }).click();
-    await expect(
-      page.getByRole("textbox", { name: "Event pattern" }),
-    ).toHaveValue("PROBE_START_{trial}");
+    await expect(field("Event pattern")).toHaveValue("PROBE_START_{trial}");
+    await expect(field("Epoch label (segment 2)")).toHaveValue("poststim");
     await expect(
       page.getByRole("checkbox", { name: "HTML diagnostic report" }),
     ).not.toBeChecked();
@@ -137,6 +174,14 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     ).toBeEnabled();
     const state = await page.evaluate(() => window.eyeris.projectState());
     expect(state.project.participants).toEqual(["001", "002"]);
+    // Each segment is reviewed as its own group of epochs.
+    expect(state.project.labels).toEqual(["epoch_poststim", "epoch_prestim"]);
+    expect(state.project.counts.total).toBe(30);
+    await page
+      .getByRole("combobox", { name: "Epoch segment filter" })
+      .selectOption("epoch_prestim");
+    await expect(page.locator(".queue-panel")).toContainText("15 epochs");
+    await expect(page.locator(".epoch-row").first()).toContainText("prestim");
     // Link the dataset's behavior and split every subject's epochs by it.
     await page.getByRole("button", { name: "Diagnostics" }).click();
     await expect(page.locator(".average-plot canvas")).toBeVisible();

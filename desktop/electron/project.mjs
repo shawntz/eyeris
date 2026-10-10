@@ -227,6 +227,11 @@ export class Project {
         .prepare("SELECT DISTINCT participant FROM epochs ORDER BY participant")
         .all()
         .map((r) => r.participant),
+      // Epoch segments, such as epoch_prestim and epoch_poststim.
+      labels: this.db
+        .prepare("SELECT DISTINCT label FROM epochs ORDER BY label")
+        .all()
+        .map((r) => r.label),
       runs: this.db
         .prepare(
           "SELECT DISTINCT run FROM epochs WHERE run != '' ORDER BY length(run), run",
@@ -454,6 +459,10 @@ export class Project {
     if (filters.run) {
       where.push("run = ?");
       args.push(String(filters.run));
+    }
+    if (filters.label) {
+      where.push("label = ?");
+      args.push(String(filters.label));
     }
     if (filters.search) {
       const search = String(filters.search).slice(0, 200);

@@ -557,3 +557,108 @@ test(
     assert.deepEqual(project.summary().runs, ["01", "02"]);
   },
 );
+
+test(
+  "several epoch segments are cut from one preprocessing pass and reviewed separately",
+  { timeout: 240000 },
+  async (t) => {
+    const dir = await mkdtemp(path.join(tmpdir(), "eyeris-segments-"));
+    const worker = new RWorker();
+    const project = await Project.open(
+      path.join(dir, "Segments.eyeris"),
+      worker,
+      true,
+    );
+    const pipeline = new Pipeline(project, { parallel: 1 });
+    t.after(async () => {
+      pipeline.dispose();
+      worker.close();
+      project.close();
+      await rm(dir, { recursive: true, force: true });
+    });
+    const asc = execFileSync(
+      resolveRscript(),
+      ["-e", "cat(eyeris::eyelink_asc_demo_dataset())"],
+      { encoding: "utf8" },
+    ).trim();
+    pipeline.addSubject("001");
+    const state = await pipeline.addRecording(
+      { subject: "001", session: "01", task: "memory" },
+      asc,
+    );
+    const probe = {
+      events: "PROBE_START_{trial}",
+      limits: [-1, 0],
+      label: "prestim",
+      baseline: false,
+    };
+    const settings = {
+      glassbox: {
+        load_asc: { block: "auto", binocular_mode: "average" },
+        lpfilt: { plot_freqz: false },
+      },
+      epochs: [
+        probe,
+        {
+          ...probe,
+          limits: [0, 2],
+          label: "poststim",
+          baseline: true,
+          baseline_type: "sub",
+          baseline_period: [-1, 0],
+        },
+      ],
+      report: false,
+      database: false,
+    };
+    for (const [epochs, message] of [
+      [[probe, { ...probe, label: "PRESTIM" }], /different label/],
+      [[{ ...probe, events: " " }], /event pattern/],
+      [Array(11).fill(probe), /Invalid epoch/],
+      [{ ...probe }, /Invalid epoch/],
+    ])
+      assert.throws(() => pipeline.validate({ ...settings, epochs }), message);
+    await pipeline.start(state.recordings[0].id, settings);
+    await pipeline.idle();
+    const [job] = pipeline.snapshot().jobs;
+    assert.equal(job.status, "completed", job.error);
+    assert.deepEqual(
+      job.config.epochs.map((e) => e.label),
+      ["prestim", "poststim"],
+    );
+    // glassbox ran once; both segments were cut from its result.
+    const log = await readFile(
+      path.join(project.directory, "processing", job.id, "process.log"),
+      "utf8",
+    );
+    assert.equal(log.match(/"phase":"glassbox"/g).length, 1);
+    assert.equal(log.match(/"phase":"epoch"/g).length, 2);
+    const outputs = JSON.parse(job.outputs);
+    for (const label of ["prestim", "poststim"])
+      assert.ok(
+        outputs.some((p) => p.includes(`epoch-${label}`)),
+        `${label} BIDS output`,
+      );
+    // Each segment is its own group of epochs to review.
+    const summary = project.summary();
+    assert.deepEqual(summary.labels, ["epoch_poststim", "epoch_prestim"]);
+    const pre = project.list({ label: "epoch_prestim" });
+    const post = project.list({ label: "epoch_poststim" });
+    assert.equal(pre.total, 5);
+    assert.equal(post.total, 5);
+    assert.equal(summary.counts.total, 10);
+    // The poststimulus segment has its baseline-corrected stage.
+    assert.ok(post.rows[0].meta.stages.some((s) => s.includes("_sub_bline")));
+    assert.ok(!pre.rows[0].meta.stages.some((s) => s.includes("_sub_bline")));
+    assert.ok(Math.abs(pre.rows[0].meta.duration - 1) < 0.01);
+    assert.ok(Math.abs(post.rows[0].meta.duration - 2) < 0.01);
+    // Settings saved with a single epoch still run, as one segment.
+    const { epochs, ...rest } = settings;
+    await pipeline.start(state.recordings[0].id, { ...rest, epoch: probe });
+    await pipeline.idle();
+    const [legacy] = pipeline.snapshot().jobs;
+    assert.equal(legacy.status, "completed", legacy.error);
+    assert.deepEqual(legacy.config.epochs, [probe]);
+    assert.equal(legacy.config.epoch, undefined);
+  },
+);

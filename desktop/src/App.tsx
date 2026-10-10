@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { FolderOpen, Plus, ArrowRight, X } from "lucide-react";
-import type { Summary, PipelineState, PipelineSettings } from "./types";
+import {
+  normalizeSettings,
+  type Summary,
+  type PipelineState,
+  type PipelineSettings,
+} from "./types";
 import { defaults } from "./PipelineSettingsPanel";
 import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
@@ -90,8 +95,8 @@ export function App() {
       if (r) {
         const state = await window.eyeris.projectState();
         setPipeline(state.pipeline);
-        loadedSettings.current = structuredClone(
-          state.pipeline.settings ?? defaults,
+        loadedSettings.current = normalizeSettings(
+          structuredClone(state.pipeline.settings ?? defaults),
         );
         setSettings(loadedSettings.current);
         setProject(r);

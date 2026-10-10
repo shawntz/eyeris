@@ -4,8 +4,8 @@ import {
   type ReactNode,
   type SetStateAction,
 } from "react";
-import { ChevronDown, Check } from "lucide-react";
-import type { PipelineSettings } from "./types";
+import { ChevronDown, Check, Plus, X } from "lucide-react";
+import { epochsOf, type EpochSetting, type PipelineSettings } from "./types";
 const steps = [
   {
     key: "resample",
@@ -76,7 +76,7 @@ export const defaults: PipelineSettings = {
     zscore: true,
     seed: 123,
   },
-  epoch: null,
+  epochs: [],
   report: true,
   database: false,
 };
@@ -116,8 +116,38 @@ export function PipelineSettingsPanel({
   function setStep(key: string, value: PipelineSettings["glassbox"][string]) {
     setSettings((s) => ({ ...s, glassbox: { ...s.glassbox, [key]: value } }));
   }
-  function epoch(change: Partial<NonNullable<PipelineSettings["epoch"]>>) {
-    setSettings((s) => ({ ...s, epoch: { ...s.epoch!, ...change } }));
+  const epochs = epochsOf(settings);
+  function setEpochs(update: (list: EpochSetting[]) => EpochSetting[]) {
+    setSettings((s) => {
+      const { epoch: _, ...rest } = s;
+      return { ...rest, epochs: update(epochsOf(s)) };
+    });
+  }
+  function epoch(i: number, change: Partial<EpochSetting>) {
+    setEpochs((list) =>
+      list.map((e, k) => (k === i ? { ...e, ...change } : e)),
+    );
+  }
+  // A new segment uses the previous one's events and the window of the same
+  // length right after it, with its own label: after a prestimulus window of
+  // -1 to 0 s comes 0 to 1 s.
+  function addSegment() {
+    setEpochs((list) => {
+      const last = list.at(-1);
+      const taken = new Set(list.map((e) => e.label.toLowerCase()));
+      let n = list.length + 1;
+      while (taken.has(`segment${n}`)) n++;
+      const [start, end] = last?.limits ?? [-1, 2];
+      return [
+        ...list,
+        {
+          events: last?.events ?? "",
+          limits: last ? [end, end + (end - start)] : [-1, 2],
+          label: list.length ? `segment${n}` : "trial",
+          baseline: false,
+        },
+      ];
+    });
   }
   return (
     <div className="pipeline-layout">
@@ -292,140 +322,199 @@ export function PipelineSettingsPanel({
             <input
               type="checkbox"
               aria-label="Extract epochs"
-              checked={!!settings.epoch}
+              checked={epochs.length > 0}
               onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  epoch: e.target.checked
-                    ? {
-                        events: "",
-                        limits: [-1, 2],
-                        label: "trial",
-                        baseline: false,
-                      }
-                    : null,
-                }))
+                e.target.checked ? addSegment() : setEpochs(() => [])
               }
             />{" "}
             Extract epochs for review
           </label>
-          {settings.epoch && (
-            <div className="epoch-options">
-              <label>
-                Event pattern
-                <input
-                  aria-label="Event pattern"
-                  placeholder="PROBE_START_{trial}"
-                  value={settings.epoch.events}
-                  onChange={(e) => epoch({ events: e.target.value })}
-                />
-              </label>
-              <label>
-                Epoch label
-                <input
-                  aria-label="Epoch label"
-                  value={settings.epoch.label}
-                  onChange={(e) => epoch({ label: e.target.value })}
-                />
-              </label>
-              <div className="paired-fields">
-                <label>
-                  Start (s)
-                  <input
-                    type="number"
-                    step="any"
-                    aria-label="Epoch start"
-                    value={settings.epoch.limits?.[0] ?? -1}
-                    onChange={(e) =>
-                      epoch({
-                        limits: [
-                          Number(e.target.value),
-                          settings.epoch!.limits?.[1] ?? 2,
-                        ],
-                      })
-                    }
-                  />
-                </label>
-                <label>
-                  End (s)
-                  <input
-                    type="number"
-                    step="any"
-                    aria-label="Epoch end"
-                    value={settings.epoch.limits?.[1] ?? 2}
-                    onChange={(e) =>
-                      epoch({
-                        limits: [
-                          settings.epoch!.limits?.[0] ?? -1,
-                          Number(e.target.value),
-                        ],
-                      })
-                    }
-                  />
-                </label>
-              </div>
-              <label className="check-label">
-                <input
-                  type="checkbox"
-                  checked={settings.epoch.baseline}
-                  onChange={(e) =>
-                    epoch({
-                      baseline: e.target.checked,
-                      baseline_type: "sub",
-                      baseline_period: [-1, 0],
-                    })
-                  }
-                />{" "}
-                Baseline correction
-              </label>
-              {settings.epoch.baseline && (
-                <>
-                  <label>
-                    Method
-                    <select
-                      value={settings.epoch.baseline_type}
-                      onChange={(e) => epoch({ baseline_type: e.target.value })}
+          {epochs.map((ep, i) => {
+            // The first segment keeps the plain field names.
+            const name = (field: string) =>
+              i ? `${field} (segment ${i + 1})` : field;
+            const duplicate = epochs.some(
+              (other, k) =>
+                k !== i && other.label.toLowerCase() === ep.label.toLowerCase(),
+            );
+            return (
+              <div
+                className="epoch-options epoch-segment"
+                key={i}
+                role="group"
+                aria-label={`Epoch segment ${i + 1}`}
+              >
+                {epochs.length > 1 && (
+                  <div className="segment-heading">
+                    <strong>
+                      Segment {i + 1} · epoch_{ep.label || "…"}
+                    </strong>
+                    <button
+                      type="button"
+                      aria-label={`Remove segment ${i + 1}`}
+                      onClick={() =>
+                        setEpochs((list) => list.filter((_, k) => k !== i))
+                      }
                     >
-                      <option value="sub">Subtract baseline</option>
-                      <option value="div">Divide by baseline</option>
-                    </select>
-                  </label>
-                  <div className="paired-fields">
-                    <label>
-                      Baseline start (s)
-                      <input
-                        type="number"
-                        step="any"
-                        value={settings.epoch.baseline_period?.[0] ?? -1}
-                        onChange={(e) =>
-                          epoch({
-                            baseline_period: [
-                              Number(e.target.value),
-                              settings.epoch!.baseline_period?.[1] ?? 0,
-                            ],
-                          })
-                        }
-                      />
-                    </label>
-                    <label>
-                      Baseline end (s)
-                      <input
-                        type="number"
-                        step="any"
-                        value={settings.epoch.baseline_period?.[1] ?? 0}
-                        onChange={(e) =>
-                          epoch({
-                            baseline_period: [
-                              settings.epoch!.baseline_period?.[0] ?? -1,
-                              Number(e.target.value),
-                            ],
-                          })
-                        }
-                      />
-                    </label>
+                      <X size={14} /> Remove
+                    </button>
                   </div>
-                </>
-              )}
+                )}
+                <label>
+                  Event pattern
+                  <input
+                    aria-label={name("Event pattern")}
+                    placeholder="PROBE_START_{trial}"
+                    value={ep.events}
+                    onChange={(e) => epoch(i, { events: e.target.value })}
+                  />
+                </label>
+                <label>
+                  Epoch label
+                  <input
+                    aria-label={name("Epoch label")}
+                    aria-invalid={duplicate}
+                    value={ep.label}
+                    onChange={(e) => epoch(i, { label: e.target.value })}
+                  />
+                  {duplicate && (
+                    <small className="field-error">
+                      Each segment needs a different label.
+                    </small>
+                  )}
+                </label>
+                <div className="paired-fields">
+                  <label>
+                    Start (s)
+                    <input
+                      type="number"
+                      step="any"
+                      aria-label={name("Epoch start")}
+                      value={ep.limits?.[0] ?? -1}
+                      onChange={(e) =>
+                        epoch(i, {
+                          limits: [Number(e.target.value), ep.limits?.[1] ?? 2],
+                        })
+                      }
+                    />
+                  </label>
+                  <label>
+                    End (s)
+                    <input
+                      type="number"
+                      step="any"
+                      aria-label={name("Epoch end")}
+                      value={ep.limits?.[1] ?? 2}
+                      onChange={(e) =>
+                        epoch(i, {
+                          limits: [
+                            ep.limits?.[0] ?? -1,
+                            Number(e.target.value),
+                          ],
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+                <label className="check-label">
+                  <input
+                    type="checkbox"
+                    aria-label={name("Baseline correction")}
+                    checked={ep.baseline}
+                    onChange={(e) =>
+                      epoch(i, {
+                        baseline: e.target.checked,
+                        baseline_type: "sub",
+                        baseline_period: [-1, 0],
+                        baseline_events: ep.baseline_events || ep.events,
+                      })
+                    }
+                  />{" "}
+                  Baseline correction
+                </label>
+                {ep.baseline && (
+                  <>
+                    <label>
+                      Baseline event pattern
+                      <input
+                        aria-label={name("Baseline event pattern")}
+                        placeholder={ep.events || "PROBE_START_{trial}"}
+                        value={ep.baseline_events ?? ""}
+                        onChange={(e) =>
+                          epoch(i, { baseline_events: e.target.value })
+                        }
+                      />
+                      <small>
+                        The baseline window is measured from these events, such
+                        as -1 to 0 s before the same event as this segment.
+                      </small>
+                    </label>
+                    <label>
+                      Method
+                      <select
+                        value={ep.baseline_type}
+                        onChange={(e) =>
+                          epoch(i, { baseline_type: e.target.value })
+                        }
+                      >
+                        <option value="sub">Subtract baseline</option>
+                        <option value="div">Divide by baseline</option>
+                      </select>
+                    </label>
+                    <div className="paired-fields">
+                      <label>
+                        Baseline start (s)
+                        <input
+                          type="number"
+                          step="any"
+                          value={ep.baseline_period?.[0] ?? -1}
+                          onChange={(e) =>
+                            epoch(i, {
+                              baseline_period: [
+                                Number(e.target.value),
+                                ep.baseline_period?.[1] ?? 0,
+                              ],
+                            })
+                          }
+                        />
+                      </label>
+                      <label>
+                        Baseline end (s)
+                        <input
+                          type="number"
+                          step="any"
+                          value={ep.baseline_period?.[1] ?? 0}
+                          onChange={(e) =>
+                            epoch(i, {
+                              baseline_period: [
+                                ep.baseline_period?.[0] ?? -1,
+                                Number(e.target.value),
+                              ],
+                            })
+                          }
+                        />
+                      </label>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+          {epochs.length > 0 && (
+            <div className="segment-actions">
+              <button
+                type="button"
+                className="button"
+                disabled={epochs.length >= 10}
+                onClick={addSegment}
+              >
+                <Plus size={14} /> Add epoch segment
+              </button>
+              <small>
+                Segments such as prestimulus and poststimulus windows are all
+                cut from the same preprocessed recording, so glassbox runs once.
+                Each is reviewed and exported as its own group of epochs.
+              </small>
               {epochExtras}
             </div>
           )}

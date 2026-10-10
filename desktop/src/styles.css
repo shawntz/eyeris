@@ -806,6 +806,55 @@ main {
 .epoch-options .check-label {
   margin: 8px 0 0;
 }
+.epoch-segment {
+  border-top: 1px dashed #d5d5d5;
+  padding-top: 14px;
+}
+.epoch-segment:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.segment-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.segment-heading strong {
+  font-weight: 500;
+}
+.segment-heading button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #777;
+}
+.segment-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.segment-actions > .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.segment-actions > small {
+  font-size: 11px;
+  color: #6f6f6f;
+  line-height: 1.5;
+}
+.segment-actions > .auto-exclude {
+  align-self: stretch;
+}
+.field-error {
+  display: block;
+  margin-top: 4px;
+  color: #9a3119;
+  font-size: 11px;
+}
 .output-options {
   border-top: 1px solid #ddd;
   padding-top: 19px;

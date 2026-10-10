@@ -43,6 +43,7 @@ const defaults: Filters = {
   status: "all",
   participant: "",
   run: "",
+  label: "",
   search: "",
   stage: "final",
   sort: "natural",
@@ -91,6 +92,7 @@ export function ReviewWorkspace({
     if (f.participant && !initialProject.participants.includes(f.participant))
       f.participant = "";
     if (f.run && !initialProject.runs.includes(f.run)) f.run = "";
+    if (f.label && !initialProject.labels.includes(f.label)) f.label = "";
     if (f.stage !== "final" && !initialProject.stages.includes(f.stage))
       f.stage = "final";
     return { epochId: saved.epochId, filters: f };
@@ -819,6 +821,22 @@ export function ReviewWorkspace({
                     ))}
                   </select>
                 </label>
+                {project.labels.length > 1 && (
+                  <label className="select-field">
+                    <select
+                      aria-label="Epoch segment filter"
+                      value={filters.label}
+                      onChange={(e) => filter({ label: e.target.value })}
+                    >
+                      <option value="">All epoch segments</option>
+                      {project.labels.map((l) => (
+                        <option key={l} value={l}>
+                          {l.replace(/^epoch_/, "")}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 {project.runs.length > 1 && (
                   <label className="select-field">
                     <select

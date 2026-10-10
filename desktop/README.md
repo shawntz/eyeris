@@ -78,8 +78,16 @@ does not automatically run any processing.
    random seed. Advanced JSON exposes additional supported step parameters.
    Binning and downsampling are mutually exclusive.
 4. Optionally enable epoch extraction with an event pattern and time limits. Add
-   baseline correction if needed. Epoching is optional for preprocessing but is
-   required to add the result to the trial-review queue.
+   baseline correction if needed, measured from a baseline event pattern (by
+   default the segment's own events) over a window such as -1 to 0 s. Epoching is
+   optional for preprocessing but is required to add the result to the
+   trial-review queue. **Add epoch segment** cuts further windows from the same
+   preprocessed recording, so glassbox runs once: for example `prestim` from -1
+   to 0 s and `poststim` from 0 to 2 s around each probe, with the poststimulus
+   segment baselined on the prestimulus second. A new segment starts with the
+   previous one's events and the window of the same length right after it. Each
+   segment calls `eyeris::epoch()` in turn, needs its own label, and becomes its
+   own group of epochs (`epoch_<label>`) to review, filter, diagnose and export.
 5. Select HTML reports and/or a DuckDB database, check the recordings to process,
    then run the pipeline. It calls `eyeris::glassbox()`, optional `eyeris::epoch()`,
    and `eyeris::bidsify()` directly for each recording, in run order, in one R
@@ -165,7 +173,7 @@ otherwise, and when the name has no run, block numbers name the runs.
 
 - Select the final available stage or an individual stored preprocessing column.
 - Search events, trials, participants or epoch labels; filter by review status,
-  participant or run. A participant's runs are listed together in session, task
+  participant, run or epoch segment. A participant's runs are listed together in session, task
   and run order. The queue pages 80 epochs at a time.
 - Hover to inspect, drag horizontally to zoom, and reset or double-click to unzoom.
 - `K` keeps, `X` excludes, arrow keys navigate, and `U` or Cmd/Ctrl-Z undoes the last

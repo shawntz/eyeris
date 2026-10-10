@@ -21,11 +21,14 @@ import {
   Users,
   LineChart,
 } from "lucide-react";
-import type {
-  Summary,
-  PipelineState,
-  PipelineSettings,
-  Recording,
+import {
+  type Summary,
+  type PipelineState,
+  type PipelineSettings,
+  type Recording,
+  epochsOf,
+  epochProblem,
+  normalizeSettings,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
@@ -646,7 +649,7 @@ export function ProjectWorkspace({
                           busy ||
                           !!importing ||
                           !selected.length ||
-                          (!!settings.epoch && !settings.epoch.events.trim())
+                          !!epochProblem(settings)
                         }
                         onClick={() =>
                           void act(async () => {
@@ -671,13 +674,14 @@ export function ProjectWorkspace({
                   </div>
                   {!running && (
                     <p className="run-note">
-                      {!selected.length
-                        ? "Select the recordings to process."
-                        : partial.length
-                          ? `${partial.join(" ")} Its report and database will include only the selected runs.`
-                          : selected.length > 1
-                            ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
-                            : ""}
+                      {epochProblem(settings) ||
+                        (!selected.length
+                          ? "Select the recordings to process."
+                          : partial.length
+                            ? `${partial.join(" ")} Its report and database will include only the selected runs.`
+                            : selected.length > 1
+                              ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
+                              : "")}
                       {pipeline.running.length >= pipeline.parallel.jobs &&
                         " Other subjects are processing; this job will wait its turn."}
                     </p>
@@ -738,7 +742,7 @@ export function ProjectWorkspace({
                           >
                             Show run output
                           </button>
-                          {latest.config.epoch && (
+                          {!!epochsOf(latest.config).length && (
                             <button
                               className="button primary"
                               onClick={() => onReview(subject)}
@@ -772,7 +776,9 @@ export function ProjectWorkspace({
                           </button>
                           <button
                             onClick={() =>
-                              setSettings(structuredClone(j.config))
+                              setSettings(
+                                normalizeSettings(structuredClone(j.config)),
+                              )
                             }
                           >
                             Reuse settings

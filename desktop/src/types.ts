@@ -45,6 +45,7 @@ export interface Summary {
   counts: { total: number; keep: number; exclude: number; unreviewed: number };
   sources: { id: string; name: string; participant: string }[];
   participants: string[];
+  labels: string[];
   runs: string[];
   stages: string[];
   autoExclude: AutoExclude;
@@ -149,6 +150,8 @@ export interface Filters {
   status: Status | "all";
   participant: string;
   run: string;
+  // An epoch segment's label, such as epoch_poststim.
+  label: string;
   search: string;
   stage: string;
   sort: string;
@@ -159,19 +162,51 @@ export interface Queue {
   total: number;
   offset: number;
 }
+// One epoch segment, such as a prestimulus or poststimulus window.
+export interface EpochSetting {
+  events: string;
+  limits: [number, number] | null;
+  label: string;
+  baseline: boolean;
+  baseline_type?: string;
+  baseline_period?: number[];
+  baseline_events?: string;
+}
 export interface PipelineSettings {
   glassbox: Record<string, boolean | number | Record<string, unknown>>;
-  epoch: {
-    events: string;
-    limits: [number, number] | null;
-    label: string;
-    baseline: boolean;
-    baseline_type?: string;
-    baseline_period?: number[];
-    baseline_events?: string;
-  } | null;
+  // Every segment is cut from the same preprocessed recording. Empty when
+  // epochs are not extracted.
+  epochs: EpochSetting[];
+  // Settings saved before several segments were supported.
+  epoch?: EpochSetting | null;
   report: boolean;
   database: boolean;
+}
+// Epoch segments of settings, including those saved with a single epoch.
+export function epochsOf(settings: PipelineSettings): EpochSetting[] {
+  if (Array.isArray(settings.epochs)) return settings.epochs;
+  return settings.epoch ? [settings.epoch] : [];
+}
+// Why the epoch segments cannot run yet, or "" when they can.
+export function epochProblem(settings: PipelineSettings) {
+  const epochs = epochsOf(settings);
+  const labels = epochs.map((e) => e.label.trim().toLowerCase());
+  if (epochs.some((e) => !e.events.trim()))
+    return "Enter an event pattern for every epoch segment.";
+  if (epochs.some((e) => e.baseline && !e.baseline_events?.trim()))
+    return "Enter the baseline's event pattern.";
+  if (labels.some((l) => !l)) return "Give every epoch segment a label.";
+  if (epochs.some((e) => e.limits && !(e.limits[0] < e.limits[1])))
+    return "Epoch start must be earlier than epoch end.";
+  if (new Set(labels).size !== labels.length)
+    return "Give each epoch segment a different label.";
+  return "";
+}
+export function normalizeSettings(
+  settings: PipelineSettings,
+): PipelineSettings {
+  const { epoch: _, ...rest } = settings;
+  return { ...rest, epochs: epochsOf(settings) };
 }
 export interface Recording {
   id: string;

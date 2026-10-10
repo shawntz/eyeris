@@ -191,6 +191,15 @@ test("BIDS session, task and run labels let runs be reviewed together", async (t
   ])
     await project.importFile(path.join(dir, name));
   assert.deepEqual(project.summary().runs, ["01", "03", "07"]);
+  // Each epoch segment (label) can be reviewed on its own.
+  assert.deepEqual(project.summary().labels, ["epoch_probe", "epoch_second"]);
+  const second = project.list({ label: "epoch_second" });
+  assert.equal(second.total, 3);
+  assert.ok(second.rows.every((e) => e.participant === "003"));
+  assert.equal(
+    project.nextUnreviewed({ label: "epoch_second" }, null).id,
+    second.rows[0].id,
+  );
   // Without a run entity, numbered blocks name the runs, as in bidsify().
   assert.deepEqual(
     project

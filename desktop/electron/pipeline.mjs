@@ -22,6 +22,25 @@ import { scanBids } from "./bids.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
+// Epoch segments of a settings object. Settings saved before several segments
+// were supported have a single `epoch` (or null) instead of `epochs`.
+export function epochsOf(settings) {
+  if (Array.isArray(settings?.epochs)) return settings.epochs;
+  return settings?.epoch ? [settings.epoch] : [];
+}
+// eyeris::epoch() requires baseline events for a baseline; measure it from the
+// segment's own events unless others are given.
+export function normalizeSettings(settings) {
+  const { epoch, ...rest } = settings;
+  return {
+    ...rest,
+    epochs: epochsOf(settings).map((e) =>
+      e.baseline && !e.baseline_events
+        ? { ...e, baseline_events: e.events }
+        : e,
+    ),
+  };
+}
 // Subjects processed at once by default: leave a core for the app and allow
 // about 2 GiB per R process, which holds a long recording several times over
 // while it is preprocessed.
@@ -495,39 +514,53 @@ export class Pipeline {
         throw new Error(`Unsupported glassbox option: ${key}`);
     if (settings.glassbox.downsample && settings.glassbox.bin)
       throw new Error("Choose downsampling or binning, not both.");
-    if (settings.epoch) {
-      const allowedEpoch = [
-        "events",
-        "limits",
-        "label",
-        "baseline",
-        "baseline_type",
-        "baseline_events",
-        "baseline_period",
-        "hz",
-      ];
+    if (
+      settings.epochs !== undefined &&
+      (!Array.isArray(settings.epochs) || settings.epochs.length > 10)
+    )
+      throw new Error("Invalid epoch settings.");
+    const epochs = epochsOf(settings);
+    const allowedEpoch = [
+      "events",
+      "limits",
+      "label",
+      "baseline",
+      "baseline_type",
+      "baseline_events",
+      "baseline_period",
+      "hz",
+    ];
+    for (const epoch of epochs) {
       if (
-        typeof settings.epoch !== "object" ||
-        Array.isArray(settings.epoch) ||
-        Object.keys(settings.epoch).some((k) => !allowedEpoch.includes(k))
+        !epoch ||
+        typeof epoch !== "object" ||
+        Array.isArray(epoch) ||
+        Object.keys(epoch).some((k) => !allowedEpoch.includes(k))
       )
         throw new Error("Invalid epoch settings.");
+      if (typeof epoch.events !== "string" || !epoch.events.trim())
+        throw new Error("Enter an event pattern for every epoch segment.");
       if (
-        typeof settings.epoch.events !== "string" ||
-        !settings.epoch.events.trim()
+        epoch.baseline_events !== undefined &&
+        (typeof epoch.baseline_events !== "string" ||
+          !epoch.baseline_events.trim())
       )
-        throw new Error("Enter an epoch event pattern or turn epoching off.");
-      if (!entity(settings.epoch.label))
+        throw new Error("Enter the baseline's event pattern.");
+      if (!entity(epoch.label))
         throw new Error("Epoch labels must contain only letters and digits.");
       if (
-        settings.epoch.limits !== null &&
-        (!Array.isArray(settings.epoch.limits) ||
-          settings.epoch.limits.length !== 2 ||
-          !settings.epoch.limits.every(Number.isFinite) ||
-          settings.epoch.limits[0] >= settings.epoch.limits[1])
+        epoch.limits !== null &&
+        (!Array.isArray(epoch.limits) ||
+          epoch.limits.length !== 2 ||
+          !epoch.limits.every(Number.isFinite) ||
+          epoch.limits[0] >= epoch.limits[1])
       )
         throw new Error("Epoch start must be earlier than epoch end.");
     }
+    // Each segment is stored as epoch_<label>, so labels must differ.
+    const labels = epochs.map((e) => e.label.toLowerCase());
+    if (new Set(labels).size !== labels.length)
+      throw new Error("Give each epoch segment a different label.");
     if (
       typeof settings.report !== "boolean" ||
       typeof settings.database !== "boolean"
@@ -542,9 +575,10 @@ export class Pipeline {
   }
   // Queue one job per group of recordings, all with the same settings. Jobs run
   // in order, up to `concurrency` at a time, each in its own R process.
-  async enqueue(groups, settings) {
+  async enqueue(groups, requested) {
     if (this.importing) throw new Error("Wait for the BIDS import to finish.");
-    this.validate(settings);
+    this.validate(requested);
+    const settings = normalizeSettings(requested);
     const jobs = groups.map((ids) => this.prepare(ids));
     if (!jobs.length) throw new Error("Select at least one recording.");
     const taken = new Set(
@@ -749,7 +783,7 @@ export class Pipeline {
       );
       await writeFile(
         path.join(dir, "reproduce.R"),
-        `# Run with the eyeris version recorded in runtime.json.\n# The JSON configuration preserves every selected parameter.\ncfg <- jsonlite::fromJSON("config.json", simplifyDataFrame=FALSE)\nfor (rec in cfg$recordings) {\n  x <- do.call(eyeris::glassbox, c(list(file=rec$input, interactive_preview=FALSE), cfg$glassbox))\n  if (!is.null(cfg$epoch)) x <- do.call(eyeris::epoch, c(list(eyeris=x), cfg$epoch))\n  eyeris::bidsify(x, bids_dir=cfg$bids, participant_id=rec$subject, session_num=rec$session, task_name=rec$task, run_num=rec$run, html_report=cfg$report, db_enabled=cfg$database, db_path="eyeris")\n  saveRDS(x, rec$output)\n}\n`,
+        `# Run with the eyeris version recorded in runtime.json.\n# The JSON configuration preserves every selected parameter.\ncfg <- jsonlite::fromJSON("config.json", simplifyDataFrame=FALSE)\nfor (rec in cfg$recordings) {\n  x <- do.call(eyeris::glassbox, c(list(file=rec$input, interactive_preview=FALSE), cfg$glassbox))\n  for (ep in cfg$epochs) x <- do.call(eyeris::epoch, c(list(eyeris=x), ep))\n  eyeris::bidsify(x, bids_dir=cfg$bids, participant_id=rec$subject, session_num=rec$session, task_name=rec$task, run_num=rec$run, html_report=cfg$report, db_enabled=cfg$database, db_path="eyeris")\n  saveRDS(x, rec$output)\n}\n`,
       );
       result =
         active.cancelled || this.disposed
@@ -789,7 +823,7 @@ export class Pipeline {
         // Jobs finish in any order; publish and index them one at a time.
         const outputs = await this.exclusive(async () => {
           const published = await this.publishBids(dir);
-          if (settings.epoch)
+          if (settings.epochs.length)
             for (const r of recordings)
               try {
                 await this.project.importFile(r.output);
