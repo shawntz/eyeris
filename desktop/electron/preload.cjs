@@ -39,6 +39,8 @@ contextBridge.exposeInMainWorld(
       "startPipeline",
       "queuePipeline",
       "saveSettings",
+      "recheckEyes",
+      "eventPatterns",
       "setParallelJobs",
       "cancelPipeline",
       "pipelineLog",

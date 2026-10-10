@@ -172,6 +172,20 @@ export interface EpochSetting {
   baseline_period?: number[];
   baseline_events?: string;
 }
+// Event patterns inferred from recordings' messages, such as
+// PROBE_START_{trial}, most frequent first.
+export interface EventPatterns {
+  patterns: {
+    pattern: string;
+    count: number;
+    recordings: number;
+    example: string;
+  }[];
+  // Recordings read so far, and those still being read, of the sample.
+  read: number;
+  pending: number;
+  total: number;
+}
 export interface PipelineSettings {
   glassbox: Record<string, boolean | number | Record<string, unknown>>;
   // Every segment is cut from the same preprocessed recording. Empty when
@@ -216,6 +230,43 @@ export interface Recording {
   run: string;
   name: string;
   file: string;
+  // "left", "right" or "both" as read by eyeris::load_asc(), or "unknown".
+  eyes: string;
+  eyes_error: string;
+  // The file that was checked; differs from file until the check finishes.
+  eyes_file: string;
+}
+// Which eyes a set of recordings has, to offer only the choices they support.
+export interface EyeSummary {
+  both: number;
+  left: number;
+  right: number;
+  pending: number;
+  unknown: { name: string; error: string }[];
+}
+export function eyeSummary(recordings: Recording[]): EyeSummary {
+  const summary: EyeSummary = {
+    both: 0,
+    left: 0,
+    right: 0,
+    pending: 0,
+    unknown: [],
+  };
+  for (const r of recordings) {
+    if (r.eyes_file !== r.file) summary.pending += 1;
+    else if (r.eyes === "both" || r.eyes === "left" || r.eyes === "right")
+      summary[r.eyes] += 1;
+    else summary.unknown.push({ name: r.name, error: r.eyes_error });
+  }
+  return summary;
+}
+// Why the selected recordings cannot run yet, or "" when they can.
+export function eyeProblem(eyes: EyeSummary) {
+  if (eyes.pending)
+    return `Checking which eyes ${eyes.pending} recording${eyes.pending === 1 ? " has" : "s have"}…`;
+  if (eyes.unknown.length)
+    return `eyeris could not read ${eyes.unknown.length} selected recording${eyes.unknown.length === 1 ? "" : "s"}. Deselect ${eyes.unknown.length === 1 ? "it" : "them"} or check again.`;
+  return "";
 }
 export interface Job {
   id: string;
@@ -259,10 +310,14 @@ export interface PipelineState {
     totalBytes: number;
     current: string;
   } | null;
+  // The background check of which eyes recordings have.
+  detecting: { total: number; done: number } | null;
   lastImport: {
     id: string;
     root: string;
     added: number;
+    // Earlier recordings of macOS metadata files replaced by their real files.
+    replaced: number;
     subjects: number;
     skipped: { file: string; reason: string }[];
     cancelled: boolean;
@@ -320,6 +375,8 @@ interface API {
     settings: PipelineSettings,
   ): Promise<PipelineState>;
   saveSettings(settings: PipelineSettings): Promise<PipelineState>;
+  recheckEyes(): Promise<PipelineState>;
+  eventPatterns(recordingIds: string[]): Promise<EventPatterns>;
   setParallelJobs(value: "auto" | number): Promise<PipelineState>;
   cancelPipeline(id?: string): Promise<PipelineState>;
   pipelineLog(id: string): Promise<string>;

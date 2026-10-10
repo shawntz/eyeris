@@ -70,12 +70,27 @@ does not automatically run any processing.
    are numbered after the existing runs. Files without a `task-` entity, with
    mismatched entities, or whose run is already in the project are skipped and
    listed. Recordings already imported are skipped, so importing the folder again
-   adds only new files. Files are copied in the background with a progress bar;
+   adds only new files. Hidden files are ignored, including the `._` metadata
+   files macOS writes beside every file on drives such as exFAT. Versions up to
+   0.4.1 imported those as recordings and skipped the real files as duplicate
+   runs; importing the same folder again replaces each of them with its real
+   recording, keeping its run number and processing history. **Add ASC files**
+   also rejects `._` metadata files. Files are copied in the background with a progress bar;
    each recording is added once its copy completes, and **Cancel** keeps the
    recordings already copied.
 3. Configure the glassbox steps. The interface provides the package's default
    pipeline, individual step switches, common parameters, eye selection, and a
-   random seed. Advanced JSON exposes additional supported step parameters.
+   random seed. Each recording is loaded once with `eyeris::load_asc()` in the
+   background when it is added (and, for older projects, when the project
+   opens) to read which eyes it has. Eye selection then offers only what the
+   recordings to be processed support: binocular recordings can be averaged,
+   reduced to one eye, or kept as both; a recording of one eye is always
+   processed from that eye (eyeris ignores the eye mode for one-eye data), so
+   the app shows the recorded eye instead of a choice. When binocular and
+   one-eye recordings are processed together, the note says which recordings
+   the choice applies to. Processing waits until the selected recordings have
+   been checked, and a recording eyeris cannot read must be deselected or
+   checked again first. Each job's `config.json` records the eyes found. Advanced JSON exposes additional supported step parameters.
    Binning and downsampling are mutually exclusive.
 4. Optionally enable epoch extraction with an event pattern and time limits. Add
    baseline correction if needed, measured from a baseline event pattern (by
@@ -88,9 +103,21 @@ does not automatically run any processing.
    previous one's events and the window of the same length right after it. Each
    segment calls `eyeris::epoch()` in turn, needs its own label, and becomes its
    own group of epochs (`epoch_<label>`) to review, filter, diagnose and export.
-5. Select HTML reports and/or a DuckDB database, check the recordings to process,
-   then run the pipeline. It calls `eyeris::glassbox()`, optional `eyeris::epoch()`,
-   and `eyeris::bidsify()` directly for each recording, in run order, in one R
+   Below each event pattern field, a menu suggests patterns found in the
+   recordings' own event messages: the app reads the `MSG` lines that eyeris
+   would see (those inside a recording block, leaving out EyeLink's
+   configuration and calibration messages) from up to eight of the selected
+   recordings, spread across subjects. Numbers that change from message to
+   message become placeholders (`TRIALID 1`, `TRIALID 2`: `TRIALID {trial}`),
+   numbers that never change stay as they are, and messages that differ only in
+   their last word are grouped (`STIM face`, `STIM house`: `STIM {stim}`). Each
+   suggestion shows how many messages it matches and an example; picking one
+   fills in the field, which can still be edited. Messages are read once per
+   file and remembered in the project.
+5. Optionally select HTML reports (off by default) and/or a DuckDB database,
+   check the recordings to process, then run the pipeline. It calls
+   `eyeris::glassbox()`, optional `eyeris::epoch()`, and `eyeris::bidsify()`
+   directly for each recording, in run order, in one R
    session that writes one BIDS folder. Each session-level report and database
    therefore covers all of the runs processed together. Process all runs of a
    session in one job; the app notes when only some are selected. An ASC with

@@ -5,7 +5,13 @@ import {
   type SetStateAction,
 } from "react";
 import { ChevronDown, Check, Plus, X } from "lucide-react";
-import { epochsOf, type EpochSetting, type PipelineSettings } from "./types";
+import {
+  epochsOf,
+  type EpochSetting,
+  type EyeSummary,
+  type EventPatterns,
+  type PipelineSettings,
+} from "./types";
 const steps = [
   {
     key: "resample",
@@ -77,7 +83,8 @@ export const defaults: PipelineSettings = {
     seed: 123,
   },
   epochs: [],
-  report: true,
+  // HTML reports are opt-in.
+  report: false,
   database: false,
 };
 const names: Record<string, string> = {
@@ -95,6 +102,45 @@ const names: Record<string, string> = {
   spline_df: "Spline degrees of freedom",
 };
 
+// A menu of event patterns found in the recordings' messages; choosing one
+// fills in the field above it, which can still be edited.
+function PatternSuggestions({
+  label,
+  patterns,
+  onPick,
+}: {
+  label: string;
+  patterns?: EventPatterns | null;
+  onPick: (pattern: string) => void;
+}) {
+  if (!patterns) return null;
+  const found = patterns.patterns;
+  const plural = (n: number) => (n === 1 ? "" : "s");
+  return (
+    <select
+      aria-label={label}
+      className="pattern-suggestions"
+      value=""
+      disabled={!found.length}
+      onChange={(e) => e.target.value && onPick(e.target.value)}
+    >
+      <option value="">
+        {found.length
+          ? `Use a pattern found in ${patterns.read} recording${plural(patterns.read)}${patterns.pending ? " (reading more…)" : ""}`
+          : patterns.pending
+            ? "Reading event messages from the recordings…"
+            : "No repeated event messages found"}
+      </option>
+      {found.map((p) => (
+        <option key={p.pattern} value={p.pattern}>
+          {p.pattern} · {p.count} message{plural(p.count)}
+          {p.pattern !== p.example ? ` · e.g. ${p.example}` : ""}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 // The glassbox, epoch and output settings shared by every subject and run.
 export function PipelineSettingsPanel({
   settings,
@@ -102,6 +148,9 @@ export function PipelineSettingsPanel({
   disabled,
   onError,
   epochExtras,
+  eyes,
+  onRecheckEyes,
+  eventPatterns,
   children,
 }: {
   settings: PipelineSettings;
@@ -110,6 +159,11 @@ export function PipelineSettingsPanel({
   onError: (message: string) => void;
   // Shown with the epoch options, such as the automatic exclusion rule.
   epochExtras?: ReactNode;
+  // Which eyes the recordings to be processed have.
+  eyes?: EyeSummary;
+  onRecheckEyes?: () => void;
+  // Patterns found in the messages of the recordings to be processed.
+  eventPatterns?: EventPatterns | null;
   children: ReactNode;
 }) {
   const [openStep, setOpenStep] = useState("");
@@ -163,27 +217,95 @@ export function PipelineSettingsPanel({
         </div>
         <fieldset disabled={disabled}>
           <div className="load-options">
-            <label>
-              Eye
-              <select
-                aria-label="Eye"
-                value={String(
-                  (settings.glassbox.load_asc as Record<string, unknown>)
-                    .binocular_mode,
-                )}
-                onChange={(e) =>
-                  setStep("load_asc", {
-                    ...(settings.glassbox.load_asc as object),
-                    binocular_mode: e.target.value,
-                  })
-                }
-              >
-                <option value="average">Average</option>
-                <option value="left">Left</option>
-                <option value="right">Right</option>
-                <option value="both">Both, separately</option>
-              </select>
-            </label>
+            {(() => {
+              const mono = eyes ? eyes.left + eyes.right : 0;
+              const plural = (n: number) => (n === 1 ? "" : "s");
+              // One-eye recordings are processed from that eye whatever the
+              // mode, so only binocular recordings offer a choice.
+              const choice = !eyes || eyes.both > 0 || (!mono && !eyes.pending);
+              return (
+                <div className="eye-field">
+                  {choice ? (
+                    <label>
+                      Eye
+                      <select
+                        aria-label="Eye"
+                        value={String(
+                          (
+                            settings.glassbox.load_asc as Record<
+                              string,
+                              unknown
+                            >
+                          ).binocular_mode,
+                        )}
+                        onChange={(e) =>
+                          setStep("load_asc", {
+                            ...(settings.glassbox.load_asc as object),
+                            binocular_mode: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="average">Average</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                        <option value="both">Both, separately</option>
+                      </select>
+                    </label>
+                  ) : (
+                    <label>
+                      Eye
+                      <output aria-label="Eye" className="eye-fixed">
+                        {!mono
+                          ? "Checking which eyes were recorded…"
+                          : eyes.left && eyes.right
+                            ? "Each recording's only eye"
+                            : eyes.left
+                              ? "Left, the only eye recorded"
+                              : "Right, the only eye recorded"}
+                      </output>
+                    </label>
+                  )}
+                  {eyes && choice && eyes.both > 0 && mono > 0 && (
+                    <small>
+                      Applies to {eyes.both} binocular recording
+                      {plural(eyes.both)}. {mono} recording{plural(mono)} from
+                      one eye use{mono === 1 ? "s" : ""} that eye.
+                    </small>
+                  )}
+                  {eyes && !choice && eyes.left > 0 && eyes.right > 0 && (
+                    <small>
+                      {eyes.left} left-eye and {eyes.right} right-eye
+                      recordings, each processed from its recorded eye.
+                    </small>
+                  )}
+                  {!!eyes?.pending && (
+                    <small>
+                      Reading {eyes.pending} recording{plural(eyes.pending)}{" "}
+                      with eyeris to check which eyes were recorded…
+                    </small>
+                  )}
+                  {!!eyes?.unknown.length && (
+                    <small className="field-error">
+                      eyeris could not read {eyes.unknown.length} recording
+                      {plural(eyes.unknown.length)}: {eyes.unknown[0].name} (
+                      {eyes.unknown[0].error})
+                      {onRecheckEyes && (
+                        <>
+                          {" "}
+                          <button
+                            type="button"
+                            className="link-button inline"
+                            onClick={onRecheckEyes}
+                          >
+                            Check again
+                          </button>
+                        </>
+                      )}
+                    </small>
+                  )}
+                </div>
+              );
+            })()}
             <label>
               Random seed
               <input
@@ -369,6 +491,11 @@ export function PipelineSettingsPanel({
                     onChange={(e) => epoch(i, { events: e.target.value })}
                   />
                 </label>
+                <PatternSuggestions
+                  label={name("Suggested event patterns")}
+                  patterns={eventPatterns}
+                  onPick={(events) => epoch(i, { events })}
+                />
                 <label>
                   Epoch label
                   <input
@@ -449,6 +576,13 @@ export function PipelineSettingsPanel({
                         as -1 to 0 s before the same event as this segment.
                       </small>
                     </label>
+                    <PatternSuggestions
+                      label={name("Suggested baseline event patterns")}
+                      patterns={eventPatterns}
+                      onPick={(baseline_events) =>
+                        epoch(i, { baseline_events })
+                      }
+                    />
                     <label>
                       Method
                       <select

@@ -29,9 +29,12 @@ import {
   epochsOf,
   epochProblem,
   normalizeSettings,
+  eyeSummary,
+  eyeProblem,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
+import { useEventPatterns } from "./useEventPatterns";
 import { AutoExcludeControl } from "./AutoExcludeControl";
 // The subject list entry that opens batch processing for every subject.
 const ALL = "*";
@@ -89,6 +92,14 @@ export function ProjectWorkspace({
   const imported =
     pipeline.lastImport?.id !== dismissedImport ? pipeline.lastImport : null;
   const selected = records.filter((r) => checked.includes(r.id));
+  // The eyes of the recordings that will be processed.
+  const eyes = eyeSummary(selected.length ? selected : records);
+  const recheckEyes = () =>
+    void act(async () => onPipeline(await window.eyeris.recheckEyes()));
+  const eventPatterns = useEventPatterns(
+    (selected.length ? selected : records).map((r) => r.id),
+    epochsOf(settings).length > 0,
+  );
   const named = (id: string) =>
     pipeline.recordings.find((r) => r.id === id) as Recording | undefined;
   // Runs left out of a session's job are missing from its report and database.
@@ -353,7 +364,7 @@ export function ProjectWorkspace({
           )}
           {imported && !importing && (
             <div
-              className={`message ${imported.error ? "error" : "notice"}`}
+              className={`message import-summary ${imported.error ? "error" : "notice"}`}
               role="status"
             >
               <div>
@@ -363,12 +374,14 @@ export function ProjectWorkspace({
                     : imported.error
                       ? "Import stopped. "
                       : ""}
-                  Added {imported.added} recording
-                  {imported.added === 1 ? "" : "s"}
-                  {imported.added
-                    ? ` for ${imported.subjects} subject${imported.subjects === 1 ? "" : "s"}`
-                    : ""}
-                  .
+                  {(!!imported.added || !imported.replaced) &&
+                    `Added ${imported.added} recording${imported.added === 1 ? "" : "s"}${
+                      imported.added
+                        ? ` for ${imported.subjects} subject${imported.subjects === 1 ? "" : "s"}`
+                        : ""
+                    }. `}
+                  {!!imported.replaced &&
+                    `Replaced ${imported.replaced} recording${imported.replaced === 1 ? "" : "s"} imported from macOS metadata files (._*) with ${imported.replaced === 1 ? "its" : "their"} EyeLink file${imported.replaced === 1 ? "" : "s"}.`}
                 </strong>
                 {imported.error && <p>{imported.error}</p>}
                 {imported.subjects > 1 && subject !== ALL && (
@@ -619,6 +632,9 @@ export function ProjectWorkspace({
                   disabled={busy}
                   onError={setError}
                   epochExtras={exclusion}
+                  eyes={eyes}
+                  onRecheckEyes={recheckEyes}
+                  eventPatterns={eventPatterns}
                 >
                   <div className="run-actions">
                     {running ? (
@@ -649,7 +665,8 @@ export function ProjectWorkspace({
                           busy ||
                           !!importing ||
                           !selected.length ||
-                          !!epochProblem(settings)
+                          !!epochProblem(settings) ||
+                          !!eyeProblem(eyes)
                         }
                         onClick={() =>
                           void act(async () => {
@@ -675,6 +692,7 @@ export function ProjectWorkspace({
                   {!running && (
                     <p className="run-note">
                       {epochProblem(settings) ||
+                        eyeProblem(eyes) ||
                         (!selected.length
                           ? "Select the recordings to process."
                           : partial.length

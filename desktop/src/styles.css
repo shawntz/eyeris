@@ -643,9 +643,16 @@ main {
   margin-top: 6px;
   font-size: 11px;
 }
+.message.import-summary {
+  max-height: none;
+  overflow: visible;
+}
 .message details ul {
-  margin: 6px 0 0 16px;
+  margin: 6px 0 0;
+  padding-left: 16px;
   line-height: 1.6;
+  max-height: 220px;
+  overflow: auto;
 }
 .recordings-section {
   border-top: 1px solid #d5d5d5;
@@ -719,6 +726,34 @@ main {
 }
 .load-options label {
   flex: 1;
+}
+.eye-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eye-field small {
+  font-size: 11px;
+  color: #6f6f6f;
+  line-height: 1.5;
+}
+.eye-field .field-error {
+  color: #9a3119;
+}
+.eye-fixed {
+  display: block;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 13px;
+}
+.link-button.inline {
+  display: inline;
+  margin: 0;
+  font-size: inherit;
 }
 .pipeline-steps {
   border-top: 1px solid #ddd;
@@ -848,6 +883,12 @@ main {
 }
 .segment-actions > .auto-exclude {
   align-self: stretch;
+}
+.pattern-suggestions {
+  margin-top: -6px;
+  padding: 6px 9px;
+  font-size: 12px;
+  color: #555;
 }
 .field-error {
   display: block;

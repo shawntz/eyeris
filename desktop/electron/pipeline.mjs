@@ -18,7 +18,8 @@ import path from "node:path";
 import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
-import { scanBids } from "./bids.mjs";
+import { isAppleDouble, scanBids } from "./bids.mjs";
+import { inferPatterns, summarizeMessages } from "./events.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -109,7 +110,7 @@ const sourcePath = (r) =>
     r.name,
   );
 export class Pipeline {
-  constructor(project, { parallel = "auto" } = {}) {
+  constructor(project, { parallel = "auto", detectEyes = false } = {}) {
     this.project = project;
     this.running = new Map();
     this.queue = [];
@@ -126,11 +127,121 @@ export class Pipeline {
       CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY, recording_id TEXT NOT NULL REFERENCES recordings(id), status TEXT NOT NULL, phase TEXT NOT NULL, config TEXT NOT NULL, started_at TEXT NOT NULL, finished_at TEXT, error TEXT, outputs TEXT NOT NULL DEFAULT '[]');
       CREATE TABLE IF NOT EXISTS job_recordings(job_id TEXT NOT NULL REFERENCES jobs(id), recording_id TEXT NOT NULL REFERENCES recordings(id), PRIMARY KEY(job_id, recording_id));`);
     this.migrate();
+    // Which eyes each recording has: "left", "right" or "both", or "unknown"
+    // with the reason when eyeris could not read it. eyes_file is the file
+    // that was checked, so a replaced file is checked again.
+    const columns = project.db
+      .prepare("SELECT name FROM pragma_table_info('recordings')")
+      .all()
+      .map((c) => c.name);
+    for (const column of ["eyes", "eyes_error", "eyes_file"])
+      if (!columns.includes(column))
+        project.db.exec(
+          `ALTER TABLE recordings ADD COLUMN ${column} TEXT NOT NULL DEFAULT ''`,
+        );
+    // Each recording's event messages, summarized for pattern suggestions.
+    project.db.exec(
+      "CREATE TABLE IF NOT EXISTS recording_messages(recording_id TEXT PRIMARY KEY REFERENCES recordings(id), file TEXT NOT NULL, summary TEXT NOT NULL)",
+    );
+    this.messageQueue = [];
+    this.readingMessages = null;
     project.db
       .prepare(
         "UPDATE jobs SET status='interrupted', phase='interrupted', error='Processing was interrupted. Run this recording again.' WHERE status IN ('running','publishing')",
       )
       .run();
+    this.detecting = null;
+    this.autoDetect = detectEyes;
+    if (detectEyes) this.detectEyes();
+  }
+  // Check again the recordings eyeris could not read, such as after R failed
+  // to start or a file was restored.
+  recheckEyes() {
+    this.project.db
+      .prepare("UPDATE recordings SET eyes_file='' WHERE eyes='unknown'")
+      .run();
+    this.detectEyes();
+    return this.snapshot();
+  }
+  // Check which eyes each new or changed recording has by loading it with
+  // eyeris::load_asc() in one background R process, one recording at a time.
+  detectEyes() {
+    if (this.disposed) return;
+    if (this.detecting) {
+      this.detecting.again = true;
+      return;
+    }
+    const db = this.project.db;
+    const pending = db
+      .prepare(
+        `SELECT id, file FROM recordings WHERE eyes_file IS NOT file ORDER BY ${runOrder}`,
+      )
+      .all();
+    if (!pending.length) return;
+    const detecting = { total: pending.length, done: 0, again: false };
+    this.detecting = detecting;
+    const child = spawn(
+      resolveRscript(),
+      ["--vanilla", path.join(rDirectory(), "detect-eyes.R")],
+      {
+        env: rEnvironment(),
+        stdio: ["pipe", "pipe", "pipe"],
+        windowsHide: true,
+      },
+    );
+    detecting.child = child;
+    const record = db.prepare(
+      "UPDATE recordings SET eyes=?, eyes_error=?, eyes_file=? WHERE id=? AND file=?",
+    );
+    let stdout = "";
+    let log = "";
+    child.stdout.on("data", (data) => {
+      stdout += data;
+      const lines = stdout.split("\n");
+      stdout = lines.pop();
+      for (const line of lines)
+        if (line.startsWith("@@EYES@@") && !this.disposed) {
+          try {
+            const result = JSON.parse(line.slice(8));
+            const file = pending.find((r) => r.id === result.id)?.file;
+            record.run(result.eyes, result.error ?? "", file, result.id, file);
+            detecting.done += 1;
+          } catch {}
+        }
+    });
+    child.stderr.on("data", (data) => (log = (log + data).slice(-2000)));
+    child.on("error", (error) => (log = error.message));
+    child.on("close", () => {
+      if (this.disposed) return;
+      // Recordings the process never reached are marked unknown rather than
+      // left waiting, for example when R cannot start.
+      for (const r of pending)
+        if (
+          db
+            .prepare(
+              "SELECT 1 FROM recordings WHERE id=? AND eyes_file IS NOT file",
+            )
+            .get(r.id)
+        )
+          record.run(
+            "unknown",
+            `The eye check stopped before this recording. ${log}`.trim(),
+            r.file,
+            r.id,
+            r.file,
+          );
+      this.detecting = null;
+      if (detecting.again) this.detectEyes();
+    });
+    child.stdin.on("error", () => {});
+    child.stdin.end(
+      JSON.stringify(
+        pending.map((r) => ({
+          id: r.id,
+          path: path.join(this.project.directory, r.file),
+        })),
+      ),
+    );
   }
   // Projects created before run numbers allowed one ASC per subject, session and
   // task. SQLite cannot change a UNIQUE constraint in place, so rebuild the
@@ -210,6 +321,10 @@ export class Pipeline {
         current: this.importing.current,
       },
       lastImport: this.lastImport,
+      detecting: this.detecting && {
+        total: this.detecting.total,
+        done: this.detecting.done,
+      },
     };
   }
   // Pipeline settings are saved with the project, so they are set once for every
@@ -239,6 +354,7 @@ export class Pipeline {
   // Called when the app quits: unfinished jobs are recorded as interrupted.
   dispose() {
     this.disposed = true;
+    this.detecting?.child.kill();
     this.queue = [];
     this.cancelImport();
     for (const active of this.running.values()) {
@@ -249,6 +365,68 @@ export class Pipeline {
         .run(active.id);
       active.child?.kill();
     }
+  }
+  // Event patterns found in the messages of some of these recordings, to offer
+  // as epoch and baseline events. Experiments usually log the same messages
+  // for every subject, so up to eight recordings spread across subjects are
+  // read, in the background and once each; until then the result is partial.
+  eventPatterns(recordingIds) {
+    const db = this.project.db;
+    const ids = [...new Set([recordingIds].flat())];
+    const rows = ids.length
+      ? db
+          .prepare(
+            `SELECT id, subject, file FROM recordings WHERE id IN (${ids.map(() => "?").join(",")}) ORDER BY ${runOrder}`,
+          )
+          .all(...ids)
+      : [];
+    const subjects = [...Map.groupBy(rows, (r) => r.subject).values()];
+    const sample = [];
+    for (let i = 0; sample.length < 8 && subjects.some((s) => s[i]); i++)
+      for (const list of subjects)
+        if (list[i] && sample.length < 8) sample.push(list[i]);
+    const read = [];
+    for (const r of sample) {
+      const cached = db
+        .prepare(
+          "SELECT summary FROM recording_messages WHERE recording_id=? AND file=?",
+        )
+        .get(r.id, r.file);
+      if (cached) read.push(JSON.parse(cached.summary));
+      else this.readMessages(r);
+    }
+    return {
+      patterns: inferPatterns(read),
+      read: read.length,
+      pending: sample.length - read.length,
+      total: rows.length,
+    };
+  }
+  // Queue a recording's messages to be read in the background.
+  readMessages(recording) {
+    if (this.disposed) return;
+    if (!this.messageQueue.some((r) => r.id === recording.id))
+      this.messageQueue.push(recording);
+    this.readingMessages ??= (async () => {
+      const db = this.project.db;
+      while (this.messageQueue.length && !this.disposed) {
+        const r = this.messageQueue[0];
+        let summary = {};
+        try {
+          summary = await summarizeMessages(
+            path.join(this.project.directory, r.file),
+          );
+        } catch {
+          // An unreadable file has no messages to suggest.
+        }
+        if (this.disposed) break;
+        db.prepare(
+          "INSERT INTO recording_messages VALUES (?,?,?) ON CONFLICT(recording_id) DO UPDATE SET file=excluded.file, summary=excluded.summary",
+        ).run(r.id, r.file, JSON.stringify(summary));
+        this.messageQueue.shift();
+      }
+      this.readingMessages = null;
+    })();
   }
   addSubject(id) {
     if (!entity(id))
@@ -278,6 +456,11 @@ export class Pipeline {
       selected.some((file) => path.extname(file).toLowerCase() !== ".asc")
     )
       throw new Error("Select EyeLink .asc files.");
+    for (const file of selected)
+      if (await isAppleDouble(file))
+        throw new Error(
+          `${path.basename(file)} is a macOS metadata file, not an EyeLink recording. Select the file without the "._" prefix.`,
+        );
     const existing = db
       .prepare(
         "SELECT run FROM recordings WHERE subject=? AND session=? AND task=?",
@@ -354,6 +537,7 @@ export class Pipeline {
       for (const file of copied) await rm(file, { force: true });
       throw error;
     }
+    if (this.autoDetect) this.detectEyes();
     return this.snapshot();
   }
   // Add every recording in a BIDS dataset. Files are copied in the background so
@@ -381,25 +565,50 @@ export class Pipeline {
     );
     for (const files of groups.values()) {
       const { subject, session, task } = files[0];
-      const existing = db
+      const recorded = db
         .prepare(
-          "SELECT run, name FROM recordings WHERE subject=? AND session=? AND task=?",
+          "SELECT id, run, name, file FROM recordings WHERE subject=? AND session=? AND task=?",
         )
         .all(subject, session, task);
-      const runs = new Set(existing.map((r) => r.run));
+      // Versions up to 0.4.1 imported macOS metadata files (._*) as recordings
+      // and skipped the real files as duplicates. Each is replaced by the file
+      // it was written beside, and keeps its run until then.
+      const stale = new Map();
+      for (const e of recorded)
+        if (
+          e.name.startsWith("._") &&
+          (await isAppleDouble(path.join(this.project.directory, e.file)).catch(
+            () => false,
+          ))
+        )
+          stale.set(e.name.slice(2), e);
+      const existing = recorded.filter((e) => stale.get(e.name.slice(2)) !== e);
+      const runs = new Set(recorded.map((r) => r.run));
+      const planned = new Map();
       const pending = [];
       for (const r of files) {
+        const replaces = stale.get(r.name);
         if (
           existing.some((e) => e.name === r.name && (!r.run || e.run === r.run))
         )
           skipped.push({ file: r.relative, reason: "already in this project" });
-        else if (runs.has(r.run))
+        else if (planned.has(r.run))
+          skipped.push({
+            file: r.relative,
+            reason: `${planned.get(r.run)} is also run ${r.run} of sub-${subject} ses-${session} task-${task}`,
+          });
+        else if (r.run && replaces?.run === r.run) {
+          stale.delete(r.name);
+          planned.set(r.run, r.relative);
+          plan.push({ ...r, replaces });
+        } else if (runs.has(r.run))
           skipped.push({
             file: r.relative,
             reason: `sub-${subject} already has run ${r.run} for ses-${session} task-${task}`,
           });
         else if (r.run) {
           runs.add(r.run);
+          planned.set(r.run, r.relative);
           plan.push(r);
         } else pending.push(r);
       }
@@ -408,6 +617,12 @@ export class Pipeline {
       for (const r of pending.sort((a, b) =>
         a.name.localeCompare(b.name, undefined, { numeric: true }),
       )) {
+        const replaces = stale.get(r.name);
+        if (replaces) {
+          stale.delete(r.name);
+          plan.push({ ...r, run: replaces.run, replaces });
+          continue;
+        }
         next += 1;
         if (next > 999)
           skipped.push({ file: r.relative, reason: "run numbers end at 999" });
@@ -431,6 +646,7 @@ export class Pipeline {
     };
     this.importing = importing;
     const subjects = new Set();
+    let replaced = 0;
     let error = null;
     importing.finished = (async () => {
       for (const r of plan) {
@@ -450,19 +666,33 @@ export class Pipeline {
               r.subject,
               new Date().toISOString(),
             );
-            db.prepare(
-              "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?,?,?,?,?,?,?,?)",
-            ).run(
-              randomUUID(),
-              r.subject,
-              r.session,
-              r.task,
-              r.run,
-              r.name,
-              file,
-              new Date().toISOString(),
-            );
+            // A replaced recording keeps its ID, and so its processing history.
+            if (r.replaces)
+              db.prepare("UPDATE recordings SET name=?, file=? WHERE id=?").run(
+                r.name,
+                file,
+                r.replaces.id,
+              );
+            else
+              db.prepare(
+                "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?,?,?,?,?,?,?,?)",
+              ).run(
+                randomUUID(),
+                r.subject,
+                r.session,
+                r.task,
+                r.run,
+                r.name,
+                file,
+                new Date().toISOString(),
+              );
           });
+          if (r.replaces) {
+            await rm(path.join(this.project.directory, r.replaces.file), {
+              force: true,
+            });
+            replaced += 1;
+          }
           subjects.add(r.subject);
           importing.completed += 1;
         } catch (e) {
@@ -475,13 +705,15 @@ export class Pipeline {
       this.lastImport = {
         id: randomUUID(),
         root,
-        added: importing.completed,
+        added: importing.completed - replaced,
+        replaced,
         subjects: subjects.size,
         skipped,
         cancelled: importing.cancel.signal.aborted,
         error,
       };
       this.importing = null;
+      if (this.autoDetect) this.detectEyes();
     })();
     return this.snapshot();
   }
@@ -703,6 +935,8 @@ export class Pipeline {
       session: r.session,
       task: r.task,
       run: r.run || null,
+      // Recorded by eyeris::load_asc() when the recording was added.
+      eyes: r.eyes || null,
       output: path.join(
         dir,
         `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}.rds`,
