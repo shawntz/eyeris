@@ -61,6 +61,12 @@ test("splash → subject → ASC runs → glassbox and BIDS → epoch review", a
     await page
       .getByRole("textbox", { name: "Event pattern" })
       .fill("PROBE_START_{trial}");
+    // The HTML report is optional and off unless chosen.
+    const report = page.getByRole("checkbox", {
+      name: "HTML diagnostic report",
+    });
+    await expect(report).not.toBeChecked();
+    await report.check();
     await page
       .getByRole("button", { name: "Run pipeline on 2 recordings" })
       .click();

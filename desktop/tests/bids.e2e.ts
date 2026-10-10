@@ -152,9 +152,11 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     await expect(field("Baseline event pattern (segment 2)")).toHaveValue(
       "PROBE_START_{trial}",
     );
-    await page
-      .getByRole("checkbox", { name: "HTML diagnostic report" })
-      .uncheck();
+    const report = page.getByRole("checkbox", {
+      name: "HTML diagnostic report",
+    });
+    await expect(report).not.toBeChecked();
+    await report.check();
     // Settings are saved with the project and restored when it is reopened.
     await page.waitForTimeout(600);
     await page.getByRole("button", { name: /Epoch review/ }).click();
@@ -162,9 +164,8 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     await page.getByRole("button", { name: /^All subjects/ }).click();
     await expect(field("Event pattern")).toHaveValue("PROBE_START_{trial}");
     await expect(field("Epoch label (segment 2)")).toHaveValue("poststim");
-    await expect(
-      page.getByRole("checkbox", { name: "HTML diagnostic report" }),
-    ).not.toBeChecked();
+    await expect(report).toBeChecked();
+    await report.uncheck();
     // Separate subjects run in parallel R processes.
     await page
       .getByRole("combobox", { name: "Subjects at a time" })

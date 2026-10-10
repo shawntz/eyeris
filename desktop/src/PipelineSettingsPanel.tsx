@@ -77,7 +77,8 @@ export const defaults: PipelineSettings = {
     seed: 123,
   },
   epochs: [],
-  report: true,
+  // HTML reports are opt-in.
+  report: false,
   database: false,
 };
 const names: Record<string, string> = {
