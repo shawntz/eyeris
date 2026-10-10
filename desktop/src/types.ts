@@ -287,6 +287,25 @@ export interface RunningJob {
   recordings: string[];
   current: string;
 }
+// The recordings of one session and task in a BIDS dataset.
+export interface BidsGroupKey {
+  session: string;
+  task: string;
+}
+export interface BidsGroup extends BidsGroupKey {
+  subjects: number;
+  files: number;
+  bytes: number;
+  // Recordings of this session and task already in the project.
+  inProject: number;
+}
+// What a chosen BIDS dataset holds, before importing any of it.
+export interface BidsPreview {
+  root: string;
+  groups: BidsGroup[];
+  // Files that cannot be imported, listed after the import.
+  skipped: number;
+}
 export interface PipelineState {
   subjects: { id: string }[];
   recordings: Recording[];
@@ -364,7 +383,8 @@ interface API {
     task: string;
     run: string;
   }): Promise<PipelineState | null>;
-  importBids(): Promise<PipelineState | null>;
+  chooseBids(): Promise<BidsPreview | null>;
+  importBids(groups: BidsGroupKey[]): Promise<PipelineState>;
   cancelImport(): Promise<PipelineState>;
   startPipeline(
     ids: string[],

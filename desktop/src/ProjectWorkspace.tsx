@@ -26,6 +26,8 @@ import {
   type PipelineState,
   type PipelineSettings,
   type Recording,
+  type BidsGroup,
+  type BidsPreview,
   epochsOf,
   epochProblem,
   normalizeSettings,
@@ -36,6 +38,7 @@ import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
 import { useEventPatterns } from "./useEventPatterns";
 import { AutoExcludeControl } from "./AutoExcludeControl";
+import { BidsImportChoice } from "./BidsImportChoice";
 // The subject list entry that opens batch processing for every subject.
 const ALL = "*";
 const megabytes = (n: number) => `${(n / 1e6).toFixed(n < 1e7 ? 1 : 0)} MB`;
@@ -76,6 +79,8 @@ export function ProjectWorkspace({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [showLog, setShowLog] = useState(false);
+  // A chosen BIDS dataset with several sessions or tasks, before importing.
+  const [bidsChoice, setBidsChoice] = useState<BidsPreview | null>(null);
   const [, setDismissed] = useState(dismissedImport);
   const records = pipeline.recordings.filter((r) => r.subject === subject);
   const latestJob = (id: string) =>
@@ -180,8 +185,18 @@ export function ProjectWorkspace({
   }
   function importBids() {
     void act(async () => {
-      const r = await window.eyeris.importBids();
-      if (r) onPipeline(r);
+      setBidsChoice(null);
+      const preview = await window.eyeris.chooseBids();
+      if (!preview) return;
+      // A dataset of one session and task is imported without asking.
+      if (preview.groups.length > 1) setBidsChoice(preview);
+      else onPipeline(await window.eyeris.importBids(preview.groups));
+    });
+  }
+  function importGroups(groups: BidsGroup[]) {
+    void act(async () => {
+      onPipeline(await window.eyeris.importBids(groups));
+      setBidsChoice(null);
     });
   }
   async function importProcessed() {
@@ -321,6 +336,16 @@ export function ProjectWorkspace({
               </button>
             </div>
           </div>
+          {bidsChoice && !importing && (
+            <BidsImportChoice
+              key={bidsChoice.root}
+              preview={bidsChoice}
+              recordings={pipeline.recordings}
+              disabled={busy || running}
+              onImport={importGroups}
+              onCancel={() => setBidsChoice(null)}
+            />
+          )}
           {importing && (
             <section className="import-progress" role="status">
               <div>
@@ -434,9 +459,9 @@ export function ProjectWorkspace({
                 Enter a subject ID in the sidebar, then add its .asc recordings.
               </p>
               <p>
-                To add a whole study at once, import a BIDS folder. Every
-                sub-*/[ses-*/]eye/*.asc file is added with its subject, session,
-                task and run.
+                To add a whole study at once, import a BIDS folder. Its
+                sub-*/[ses-*/]eye/*.asc files are added with their subject,
+                session, task and run, for the sessions and tasks you choose.
               </p>
               <p>
                 You can also import an already processed eyeris object for epoch

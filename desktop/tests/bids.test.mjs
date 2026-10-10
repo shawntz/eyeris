@@ -153,6 +153,109 @@ test("a BIDS dataset imports every subject's ASC runs in one step", async (t) =>
   assert.ok(single.recordings.every((r) => r.subject === "001"));
 });
 
+test("a BIDS import can take only some of the dataset's sessions and tasks", async (t) => {
+  const { dir, pipeline } = await open(t, "bids-sessions");
+  const root = path.join(dir, "dataset");
+  const eye = (sub, ses, name) =>
+    path.join(
+      `sub-${sub}`,
+      `ses-${ses}`,
+      "eye",
+      `sub-${sub}_ses-${ses}_${name}`,
+    );
+  for (const file of [
+    eye("01", "enc", "task-clamp_run-01_eyetrack.asc"),
+    eye("01", "enc", "task-clamp_run-02_eyetrack.asc"),
+    eye("01", "ret", "task-clamp_run-01_eyetrack.asc"),
+    eye("02", "enc", "task-clamp_run-01_eyetrack.asc"),
+    eye("02", "ret", "task-rest_run-01_eyetrack.asc"),
+    // Skipped, and listed only when their session (and task) is imported.
+    eye("01", "enc", "task-clamp_run-x_eyetrack.asc"),
+    eye("02", "ret", "eyetrack.asc"),
+  ])
+    await write(root, file, "x".repeat(10));
+  await assert.rejects(
+    () => pipeline.previewBids(path.join(dir, "missing")),
+    /ENOENT/,
+  );
+  await mkdir(path.join(dir, "empty"));
+  await assert.rejects(
+    () => pipeline.previewBids(path.join(dir, "empty")),
+    /No EyeLink \.asc files/,
+  );
+  const group = (session, task, subjects, files, inProject = 0) => ({
+    session,
+    task,
+    subjects,
+    files,
+    bytes: 10 * files,
+    inProject,
+  });
+  assert.deepEqual(await pipeline.previewBids(root), {
+    root,
+    groups: [
+      group("enc", "clamp", 2, 3),
+      group("ret", "clamp", 1, 1),
+      group("ret", "rest", 1, 1),
+    ],
+    skipped: 2,
+  });
+  // Previewing imports nothing.
+  assert.equal(pipeline.snapshot().recordings.length, 0);
+
+  await pipeline.importBids(root, [{ session: "enc", task: "clamp" }]);
+  await pipeline.importing.finished;
+  let state = pipeline.snapshot();
+  assert.deepEqual(
+    state.recordings.map((r) => [r.subject, r.session, r.task, r.run]),
+    [
+      ["01", "enc", "clamp", "01"],
+      ["01", "enc", "clamp", "02"],
+      ["02", "enc", "clamp", "01"],
+    ],
+  );
+  assert.equal(state.lastImport.added, 3);
+  assert.deepEqual(state.lastImport.skipped, [
+    {
+      file: eye("01", "enc", "task-clamp_run-x_eyetrack.asc"),
+      reason: "run-x is not a run number from 1 to 999",
+    },
+  ]);
+  assert.deepEqual(
+    (await pipeline.previewBids(root)).groups.map((g) => g.inProject),
+    [3, 0, 0],
+  );
+
+  // The other session, with both of its tasks, adds only its own files.
+  await pipeline.importBids(root, [
+    { session: "ret", task: "clamp" },
+    { session: "ret", task: "rest" },
+  ]);
+  await pipeline.importing.finished;
+  state = pipeline.snapshot();
+  assert.equal(state.lastImport.added, 2);
+  assert.deepEqual(
+    state.recordings
+      .filter((r) => r.session === "ret")
+      .map((r) => [r.subject, r.session, r.task]),
+    [
+      ["01", "ret", "clamp"],
+      ["02", "ret", "rest"],
+    ],
+  );
+  assert.deepEqual(state.lastImport.skipped, [
+    {
+      file: eye("02", "ret", "eyetrack.asc"),
+      reason: "the filename has no task- entity",
+    },
+  ]);
+  // Choosing nothing imports nothing.
+  await pipeline.importBids(root, []);
+  await pipeline.importing?.finished;
+  assert.equal(pipeline.snapshot().lastImport.added, 0);
+  assert.deepEqual(pipeline.snapshot().lastImport.skipped, []);
+});
+
 test("a cancelled BIDS import keeps completed recordings and no partial copies", async (t) => {
   const { dir, project, pipeline } = await open(t, "bids-cancel");
   const root = path.join(dir, "dataset");

@@ -37,6 +37,8 @@ async function saveAppSettings(change) {
   await mkdir(app.getPath("userData"), { recursive: true });
   await writeFile(settingsFile(), JSON.stringify(settings));
 }
+// The BIDS folder last chosen for import, and the project it was chosen in.
+let bidsChoice = null;
 const requireProject = () => {
   if (!project) throw new Error("Open a review project first.");
   return project;
@@ -118,15 +120,32 @@ const methods = {
     if (result.canceled) return null;
     return pipeline.addRecording(input, result.filePaths);
   },
-  async importBids() {
+  // Choosing a dataset only reads what it holds; the renderer then names the
+  // sessions and tasks to import from the folder chosen here.
+  async chooseBids() {
     requireProject();
     const result = await dialog.showOpenDialog(window, {
       title: "Import a BIDS dataset of EyeLink recordings",
-      buttonLabel: "Import recordings",
+      buttonLabel: "Choose dataset",
       properties: ["openDirectory"],
     });
     if (result.canceled) return null;
-    return pipeline.importBids(result.filePaths[0]);
+    const preview = await pipeline.previewBids(result.filePaths[0]);
+    bidsChoice = { pipeline, root: preview.root };
+    return preview;
+  },
+  importBids(groups) {
+    requireProject();
+    if (bidsChoice?.pipeline !== pipeline)
+      throw new Error("Choose a BIDS folder to import first.");
+    if (
+      !Array.isArray(groups) ||
+      !groups.every(
+        (g) => typeof g?.session === "string" && typeof g?.task === "string",
+      )
+    )
+      throw new Error("Invalid sessions and tasks to import.");
+    return pipeline.importBids(bidsChoice.root, groups);
   },
   cancelImport() {
     requireProject();

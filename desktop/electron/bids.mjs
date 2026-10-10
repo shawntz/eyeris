@@ -84,7 +84,9 @@ export async function scanBids(root) {
                   : run && !(/^\d{1,3}$/.test(run) && Number(run) > 0)
                     ? `run-${run} is not a run number from 1 to 999`
                     : "";
-        if (reason) skipped.push({ file: relative, reason });
+        // The session and task, when known, let a selective import list only
+        // the skipped files it was asked for.
+        if (reason) skipped.push({ file: relative, reason, session, task });
         else
           recordings.push({
             file,
