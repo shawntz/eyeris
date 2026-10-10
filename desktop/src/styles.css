@@ -1198,6 +1198,13 @@ main {
   gap: 8px 22px;
   align-items: center;
 }
+/* Review pushes its last metadata item right and hides it in short windows;
+   here the last item can be a group in the legend, which must stay visible. */
+.diagnostics-panel .signal-metadata > span:last-child {
+  display: inline;
+  margin-left: 0;
+  font-size: inherit;
+}
 .split-controls {
   margin-top: -4px;
 }

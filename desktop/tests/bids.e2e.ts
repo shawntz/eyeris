@@ -160,6 +160,15 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     await expect(page.getByText(/accuracy = 0 \(n = \d+\)/)).toBeVisible();
     await expect(page.getByText(/accuracy = 1 \(n = \d+\)/)).toBeVisible();
     await captureScreenshot(page, { path: "test-results/behavior-split.png" });
+    // Every group stays in the legend in the smallest supported window.
+    await app.evaluate(({ BrowserWindow }) => {
+      BrowserWindow.getAllWindows()[0].setContentSize(1080, 740);
+    });
+    await expect.poll(() => page.evaluate(() => window.innerHeight)).toBe(740);
+    for (const value of [0, 1])
+      await expect(
+        page.getByText(new RegExp(`accuracy = ${value} \\(n = \\d+\\)`)),
+      ).toBeVisible();
     expect(state.pipeline.jobs.every((j) => j.status === "completed")).toBe(
       true,
     );
