@@ -610,3 +610,83 @@ test("review resumes where it was left and exports every subject at once", async
     code: "ENOENT",
   });
 });
+
+test("run diagnostics average a run's epochs and keep each trace", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-average-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  project = await Project.open(path.join(dir, "average.eyeris"), worker, true);
+  await project.importFile(path.join(dir, "sub-005_task-memory.rds"));
+  await project.importFile(path.join(dir, "sub-003_task-memory.rds"));
+  const groups = project.diagnosticGroups();
+  assert.deepEqual(
+    groups.map((g) => [g.participant, g.run, g.label, g.epochs]),
+    [
+      ["003", "01", "epoch_probe", 3],
+      ["003", "01", "epoch_second", 3],
+      ["003", "07", "epoch_probe", 3],
+      ["005", "01", "epoch_probe", 3],
+    ],
+  );
+  const key = groups[3].key;
+  const all = await project.average({
+    key,
+    stage: "pupil_raw",
+    include: "all",
+  });
+  assert.equal(all.epochs, 3);
+  assert.equal(all.traces.length, 3);
+  assert.equal(all.time.length, 600);
+  // The window is -1 to 1 s, so time is measured from the event.
+  assert.equal(all.onset, true);
+  assert.ok(Math.abs(all.time[0] + 1) < 1e-12);
+  assert.ok(Math.abs(all.time.at(-1) - 1) < 1e-12);
+  // Missing samples stay missing: at the start only the second epoch has data.
+  assert.deepEqual(
+    all.traces.map((trace) => trace[0] === null),
+    [true, false, true],
+  );
+  assert.equal(all.n[0], 1);
+  assert.equal(all.se[0], null);
+  assert.ok(Math.abs(all.mean[0] - all.traces[1][0]) < 1e-9);
+  // Identical epochs average to themselves with no spread.
+  assert.equal(all.n.at(-1), 3);
+  assert.ok(Math.abs(all.mean.at(-1) - all.traces[0].at(-1)) < 1e-9);
+  assert.equal(all.se.at(-1), 0);
+  const final = await project.average({ key, stage: "final", include: "all" });
+  assert.equal(final.stage, "pupil_raw_lpfilt");
+  // Excluded epochs are left out unless every epoch is requested.
+  const [first] = project.list({ participant: "005" }).rows;
+  project.decision({
+    id: first.id,
+    status: "exclude",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "",
+  });
+  const included = await project.average({
+    key,
+    stage: "final",
+    include: "included",
+  });
+  assert.equal(included.epochs, 2);
+  assert.ok(!included.ids.includes(first.id));
+  assert.deepEqual(
+    await project.average({ key, stage: "final", include: "kept" }),
+    { epochs: 0, stage: "final" },
+  );
+  await assert.rejects(
+    () => project.average({ key, stage: "final", include: "some" }),
+    /Choose/,
+  );
+  await assert.rejects(
+    () => project.average({ key, stage: "pupil_missing", include: "all" }),
+    /selected stage/,
+  );
+});

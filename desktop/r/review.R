@@ -66,6 +66,34 @@ review_missing <- function(x, epochs) {
   })
 }
 
+# Average epochs on a shared time grid, for run diagnostics. Each epoch is
+# sampled at the grid's nearest stored sample, so missing samples stay missing
+# instead of being interpolated. Returns every epoch's trace, and the mean,
+# standard error and number of finite values at each time.
+review_average <- function(x, epochs, stage, points = 600L) {
+  frames <- lapply(epochs, function(e) review_frame(x, e))
+  t0 <- frames[[1]]$timebin
+  grid <- seq(min(t0), max(t0), length.out = min(length(t0), as.integer(points)))
+  traces <- vapply(frames, function(df) {
+    t <- df$timebin
+    if (!stage %in% names(df)) stop("An epoch does not contain the selected stage.")
+    nearest <- round(stats::approx(t, seq_along(t), grid, rule = 2, ties = "ordered")$y)
+    y <- df[[stage]][nearest]
+    y[!is.finite(y) | grid < min(t) | grid > max(t)] <- NA_real_
+    y
+  }, numeric(length(grid)))
+  traces <- matrix(traces, nrow = length(grid))
+  n <- rowSums(is.finite(traces))
+  mean <- ifelse(n > 0, rowSums(traces, na.rm = TRUE) / pmax(n, 1), NA_real_)
+  sd <- apply(traces, 1, stats::sd, na.rm = TRUE)
+  se <- ifelse(n > 1, sd / sqrt(n), NA_real_)
+  list(
+    time = unname(as.list(grid)),
+    traces = lapply(seq_len(ncol(traces)), function(i) unname(as.list(traces[, i]))),
+    mean = unname(as.list(mean)), se = unname(as.list(se)), n = unname(as.list(n))
+  )
+}
+
 review_frame <- function(x, epoch) {
   df <- review_objects(x)[[epoch$eye]][[epoch$label]][[epoch$block]]
   if (is.null(df) || epoch$start < 1 || epoch$end > nrow(df)) stop("Epoch locator is no longer valid.")

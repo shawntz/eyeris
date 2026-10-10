@@ -101,6 +101,26 @@ test("splash → subject → ASC runs → glassbox and BIDS → epoch review", a
     await captureScreenshot(page, { path: "test-results/review-real.png" });
     await page.getByRole("button", { name: /Keep epoch/ }).click();
     await expect(page.locator(".epoch-status.keep")).toHaveCount(1);
+    // The run's average, with each epoch behind it.
+    await page.getByRole("button", { name: "Run average" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Run diagnostics" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("combobox", { name: "Run" }).locator("option:checked"),
+    ).toHaveText("sub-001 · ses-01 · task-memory · Run 02 · trial (5)");
+    await expect(page.getByText("5 of 5 epochs averaged")).toBeVisible();
+    await expect(page.locator(".average-plot canvas")).toBeVisible();
+    await captureScreenshot(page, { path: "test-results/diagnostics.png" });
+    await expect(page.getByRole("button", { name: "Next run" })).toBeDisabled();
+    await page.getByRole("button", { name: "Previous run" }).click();
+    await expect(
+      page.getByRole("combobox", { name: "Run" }).locator("option:checked"),
+    ).toContainText("Run 01");
+    await page
+      .getByRole("combobox", { name: "Epochs to average" })
+      .selectOption("kept");
+    await expect(page.getByText("0 of 5 epochs averaged")).toBeVisible();
     expect(errors).toEqual([]);
   } catch (e) {
     try {

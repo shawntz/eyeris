@@ -4,6 +4,7 @@ import type { Summary, PipelineState, PipelineSettings } from "./types";
 import { defaults } from "./PipelineSettingsPanel";
 import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
+import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 const emptyPipeline: PipelineState = {
   subjects: [],
   recordings: [],
@@ -27,7 +28,18 @@ export function App() {
   const loadedSettings = useRef<PipelineSettings | null>(null);
   const [reviewer, setReviewer] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
-  const [screen, setScreen] = useState<"subjects" | "review">("subjects");
+  const [screen, setScreen] = useState<"subjects" | "review" | "diagnostics">(
+    "subjects",
+  );
+  const [diagnosticsKey, setDiagnosticsKey] = useState<string>();
+  const showDiagnostics = (key?: string) => {
+    setDiagnosticsKey(key);
+    setScreen("diagnostics");
+  };
+  const showReview = (participant = "") => {
+    setReviewParticipant(participant);
+    setScreen("review");
+  };
   const [reviewParticipant, setReviewParticipant] = useState("");
   const [error, setError] = useState("");
   const [runtimeReady, setRuntimeReady] = useState(false);
@@ -195,12 +207,21 @@ export function App() {
           </button>
         </div>
       )}
-      {screen === "review" ? (
+      {screen === "diagnostics" ? (
+        <DiagnosticsWorkspace
+          project={project}
+          initialKey={diagnosticsKey}
+          onSubjects={() => setScreen("subjects")}
+          onReview={showReview}
+          onClose={() => void close()}
+        />
+      ) : screen === "review" ? (
         <ReviewWorkspace
           initialProject={project}
           reviewer={reviewer}
           participant={reviewParticipant}
           onSubjects={() => setScreen("subjects")}
+          onDiagnostics={showDiagnostics}
           onClose={() => void close()}
         />
       ) : (
@@ -210,10 +231,8 @@ export function App() {
           settings={settings}
           setSettings={setSettings}
           onPipeline={setPipeline}
-          onReview={(participant = "") => {
-            setReviewParticipant(participant);
-            setScreen("review");
-          }}
+          onReview={showReview}
+          onDiagnostics={() => showDiagnostics()}
           onClose={() => void close()}
           onProject={setProject}
         />

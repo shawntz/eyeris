@@ -620,6 +620,62 @@ export class Project {
     });
     return this.epoch(action.epoch_id);
   }
+  // Every run of every source, for run diagnostics. A run is one block of one
+  // epoch label and eye in a source, so its epochs share a time axis.
+  diagnosticGroups() {
+    return this.db
+      .prepare(
+        `SELECT e.source_id, s.name AS source_name, e.participant, e.session, e.task, e.run, e.label, e.eye, e.block,
+          COUNT(*) AS epochs, SUM(e.status='keep') AS keep, SUM(e.status='exclude') AS exclude, SUM(e.status='unreviewed') AS unreviewed
+        FROM epochs e JOIN sources s ON s.id = e.source_id
+        GROUP BY e.source_id, e.label, e.eye, e.block
+        ORDER BY e.participant, e.session, e.task, length(e.run), e.run, e.label, e.eye, s.imported_at`,
+      )
+      .all()
+      .map((row) => ({
+        ...row,
+        key: [row.source_id, row.label, row.eye, row.block].join("|"),
+      }));
+  }
+  // The average trace of a run's epochs at one stage, with each epoch's trace.
+  // `include` selects all epochs, those not excluded, or only kept epochs.
+  async average({ key, stage = "final", include = "included" }) {
+    const [source, label, eye, block] = String(key).split("|");
+    const statuses = {
+      all: states,
+      included: ["keep", "unreviewed"],
+      kept: ["keep"],
+    }[include];
+    if (!statuses) throw new Error("Choose which epochs to include.");
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE source_id=? AND label=? AND eye=? AND block=? AND status IN (${statuses.map(() => "?").join(",")}) ORDER BY ordinal`,
+      )
+      .all(source, label, eye, block, ...statuses)
+      .map((row) => this.deserialize(row));
+    if (!rows.length) return { epochs: 0, stage };
+    const resolved = stage === "final" ? rows[0].meta.finalStage : stage;
+    if (!rows.every((r) => r.meta.stages.includes(resolved)))
+      throw new Error("These epochs do not all contain the selected stage.");
+    const result = await this.worker.request("average", {
+      path: await this.sourcePath(source),
+      epochs: rows.map((r) => r.meta),
+      stage: resolved,
+      points: 600,
+    });
+    // Epoch time starts at the window's start; shift it so 0 is the event.
+    const limits = rows[0].meta.limits;
+    const offset =
+      Array.isArray(limits) && Number.isFinite(limits[0]) ? limits[0] : null;
+    return {
+      ...result,
+      time: offset === null ? result.time : result.time.map((t) => t + offset),
+      onset: offset !== null,
+      stage: resolved,
+      epochs: rows.length,
+      ids: rows.map((r) => r.id),
+    };
+  }
   // Export in the background, reporting progress in the summary.
   startExport(destination) {
     if (this.exporting) throw new Error("An export is already running.");

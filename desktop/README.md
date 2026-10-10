@@ -197,6 +197,17 @@ otherwise, and when the name has no run, block numbers name the runs.
   were processed). A run indexed from two sources, such as a recording processed
   twice, adds `_source-<sha256 prefix>` to tell them apart.
 
+**Diagnostics** shows the average trace of a run's epochs, with every epoch's
+trace faded in gray behind it (a butterfly plot) and a standard-error band
+around the mean. Choose any run of any source, step through runs with the arrows,
+and pick the stage and which epochs to include: kept and unreviewed (the
+default), kept only, or all including excluded epochs. Time is measured from the
+event when the epoch window is known, with the onset marked; otherwise from the
+start of the epoch. Each epoch is sampled at its nearest stored sample on a
+shared grid of up to 600 points, so missing samples stay missing rather than
+being interpolated, and the mean and standard error at each time use only the
+epochs with data there. **Run average** in review opens the selected epoch's run.
+
 **Automatic exclusion** excludes epochs missing more than a chosen percentage of
 samples, measured at the final stage or at any stored stage (for example the raw
 signal, before interpolation fills gaps). Set it under **Automatic exclusion** in

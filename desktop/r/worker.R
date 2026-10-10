@@ -29,6 +29,7 @@ repeat {
       index = review_index(get_object(p$path)),
       trace = review_trace(get_object(p$path), p$epoch, p$stage, p$range),
       missing = review_missing(get_object(p$path), p$epochs),
+      average = review_average(get_object(p$path), p$epochs, p$stage, p$points),
       export = review_export_source(get_object(p$path), p$epochs, p$destination),
       stop("Unknown worker method.")
     )

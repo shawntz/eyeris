@@ -75,6 +75,36 @@ export interface AutoExclude {
   stage: string;
 }
 export const AUTO_REVIEWER = "eyeris auto-exclude";
+// A run of epochs that share a time axis: one block, label and eye of a source.
+export interface DiagnosticGroup {
+  key: string;
+  source_id: string;
+  source_name: string;
+  participant: string;
+  session: string;
+  task: string;
+  run: string;
+  label: string;
+  eye: string;
+  block: string;
+  epochs: number;
+  keep: number;
+  exclude: number;
+  unreviewed: number;
+}
+export type Include = "all" | "included" | "kept";
+export interface Average {
+  epochs: number;
+  stage: string;
+  // Time from the event when the epoch window is known, else from its start.
+  onset?: boolean;
+  time?: number[];
+  traces?: (number | null)[][];
+  mean?: (number | null)[];
+  se?: (number | null)[];
+  n?: number[];
+  ids?: string[];
+}
 export interface Trace {
   time: number[];
   signal: (number | null)[];
@@ -241,6 +271,12 @@ interface API {
   } | null>;
   setAutoExclude(rule: AutoExclude): Promise<Summary>;
   list(filters: Filters): Promise<Queue>;
+  diagnosticGroups(): Promise<DiagnosticGroup[]>;
+  average(selection: {
+    key: string;
+    stage: string;
+    include: Include;
+  }): Promise<Average>;
   trace(id: string, stage: string, range?: [number, number]): Promise<Trace>;
   decide(input: {
     id: string;

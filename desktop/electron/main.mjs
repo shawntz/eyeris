@@ -268,6 +268,8 @@ const methods = {
   },
   setAutoExclude: (rule) => requireProject().setAutoExclude(rule),
   list: (filters) => requireProject().list(filters),
+  diagnosticGroups: () => requireProject().diagnosticGroups(),
+  average: (selection) => requireProject().average(selection),
   nextUnreviewed: (filters, fromId) =>
     requireProject().nextUnreviewed(filters, fromId),
   saveReviewPosition: (position) =>

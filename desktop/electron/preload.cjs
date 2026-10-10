@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld(
       "demo",
       "importFiles",
       "list",
+      "diagnosticGroups",
+      "average",
       "nextUnreviewed",
       "saveReviewPosition",
       "setAutoExclude",

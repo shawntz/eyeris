@@ -23,9 +23,11 @@ import {
   RotateCcw,
   LoaderCircle,
   SkipForward,
+  LineChart,
 } from "lucide-react";
 import { TracePlot } from "./TracePlot";
 import { AutoExcludeControl } from "./AutoExcludeControl";
+import { groupKey } from "./DiagnosticsWorkspace";
 import {
   stageName,
   AUTO_REVIEWER,
@@ -69,12 +71,14 @@ export function ReviewWorkspace({
   reviewer: initialReviewer,
   participant = "",
   onSubjects,
+  onDiagnostics,
   onClose,
 }: {
   initialProject: Summary;
   reviewer: string;
   participant?: string;
   onSubjects: () => void;
+  onDiagnostics: (key?: string) => void;
   onClose: () => void;
 }) {
   const [project, setProject] = useState<Summary | null>(initialProject);
@@ -449,6 +453,9 @@ export function ReviewWorkspace({
           <Layers3 size={17} /> Epoch review{" "}
           <span className="nav-count">{project?.counts.total}</span>
         </div>
+        <button className="nav-item" onClick={() => onDiagnostics()}>
+          <LineChart size={17} /> Diagnostics
+        </button>
         <button
           className="import-sidebar"
           disabled={!!busy}
@@ -1016,6 +1023,15 @@ export function ReviewWorkspace({
                         </select>
                         <ChevronDown size={14} />
                       </label>
+                      <button
+                        className="run-average"
+                        disabled={!selected}
+                        onClick={() =>
+                          selected && onDiagnostics(groupKey(selected))
+                        }
+                      >
+                        <LineChart size={14} /> Run average
+                      </button>
                     </div>
                     <div className="plot-heading">
                       <span>

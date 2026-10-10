@@ -19,6 +19,7 @@ import {
   LoaderCircle,
   FolderInput,
   Users,
+  LineChart,
 } from "lucide-react";
 import type {
   Summary,
@@ -44,6 +45,7 @@ export function ProjectWorkspace({
   setSettings,
   onPipeline,
   onReview,
+  onDiagnostics,
   onClose,
   onProject,
 }: {
@@ -53,6 +55,7 @@ export function ProjectWorkspace({
   setSettings: Dispatch<SetStateAction<PipelineSettings>>;
   onPipeline: (p: PipelineState) => void;
   onReview: (participant?: string) => void;
+  onDiagnostics: () => void;
   onClose: () => void;
   onProject: (p: Summary) => void;
 }) {
@@ -192,6 +195,9 @@ export function ProjectWorkspace({
         <button className="nav-item" onClick={() => onReview()}>
           <Layers3 size={17} /> Epoch review{" "}
           <span className="nav-count">{project.counts.total}</span>
+        </button>
+        <button className="nav-item" onClick={onDiagnostics}>
+          <LineChart size={17} /> Diagnostics
         </button>
         <div className="subject-list">
           <h2>Subjects</h2>

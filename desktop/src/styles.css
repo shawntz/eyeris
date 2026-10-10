@@ -1139,6 +1139,78 @@ main {
   text-decoration: underline;
   font-size: 11px;
 }
+.run-average {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #555;
+  margin-left: 12px;
+}
+.diagnostics-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 18px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.diagnostics-controls select {
+  font-size: 12px;
+  padding: 7px 9px;
+  margin: 0;
+}
+.diagnostics-controls .check-label {
+  margin: 0 0 8px;
+}
+.run-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 360px;
+}
+.run-picker select {
+  flex: 1;
+  min-width: 0;
+}
+.run-picker button {
+  padding: 6px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #fff;
+}
+.diagnostics-panel {
+  min-height: 320px;
+}
+.diagnostics-panel .plot-heading {
+  justify-content: space-between;
+}
+.average-plot {
+  flex: 1;
+  min-height: 200px;
+  padding: 0 16px;
+  position: relative;
+}
+.diagnostics-panel .signal-metadata {
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  align-items: center;
+}
+.legend-mean,
+.legend-trace {
+  display: inline-block;
+  width: 16px;
+  height: 2px;
+  vertical-align: middle;
+  margin-right: 5px;
+  background: #820000;
+}
+.legend-trace {
+  background: rgba(96, 96, 96, 0.45);
+  height: 1px;
+  margin-left: 10px;
+}
 .filter-bar {
   display: flex;
   gap: 12px;
