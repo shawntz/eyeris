@@ -76,6 +76,13 @@ test("eye choices follow the eyes eyeris finds in each recording", async () => {
       { timeout: 60_000 },
     );
     await expect(eye).toHaveCount(0);
+    // The recorded eye lines up with the random seed field beside it.
+    const box = async (selector: string) =>
+      (await page.locator(selector).boundingBox())!;
+    const fixed = await box("output.eye-fixed");
+    const seed = await box('input[aria-label="Random seed"]');
+    expect(Math.round(fixed.y)).toBe(Math.round(seed.y));
+    expect(Math.round(fixed.height)).toBe(Math.round(seed.height));
     await expect(
       page.getByRole("button", { name: "Run pipeline" }),
     ).toBeEnabled();
