@@ -830,6 +830,22 @@ main {
 .run-actions .button {
   width: 100%;
 }
+.parallel-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  font-size: 12px;
+  color: #393939;
+}
+.parallel-field select {
+  width: auto;
+  min-width: 140px;
+  margin: 0;
+  font-size: 12px;
+  padding: 6px 9px;
+}
 .run-note {
   margin-top: 12px;
   font-size: 11px;

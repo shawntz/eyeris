@@ -4,20 +4,22 @@ import type { Summary, PipelineState, PipelineSettings } from "./types";
 import { defaults } from "./PipelineSettingsPanel";
 import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
+const emptyPipeline: PipelineState = {
+  subjects: [],
+  recordings: [],
+  jobs: [],
+  running: [],
+  queued: [],
+  batch: [],
+  settings: null,
+  parallel: { setting: "auto", jobs: 1, cores: 1, automatic: 1 },
+  importing: null,
+  lastImport: null,
+};
 export function App() {
   const [project, setProject] = useState<Summary | null>(null);
   const [version, setVersion] = useState("");
-  const [pipeline, setPipeline] = useState<PipelineState>({
-    subjects: [],
-    recordings: [],
-    jobs: [],
-    running: [],
-    queued: [],
-    batch: [],
-    settings: null,
-    importing: null,
-    lastImport: null,
-  });
+  const [pipeline, setPipeline] = useState<PipelineState>(emptyPipeline);
   // Pipeline settings belong to the project and apply to every subject.
   const [settings, setSettings] = useState<PipelineSettings>(
     structuredClone(defaults),
@@ -111,17 +113,7 @@ export function App() {
       await saveSettings();
       await window.eyeris.closeProject();
       setProject(null);
-      setPipeline({
-        subjects: [],
-        recordings: [],
-        jobs: [],
-        running: [],
-        queued: [],
-        batch: [],
-        settings: null,
-        importing: null,
-        lastImport: null,
-      });
+      setPipeline(emptyPipeline);
       setError("");
     } catch (e) {
       setError(String(e));

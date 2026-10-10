@@ -100,6 +100,13 @@ test("a BIDS folder is imported and every subject processed in one batch", async
     await expect(
       page.getByRole("checkbox", { name: "HTML diagnostic report" }),
     ).not.toBeChecked();
+    // Separate subjects run in parallel R processes.
+    await page
+      .getByRole("combobox", { name: "Subjects at a time" })
+      .selectOption("2");
+    await expect(
+      page.getByText(/up to 2 subjects at a time in separate R processes/),
+    ).toBeVisible();
     await page.getByRole("button", { name: "Process 2 subjects" }).click();
     await expect(
       page.getByRole("progressbar", { name: "Batch progress" }),

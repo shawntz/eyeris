@@ -101,7 +101,13 @@ the settings it was started with. To process the whole study, choose **All
 subjects** in the sidebar (or **Process all subjects** after a BIDS import), set
 the glassbox, epoch and output options once, select the subjects, and choose
 **Process subjects**. Each subject becomes its own job containing all of its
-recordings, processed in run order, and jobs run one after another. The batch
+recordings, processed in run order in one R process. **Subjects at a time**
+runs separate subjects in parallel R processes; a subject's runs are never split
+across processes. **Automatic** leaves one core for the app, allows about 2 GiB
+of memory per process, and uses at most 8; any value up to the number of cores
+can be chosen. The choice is saved for this computer. When several subjects run
+at once, data.table and OpenMP threads are divided between the R processes.
+Finished jobs are published and indexed one at a time. The batch
 shows overall progress, the recording and step each job is on, and a summary
 with links to any subject that failed; **Cancel all** stops the running job and
 removes the waiting ones. Processing a single subject while a batch runs queues

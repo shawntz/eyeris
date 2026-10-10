@@ -122,6 +122,13 @@ export interface PipelineState {
   // Jobs queued since processing was last idle.
   batch: string[];
   settings: PipelineSettings | null;
+  // Subjects processed at once, each in its own R process.
+  parallel: {
+    setting: "auto" | number;
+    jobs: number;
+    cores: number;
+    automatic: number;
+  };
   importing: {
     total: number;
     completed: number;
@@ -190,6 +197,7 @@ interface API {
     settings: PipelineSettings,
   ): Promise<PipelineState>;
   saveSettings(settings: PipelineSettings): Promise<PipelineState>;
+  setParallelJobs(value: "auto" | number): Promise<PipelineState>;
   cancelPipeline(id?: string): Promise<PipelineState>;
   pipelineLog(id: string): Promise<string>;
   showProjectFiles(kind: string, id?: string): Promise<void>;

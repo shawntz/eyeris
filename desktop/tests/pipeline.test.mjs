@@ -15,7 +15,11 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { Project } from "../electron/project.mjs";
 import { RWorker } from "../electron/r-worker.mjs";
-import { Pipeline } from "../electron/pipeline.mjs";
+import {
+  Pipeline,
+  automaticJobs,
+  threadLimits,
+} from "../electron/pipeline.mjs";
 
 test(
   "ASC → full glassbox → epochs → BIDS, review, saved provenance and reruns",
@@ -342,7 +346,7 @@ test(
       worker,
       true,
     );
-    let pipeline = new Pipeline(project);
+    let pipeline = new Pipeline(project, { parallel: 1 });
     t.after(async () => {
       pipeline.dispose();
       worker.close();
@@ -380,7 +384,7 @@ test(
     // Settings are stored with the project and survive reopening it.
     assert.equal(pipeline.snapshot().settings, null);
     pipeline.saveSettings(settings);
-    pipeline = new Pipeline(project);
+    pipeline = new Pipeline(project, { parallel: 1 });
     assert.deepEqual(pipeline.snapshot().settings, settings);
     assert.throws(() => pipeline.saveSettings([]), /Invalid/);
 
@@ -434,5 +438,122 @@ test(
     assert.equal(after.length, 3);
     assert.equal(after[0].status, "cancelled");
     assert.deepEqual(after[0].recordings, [ids["001"]]);
+  },
+);
+
+test("automatic parallelism leaves a core free and fits the memory", () => {
+  const gib = 2 ** 30;
+  assert.equal(automaticJobs(1, 16 * gib), 1);
+  assert.equal(automaticJobs(4, 4 * gib), 2);
+  assert.equal(automaticJobs(10, 24 * gib), 8);
+  assert.equal(automaticJobs(16, 3 * gib), 1);
+  assert.deepEqual(threadLimits(1, 10), {});
+  assert.deepEqual(threadLimits(3, 10), {
+    R_DATATABLE_NUM_THREADS: "3",
+    OMP_NUM_THREADS: "3",
+  });
+  assert.deepEqual(threadLimits(16, 10), {
+    R_DATATABLE_NUM_THREADS: "1",
+    OMP_NUM_THREADS: "1",
+  });
+});
+
+test(
+  "subjects run in parallel R processes while each subject's runs stay in order",
+  { timeout: 240000 },
+  async (t) => {
+    const dir = await mkdtemp(path.join(tmpdir(), "eyeris-parallel-"));
+    const worker = new RWorker();
+    const project = await Project.open(
+      path.join(dir, "Parallel.eyeris"),
+      worker,
+      true,
+    );
+    const pipeline = new Pipeline(project, { parallel: 2 });
+    t.after(async () => {
+      pipeline.dispose();
+      worker.close();
+      project.close();
+      await rm(dir, { recursive: true, force: true });
+    });
+    assert.throws(() => pipeline.setParallel(0), /from 1 to/);
+    assert.throws(
+      () => pipeline.setParallel(pipeline.snapshot().parallel.cores + 1),
+      /from 1 to/,
+    );
+    pipeline.setParallel("auto");
+    assert.equal(pipeline.snapshot().parallel.jobs, automaticJobs());
+    pipeline.setParallel(2);
+    const asc = execFileSync(
+      resolveRscript(),
+      ["-e", "cat(eyeris::eyelink_asc_demo_dataset())"],
+      { encoding: "utf8" },
+    ).trim();
+    const groups = [];
+    for (const subject of ["001", "002", "003"]) {
+      pipeline.addSubject(subject);
+      const state = await pipeline.addRecording(
+        { subject, session: "01", task: "memory" },
+        [asc, asc],
+      );
+      groups.push(
+        state.recordings.filter((r) => r.subject === subject).map((r) => r.id),
+      );
+    }
+    const settings = {
+      glassbox: {
+        load_asc: { block: "auto", binocular_mode: "average" },
+        lpfilt: { plot_freqz: false },
+      },
+      epoch: {
+        events: "PROBE_START_{trial}",
+        limits: [-1, 2],
+        label: "probe",
+        baseline: false,
+      },
+      report: false,
+      database: true,
+    };
+    const state = await pipeline.enqueue(groups, settings);
+    assert.equal(state.running.length, 2);
+    assert.equal(state.queued.length, 1);
+    await pipeline.idle();
+    const jobs = pipeline.snapshot().jobs;
+    assert.equal(jobs.length, 3);
+    for (const job of jobs) {
+      assert.equal(job.status, "completed", job.error);
+      assert.equal(job.recordings.length, 2);
+      const log = await pipeline.log(job.id);
+      // Runs are processed in order within the subject's single R process.
+      assert.ok(log.indexOf("run-01") < log.lastIndexOf("run-02"));
+      const config = JSON.parse(
+        await readFile(
+          path.join(project.directory, "processing", job.id, "config.json"),
+          "utf8",
+        ),
+      );
+      assert.deepEqual(
+        config.recordings.map((r) => r.run),
+        ["01", "02"],
+      );
+      assert.ok(JSON.parse(job.outputs).length > 0, "published");
+    }
+    const tables = execFileSync(
+      resolveRscript(),
+      [
+        "-e",
+        'con <- DBI::dbConnect(duckdb::duckdb(), commandArgs(TRUE)[1], read_only = TRUE); cat(DBI::dbListTables(con), sep = "\\n"); DBI::dbDisconnect(con, shutdown = TRUE)',
+        path.join(project.directory, "bids", "derivatives", "eyeris.eyerisdb"),
+      ],
+      { encoding: "utf8" },
+    );
+    for (const subject of ["001", "002", "003"])
+      for (const run of ["01", "02"])
+        assert.match(
+          tables,
+          new RegExp(`timeseries_${subject}_01_memory_run${run}`),
+        );
+    assert.deepEqual(project.summary().participants, ["001", "002", "003"]);
+    assert.deepEqual(project.summary().runs, ["01", "02"]);
   },
 );

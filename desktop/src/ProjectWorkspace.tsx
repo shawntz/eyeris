@@ -78,7 +78,6 @@ export function ProjectWorkspace({
   const active = pipeline.running.find(mine);
   const waiting = pipeline.queued.filter(mine);
   const running = !!active || !!waiting.length;
-  const processing = !!pipeline.running.length || !!pipeline.queued.length;
   const importing = pipeline.importing;
   const imported =
     pipeline.lastImport?.id !== dismissedImport ? pipeline.lastImport : null;
@@ -667,7 +666,7 @@ export function ProjectWorkspace({
                           : selected.length > 1
                             ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
                             : ""}
-                      {processing &&
+                      {pipeline.running.length >= pipeline.parallel.jobs &&
                         " Other subjects are processing; this job will wait its turn."}
                     </p>
                   )}

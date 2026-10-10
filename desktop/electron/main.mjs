@@ -23,6 +23,20 @@ if (process.env.EYERIS_TEST_USER_DATA)
   app.setPath("userData", process.env.EYERIS_TEST_USER_DATA);
 const settingsFile = () =>
   path.join(app.getPath("userData"), "review-settings.json");
+// App settings are per machine: the recent project and how many subjects to
+// process at once.
+async function appSettings() {
+  try {
+    return JSON.parse(await readFile(settingsFile(), "utf8"));
+  } catch {
+    return {};
+  }
+}
+async function saveAppSettings(change) {
+  const settings = { ...(await appSettings()), ...change };
+  await mkdir(app.getPath("userData"), { recursive: true });
+  await writeFile(settingsFile(), JSON.stringify(settings));
+}
 const requireProject = () => {
   if (!project) throw new Error("Open a review project first.");
   return project;
@@ -37,8 +51,12 @@ async function activate(directory, create) {
   project?.close();
   project = next;
   pipeline = new Pipeline(project);
-  await mkdir(app.getPath("userData"), { recursive: true });
-  await writeFile(settingsFile(), JSON.stringify({ lastProject: directory }));
+  try {
+    pipeline.setParallel((await appSettings()).parallelJobs ?? "auto");
+  } catch {
+    // A limit saved on a machine with more cores falls back to automatic.
+  }
+  await saveAppSettings({ lastProject: directory });
   return project.summary();
 }
 const methods = {
@@ -53,10 +71,7 @@ const methods = {
     } catch (error) {
       warning = error.message;
     }
-    let recent = null;
-    try {
-      recent = JSON.parse(await readFile(settingsFile(), "utf8")).lastProject;
-    } catch {}
+    const recent = (await appSettings()).lastProject ?? null;
     return {
       appVersion: packageMetadata.version,
       project: project?.summary() ?? null,
@@ -66,8 +81,9 @@ const methods = {
     };
   },
   async openRecent() {
-    const settings = JSON.parse(await readFile(settingsFile(), "utf8"));
-    return activate(settings.lastProject, false);
+    const { lastProject } = await appSettings();
+    if (!lastProject) throw new Error("There is no recent project.");
+    return activate(lastProject, false);
   },
   closeProject() {
     if (pipeline?.busy || pipeline?.importing)
@@ -121,6 +137,12 @@ const methods = {
     if (!Array.isArray(groups) || !groups.every(Array.isArray))
       throw new Error("Invalid processing request.");
     return pipeline.enqueue(groups, settings);
+  },
+  async setParallelJobs(value) {
+    requireProject();
+    pipeline.setParallel(value);
+    await saveAppSettings({ parallelJobs: value });
+    return pipeline.snapshot();
   },
   saveSettings(settings) {
     requireProject();

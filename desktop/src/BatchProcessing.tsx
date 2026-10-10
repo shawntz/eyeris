@@ -266,6 +266,34 @@ export function BatchProcessing({
           disabled={busy}
           onError={onError}
         >
+          <label className="parallel-field">
+            Subjects at a time
+            <select
+              aria-label="Subjects at a time"
+              value={String(pipeline.parallel.setting)}
+              disabled={busy}
+              onChange={(e) =>
+                void act(async () =>
+                  onPipeline(
+                    await window.eyeris.setParallelJobs(
+                      e.target.value === "auto"
+                        ? "auto"
+                        : Number(e.target.value),
+                    ),
+                  ),
+                )
+              }
+            >
+              <option value="auto">
+                Automatic ({pipeline.parallel.automatic})
+              </option>
+              {Array.from({ length: pipeline.parallel.cores }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="run-actions">
             <button
               className="button primary"
@@ -298,7 +326,11 @@ export function BatchProcessing({
           </div>
           <p className="run-note">
             {selected.length
-              ? `${plural(recordings, "recording")} in ${plural(selected.length, "job")}, processed one subject at a time.`
+              ? `${plural(recordings, "recording")} in ${plural(selected.length, "job")}, processed ${
+                  pipeline.parallel.jobs === 1
+                    ? "one subject at a time"
+                    : `up to ${pipeline.parallel.jobs} subjects at a time in separate R processes`
+                }. Each subject's runs stay in order in one process.`
               : "Select the subjects to process."}
             {!!pending.length &&
               " Setting changes apply to jobs started later."}

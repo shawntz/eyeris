@@ -15,12 +15,29 @@ import {
 } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
+import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { scanBids } from "./bids.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
+// Subjects processed at once by default: leave a core for the app and allow
+// about 2 GiB per R process, which holds a long recording several times over
+// while it is preprocessed.
+export function automaticJobs(
+  cores = availableParallelism(),
+  memory = totalmem(),
+) {
+  return Math.max(1, Math.min(8, cores - 1, Math.floor(memory / 2 ** 31)));
+}
+// Share the cores between parallel R processes. data.table and OpenMP would
+// otherwise each start threads for the whole machine.
+export function threadLimits(jobs, cores = availableParallelism()) {
+  if (jobs <= 1) return {};
+  const threads = String(Math.max(1, Math.floor(cores / jobs)));
+  return { R_DATATABLE_NUM_THREADS: threads, OMP_NUM_THREADS: threads };
+}
 // Copy the tables of a job's DuckDB database into the project's database. Tables
 // are named by subject, session, task and run, so existing tables are the same
 // published run and are kept.
@@ -73,11 +90,11 @@ const sourcePath = (r) =>
     r.name,
   );
 export class Pipeline {
-  constructor(project) {
+  constructor(project, { parallel = "auto" } = {}) {
     this.project = project;
     this.running = new Map();
     this.queue = [];
-    this.concurrency = 1;
+    this.setParallel(parallel);
     this.waiters = [];
     // The jobs queued since processing was last idle, for overall progress.
     this.batch = [];
@@ -159,6 +176,12 @@ export class Pipeline {
       ),
       queued: this.queue.map(({ id, recordings }) => ({ id, recordings })),
       batch: this.batch,
+      parallel: {
+        setting: this.parallel,
+        jobs: this.concurrency,
+        cores: availableParallelism(),
+        automatic: automaticJobs(),
+      },
       settings: this.settings(),
       importing: this.importing && {
         total: this.importing.total,
@@ -568,6 +591,21 @@ export class Pipeline {
       );
     return records;
   }
+  // How many subjects run at once, each in its own R process. A subject's runs
+  // always stay in one process, in order.
+  setParallel(setting) {
+    const cores = availableParallelism();
+    if (
+      setting !== "auto" &&
+      !(Number.isInteger(setting) && setting >= 1 && setting <= cores)
+    )
+      throw new Error(
+        `Choose automatic or from 1 to ${cores} subjects at a time.`,
+      );
+    this.parallel = setting;
+    this.concurrency = setting === "auto" ? automaticJobs() : setting;
+    this.schedule();
+  }
   get busy() {
     return this.running.size > 0 || this.queue.length > 0;
   }
@@ -648,7 +686,7 @@ export class Pipeline {
             path.join(dir, "config.json"),
           ],
           {
-            env: rEnvironment(),
+            env: { ...rEnvironment(), ...threadLimits(this.concurrency) },
             stdio: ["ignore", "pipe", "pipe"],
             windowsHide: true,
           },
