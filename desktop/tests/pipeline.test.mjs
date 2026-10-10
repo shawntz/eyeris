@@ -231,6 +231,34 @@ test(
       /already has run 02, run 03/,
     );
     assert.equal(pipeline.snapshot().recordings.length, 4);
+    // A file left by an interrupted add, with no recording, is replaced.
+    const orphan = path.join(
+      project.directory,
+      "sourcedata/sub-001/ses-01/task-memory/run-08/memory.asc",
+    );
+    await mkdir(path.dirname(orphan), { recursive: true });
+    await writeFile(orphan, "partial copy");
+    const replaced = await pipeline.addRecording(
+      { subject: "001", session: "01", task: "memory", run: "8" },
+      files[0],
+    );
+    const used = replaced.recordings.at(-1);
+    assert.equal(used.run, "08");
+    assert.deepEqual(await readFile(orphan), await readFile(demo));
+    // A recording's file is never replaced, even if its run number changed.
+    project.db
+      .prepare("UPDATE recordings SET run='09' WHERE id=?")
+      .run(used.id);
+    await assert.rejects(
+      () =>
+        pipeline.addRecording(
+          { subject: "001", session: "01", task: "memory", run: "8" },
+          files[1],
+        ),
+      { code: "EEXIST" },
+    );
+    assert.deepEqual(await readFile(orphan), await readFile(demo));
+    project.db.prepare("DELETE FROM recordings WHERE id=?").run(used.id);
     const [first, second] = state.recordings;
     const settings = {
       glassbox: {

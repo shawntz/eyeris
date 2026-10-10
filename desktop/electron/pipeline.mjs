@@ -1,6 +1,6 @@
 import { resolveRscript } from "./rscript.mjs";
 import { spawn } from "node:child_process";
-import { createWriteStream } from "node:fs";
+import { constants, createWriteStream } from "node:fs";
 import { finished } from "node:stream/promises";
 import {
   mkdir,
@@ -186,7 +186,18 @@ export class Pipeline {
       for (const row of rows) {
         const target = path.join(this.project.directory, row.file);
         await mkdir(path.dirname(target), { recursive: true });
-        await copyFile(row.original, target);
+        try {
+          await copyFile(row.original, target, constants.COPYFILE_EXCL);
+        } catch (error) {
+          // A file here that no recording uses was left by an add interrupted
+          // before it was recorded, and is replaced. A recording's file never is.
+          if (
+            error.code !== "EEXIST" ||
+            db.prepare("SELECT 1 FROM recordings WHERE file=?").get(row.file)
+          )
+            throw error;
+          await copyFile(row.original, target);
+        }
         copied.push(target);
       }
       const created = new Date().toISOString();
