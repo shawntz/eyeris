@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld(
       "demo",
       "importFiles",
       "list",
+      "setAutoExclude",
       "trace",
       "decide",
       "undo",

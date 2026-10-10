@@ -9,6 +9,10 @@ const states = ["unreviewed", "keep", "exclude"];
 // Version 2 adds BIDS session, task and run labels to epochs and allows several
 // recordings, one per run, for a subject, session and task.
 const schemaVersion = "2";
+// Automatic exclusions are recorded under this reviewer name. They apply only
+// to epochs no person has decided on, and never change a person's decision.
+export const AUTO_REVIEWER = "eyeris auto-exclude";
+const autoDefaults = { enabled: false, threshold: 25, stage: "final" };
 const digest = (text) => createHash("sha256").update(text).digest("hex");
 async function fileHash(file) {
   const hash = createHash("sha256");
@@ -179,6 +183,10 @@ export class Project {
         )
         .all()
         .map((r) => r.stage),
+      autoExclude: this.autoExclude(),
+      autoExcluded: this.db
+        .prepare("SELECT COUNT(*) AS n FROM epochs WHERE reviewer=?")
+        .get(AUTO_REVIEWER).n,
       canUndo: !!this.db
         .prepare(
           "SELECT 1 FROM actions WHERE kind='decision' AND undone=0 LIMIT 1",
@@ -236,10 +244,128 @@ export class Project {
           ),
         );
       });
-      return { duplicate: false, count: epochs.length };
+      return {
+        duplicate: false,
+        count: epochs.length,
+        autoExcluded: this.applyAutoExclude(id),
+      };
     } finally {
       await rm(temporary, { force: true });
     }
+  }
+  autoExclude() {
+    const saved = this.db
+      .prepare("SELECT value FROM metadata WHERE key='auto_exclude'")
+      .get();
+    return saved ? JSON.parse(saved.value) : { ...autoDefaults };
+  }
+  async setAutoExclude(rule) {
+    if (
+      !rule ||
+      typeof rule.enabled !== "boolean" ||
+      typeof rule.threshold !== "number" ||
+      !(rule.threshold >= 0 && rule.threshold < 100) ||
+      typeof rule.stage !== "string" ||
+      !rule.stage ||
+      rule.stage.length > 200
+    )
+      throw new Error(
+        "Enter a missing-data threshold from 0 to less than 100 percent.",
+      );
+    const value = {
+      enabled: rule.enabled,
+      threshold: rule.threshold,
+      stage: rule.stage,
+    };
+    if (value.enabled && value.stage !== "final")
+      await this.backfillStageMissing();
+    this.db
+      .prepare(
+        "INSERT INTO metadata VALUES ('auto_exclude', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      )
+      .run(JSON.stringify(value));
+    this.applyAutoExclude();
+    return this.summary();
+  }
+  // Epochs indexed by earlier versions store only the final stage's missing
+  // fraction. Compute every stage's from the source before applying a rule.
+  async backfillStageMissing() {
+    const rows = this.db
+      .prepare(
+        "SELECT id, source_id, meta FROM epochs WHERE json_type(meta, '$.stageMissing') IS NULL ORDER BY source_id",
+      )
+      .all();
+    for (const [source, epochs] of Map.groupBy(rows, (r) => r.source_id)) {
+      const metas = epochs.map((e) => JSON.parse(e.meta));
+      const fractions = await this.worker.request("missing", {
+        path: await this.sourcePath(source),
+        epochs: metas,
+      });
+      const update = this.db.prepare("UPDATE epochs SET meta=? WHERE id=?");
+      this.transaction(() =>
+        epochs.forEach((e, i) =>
+          update.run(
+            JSON.stringify({ ...metas[i], stageMissing: fractions[i] }),
+            e.id,
+          ),
+        ),
+      );
+    }
+  }
+  // Apply the missing-data rule to every epoch without a person's decision, in
+  // one source or the whole project. Epochs that no longer exceed the threshold
+  // return to unreviewed. Each change is recorded in the audit history.
+  applyAutoExclude(sourceId) {
+    const rule = this.autoExclude();
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM epochs WHERE reviewer IN ('', ?)${sourceId ? " AND source_id=?" : ""}`,
+      )
+      .all(AUTO_REVIEWER, ...(sourceId ? [sourceId] : []));
+    const now = new Date().toISOString();
+    const fields = ["status", "reason", "reviewer", "stage", "updated_at"];
+    const record = this.db.prepare(
+      "INSERT INTO actions (epoch_id, kind, before_json, after_json, at) VALUES (?, 'auto', ?, ?, ?)",
+    );
+    let excluded = 0;
+    this.transaction(() => {
+      for (const row of rows) {
+        const meta = JSON.parse(row.meta);
+        const stage = rule.stage === "final" ? meta.finalStage : rule.stage;
+        const fraction = !meta.stages.includes(stage)
+          ? null
+          : (meta.stageMissing?.[stage] ??
+            (stage === meta.finalStage ? row.missing : null));
+        const after =
+          rule.enabled && fraction !== null && fraction * 100 > rule.threshold
+            ? {
+                status: "exclude",
+                reason: `Excessive missing data: ${(fraction * 100).toFixed(1)}% of samples missing in ${stage}, above the ${rule.threshold}% automatic exclusion threshold`,
+                reviewer: AUTO_REVIEWER,
+                stage,
+                updated_at: now,
+              }
+            : row.reviewer === AUTO_REVIEWER
+              ? {
+                  status: "unreviewed",
+                  reason: "",
+                  reviewer: "",
+                  stage: "",
+                  updated_at: now,
+                }
+              : null;
+        if (after?.status === "exclude") excluded += 1;
+        if (
+          !after ||
+          (row.status === after.status && row.reason === after.reason)
+        )
+          continue;
+        const before = Object.fromEntries(fields.map((key) => [key, row[key]]));
+        this.setDecision(row.id, after);
+        record.run(row.id, JSON.stringify(before), JSON.stringify(after), now);
+      }
+    });
+    return excluded;
   }
   list(filters = {}) {
     const where = [];
@@ -330,6 +456,10 @@ export class Project {
       input.reviewer.length > 200
     )
       throw new Error("Enter a reviewer name.");
+    if (input.reviewer.trim() === AUTO_REVIEWER)
+      throw new Error(
+        "That reviewer name is reserved for automatic exclusions.",
+      );
     if (typeof input.reason !== "string" || input.reason.length > 2000)
       throw new Error("The note is too long.");
     const fields = ["status", "reason", "reviewer", "stage", "updated_at"];
@@ -408,6 +538,8 @@ export class Project {
         application: `${packageMetadata.name}/${packageMetadata.version}`,
         policy:
           "Only explicitly kept epochs are retained. Unreviewed epochs are exported separately. All stored stages and original samples are preserved.",
+        // Exclusions made by this rule have the reviewer "eyeris auto-exclude".
+        autoExclude: this.autoExclude(),
         sources,
         decisions: rows.map(({ meta, ...row }) => ({ ...row, locator: meta })),
         history: this.db.prepare("SELECT * FROM actions ORDER BY seq").all(),

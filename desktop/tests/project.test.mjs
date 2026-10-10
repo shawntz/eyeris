@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { Project } from "../electron/project.mjs";
+import { Project, AUTO_REVIEWER } from "../electron/project.mjs";
 import { RWorker } from "../electron/r-worker.mjs";
 import packageMetadata from "../package.json" with { type: "json" };
 
@@ -299,4 +299,166 @@ test("real eyeris pipeline output can be reviewed", async (t) => {
     assert.equal(trace.time.length, trace.signal.length);
     assert.ok(trace.samples > 0);
   }
+});
+
+test("epochs missing too much data are excluded automatically, with the reason", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-auto-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  project = await Project.open(path.join(dir, "auto.eyeris"), worker, true);
+  const imported = await project.importFile(
+    path.join(dir, "sub-005_task-memory.rds"),
+  );
+  assert.equal(imported.autoExcluded, 0, "the rule is off by default");
+  const [partial, clean, mostly] = project.list().rows;
+  assert.ok(
+    Math.abs(partial.meta.stageMissing.pupil_raw - 3700 / 12000) < 1e-12,
+  );
+  assert.ok(
+    Math.abs(partial.meta.stageMissing.pupil_raw_lpfilt - 700 / 12000) < 1e-12,
+  );
+  const byId = (id) => project.list().rows.find((e) => e.id === id);
+  // A reviewer's decision is never changed by the rule.
+  project.decision({
+    id: mostly.id,
+    status: "keep",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "",
+  });
+  let summary = await project.setAutoExclude({
+    enabled: true,
+    threshold: 25,
+    stage: "final",
+  });
+  assert.equal(summary.autoExcluded, 0, "5.8% at the final stage is kept");
+  assert.equal(byId(mostly.id).status, "keep");
+  // Measured before interpolation, the first epoch is 30.8% missing.
+  summary = await project.setAutoExclude({
+    enabled: true,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  assert.equal(summary.autoExcluded, 1);
+  assert.deepEqual(summary.autoExclude, {
+    enabled: true,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  let excluded = byId(partial.id);
+  assert.equal(excluded.status, "exclude");
+  assert.equal(excluded.reviewer, AUTO_REVIEWER);
+  assert.equal(excluded.stage, "pupil_raw");
+  assert.equal(
+    excluded.reason,
+    "Excessive missing data: 30.8% of samples missing in pupil_raw, above the 25% automatic exclusion threshold",
+  );
+  assert.equal(byId(clean.id).status, "unreviewed");
+  // Undo applies to reviewers' decisions, not automatic ones.
+  assert.equal(project.undo().id, mostly.id);
+  assert.equal(byId(mostly.id).status, "unreviewed");
+  assert.equal(byId(partial.id).status, "exclude");
+  // Raising the threshold returns epochs below it to unreviewed.
+  summary = await project.setAutoExclude({
+    enabled: true,
+    threshold: 40,
+    stage: "pupil_raw",
+  });
+  assert.equal(byId(partial.id).status, "unreviewed");
+  assert.equal(byId(partial.id).reviewer, "");
+  assert.equal(byId(mostly.id).status, "exclude");
+  assert.match(byId(mostly.id).reason, /60\.0% of samples missing/);
+  // A reviewer who marks an automatic exclusion unreviewed overrides it.
+  project.decision({
+    id: mostly.id,
+    status: "unreviewed",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "",
+  });
+  await project.setAutoExclude({
+    enabled: true,
+    threshold: 40,
+    stage: "pupil_raw",
+  });
+  assert.equal(byId(mostly.id).status, "unreviewed");
+  assert.equal(byId(mostly.id).reviewer, "Tester");
+  // New epochs are checked as they are imported.
+  await project.setAutoExclude({ enabled: true, threshold: 0, stage: "final" });
+  assert.equal(
+    (await project.importFile(path.join(dir, "sub-001_task-memory.rds")))
+      .autoExcluded,
+    3,
+  );
+  // Epochs indexed before per-stage fractions were stored are recomputed.
+  project.db
+    .prepare("UPDATE epochs SET meta = json_remove(meta, '$.stageMissing')")
+    .run();
+  summary = await project.setAutoExclude({
+    enabled: true,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  assert.equal(byId(partial.id).status, "exclude");
+  assert.ok(byId(clean.id).meta.stageMissing.pupil_raw > 0);
+  // Turning the rule off restores every automatic exclusion.
+  summary = await project.setAutoExclude({
+    enabled: false,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  assert.equal(summary.autoExcluded, 0);
+  assert.equal(summary.counts.exclude, 0);
+  for (const bad of [100, -1, Number.NaN])
+    await assert.rejects(
+      () =>
+        project.setAutoExclude({
+          enabled: true,
+          threshold: bad,
+          stage: "final",
+        }),
+      /threshold/,
+    );
+  assert.throws(
+    () =>
+      project.decision({
+        id: clean.id,
+        status: "keep",
+        stage: "final",
+        reviewer: AUTO_REVIEWER,
+        reason: "",
+      }),
+    /reserved/,
+  );
+  const history = project.db
+    .prepare("SELECT kind FROM actions WHERE kind = 'auto'")
+    .all();
+  assert.ok(history.length >= 4, "automatic changes are audited");
+  await project.setAutoExclude({
+    enabled: true,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  const exportParent = path.join(dir, "exports");
+  await mkdir(exportParent);
+  const result = await project.export(exportParent);
+  const manifest = JSON.parse(
+    await readFile(path.join(result.directory, "manifest.json"), "utf8"),
+  );
+  assert.deepEqual(manifest.autoExclude, {
+    enabled: true,
+    threshold: 25,
+    stage: "pupil_raw",
+  });
+  assert.ok(
+    manifest.decisions.some(
+      (d) => d.reviewer === AUTO_REVIEWER && d.status === "exclude",
+    ),
+  );
 });

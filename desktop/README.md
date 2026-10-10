@@ -175,6 +175,23 @@ otherwise, and when the name has no run, block numbers name the runs.
   (including session, task and run) and `manifest.json` with audit history. Only explicit keep decisions enter the
   retained data. Existing exports are never overwritten.
 
+**Automatic exclusion** excludes epochs missing more than a chosen percentage of
+samples, measured at the final stage or at any stored stage (for example the raw
+signal, before interpolation fills gaps). Set it under **Automatic exclusion** in
+review, or with the epoch options before processing. The rule applies to every
+epoch no reviewer has decided on: when it is changed, and to new epochs as they
+are indexed. Epochs that no longer exceed the threshold return to unreviewed.
+Each exclusion is recorded with the reviewer `eyeris auto-exclude` and a reason
+such as `Excessive missing data: 30.8% of samples missing in pupil_raw, above
+the 25% automatic exclusion threshold`, which appears as the exclusion reason and
+note in the decision panel and in `decisions.csv`. Every automatic change is in
+the export's audit history, and the rule is saved in `manifest.json`. A
+reviewer's decision, including marking an epoch unreviewed, is never changed by
+the rule, and undo applies only to reviewers' decisions. Missing fractions for
+every stage are stored when epochs are indexed; epochs indexed by earlier
+versions are recomputed from their source the first time a non-final stage is
+chosen.
+
 Decisions apply to an individual epoch across all stored stages, not other epoch
 labels or the other eye. Epoch identities combine a source SHA-256 with eye,
 label, block and row bounds. Repeated trial numbers and overlapping windows remain

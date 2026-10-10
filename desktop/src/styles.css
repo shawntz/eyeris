@@ -987,6 +987,65 @@ main {
   font-style: normal;
   font-size: 13px;
 }
+.auto-exclude {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 14px;
+  margin-top: 6px;
+}
+.auto-exclude .check-label {
+  margin: 0;
+}
+.auto-exclude label {
+  font-size: 11px;
+}
+.auto-exclude small {
+  color: #6f6f6f;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.auto-exclude-error {
+  color: #9a3119;
+  font-size: 11px;
+}
+.auto-exclude-panel {
+  margin-bottom: 14px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.auto-exclude-panel > summary {
+  cursor: pointer;
+  color: #555;
+}
+/* One row in review, so the signal keeps its height. */
+.auto-exclude-panel .auto-exclude {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px 18px;
+  border-top: 0;
+  padding-top: 10px;
+}
+.auto-exclude-panel .auto-exclude .check-label {
+  padding-bottom: 8px;
+}
+.auto-exclude-panel .paired-fields label:first-child {
+  flex: 0 0 120px;
+}
+.auto-exclude-panel .paired-fields label:last-child {
+  flex: 0 0 230px;
+}
+.auto-exclude-panel input,
+.auto-exclude-panel select {
+  font-size: 12px;
+  padding: 6px 9px;
+}
+.auto-exclude-panel small,
+.auto-exclude-panel .auto-exclude-error {
+  flex-basis: 100%;
+}
 .filter-bar {
   display: flex;
   gap: 12px;

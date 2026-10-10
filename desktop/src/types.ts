@@ -14,6 +14,7 @@ export interface EpochMeta {
   samples: number;
   duration: number;
   missing: number;
+  stageMissing?: Record<string, number>;
   blocks?: number | null;
   limits: number[] | null;
 }
@@ -46,8 +47,17 @@ export interface Summary {
   participants: string[];
   runs: string[];
   stages: string[];
+  autoExclude: AutoExclude;
+  autoExcluded: number;
   canUndo: boolean;
 }
+// Exclude unreviewed epochs missing more than `threshold` percent of samples.
+export interface AutoExclude {
+  enabled: boolean;
+  threshold: number;
+  stage: string;
+}
+export const AUTO_REVIEWER = "eyeris auto-exclude";
 export interface Trace {
   time: number[];
   signal: (number | null)[];
@@ -207,10 +217,12 @@ interface API {
     results: {
       file: string;
       count?: number;
+      autoExcluded?: number;
       duplicate?: boolean;
       error?: string;
     }[];
   } | null>;
+  setAutoExclude(rule: AutoExclude): Promise<Summary>;
   list(filters: Filters): Promise<Queue>;
   trace(id: string, stage: string, range?: [number, number]): Promise<Trace>;
   decide(input: {

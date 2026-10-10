@@ -101,12 +101,15 @@ export function PipelineSettingsPanel({
   setSettings,
   disabled,
   onError,
+  epochExtras,
   children,
 }: {
   settings: PipelineSettings;
   setSettings: Dispatch<SetStateAction<PipelineSettings>>;
   disabled: boolean;
   onError: (message: string) => void;
+  // Shown with the epoch options, such as the automatic exclusion rule.
+  epochExtras?: ReactNode;
   children: ReactNode;
 }) {
   const [openStep, setOpenStep] = useState("");
@@ -423,6 +426,7 @@ export function PipelineSettingsPanel({
                   </div>
                 </>
               )}
+              {epochExtras}
             </div>
           )}
           <div className="output-options">

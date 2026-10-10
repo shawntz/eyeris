@@ -258,6 +258,7 @@ const methods = {
     }
     return { project: project.summary(), results };
   },
+  setAutoExclude: (rule) => requireProject().setAutoExclude(rule),
   list: (filters) => requireProject().list(filters),
   trace: (id, stage, range) => requireProject().trace(id, stage, range),
   decide: (input) => {

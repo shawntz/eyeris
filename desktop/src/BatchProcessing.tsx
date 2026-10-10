@@ -4,6 +4,7 @@ import {
   useState,
   type Dispatch,
   type SetStateAction,
+  type ReactNode,
 } from "react";
 import { LoaderCircle, Play, Square } from "lucide-react";
 import type { PipelineSettings, PipelineState, Recording } from "./types";
@@ -25,6 +26,7 @@ export function BatchProcessing({
   onReview,
   onSubject,
   onError,
+  epochExtras,
 }: {
   pipeline: PipelineState;
   settings: PipelineSettings;
@@ -35,6 +37,7 @@ export function BatchProcessing({
   onReview: () => void;
   onSubject: (id: string) => void;
   onError: (message: string) => void;
+  epochExtras?: ReactNode;
 }) {
   const latestJob = (id: string) =>
     pipeline.jobs.find((j) => j.recordings.includes(id));
@@ -265,6 +268,7 @@ export function BatchProcessing({
           setSettings={setSettings}
           disabled={busy}
           onError={onError}
+          epochExtras={epochExtras}
         >
           <label className="parallel-field">
             Subjects at a time

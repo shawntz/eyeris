@@ -28,6 +28,7 @@ import type {
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
+import { AutoExcludeControl } from "./AutoExcludeControl";
 // The subject list entry that opens batch processing for every subject.
 const ALL = "*";
 const megabytes = (n: number) => `${(n / 1e6).toFixed(n < 1e7 ? 1 : 0)} MB`;
@@ -145,6 +146,9 @@ export function ProjectWorkspace({
         .then(setLog)
         .catch(() => {});
   }, [latest?.id, latest?.status, running]);
+  const exclusion = (
+    <AutoExcludeControl project={project} onProject={onProject} />
+  );
   async function act(fn: () => Promise<void>) {
     if (busy) return;
     setBusy(true);
@@ -428,6 +432,7 @@ export function ProjectWorkspace({
               onReview={() => onReview()}
               onSubject={setSubject}
               onError={setError}
+              epochExtras={exclusion}
             />
           ) : (
             <>
@@ -604,6 +609,7 @@ export function ProjectWorkspace({
                   setSettings={setSettings}
                   disabled={busy}
                   onError={setError}
+                  epochExtras={exclusion}
                 >
                   <div className="run-actions">
                     {running ? (

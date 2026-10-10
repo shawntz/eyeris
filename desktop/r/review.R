@@ -34,6 +34,9 @@ review_index <- function(x) {
           }
           final <- tail(stages, 1)
           ys <- df[[final]][a:b]
+          # Missing samples per stored stage, for automatic exclusion rules.
+          stage_missing <- lapply(stages, function(s) mean(!is.finite(df[[s]][a:b])))
+          names(stage_missing) <- stages
           out[[length(out) + 1L]] <- list(
             key = paste(eye, label, block, a, b, sep = "/"), eye = eye,
             label = label, block = block, start = a, end = b, ordinal = i,
@@ -41,7 +44,7 @@ review_index <- function(x) {
             event = value(c("matched_event", "start_matched_event", "start_msg", "text_unique"), paste("Epoch", i)),
             stages = unname(as.list(stages)), finalStage = final,
             samples = b - a + 1L, duration = df$timebin[b] - df$timebin[a],
-            missing = mean(!is.finite(ys)), blocks = blocks,
+            missing = mean(!is.finite(ys)), stageMissing = stage_missing, blocks = blocks,
             limits = object[[label]]$info[[block]]$epoch_limits
           )
         }
@@ -50,6 +53,17 @@ review_index <- function(x) {
   }
   if (!length(out)) stop("No nonempty epoch tables found in this RDS.")
   out
+}
+
+# Recompute missing fractions per stage for epochs indexed before they were stored.
+review_missing <- function(x, epochs) {
+  lapply(epochs, function(epoch) {
+    df <- review_frame(x, epoch)
+    stages <- unlist(epoch$stages)
+    out <- lapply(stages, function(s) mean(!is.finite(df[[s]])))
+    names(out) <- stages
+    out
+  })
 }
 
 review_frame <- function(x, epoch) {

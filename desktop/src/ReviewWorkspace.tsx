@@ -24,8 +24,10 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { TracePlot } from "./TracePlot";
+import { AutoExcludeControl } from "./AutoExcludeControl";
 import {
   stageName,
+  AUTO_REVIEWER,
   type Epoch,
   type Summary,
   type Trace,
@@ -225,8 +227,12 @@ export function ReviewWorkspace({
         .map((r) => `${r.file}: ${r.error}`);
       if (errors.length) setError(errors.join("\n"));
       const count = result.results.reduce((n, r) => n + (r.count || 0), 0);
+      const auto = result.results.reduce(
+        (n, r) => n + (r.autoExcluded || 0),
+        0,
+      );
       setNotice(
-        `${number(count)} epochs imported.${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
+        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
       );
     });
   }
@@ -503,6 +509,22 @@ export function ReviewWorkspace({
                   <small>Never automatically kept</small>
                 </div>
               </div>
+              <details className="auto-exclude-panel">
+                <summary>
+                  Automatic exclusion ·{" "}
+                  {project.autoExclude.enabled
+                    ? `more than ${project.autoExclude.threshold}% missing in ${project.autoExclude.stage === "final" ? "the final stage" : project.autoExclude.stage} · ${number(project.autoExcluded)} excluded`
+                    : "off"}
+                </summary>
+                <AutoExcludeControl
+                  project={project}
+                  disabled={!!busy}
+                  onProject={(next) => {
+                    setProject(next);
+                    refresh();
+                  }}
+                />
+              </details>
               <div className="filter-bar">
                 <label className="search">
                   <Search size={16} />
@@ -607,6 +629,7 @@ export function ReviewWorkspace({
                             {e.run ? `Run ${e.run}` : e.block} ·{" "}
                             {e.label.replace("epoch_", "")}
                             {e.eye !== "main" ? ` · ${e.eye}` : ""}
+                            {e.reviewer === AUTO_REVIEWER && " · auto"}
                           </small>
                         </span>
                         <ChevronRight size={14} />
