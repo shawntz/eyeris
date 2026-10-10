@@ -263,6 +263,8 @@ export interface PipelineState {
     id: string;
     root: string;
     added: number;
+    // Earlier recordings of macOS metadata files replaced by their real files.
+    replaced: number;
     subjects: number;
     skipped: { file: string; reason: string }[];
     cancelled: boolean;

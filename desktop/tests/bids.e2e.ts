@@ -27,6 +27,14 @@ test("a BIDS folder is imported and every subject processed in one batch", async
   ]) {
     await mkdir(path.dirname(path.join(root, file)), { recursive: true });
     await copyFile(asc, path.join(root, file));
+    // macOS writes metadata files like these on drives such as exFAT.
+    await writeFile(
+      path.join(
+        root,
+        file.replace(/[^/]+$/, (name) => `._${name}`),
+      ),
+      Buffer.from([0x00, 0x05, 0x16, 0x07, 0x00, 0x02, 0x00, 0x00]),
+    );
     // Trial-level behavior for each run, beside the eye-tracking data.
     const beh = file.replace("/eye/", "/beh/").replace("_eye.asc", "_beh.tsv");
     await mkdir(path.dirname(path.join(root, beh)), { recursive: true });
@@ -36,6 +44,11 @@ test("a BIDS folder is imported and every subject processed in one batch", async
         Array.from({ length: 40 }, (_, i) => `${i}\t${i % 2}`).join("\n"),
     );
   }
+  // A recording without a task- entity is listed as skipped.
+  await writeFile(
+    path.join(root, "sub-002/ses-01/eye/sub-002_ses-01_eye.asc"),
+    "",
+  );
   const app = await electron.launch({ args: ["."], cwd: process.cwd(), env });
   try {
     const page = await app.firstWindow();
@@ -69,6 +82,13 @@ test("a BIDS folder is imported and every subject processed in one batch", async
         .getByRole("button", { name: /^sub-00[12]/ }),
     ).toHaveCount(2);
     await expect(page.getByRole("heading", { name: "sub-001" })).toBeVisible();
+    await page.getByText("1 file skipped").click();
+    await expect(
+      page.getByText(
+        /sub-002_ses-01_eye\.asc: the filename has no task- entity/,
+      ),
+    ).toBeInViewport({ ratio: 1 });
+    await expect(page.locator(".recordings-table")).not.toContainText("._");
     await expect(page.locator(".recordings-table tbody tr")).toHaveCount(2);
     await expect(
       page.getByRole("button", { name: "Run pipeline on 2 recordings" }),

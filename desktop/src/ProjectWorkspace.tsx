@@ -353,7 +353,7 @@ export function ProjectWorkspace({
           )}
           {imported && !importing && (
             <div
-              className={`message ${imported.error ? "error" : "notice"}`}
+              className={`message import-summary ${imported.error ? "error" : "notice"}`}
               role="status"
             >
               <div>
@@ -363,12 +363,14 @@ export function ProjectWorkspace({
                     : imported.error
                       ? "Import stopped. "
                       : ""}
-                  Added {imported.added} recording
-                  {imported.added === 1 ? "" : "s"}
-                  {imported.added
-                    ? ` for ${imported.subjects} subject${imported.subjects === 1 ? "" : "s"}`
-                    : ""}
-                  .
+                  {(!!imported.added || !imported.replaced) &&
+                    `Added ${imported.added} recording${imported.added === 1 ? "" : "s"}${
+                      imported.added
+                        ? ` for ${imported.subjects} subject${imported.subjects === 1 ? "" : "s"}`
+                        : ""
+                    }. `}
+                  {!!imported.replaced &&
+                    `Replaced ${imported.replaced} recording${imported.replaced === 1 ? "" : "s"} imported from macOS metadata files (._*) with ${imported.replaced === 1 ? "its" : "their"} EyeLink file${imported.replaced === 1 ? "" : "s"}.`}
                 </strong>
                 {imported.error && <p>{imported.error}</p>}
                 {imported.subjects > 1 && subject !== ALL && (

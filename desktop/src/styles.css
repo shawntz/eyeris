@@ -643,9 +643,16 @@ main {
   margin-top: 6px;
   font-size: 11px;
 }
+.message.import-summary {
+  max-height: none;
+  overflow: visible;
+}
 .message details ul {
-  margin: 6px 0 0 16px;
+  margin: 6px 0 0;
+  padding-left: 16px;
   line-height: 1.6;
+  max-height: 220px;
+  overflow: auto;
 }
 .recordings-section {
   border-top: 1px solid #d5d5d5;
