@@ -104,31 +104,23 @@ review_trace <- function(x, epoch, stage, range = NULL) {
        missing = mean(!is.finite(df[[stage]])), stage = stage)
 }
 
+# Write each table to <status>/<file>.rds and .csv. `file` is a relative path
+# chosen by the app; only statuses with epochs are written.
 review_export_source <- function(x, epochs, destination) {
-  groups <- split(epochs, vapply(epochs, function(e) paste(e$eye, e$label, e$block, sep = "/"), character(1)))
-  for (key in names(groups)) {
-    group <- groups[[key]]
-    for (status in c("keep", "exclude", "unreviewed")) {
-      selected <- Filter(function(e) identical(e$status, status), group)
-      frames <- lapply(selected, function(e) {
-        df <- review_frame(x, e)
-        if (".review_epoch_id" %in% names(df)) stop("Reserved column .review_epoch_id already exists.")
-        df$.review_epoch_id <- e$id
-        df
-      })
-      if (length(frames)) {
-        df <- do.call(rbind, frames)
-      } else {
-        df <- review_frame(x, group[[1]])[FALSE, , drop = FALSE]
-        df$.review_epoch_id <- character(0)
-      }
-      folder <- file.path(destination, switch(status, keep = "retained", exclude = "excluded", unreviewed = "unreviewed"))
-      dir.create(folder, recursive = TRUE, showWarnings = FALSE)
-      # Encode all non-portable bytes; avoid collisions from lossy sanitization.
-      safe <- paste(vapply(charToRaw(enc2utf8(key)), function(b) sprintf("%02x", as.integer(b)), character(1)), collapse = "")
-      saveRDS(df, file.path(folder, paste0(safe, ".rds")))
-      utils::write.csv(df, file.path(folder, paste0(safe, ".csv")), row.names = FALSE, na = "")
-    }
+  groups <- split(epochs, vapply(epochs, function(e) paste(e$status, e$file, sep = "\r"), character(1)))
+  for (group in groups) {
+    frames <- lapply(group, function(e) {
+      df <- review_frame(x, e)
+      if (".review_epoch_id" %in% names(df)) stop("Reserved column .review_epoch_id already exists.")
+      df$.review_epoch_id <- e$id
+      df
+    })
+    df <- do.call(rbind, frames)
+    folder <- switch(group[[1]]$status, keep = "retained", exclude = "excluded", unreviewed = "unreviewed")
+    file <- file.path(destination, folder, group[[1]]$file)
+    dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+    saveRDS(df, paste0(file, ".rds"))
+    utils::write.csv(df, paste0(file, ".csv"), row.names = FALSE, na = "")
   }
   TRUE
 }

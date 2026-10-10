@@ -49,6 +49,23 @@ export interface Summary {
   stages: string[];
   autoExclude: AutoExclude;
   autoExcluded: number;
+  // Review progress for each participant.
+  progress: {
+    participant: string;
+    total: number;
+    keep: number;
+    exclude: number;
+    unreviewed: number;
+  }[];
+  // Where review was last left.
+  position: { epochId: string | null; filters: Filters } | null;
+  exporting: { total: number; completed: number; current: string } | null;
+  lastExport: {
+    id: string;
+    directory: string | null;
+    counts: Summary["counts"] | null;
+    error: string | null;
+  } | null;
   canUndo: boolean;
 }
 // Exclude unreviewed epochs missing more than `threshold` percent of samples.
@@ -233,10 +250,16 @@ interface API {
     reviewer: string;
   }): Promise<{ epoch: Epoch; project: Summary }>;
   undo(): Promise<{ epoch: Epoch | null; project: Summary }>;
-  exportData(): Promise<{
-    directory: string;
-    counts: Summary["counts"];
-  } | null>;
+  // Starts a background export; progress is in the project summary.
+  exportData(): Promise<Summary | null>;
+  nextUnreviewed(
+    filters: Filters,
+    fromId: string | null,
+  ): Promise<{ id: string; offset: number } | null>;
+  saveReviewPosition(position: {
+    epochId: string | null;
+    filters: Filters;
+  }): Promise<void>;
 }
 declare global {
   interface Window {

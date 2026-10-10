@@ -171,9 +171,31 @@ otherwise, and when the name has no run, block numbers name the runs.
 - `K` keeps, `X` excludes, arrow keys navigate, and `U` or Cmd/Ctrl-Z undoes the last
   decision outside text inputs. Decisions, reviewer, reason, and inspected stage
   are saved to SQLite immediately. Auto-advance can be disabled.
-- Export creates retained, excluded, and unreviewed tables, plus `decisions.csv`
-  (including session, task and run) and `manifest.json` with audit history. Only explicit keep decisions enter the
-  retained data. Existing exports are never overwritten.
+- Decisions are saved as they are made, and the queue position is saved with the
+  project, so reopening it continues where review was left. Without a saved
+  position, review opens at the first unreviewed epoch. **Next unreviewed** (`N`)
+  jumps to the next epoch without a decision in queue order. **Progress by
+  subject** shows each participant's reviewed, kept, excluded and remaining
+  epochs, with a link to continue that participant.
+- **Export review** exports every subject at once, in the background with a
+  progress bar, to a new folder (existing exports are never overwritten). It can
+  be run at any time; unreviewed epochs are exported separately and only explicit
+  keep decisions enter the retained data. The export contains:
+
+  ```text
+  eyeris-review-<time>/
+    retained/sub-001/ses-01/sub-001_ses-01_task-memory_run-01_epoch-probe.csv  (and .rds)
+    excluded/…
+    unreviewed/…
+    decisions.csv    # every epoch: decision, reason, reviewer and table file
+    summary.csv      # counts by subject, session, task and run
+    manifest.json    # sources, decisions, audit history, automatic exclusion rule
+    README.txt
+  ```
+
+  There is one table per run, epoch label and eye (`_eye-left` when both eyes
+  were processed). A run indexed from two sources, such as a recording processed
+  twice, adds `_source-<sha256 prefix>` to tell them apart.
 
 **Automatic exclusion** excludes epochs missing more than a chosen percentage of
 samples, measured at the final stage or at any stored stage (for example the raw

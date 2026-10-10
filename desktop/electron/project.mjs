@@ -46,6 +46,49 @@ function entities(name) {
     run: runLabel(entity(name, "run")),
   };
 }
+const safe = (value) => String(value).replace(/[^a-zA-Z0-9]/g, "") || "x";
+// Readable, BIDS-style paths for exported tables: one table per source run,
+// epoch label and eye, in sub-<label>/[ses-<label>/]. A run indexed from two
+// sources (processed twice) is distinguished by its source.
+function exportPaths(rows) {
+  const paths = new Map();
+  for (const r of rows) {
+    const key = `${r.source_id}/${r.eye}/${r.label}/${r.block}`;
+    if (paths.has(key)) continue;
+    const folder = [
+      `sub-${safe(r.participant)}`,
+      ...(r.session ? [`ses-${safe(r.session)}`] : []),
+    ].join("/");
+    const name = [
+      `sub-${safe(r.participant)}`,
+      r.session && `ses-${safe(r.session)}`,
+      r.task && `task-${safe(r.task)}`,
+      r.run
+        ? `run-${safe(r.run)}`
+        : `block-${safe(r.block.replace(/^block_/, ""))}`,
+      `epoch-${safe(r.label.replace(/^epoch_/, ""))}`,
+      r.eye !== "main" && `eye-${safe(r.eye)}`,
+    ]
+      .filter(Boolean)
+      .join("_");
+    paths.set(key, { source: r.source_id, file: `${folder}/${name}` });
+  }
+  const sources = new Map();
+  for (const p of paths.values())
+    sources.set(p.file, new Set([...(sources.get(p.file) ?? []), p.source]));
+  const used = new Set();
+  for (const [key, p] of paths) {
+    let file =
+      sources.get(p.file).size > 1
+        ? `${p.file}_source-${p.source.slice(0, 12)}`
+        : p.file;
+    // Labels that differ only in characters removed above keep distinct files.
+    if (used.has(file)) file += `_key-${digest(key).slice(0, 8)}`;
+    used.add(file);
+    paths.set(key, file);
+  }
+  return paths;
+}
 const csv = (rows) =>
   rows
     .map((row) =>
@@ -183,6 +226,19 @@ export class Project {
         )
         .all()
         .map((r) => r.stage),
+      progress: this.db
+        .prepare(
+          "SELECT participant, COUNT(*) AS total, SUM(status='keep') AS keep, SUM(status='exclude') AS exclude, SUM(status='unreviewed') AS unreviewed FROM epochs GROUP BY participant ORDER BY participant",
+        )
+        .all()
+        .map((row) => ({ ...row })),
+      position: this.reviewPosition(),
+      exporting: this.exporting && {
+        total: this.exporting.total,
+        completed: this.exporting.completed,
+        current: this.exporting.current,
+      },
+      lastExport: this.lastExport ?? null,
       autoExclude: this.autoExclude(),
       autoExcluded: this.db
         .prepare("SELECT COUNT(*) AS n FROM epochs WHERE reviewer=?")
@@ -367,7 +423,7 @@ export class Project {
     });
     return excluded;
   }
-  list(filters = {}) {
+  query(filters = {}) {
     const where = [];
     const args = [];
     if (filters.status && filters.status !== "all") {
@@ -378,11 +434,11 @@ export class Project {
     }
     if (filters.participant) {
       where.push("participant = ?");
-      args.push(filters.participant);
+      args.push(String(filters.participant));
     }
     if (filters.run) {
       where.push("run = ?");
-      args.push(filters.run);
+      args.push(String(filters.run));
     }
     if (filters.search) {
       const search = String(filters.search).slice(0, 200);
@@ -395,14 +451,20 @@ export class Project {
       where.push(
         "EXISTS (SELECT 1 FROM json_each(epochs.meta, '$.stages') WHERE value=?)",
       );
-      args.push(filters.stage);
+      args.push(String(filters.stage));
     }
-    const sql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+    return {
+      sql: where.length ? `WHERE ${where.join(" AND ")}` : "",
+      args,
+      sort:
+        filters.sort === "missing"
+          ? "missing DESC, source_id, label, block, ordinal"
+          : "participant, session, task, length(run), run, source_id, label, block, ordinal",
+    };
+  }
+  list(filters = {}) {
+    const { sql, args, sort } = this.query(filters);
     const offset = Math.max(0, Math.trunc(Number(filters.offset) || 0));
-    const sort =
-      filters.sort === "missing"
-        ? "missing DESC, source_id, label, block, ordinal"
-        : "participant, session, task, length(run), run, source_id, label, block, ordinal";
     const total = this.db
       .prepare(`SELECT COUNT(*) AS n FROM epochs ${sql}`)
       .get(...args).n;
@@ -411,6 +473,44 @@ export class Project {
       .all(...args, offset)
       .map((row) => this.deserialize(row));
     return { rows, total, offset };
+  }
+  // The next unreviewed epoch after `fromId` in queue order, wrapping around,
+  // with the offset of its page.
+  nextUnreviewed(filters = {}, fromId = null) {
+    const { sql, args, sort } = this.query(filters);
+    const rows = this.db
+      .prepare(`SELECT id, status FROM epochs ${sql} ORDER BY ${sort}`)
+      .all(...args);
+    const start = rows.findIndex((r) => r.id === fromId);
+    for (let step = 1; step <= rows.length; step++) {
+      const i = (start + step) % rows.length;
+      if (rows[i].status === "unreviewed")
+        return { id: rows[i].id, offset: Math.floor(i / 80) * 80 };
+    }
+    return null;
+  }
+  // Where review was last left, so a reopened project continues from there.
+  reviewPosition() {
+    const saved = this.db
+      .prepare("SELECT value FROM metadata WHERE key='review_position'")
+      .get();
+    return saved ? JSON.parse(saved.value) : null;
+  }
+  saveReviewPosition(position) {
+    const value = JSON.stringify(position);
+    if (
+      !position ||
+      typeof position !== "object" ||
+      (position.epochId !== null && typeof position.epochId !== "string") ||
+      typeof position.filters !== "object" ||
+      value.length > 5000
+    )
+      throw new Error("Invalid review position.");
+    this.db
+      .prepare(
+        "INSERT INTO metadata VALUES ('review_position', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      )
+      .run(value);
   }
   deserialize(row) {
     return { ...row, meta: JSON.parse(row.meta) };
@@ -520,7 +620,25 @@ export class Project {
     });
     return this.epoch(action.epoch_id);
   }
+  // Export in the background, reporting progress in the summary.
+  startExport(destination) {
+    if (this.exporting) throw new Error("An export is already running.");
+    if (!this.db.prepare("SELECT 1 FROM epochs LIMIT 1").get())
+      throw new Error("Import epochs before exporting.");
+    this.exporting = { total: 0, completed: 0, current: "" };
+    this.exporting.done = this.export(destination)
+      .then(
+        (result) => ({ ...result, error: null }),
+        (error) => ({ directory: null, counts: null, error: error.message }),
+      )
+      .then((result) => {
+        this.lastExport = { id: randomUUID(), ...result };
+        this.exporting = null;
+      });
+    return this.summary();
+  }
   async export(destination) {
+    const progress = this.exporting ?? {};
     const rows = this.db
       .prepare("SELECT * FROM epochs ORDER BY source_id, label, block, ordinal")
       .all()
@@ -532,8 +650,11 @@ export class Project {
     await mkdir(staging, { recursive: true });
     try {
       const sources = this.summary().sources;
+      const paths = exportPaths(rows);
+      const fileOf = (r) =>
+        paths.get(`${r.source_id}/${r.eye}/${r.label}/${r.block}`);
       const manifest = {
-        schemaVersion: 1,
+        schemaVersion: 2,
         exportedAt: new Date().toISOString(),
         application: `${packageMetadata.name}/${packageMetadata.version}`,
         policy:
@@ -541,7 +662,11 @@ export class Project {
         // Exclusions made by this rule have the reviewer "eyeris auto-exclude".
         autoExclude: this.autoExclude(),
         sources,
-        decisions: rows.map(({ meta, ...row }) => ({ ...row, locator: meta })),
+        decisions: rows.map(({ meta, ...row }) => ({
+          ...row,
+          file: fileOf(row),
+          locator: meta,
+        })),
         history: this.db.prepare("SELECT * FROM actions ORDER BY seq").all(),
       };
       await writeFile(
@@ -565,26 +690,95 @@ export class Project {
         "reviewer",
         "stage",
         "updated_at",
+        "file",
       ];
       await writeFile(
         path.join(staging, "decisions.csv"),
-        csv([cols, ...rows.map((r) => cols.map((c) => r[c]))]),
+        csv([
+          cols,
+          ...rows.map((r) =>
+            cols.map((c) => (c === "file" ? fileOf(r) : r[c])),
+          ),
+        ]),
       );
+      // Counts per subject, session, task and run, to check review is complete.
+      const groups = Map.groupBy(rows, (r) =>
+        JSON.stringify([r.participant, r.session, r.task, r.run]),
+      );
+      await writeFile(
+        path.join(staging, "summary.csv"),
+        csv([
+          [
+            "participant",
+            "session",
+            "task",
+            "run",
+            "epochs",
+            "kept",
+            "excluded",
+            "unreviewed",
+            "excluded_automatically",
+          ],
+          ...[...groups]
+            .sort(([a], [b]) =>
+              a.localeCompare(b, undefined, { numeric: true }),
+            )
+            .map(([key, group]) => [
+              ...JSON.parse(key),
+              group.length,
+              group.filter((r) => r.status === "keep").length,
+              group.filter((r) => r.status === "exclude").length,
+              group.filter((r) => r.status === "unreviewed").length,
+              group.filter((r) => r.reviewer === AUTO_REVIEWER).length,
+            ]),
+        ]),
+      );
+      progress.total = sources.length;
       for (const source of sources) {
+        progress.current = source.name;
         const epochs = rows
           .filter((r) => r.source_id === source.id)
-          .map((r) => ({ ...r.meta, id: r.id, status: r.status }));
+          .map((r) => ({
+            ...r.meta,
+            id: r.id,
+            status: r.status,
+            file: fileOf(r),
+          }));
         // Recheck before exporting even when this source was previously viewed.
         this.verified.delete(source.id);
         await this.worker.request("export", {
           path: await this.sourcePath(source.id),
           epochs,
-          destination: path.join(staging, source.id),
+          destination: staging,
         });
+        progress.completed = (progress.completed ?? 0) + 1;
       }
       await writeFile(
         path.join(staging, "README.txt"),
-        "eyeris review export\n\nEach source SHA-256 folder contains retained/, excluded/, and unreviewed/.\nEach table is saved as CSV and RDS, preserving all original columns and samples.\n.review_epoch_id joins samples to decisions.csv and manifest.json.\nTable filenames hex-encode eye/epoch-label/block to avoid naming collisions.\nThese are epoch tables, not complete eyeris pipeline objects. Continuous signals,\nbaseline lists and confounds are not filtered by this export.\nDecisions apply to individual epochs across all stored stages, not sibling\nepoch definitions or the other eye. No unreviewed epoch is treated as kept.\nRead an RDS with readRDS(); CSV missing values are empty fields.\n",
+        `eyeris review export
+
+retained/, excluded/ and unreviewed/ each hold a folder per subject and
+session, with one table per run, epoch label and eye, for example
+retained/sub-001/ses-01/sub-001_ses-01_task-memory_run-01_epoch-probe.csv.
+Analyze retained/ only: it contains exactly the epochs a reviewer kept.
+No unreviewed epoch is treated as kept.
+
+Each table is saved as CSV and RDS, preserving all original columns, stages and
+samples. .review_epoch_id joins samples to decisions.csv and manifest.json.
+decisions.csv lists every epoch's decision, reason, reviewer and table file;
+summary.csv counts epochs by subject, session, task and run; manifest.json adds
+the audit history, the automatic exclusion rule and each epoch's locator.
+
+To combine every kept epoch in R:
+  files <- list.files("retained", "[.]rds$", recursive = TRUE, full.names = TRUE)
+  kept <- do.call(rbind, lapply(files, readRDS))
+(rbind tables of one epoch label; labels and eyes can differ in columns.)
+
+These are epoch tables, not complete eyeris pipeline objects. Continuous
+signals, baseline lists and confounds are not filtered by this export.
+Decisions apply to individual epochs across all stored stages, not sibling
+epoch definitions or the other eye. CSV missing values are empty fields.
+`,
       );
       await rename(staging, target);
       return { directory: target, counts: this.summary().counts };

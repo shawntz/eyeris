@@ -43,6 +43,8 @@ const requireProject = () => {
 };
 async function activate(directory, create) {
   await ensureRuntime();
+  if (project?.exporting)
+    throw new Error("Wait for the export to finish before switching projects.");
   if (pipeline?.busy || pipeline?.importing)
     throw new Error(
       "Wait for processing or importing to finish, or cancel it, before switching projects.",
@@ -86,6 +88,10 @@ const methods = {
     return activate(lastProject, false);
   },
   closeProject() {
+    if (project?.exporting)
+      throw new Error(
+        "Wait for the export to finish before closing the project.",
+      );
     if (pipeline?.busy || pipeline?.importing)
       throw new Error(
         "Wait for processing or importing to finish, or cancel it, before closing the project.",
@@ -164,7 +170,9 @@ const methods = {
         ? path.join(project.directory, "processing", id)
         : kind === "bids"
           ? path.join(project.directory, "bids")
-          : project.directory;
+          : kind === "export" && project.lastExport?.directory
+            ? project.lastExport.directory
+            : project.directory;
     const error = await shell.openPath(target);
     if (error) throw new Error(error);
   },
@@ -260,6 +268,10 @@ const methods = {
   },
   setAutoExclude: (rule) => requireProject().setAutoExclude(rule),
   list: (filters) => requireProject().list(filters),
+  nextUnreviewed: (filters, fromId) =>
+    requireProject().nextUnreviewed(filters, fromId),
+  saveReviewPosition: (position) =>
+    requireProject().saveReviewPosition(position),
   trace: (id, stage, range) => requireProject().trace(id, stage, range),
   decide: (input) => {
     const epoch = requireProject().decision(input);
@@ -277,7 +289,7 @@ const methods = {
       properties: ["openDirectory", "createDirectory"],
     });
     if (result.canceled) return null;
-    return project.export(result.filePaths[0]);
+    return project.startExport(result.filePaths[0]);
   },
 };
 
@@ -292,6 +304,7 @@ app.whenReady().then(async () => {
     busy: () =>
       Boolean(
         pipeline?.busy ||
+        project?.exporting ||
         pipeline?.importing ||
         demoChild ||
         worker.pending.size,

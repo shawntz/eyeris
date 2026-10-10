@@ -1046,6 +1046,99 @@ main {
 .auto-exclude-panel .auto-exclude-error {
   flex-basis: 100%;
 }
+.export-progress,
+.export-panel {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.export-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.export-progress strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+}
+.export-progress .progress-track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.export-progress small {
+  display: block;
+  margin-top: 8px;
+  color: #777;
+}
+.export-panel > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.export-panel h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.export-panel p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  max-width: 760px;
+}
+.export-panel .export-warning {
+  color: #6b5a16;
+}
+.export-panel .button {
+  margin-top: 4px;
+}
+.subject-progress {
+  margin-bottom: 14px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.subject-progress > summary {
+  cursor: pointer;
+  color: #555;
+}
+.subject-progress table {
+  width: 100%;
+  max-width: 860px;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.subject-progress th {
+  text-align: left;
+  font-weight: 500;
+  color: #747474;
+  font-size: 11px;
+  padding: 6px 10px 6px 0;
+}
+.subject-progress td {
+  padding: 6px 10px 6px 0;
+  border-top: 1px solid #e3e3e3;
+}
+.subject-progress td .progress-track {
+  display: inline-block;
+  width: 90px;
+  height: 4px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.subject-progress td button {
+  text-decoration: underline;
+  font-size: 11px;
+}
 .filter-bar {
   display: flex;
   gap: 12px;
@@ -1086,6 +1179,14 @@ main {
   gap: 20px;
   flex: 1;
   min-height: 0;
+}
+/* While an export or a details panel is open, it pushes the review area down
+   and the page scrolls, rather than shrinking the signal plot to nothing. */
+.content:has(.export-panel, .export-progress, details[open]) {
+  overflow-y: auto;
+}
+.content:has(.export-panel, .export-progress, details[open]) .review-workspace {
+  min-height: 560px;
 }
 .queue-panel {
   background: #fff;

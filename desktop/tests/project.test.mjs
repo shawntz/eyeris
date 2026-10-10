@@ -5,6 +5,7 @@ import {
   mkdtemp,
   mkdir,
   readFile,
+  readdir,
   copyFile,
   rm,
   writeFile,
@@ -134,7 +135,7 @@ test("R-backed review: identity, traces, decisions, persistence, and lossless ex
     manifest.decisions.find((e) => e.id === rows[1].id).stage,
     "pupil_raw",
   );
-  const script = `args <- commandArgs(TRUE); source <- readRDS(args[1]); target <- args[2]; source_df <- source$epoch_probe$block_1; for (i in 1:3) { status <- c('retained','excluded','unreviewed')[i]; files <- list.files(file.path(target, status), pattern='\\\\.rds$', full.names=TRUE); stopifnot(length(files)==1); actual <- readRDS(files[1]); expected <- source_df[seq.int((i-1)*12000+1,i*12000),]; rownames(actual)<-NULL; rownames(expected)<-NULL; stopifnot(identical(actual[,names(expected)], expected), nrow(actual)==12000, length(unique(actual$.review_epoch_id))==1) }; cat('Lossless partitions verified')`;
+  const script = `args <- commandArgs(TRUE); source <- readRDS(args[1]); target <- args[2]; source_df <- source$epoch_probe$block_1; for (i in 1:3) { status <- c('retained','excluded','unreviewed')[i]; files <- list.files(file.path(target, status, 'sub-001'), pattern='[.]rds$', full.names=TRUE); stopifnot(length(files)==1); actual <- readRDS(files[1]); expected <- source_df[seq.int((i-1)*12000+1,i*12000),]; rownames(actual)<-NULL; rownames(expected)<-NULL; stopifnot(identical(actual[,names(expected)], expected), nrow(actual)==12000, length(unique(actual$.review_epoch_id))==1) }; cat('Lossless partitions verified')`;
   const sourceId = rows[0].source_id;
   const verify = path.join(dir, "verify.R");
   // Direct R comparison includes original precision, missing values, all stages and metadata.
@@ -144,11 +145,22 @@ test("R-backed review: identity, traces, decisions, persistence, and lossless ex
     [
       verify,
       path.join(project.directory, "sources", `${sourceId}.rds`),
-      path.join(result.directory, sourceId),
+      result.directory,
     ],
     { encoding: "utf8" },
   );
   assert.match(output, /Lossless partitions verified/);
+  // Tables are named for their subject, task, run and epoch label.
+  for (const file of [
+    "retained/sub-001/sub-001_task-memory_run-01_epoch-probe.csv",
+    "excluded/sub-001/sub-001_task-memory_run-01_epoch-probe.rds",
+    "unreviewed/sub-003/sub-003_task-memory_run-07_epoch-probe.csv",
+    "unreviewed/sub-003/sub-003_task-memory_run-01_epoch-second.csv",
+  ])
+    assert.ok(
+      (await readFile(path.join(result.directory, file))).length > 0,
+      file,
+    );
   const exportedCSV = await readFile(
     path.join(result.directory, "decisions.csv"),
     "utf8",
@@ -461,4 +473,140 @@ test("epochs missing too much data are excluded automatically, with the reason",
       (d) => d.reviewer === AUTO_REVIEWER && d.status === "exclude",
     ),
   );
+});
+
+test("review resumes where it was left and exports every subject at once", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-resume-test-"));
+  const worker = new RWorker();
+  let project;
+  t.after(async () => {
+    await project?.exporting?.done;
+    project?.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  const projectDir = path.join(dir, "resume.eyeris");
+  project = await Project.open(projectDir, worker, true);
+  await project.importFile(path.join(dir, "sub-001_task-memory.rds"));
+  // The same run processed twice is kept apart by its source.
+  await copyFile(
+    path.join(dir, "sub-002_task-memory.rds"),
+    path.join(dir, "sub-001_task-memory_desc-rerun.rds"),
+  );
+  await project.importFile(
+    path.join(dir, "sub-001_task-memory_desc-rerun.rds"),
+  );
+  await project.importFile(path.join(dir, "sub-005_task-memory.rds"));
+  assert.deepEqual(project.summary().progress, [
+    { participant: "001", total: 6, keep: 0, exclude: 0, unreviewed: 6 },
+    { participant: "005", total: 3, keep: 0, exclude: 0, unreviewed: 3 },
+  ]);
+  const queue = project.list().rows;
+  const decide = (e, status) =>
+    project.decision({
+      id: e.id,
+      status,
+      stage: "final",
+      reviewer: "Tester",
+      reason: "",
+    });
+  assert.deepEqual(project.nextUnreviewed({}, null), {
+    id: queue[0].id,
+    offset: 0,
+  });
+  decide(queue[0], "keep");
+  decide(queue[2], "exclude");
+  assert.equal(project.nextUnreviewed({}, queue[0].id).id, queue[1].id);
+  assert.equal(project.nextUnreviewed({}, queue[1].id).id, queue[3].id);
+  // The search wraps around to earlier epochs.
+  assert.equal(project.nextUnreviewed({}, queue.at(-1).id).id, queue[1].id);
+  assert.equal(
+    project.nextUnreviewed({ participant: "005" }, null).id,
+    queue[6].id,
+  );
+  assert.equal(
+    project.nextUnreviewed({ status: "unreviewed" }, queue[1].id).id,
+    queue[3].id,
+  );
+  // Decisions and the review position survive closing the project.
+  const position = {
+    epochId: queue[3].id,
+    filters: {
+      status: "all",
+      participant: "001",
+      run: "",
+      search: "",
+      stage: "final",
+      sort: "natural",
+      offset: 0,
+    },
+  };
+  project.saveReviewPosition(position);
+  assert.throws(() => project.saveReviewPosition({ epochId: 4 }), /Invalid/);
+  project.close();
+  project = await Project.open(projectDir, worker);
+  assert.deepEqual(project.summary().position, position);
+  assert.deepEqual(project.summary().progress[0], {
+    participant: "001",
+    total: 6,
+    keep: 1,
+    exclude: 1,
+    unreviewed: 4,
+  });
+  for (const e of project.list().rows.filter((e) => e.status === "unreviewed"))
+    decide(e, "keep");
+  assert.equal(project.nextUnreviewed({}, null), null);
+
+  const exportParent = path.join(dir, "exports");
+  await mkdir(exportParent);
+  const started = project.startExport(exportParent);
+  assert.deepEqual(started.exporting, { total: 0, completed: 0, current: "" });
+  assert.throws(() => project.startExport(exportParent), /already running/);
+  await project.exporting.done;
+  const { lastExport, exporting } = project.summary();
+  assert.equal(exporting, null);
+  assert.equal(lastExport.error, null);
+  assert.deepEqual(lastExport.counts, {
+    total: 9,
+    keep: 8,
+    exclude: 1,
+    unreviewed: 0,
+  });
+  const exported = lastExport.directory;
+  const retained = await readdir(path.join(exported, "retained", "sub-001"));
+  assert.equal(retained.length, 4, "two sources, CSV and RDS each");
+  assert.ok(
+    retained.every((f) =>
+      /^sub-001_task-memory_run-01_epoch-probe_source-[0-9a-f]{12}\.(csv|rds)$/.test(
+        f,
+      ),
+    ),
+  );
+  assert.deepEqual(await readdir(path.join(exported, "excluded")), ["sub-001"]);
+  assert.deepEqual(
+    (await readFile(path.join(exported, "summary.csv"), "utf8"))
+      .trim()
+      .split("\n"),
+    [
+      '"participant","session","task","run","epochs","kept","excluded","unreviewed","excluded_automatically"',
+      '"001","","memory","01","6","5","1","0","0"',
+      '"005","","memory","01","3","3","0","0","0"',
+    ],
+  );
+  const decisions = (
+    await readFile(path.join(exported, "decisions.csv"), "utf8")
+  ).split("\n");
+  assert.match(decisions[0], /"file"$/);
+  assert.match(
+    decisions[1],
+    /"sub-00[15]\/sub-00[15]_task-memory_run-01_epoch-probe/,
+  );
+  assert.match(
+    await readFile(path.join(exported, "README.txt"), "utf8"),
+    /Analyze retained\/ only/,
+  );
+  await assert.rejects(() => readdir(path.join(exported, "unreviewed")), {
+    code: "ENOENT",
+  });
 });
