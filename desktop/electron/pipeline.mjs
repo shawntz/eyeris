@@ -392,7 +392,8 @@ export class Pipeline {
         )
         .all(subject, session, task);
       // Versions up to 0.4.1 imported macOS metadata files (._*) as recordings
-      // and skipped the real files as duplicates. Replace each with its file.
+      // and skipped the real files as duplicates. Each is replaced by the file
+      // it was written beside, and keeps its run until then.
       const stale = new Map();
       for (const e of recorded)
         if (
@@ -401,12 +402,13 @@ export class Pipeline {
             () => false,
           ))
         )
-          stale.set(e.run, e);
-      const existing = recorded.filter((e) => stale.get(e.run) !== e);
-      const runs = new Set(existing.map((r) => r.run));
+          stale.set(e.name.slice(2), e);
+      const existing = recorded.filter((e) => stale.get(e.name.slice(2)) !== e);
+      const runs = new Set(recorded.map((r) => r.run));
       const planned = new Map();
       const pending = [];
       for (const r of files) {
+        const replaces = stale.get(r.name);
         if (
           existing.some((e) => e.name === r.name && (!r.run || e.run === r.run))
         )
@@ -416,7 +418,11 @@ export class Pipeline {
             file: r.relative,
             reason: `${planned.get(r.run)} is also run ${r.run} of sub-${subject} ses-${session} task-${task}`,
           });
-        else if (runs.has(r.run))
+        else if (r.run && replaces?.run === r.run) {
+          stale.delete(r.name);
+          planned.set(r.run, r.relative);
+          plan.push({ ...r, replaces });
+        } else if (runs.has(r.run))
           skipped.push({
             file: r.relative,
             reason: `sub-${subject} already has run ${r.run} for ses-${session} task-${task}`,
@@ -424,7 +430,7 @@ export class Pipeline {
         else if (r.run) {
           runs.add(r.run);
           planned.set(r.run, r.relative);
-          plan.push({ ...r, replaces: stale.get(r.run) });
+          plan.push(r);
         } else pending.push(r);
       }
       // Files without a run entity follow the existing runs, in filename order.
@@ -432,11 +438,16 @@ export class Pipeline {
       for (const r of pending.sort((a, b) =>
         a.name.localeCompare(b.name, undefined, { numeric: true }),
       )) {
+        const replaces = stale.get(r.name);
+        if (replaces) {
+          stale.delete(r.name);
+          plan.push({ ...r, run: replaces.run, replaces });
+          continue;
+        }
         next += 1;
-        const run = String(next).padStart(2, "0");
         if (next > 999)
           skipped.push({ file: r.relative, reason: "run numbers end at 999" });
-        else plan.push({ ...r, run, replaces: stale.get(run) });
+        else plan.push({ ...r, run: String(next).padStart(2, "0") });
       }
     }
     plan.sort((a, b) =>

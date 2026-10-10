@@ -272,3 +272,122 @@ test("re-importing replaces recordings that were macOS metadata files", async (t
     /macOS metadata file/,
   );
 });
+
+test("re-importing replaces each metadata recording only with its own file", async (t) => {
+  const { dir, project, pipeline } = await open(t, "bids-appledouble-names");
+  const db = project.db;
+  pipeline.addSubject("01");
+  const add = async (id, task, run, name, content) => {
+    const file = path.join(
+      `sourcedata/sub-01/ses-enc/task-${task}`,
+      `run-${run}`,
+      name,
+    );
+    await write(project.directory, file, content);
+    db.prepare(
+      "INSERT INTO recordings(id, subject, session, task, run, name, file, created_at) VALUES (?, '01', 'enc', ?, ?, ?, ?, 'earlier')",
+    ).run(id, task, run, name, file);
+    return file;
+  };
+  // A file without a run entity is matched to its metadata recording by name,
+  // not by the run it would be numbered next.
+  const paired = await add(
+    "paired",
+    "clamp",
+    "01",
+    "._sub-01_ses-enc_task-clamp_acq-b_eyetrack.asc",
+    appleDouble,
+  );
+  // A metadata recording whose file is not in the dataset keeps its run.
+  await add(
+    "real",
+    "rest",
+    "01",
+    "sub-01_ses-enc_task-rest_run-01_eyetrack.asc",
+    "recording",
+  );
+  const orphan = await add(
+    "orphan",
+    "rest",
+    "02",
+    "._sub-01_ses-enc_task-rest_run-02_eyetrack.asc",
+    appleDouble,
+  );
+  // A file with the same run but another name does not replace it.
+  const recall = await add(
+    "recall",
+    "recall",
+    "01",
+    "._sub-01_ses-enc_task-recall_eyetrack.asc",
+    appleDouble,
+  );
+  const root = path.join(dir, "dataset");
+  for (const name of [
+    "sub-01_ses-enc_task-clamp_acq-a_eyetrack.asc",
+    "sub-01_ses-enc_task-clamp_acq-b_eyetrack.asc",
+    "sub-01_ses-enc_task-rest_run-01_eyetrack.asc",
+    "sub-01_ses-enc_task-rest_eyetrack.asc",
+    "sub-01_ses-enc_task-recall_run-01_eyetrack.asc",
+    "sub-01_ses-enc_task-recall_eyetrack.asc",
+  ])
+    await write(root, `sub-01/ses-enc/eye/${name}`, name);
+  await pipeline.importBids(root);
+  await pipeline.importing?.finished;
+  let state = pipeline.snapshot();
+  assert.equal(state.lastImport.error, null);
+  assert.equal(state.lastImport.added, 2);
+  assert.equal(state.lastImport.replaced, 2);
+  assert.deepEqual(
+    Object.fromEntries(
+      state.lastImport.skipped.map((f) => [path.basename(f.file), f.reason]),
+    ),
+    {
+      "sub-01_ses-enc_task-rest_run-01_eyetrack.asc": "already in this project",
+      "sub-01_ses-enc_task-recall_run-01_eyetrack.asc":
+        "sub-01 already has run 01 for ses-enc task-recall",
+    },
+  );
+  const ids = ["paired", "real", "orphan", "recall"];
+  assert.deepEqual(
+    state.recordings.map((r) => [
+      r.task,
+      r.run,
+      ids.includes(r.id) ? r.id : "new",
+      r.name,
+    ]),
+    [
+      ["clamp", "01", "paired", "sub-01_ses-enc_task-clamp_acq-b_eyetrack.asc"],
+      ["clamp", "02", "new", "sub-01_ses-enc_task-clamp_acq-a_eyetrack.asc"],
+      ["recall", "01", "recall", "sub-01_ses-enc_task-recall_eyetrack.asc"],
+      ["rest", "01", "real", "sub-01_ses-enc_task-rest_run-01_eyetrack.asc"],
+      [
+        "rest",
+        "02",
+        "orphan",
+        "._sub-01_ses-enc_task-rest_run-02_eyetrack.asc",
+      ],
+      ["rest", "03", "new", "sub-01_ses-enc_task-rest_eyetrack.asc"],
+    ],
+  );
+  for (const r of state.recordings.filter((r) =>
+    ["paired", "recall"].includes(r.id),
+  ))
+    assert.equal(
+      await readFile(path.join(project.directory, r.file), "utf8"),
+      r.name,
+    );
+  for (const file of [paired, recall])
+    await assert.rejects(() => readFile(path.join(project.directory, file)), {
+      code: "ENOENT",
+    });
+  assert.deepEqual(
+    await readFile(path.join(project.directory, orphan)),
+    appleDouble,
+  );
+  // Importing again changes nothing.
+  await pipeline.importBids(root);
+  await pipeline.importing?.finished;
+  state = pipeline.snapshot();
+  assert.equal(state.lastImport.added + state.lastImport.replaced, 0);
+  assert.equal(state.recordings.length, 6);
+});
