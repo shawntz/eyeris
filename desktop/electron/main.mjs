@@ -29,7 +29,7 @@ const requireProject = () => {
 };
 async function activate(directory, create) {
   await ensureRuntime();
-  if (pipeline?.active || pipeline?.importing)
+  if (pipeline?.busy || pipeline?.importing)
     throw new Error(
       "Wait for processing or importing to finish, or cancel it, before switching projects.",
     );
@@ -70,7 +70,7 @@ const methods = {
     return activate(settings.lastProject, false);
   },
   closeProject() {
-    if (pipeline?.active || pipeline?.importing)
+    if (pipeline?.busy || pipeline?.importing)
       throw new Error(
         "Wait for processing or importing to finish, or cancel it, before closing the project.",
       );
@@ -115,9 +115,20 @@ const methods = {
     requireProject();
     return pipeline.start(ids, settings);
   },
-  cancelPipeline() {
+  // One job per group of recordings, such as each subject's runs.
+  queuePipeline(groups, settings) {
     requireProject();
-    pipeline.cancel();
+    if (!Array.isArray(groups) || !groups.every(Array.isArray))
+      throw new Error("Invalid processing request.");
+    return pipeline.enqueue(groups, settings);
+  },
+  saveSettings(settings) {
+    requireProject();
+    return pipeline.saveSettings(settings);
+  },
+  cancelPipeline(id) {
+    requireProject();
+    pipeline.cancel(id);
     return pipeline.snapshot();
   },
   pipelineLog(id) {
@@ -257,7 +268,7 @@ app.whenReady().then(async () => {
       (process.platform !== "linux" || Boolean(process.env.APPIMAGE)),
     busy: () =>
       Boolean(
-        pipeline?.active ||
+        pipeline?.busy ||
         pipeline?.importing ||
         demoChild ||
         worker.pending.size,
@@ -324,16 +335,7 @@ app.whenReady().then(async () => {
 app.on("window-all-closed", () => app.quit());
 app.on("before-quit", () => {
   updates?.stop();
-  pipeline?.cancelImport();
-  if (pipeline?.active) {
-    project.db
-      .prepare(
-        "UPDATE jobs SET status='interrupted', phase='interrupted' WHERE id=?",
-      )
-      .run(pipeline.active.id);
-    pipeline.disposed = true;
-    pipeline.active.child?.kill();
-  }
+  pipeline?.dispose();
   demoChild?.kill();
   worker.close();
   project?.close();

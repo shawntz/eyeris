@@ -106,17 +106,22 @@ export interface Job {
   error: string | null;
   outputs: string;
 }
+export interface RunningJob {
+  id: string;
+  phase: string;
+  log: string;
+  recordings: string[];
+  current: string;
+}
 export interface PipelineState {
   subjects: { id: string }[];
   recordings: Recording[];
   jobs: Job[];
-  active: {
-    id: string;
-    phase: string;
-    log: string;
-    recordings: string[];
-    current: string;
-  } | null;
+  running: RunningJob[];
+  queued: { id: string; recordings: string[] }[];
+  // Jobs queued since processing was last idle.
+  batch: string[];
+  settings: PipelineSettings | null;
   importing: {
     total: number;
     completed: number;
@@ -180,7 +185,12 @@ interface API {
     ids: string[],
     settings: PipelineSettings,
   ): Promise<PipelineState>;
-  cancelPipeline(): Promise<PipelineState>;
+  queuePipeline(
+    groups: string[][],
+    settings: PipelineSettings,
+  ): Promise<PipelineState>;
+  saveSettings(settings: PipelineSettings): Promise<PipelineState>;
+  cancelPipeline(id?: string): Promise<PipelineState>;
   pipelineLog(id: string): Promise<string>;
   showProjectFiles(kind: string, id?: string): Promise<void>;
   demo(): Promise<Summary>;

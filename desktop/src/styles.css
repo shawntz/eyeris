@@ -513,6 +513,87 @@ main {
   color: #666;
   text-decoration: underline;
 }
+.subject-list .all-subjects {
+  gap: 7px;
+  justify-content: flex-start;
+}
+.subject-list .all-subjects span {
+  margin-left: auto;
+}
+.link-button {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  text-decoration: underline;
+}
+.batch-table td button {
+  text-decoration: underline;
+}
+.batch-progress,
+.batch-result {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.batch-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.batch-result > strong {
+  font-size: 12px;
+  flex: 1;
+}
+.batch-result .batch-failures {
+  flex-basis: 100%;
+  order: 3;
+  margin-top: 0;
+}
+.batch-result .button {
+  font-size: 11px;
+}
+.batch-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.batch-progress strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+  color: #820000;
+}
+.batch-progress .button {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.batch-progress .progress-track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.batch-progress ul,
+.batch-failures {
+  margin: 10px 0 0 16px;
+  line-height: 1.7;
+  color: #555;
+  font-size: 11px;
+}
+.batch-failures button {
+  text-decoration: underline;
+  font-size: 11px;
+}
+.job-status.queued,
+.job-status.partial {
+  color: #6b5a16;
+}
 .import-progress {
   border: 1px solid #ddd;
   background: #fff;

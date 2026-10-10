@@ -6,8 +6,8 @@ import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { captureScreenshot } from "./screenshot.mjs";
 
-test("a BIDS folder adds every subject and run in one step", async () => {
-  test.setTimeout(120000);
+test("a BIDS folder is imported and every subject processed in one batch", async () => {
+  test.setTimeout(300000);
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-ui-bids-"));
   const env = {
     ...process.env,
@@ -71,8 +71,60 @@ test("a BIDS folder adds every subject and run in one step", async () => {
       .getByRole("button", { name: /^sub-002/ })
       .click();
     await expect(page.locator(".recordings-table tbody tr")).toHaveCount(1);
+    await page.getByRole("button", { name: "Process all subjects" }).click();
+    await expect(
+      page.getByRole("heading", { name: "All subjects" }),
+    ).toBeVisible();
     await page.getByRole("button", { name: "Dismiss import summary" }).click();
     await expect(page.getByText("Added 3 recordings")).toHaveCount(0);
+    for (const subject of ["001", "002"])
+      await expect(
+        page.getByRole("checkbox", { name: `Process sub-${subject}` }),
+      ).toBeChecked();
+    // One set of settings, including the epochs, applies to every subject.
+    await page.getByRole("checkbox", { name: "Extract epochs" }).check();
+    await page
+      .getByRole("textbox", { name: "Event pattern" })
+      .fill("PROBE_START_{trial}");
+    await page
+      .getByRole("checkbox", { name: "HTML diagnostic report" })
+      .uncheck();
+    // Settings are saved with the project and restored when it is reopened.
+    await page.waitForTimeout(600);
+    await page.getByRole("button", { name: /Epoch review/ }).click();
+    await page.getByRole("button", { name: /Subjects & processing/ }).click();
+    await page.getByRole("button", { name: /^All subjects/ }).click();
+    await expect(
+      page.getByRole("textbox", { name: "Event pattern" }),
+    ).toHaveValue("PROBE_START_{trial}");
+    await expect(
+      page.getByRole("checkbox", { name: "HTML diagnostic report" }),
+    ).not.toBeChecked();
+    await page.getByRole("button", { name: "Process 2 subjects" }).click();
+    await expect(
+      page.getByRole("progressbar", { name: "Batch progress" }),
+    ).toBeVisible();
+    await captureScreenshot(page, { path: "test-results/batch-running.png" });
+    await expect(
+      page.getByText("Batch finished: 2 of 2 jobs completed"),
+    ).toBeVisible({ timeout: 240_000 });
+    for (const subject of ["001", "002"])
+      await expect(
+        page
+          .getByRole("row")
+          .filter({ hasText: `sub-${subject}` })
+          .locator(".job-status"),
+      ).toHaveText("Completed");
+    await captureScreenshot(page, { path: "test-results/batch-complete.png" });
+    await page.getByRole("button", { name: "Review epochs" }).click();
+    await expect(
+      page.getByRole("button", { name: /Keep epoch/ }),
+    ).toBeEnabled();
+    const state = await page.evaluate(() => window.eyeris.projectState());
+    expect(state.project.participants).toEqual(["001", "002"]);
+    expect(state.pipeline.jobs.every((j) => j.status === "completed")).toBe(
+      true,
+    );
     expect(errors).toEqual([]);
   } finally {
     await app.close();

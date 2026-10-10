@@ -95,6 +95,25 @@ does not automatically run any processing.
    the subject with all of its runs. Each run's saved RDS and extracted epochs
    are indexed automatically.
 
+Pipeline settings belong to the project: they are saved as you edit them, apply
+to every subject, and are restored when the project is reopened. Each job keeps
+the settings it was started with. To process the whole study, choose **All
+subjects** in the sidebar (or **Process all subjects** after a BIDS import), set
+the glassbox, epoch and output options once, select the subjects, and choose
+**Process subjects**. Each subject becomes its own job containing all of its
+recordings, processed in run order, and jobs run one after another. The batch
+shows overall progress, the recording and step each job is on, and a summary
+with links to any subject that failed; **Cancel all** stops the running job and
+removes the waiting ones. Processing a single subject while a batch runs queues
+it behind the batch.
+
+When the DuckDB database is enabled, each job writes its own database. eyeris
+names its tables by subject, session, task and run, so on publication the job's
+tables are merged into the project's `bids/derivatives/eyeris.eyerisdb` instead
+of being treated as a conflicting file. The merge happens in a copy that
+replaces the database only when it succeeds, and tables that already exist (the
+same published run) are left unchanged.
+
 Project layout:
 
 ```text

@@ -30,8 +30,7 @@ test(
     );
     const pipeline = new Pipeline(project);
     t.after(async () => {
-      pipeline.disposed = true;
-      pipeline.active?.child.kill();
+      pipeline.dispose();
       worker.close();
       project.close();
       await rm(dir, { recursive: true, force: true });
@@ -83,7 +82,7 @@ test(
       database: true,
     };
     await pipeline.start(recording.id, settings);
-    await pipeline.active.done;
+    await pipeline.idle();
     let job = pipeline.snapshot().jobs[0];
     assert.equal(job.status, "completed", job.error);
     assert.ok(project.summary().counts.total > 0);
@@ -122,7 +121,7 @@ test(
       database: false,
       glassbox: { ...settings.glassbox, zscore: false },
     });
-    await pipeline.active.done;
+    await pipeline.idle();
     job = pipeline.snapshot().jobs[0];
     assert.equal(job.status, "completed", job.error);
     assert.deepEqual(
@@ -149,9 +148,8 @@ test(
       /not both/,
     );
     await pipeline.start(recording.id, { ...settings, report: false });
-    const pending = pipeline.active.done;
     pipeline.cancel();
-    await pending;
+    await pipeline.idle();
     assert.equal(pipeline.snapshot().jobs[0].status, "cancelled");
     const malformed = path.join(dir, "bad.asc");
     await writeFile(malformed, "not an EyeLink recording");
@@ -165,7 +163,7 @@ test(
       report: false,
       database: false,
     });
-    await pipeline.active.done;
+    await pipeline.idle();
     assert.equal(pipeline.snapshot().jobs[0].status, "failed");
   },
 );
@@ -183,8 +181,7 @@ test(
     );
     const pipeline = new Pipeline(project);
     t.after(async () => {
-      pipeline.disposed = true;
-      pipeline.active?.child?.kill();
+      pipeline.dispose();
       worker.close();
       project.close();
       await rm(dir, { recursive: true, force: true });
@@ -275,8 +272,11 @@ test(
       database: true,
     };
     await pipeline.start([second.id, first.id], settings);
-    assert.deepEqual(pipeline.active.recordings, [first.id, second.id]);
-    await pipeline.active.done;
+    assert.deepEqual(pipeline.snapshot().running[0].recordings, [
+      first.id,
+      second.id,
+    ]);
+    await pipeline.idle();
     const job = pipeline.snapshot().jobs[0];
     assert.equal(job.status, "completed", job.error);
     assert.deepEqual(job.recordings, [first.id, second.id]);
@@ -327,6 +327,112 @@ test(
       /no run number/,
     );
     await assert.rejects(() => pipeline.start([], settings), /Select/);
-    assert.equal(pipeline.active, null);
+    assert.equal(pipeline.busy, false);
+  },
+);
+
+test(
+  "a batch processes every subject with one set of settings and merges their databases",
+  { timeout: 240000 },
+  async (t) => {
+    const dir = await mkdtemp(path.join(tmpdir(), "eyeris-batch-"));
+    const worker = new RWorker();
+    const project = await Project.open(
+      path.join(dir, "Batch.eyeris"),
+      worker,
+      true,
+    );
+    let pipeline = new Pipeline(project);
+    t.after(async () => {
+      pipeline.dispose();
+      worker.close();
+      project.close();
+      await rm(dir, { recursive: true, force: true });
+    });
+    const asc = execFileSync(
+      resolveRscript(),
+      ["-e", "cat(eyeris::eyelink_asc_demo_dataset())"],
+      { encoding: "utf8" },
+    ).trim();
+    const ids = {};
+    for (const subject of ["001", "002"]) {
+      pipeline.addSubject(subject);
+      const state = await pipeline.addRecording(
+        { subject, session: "01", task: "memory" },
+        asc,
+      );
+      ids[subject] = state.recordings.at(-1).id;
+    }
+    const settings = {
+      glassbox: {
+        load_asc: { block: "auto", binocular_mode: "average" },
+        lpfilt: { plot_freqz: false },
+      },
+      epoch: {
+        events: "PROBE_START_{trial}",
+        limits: [-1, 2],
+        label: "probe",
+        baseline: false,
+      },
+      report: false,
+      database: true,
+    };
+    // Settings are stored with the project and survive reopening it.
+    assert.equal(pipeline.snapshot().settings, null);
+    pipeline.saveSettings(settings);
+    pipeline = new Pipeline(project);
+    assert.deepEqual(pipeline.snapshot().settings, settings);
+    assert.throws(() => pipeline.saveSettings([]), /Invalid/);
+
+    let state = await pipeline.enqueue([[ids["001"]], [ids["002"]]], settings);
+    assert.deepEqual(
+      state.running.map((j) => j.recordings),
+      [[ids["001"]]],
+    );
+    assert.deepEqual(
+      state.queued.map((j) => j.recordings),
+      [[ids["002"]]],
+    );
+    await assert.rejects(
+      () => pipeline.start(ids["002"], settings),
+      /already being processed/,
+    );
+    await pipeline.idle();
+    const jobs = pipeline.snapshot().jobs;
+    assert.equal(jobs.length, 2);
+    for (const job of jobs) {
+      assert.equal(job.status, "completed", job.error);
+      // Without merging, the second subject's database would conflict with
+      // the first and none of its outputs would be published.
+      assert.ok(JSON.parse(job.outputs).some((p) => p.endsWith(".csv")));
+    }
+    const tables = execFileSync(
+      resolveRscript(),
+      [
+        "-e",
+        'con <- DBI::dbConnect(duckdb::duckdb(), commandArgs(TRUE)[1], read_only = TRUE); cat(DBI::dbListTables(con), sep = "\\n"); DBI::dbDisconnect(con, shutdown = TRUE)',
+        path.join(project.directory, "bids", "derivatives", "eyeris.eyerisdb"),
+      ],
+      { encoding: "utf8" },
+    );
+    for (const subject of ["001", "002"])
+      assert.match(tables, new RegExp(`timeseries_${subject}_01_memory_run01`));
+    assert.deepEqual(project.summary().participants, ["001", "002"]);
+    assert.ok(
+      (
+        await readdir(path.join(project.directory, "bids", "derivatives"))
+      ).every((name) => !name.endsWith(".tmp")),
+    );
+
+    // Cancelling removes a queued job before it starts, or stops a running one.
+    state = await pipeline.enqueue([[ids["001"]], [ids["002"]]], settings);
+    pipeline.cancel(state.queued[0].id);
+    assert.equal(pipeline.snapshot().queued.length, 0);
+    pipeline.cancel();
+    await pipeline.idle();
+    const after = pipeline.snapshot().jobs;
+    assert.equal(after.length, 3);
+    assert.equal(after[0].status, "cancelled");
+    assert.deepEqual(after[0].recordings, [ids["001"]]);
   },
 );

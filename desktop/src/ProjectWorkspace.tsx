@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   Plus,
   FolderOpen,
@@ -12,6 +18,7 @@ import {
   X,
   LoaderCircle,
   FolderInput,
+  Users,
 } from "lucide-react";
 import type {
   Summary,
@@ -19,103 +26,21 @@ import type {
   PipelineSettings,
   Recording,
 } from "./types";
-const steps = [
-  {
-    key: "resample",
-    label: "Resample",
-    description: "Regularize the sampling interval",
-    params: {},
-  },
-  {
-    key: "deblink",
-    label: "Remove blinks",
-    description: "Remove blinks and surrounding samples",
-    params: { extend: 50 },
-  },
-  {
-    key: "detransient",
-    label: "Remove transients",
-    description: "Detect abrupt changes in pupil size",
-    params: { n: 16, mad_thresh: null },
-  },
-  {
-    key: "interpolate",
-    label: "Interpolate",
-    description: "Fill short gaps in the signal",
-    params: { max_gap_ms: 250 },
-  },
-  {
-    key: "lpfilt",
-    label: "Low-pass filter",
-    description: "Attenuate high-frequency noise",
-    params: { wp: 4, ws: 8, rp: 1, rs: 35, plot_freqz: false },
-  },
-  {
-    key: "downsample",
-    label: "Downsample",
-    description: "Reduce the sampling frequency",
-    params: { target_fs: 100 },
-  },
-  {
-    key: "bin",
-    label: "Bin samples",
-    description: "Aggregate samples into time bins",
-    params: { bins_per_second: 10, method: "mean" },
-  },
-  {
-    key: "detrend",
-    label: "Detrend",
-    description: "Remove linear or spline trends",
-    params: { method: "linear", spline_df: 5 },
-  },
-  {
-    key: "zscore",
-    label: "Standardize",
-    description: "Convert to z-scores",
-    params: {},
-  },
-];
-const defaults: PipelineSettings = {
-  glassbox: {
-    load_asc: { block: "auto", binocular_mode: "average" },
-    resample: true,
-    deblink: { extend: 50 },
-    detransient: { n: 16, mad_thresh: null },
-    interpolate: { max_gap_ms: 250 },
-    lpfilt: { wp: 4, ws: 8, rp: 1, rs: 35, plot_freqz: false },
-    downsample: false,
-    bin: false,
-    detrend: false,
-    zscore: true,
-    seed: 123,
-  },
-  epoch: null,
-  report: true,
-  database: false,
-};
+import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
+import { BatchProcessing } from "./BatchProcessing";
+// The subject list entry that opens batch processing for every subject.
+const ALL = "*";
 const megabytes = (n: number) => `${(n / 1e6).toFixed(n < 1e7 ? 1 : 0)} MB`;
 // Kept outside the component so a dismissed summary stays dismissed when the
 // workspace is reopened.
 let dismissedImport = "";
 const bidsName = (r: Recording) =>
   `sub-${r.subject}_ses-${r.session}_task-${r.task}${r.run ? `_run-${r.run}` : ""}`;
-const names: Record<string, string> = {
-  extend: "Blink padding (ms)",
-  n: "Window samples",
-  mad_thresh: "MAD threshold (auto if empty)",
-  max_gap_ms: "Maximum gap (ms)",
-  wp: "Passband (Hz)",
-  ws: "Stopband (Hz)",
-  rp: "Passband ripple (dB)",
-  rs: "Stopband attenuation (dB)",
-  target_fs: "Target frequency (Hz)",
-  bins_per_second: "Bins per second",
-  method: "Method",
-  spline_df: "Spline degrees of freedom",
-};
 export function ProjectWorkspace({
   project,
   pipeline,
+  settings,
+  setSettings,
   onPipeline,
   onReview,
   onClose,
@@ -123,6 +48,8 @@ export function ProjectWorkspace({
 }: {
   project: Summary;
   pipeline: PipelineState;
+  settings: PipelineSettings;
+  setSettings: Dispatch<SetStateAction<PipelineSettings>>;
   onPipeline: (p: PipelineState) => void;
   onReview: (participant?: string) => void;
   onClose: () => void;
@@ -135,10 +62,6 @@ export function ProjectWorkspace({
   const [run, setRun] = useState("");
   const [recording, setRecording] = useState("");
   const [checked, setChecked] = useState<string[]>([]);
-  const [settings, setSettings] = useState<PipelineSettings>(
-    structuredClone(defaults),
-  );
-  const [openStep, setOpenStep] = useState("");
   const [log, setLog] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -149,8 +72,13 @@ export function ProjectWorkspace({
     pipeline.jobs.find((j) => j.recordings.includes(id));
   const jobs = pipeline.jobs.filter((j) => j.recordings.includes(recording));
   const latest = jobs[0];
-  const active = pipeline.active;
-  const running = !!active;
+  const mine = (j: { recordings: string[] }) =>
+    records.some((r) => j.recordings.includes(r.id));
+  // This subject's running job, and any of its jobs waiting in the queue.
+  const active = pipeline.running.find(mine);
+  const waiting = pipeline.queued.filter(mine);
+  const running = !!active || !!waiting.length;
+  const processing = !!pipeline.running.length || !!pipeline.queued.length;
   const importing = pipeline.importing;
   const imported =
     pipeline.lastImport?.id !== dismissedImport ? pipeline.lastImport : null;
@@ -209,8 +137,8 @@ export function ProjectWorkspace({
       ]);
   }, [records.map((r) => r.id).join()]);
   useEffect(() => {
-    if (pipeline.active) setLog(pipeline.active.log);
-  }, [pipeline.active?.log]);
+    if (active) setLog(active.log);
+  }, [active?.log]);
   useEffect(() => {
     if (latest && !running)
       window.eyeris
@@ -229,12 +157,6 @@ export function ProjectWorkspace({
     } finally {
       setBusy(false);
     }
-  }
-  function setStep(key: string, value: PipelineSettings["glassbox"][string]) {
-    setSettings((s) => ({ ...s, glassbox: { ...s.glassbox, [key]: value } }));
-  }
-  function epoch(change: Partial<NonNullable<PipelineSettings["epoch"]>>) {
-    setSettings((s) => ({ ...s, epoch: { ...s.epoch!, ...change } }));
   }
   function importBids() {
     void act(async () => {
@@ -270,6 +192,15 @@ export function ProjectWorkspace({
         </button>
         <div className="subject-list">
           <h2>Subjects</h2>
+          {!!pipeline.subjects.length && (
+            <button
+              className={`all-subjects ${subject === ALL ? "selected" : ""}`}
+              onClick={() => setSubject(ALL)}
+            >
+              <Users size={14} /> All subjects
+              <span>{pipeline.subjects.length}</span>
+            </button>
+          )}
           {pipeline.subjects.map((s) => (
             <button
               className={s.id === subject ? "selected" : ""}
@@ -335,11 +266,19 @@ export function ProjectWorkspace({
         <div className="processing-content">
           <div className="page-heading">
             <div>
-              <h1>{subject ? `sub-${subject}` : "Subjects & processing"}</h1>
+              <h1>
+                {subject === ALL
+                  ? "All subjects"
+                  : subject
+                    ? `sub-${subject}`
+                    : "Subjects & processing"}
+              </h1>
               <p>
-                {subject
-                  ? "Recordings and preprocessing"
-                  : "Create a subject to add an EyeLink recording."}
+                {subject === ALL
+                  ? "Set the pipeline once, then process every subject."
+                  : subject
+                    ? "Recordings and preprocessing"
+                    : "Create a subject to add an EyeLink recording."}
               </p>
             </div>
             <div className="heading-actions">
@@ -420,6 +359,14 @@ export function ProjectWorkspace({
                   .
                 </strong>
                 {imported.error && <p>{imported.error}</p>}
+                {imported.subjects > 1 && subject !== ALL && (
+                  <button
+                    className="link-button"
+                    onClick={() => setSubject(ALL)}
+                  >
+                    Process all subjects
+                  </button>
+                )}
                 {!!imported.skipped.length && (
                   <details>
                     <summary>
@@ -471,6 +418,18 @@ export function ProjectWorkspace({
                 review.
               </p>
             </div>
+          ) : subject === ALL ? (
+            <BatchProcessing
+              pipeline={pipeline}
+              settings={settings}
+              setSettings={setSettings}
+              busy={busy}
+              act={act}
+              onPipeline={onPipeline}
+              onReview={() => onReview()}
+              onSubject={setSubject}
+              onError={setError}
+            />
           ) : (
             <>
               <section className="recordings-section">
@@ -520,7 +479,9 @@ export function ProjectWorkspace({
                           : -1;
                         const status =
                           !active || position < 0
-                            ? latestJob(r.id)?.status || "ready"
+                            ? waiting.some((j) => j.recordings.includes(r.id))
+                              ? "queued"
+                              : latestJob(r.id)?.status || "ready"
                             : r.id === active.current
                               ? "running"
                               : position <
@@ -639,531 +600,177 @@ export function ProjectWorkspace({
                 </form>
               </section>
               {!!records.length && (
-                <div className="pipeline-layout">
-                  <section className="pipeline-config">
-                    <div className="section-heading">
-                      <h2>Glassbox pipeline</h2>
+                <PipelineSettingsPanel
+                  settings={settings}
+                  setSettings={setSettings}
+                  disabled={busy}
+                  onError={setError}
+                >
+                  <div className="run-actions">
+                    {running ? (
                       <button
-                        onClick={() => setSettings(structuredClone(defaults))}
-                        disabled={running}
+                        className="button"
+                        disabled={
+                          busy ||
+                          (!waiting.length && active?.phase === "publishing")
+                        }
+                        onClick={() =>
+                          void act(async () => {
+                            for (const job of [
+                              ...waiting,
+                              ...(active ? [active] : []),
+                            ])
+                              onPipeline(
+                                await window.eyeris.cancelPipeline(job.id),
+                              );
+                          })
+                        }
                       >
-                        Reset defaults
+                        <Square size={14} /> Cancel processing
                       </button>
+                    ) : (
+                      <button
+                        className="button primary"
+                        disabled={
+                          busy ||
+                          !!importing ||
+                          !selected.length ||
+                          (!!settings.epoch && !settings.epoch.events.trim())
+                        }
+                        onClick={() =>
+                          void act(async () => {
+                            onPipeline(
+                              await window.eyeris.startPipeline(
+                                selected.map((r) => r.id),
+                                settings,
+                              ),
+                            );
+                            if (!checked.includes(recording))
+                              setRecording(selected[0].id);
+                            setShowLog(true);
+                          })
+                        }
+                      >
+                        <Play size={15} />{" "}
+                        {selected.length > 1
+                          ? `Run pipeline on ${selected.length} recordings`
+                          : "Run pipeline"}
+                      </button>
+                    )}
+                  </div>
+                  {!running && (
+                    <p className="run-note">
+                      {!selected.length
+                        ? "Select the recordings to process."
+                        : partial.length
+                          ? `${partial.join(" ")} Its report and database will include only the selected runs.`
+                          : selected.length > 1
+                            ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
+                            : ""}
+                      {processing &&
+                        " Other subjects are processing; this job will wait its turn."}
+                    </p>
+                  )}
+                  {active && (
+                    <div className="run-progress">
+                      <LoaderCircle size={15} className="spin" />{" "}
+                      {active.recordings.length > 1 &&
+                        `${active.recordings.indexOf(active.current) + 1} of ${active.recordings.length} · ${bidsName(named(active.current)!)} · `}
+                      {active.phase === "starting"
+                        ? "Starting R…"
+                        : `Running ${active.phase}…`}
                     </div>
-                    <fieldset disabled={running || busy}>
-                      <div className="load-options">
-                        <label>
-                          Eye
-                          <select
-                            aria-label="Eye"
-                            value={String(
-                              (
-                                settings.glassbox.load_asc as Record<
-                                  string,
-                                  unknown
-                                >
-                              ).binocular_mode,
-                            )}
-                            onChange={(e) =>
-                              setStep("load_asc", {
-                                ...(settings.glassbox.load_asc as object),
-                                binocular_mode: e.target.value,
-                              })
+                  )}
+                  {!active && !!waiting.length && (
+                    <div className="run-progress">
+                      <LoaderCircle size={15} className="spin" /> Queued behind
+                      other subjects…
+                    </div>
+                  )}
+                  {latest && !running && (
+                    <div className="run-result">
+                      <strong className={`job-status ${latest.status}`}>
+                        {latest.status === "completed"
+                          ? "Processing complete"
+                          : latest.status}
+                      </strong>
+                      {latest.recordings.length > 1 && (
+                        <p>
+                          {latest.recordings.length} recordings in this job:{" "}
+                          {latest.recordings
+                            .map((id) => named(id))
+                            .filter(Boolean)
+                            .map((r) => bidsName(r!))
+                            .join(", ")}
+                        </p>
+                      )}
+                      {latest.error && (
+                        <p role="alert">{latest.error.slice(-1500)}</p>
+                      )}
+                      {latest.status === "completed" && (
+                        <>
+                          <p>
+                            {JSON.parse(latest.outputs).length
+                              ? "BIDS output is available in the project’s bids folder."
+                              : "This run’s BIDS output is saved separately to preserve earlier results."}
+                          </p>
+                          <button
+                            className="button"
+                            onClick={() =>
+                              void act(() =>
+                                window.eyeris.showProjectFiles(
+                                  "run",
+                                  latest.id,
+                                ),
+                              )
                             }
                           >
-                            <option value="average">Average</option>
-                            <option value="left">Left</option>
-                            <option value="right">Right</option>
-                            <option value="both">Both, separately</option>
-                          </select>
-                        </label>
-                        <label>
-                          Random seed
-                          <input
-                            type="number"
-                            aria-label="Random seed"
-                            value={Number(settings.glassbox.seed)}
-                            onChange={(e) =>
-                              setStep("seed", Number(e.target.value))
-                            }
-                          />
-                        </label>
-                      </div>
-                      <div className="pipeline-steps">
-                        {steps.map((s, i) => {
-                          const enabled = !!settings.glassbox[s.key];
-                          const params: Record<string, unknown> =
-                            typeof settings.glassbox[s.key] === "object"
-                              ? (settings.glassbox[s.key] as Record<
-                                  string,
-                                  unknown
-                                >)
-                              : s.params;
-                          return (
-                            <div className="pipeline-step" key={s.key}>
-                              <div className="step-line">
-                                <span className="step-number">
-                                  {String(i + 1).padStart(2, "0")}
-                                </span>
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    checked={enabled}
-                                    onChange={(e) =>
-                                      setStep(
-                                        s.key,
-                                        e.target.checked
-                                          ? Object.keys(s.params).length
-                                            ? { ...s.params }
-                                            : true
-                                          : false,
-                                      )
-                                    }
-                                  />
-                                  <span>
-                                    {s.label}
-                                    <small>{s.description}</small>
-                                  </span>
-                                </label>
-                                {!!Object.keys(s.params).length && (
-                                  <button
-                                    aria-label={`${s.label} parameters`}
-                                    type="button"
-                                    onClick={() =>
-                                      setOpenStep(
-                                        openStep === s.key ? "" : s.key,
-                                      )
-                                    }
-                                  >
-                                    <ChevronDown size={15} />
-                                  </button>
-                                )}
-                              </div>
-                              {openStep === s.key && enabled && (
-                                <div className="step-parameters">
-                                  {Object.entries(params)
-                                    .filter(([key]) => key !== "plot_freqz")
-                                    .map(([key, value]) => (
-                                      <label key={key}>
-                                        {names[key] || key}
-                                        {typeof value === "string" ? (
-                                          <select
-                                            value={value}
-                                            onChange={(e) =>
-                                              setStep(s.key, {
-                                                ...params,
-                                                [key]: e.target.value,
-                                              })
-                                            }
-                                          >
-                                            {(s.key === "bin"
-                                              ? ["mean", "median"]
-                                              : ["linear", "spline"]
-                                            ).map((v) => (
-                                              <option key={v}>{v}</option>
-                                            ))}
-                                          </select>
-                                        ) : (
-                                          <input
-                                            type="number"
-                                            step="any"
-                                            aria-label={names[key] || key}
-                                            value={
-                                              value === null
-                                                ? ""
-                                                : Number(value)
-                                            }
-                                            onChange={(e) =>
-                                              setStep(s.key, {
-                                                ...params,
-                                                [key]:
-                                                  e.target.value === ""
-                                                    ? null
-                                                    : Number(e.target.value),
-                                              })
-                                            }
-                                          />
-                                        )}
-                                      </label>
-                                    ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <details className="advanced-config">
-                        <summary>Advanced glassbox options</summary>
-                        <p>
-                          Override supported step parameters using the package’s
-                          argument names.
-                        </p>
-                        <textarea
-                          aria-label="Advanced glassbox options"
-                          key={JSON.stringify(settings.glassbox)}
-                          defaultValue={JSON.stringify(
-                            settings.glassbox,
-                            null,
-                            2,
+                            Show run output
+                          </button>
+                          {latest.config.epoch && (
+                            <button
+                              className="button primary"
+                              onClick={() => onReview(subject)}
+                            >
+                              Review epochs
+                            </button>
                           )}
-                          onBlur={(e) => {
-                            try {
-                              const parsed = JSON.parse(e.target.value);
-                              if (
-                                !parsed.load_asc ||
-                                typeof parsed.load_asc !== "object"
-                              )
-                                throw new Error();
-                              setSettings((s) => ({ ...s, glassbox: parsed }));
-                              setError("");
-                            } catch {
-                              setError(
-                                "Enter a valid JSON settings object including load_asc.",
-                              );
-                            }
-                          }}
-                        />
-                      </details>
-                    </fieldset>
-                  </section>
-                  <section className="pipeline-output">
-                    <h2>Epochs & output</h2>
-                    <fieldset disabled={running || busy}>
-                      <label className="check-label">
-                        <input
-                          type="checkbox"
-                          aria-label="Extract epochs"
-                          checked={!!settings.epoch}
-                          onChange={(e) =>
-                            setSettings((s) => ({
-                              ...s,
-                              epoch: e.target.checked
-                                ? {
-                                    events: "",
-                                    limits: [-1, 2],
-                                    label: "trial",
-                                    baseline: false,
-                                  }
-                                : null,
-                            }))
-                          }
-                        />{" "}
-                        Extract epochs for review
-                      </label>
-                      {settings.epoch && (
-                        <div className="epoch-options">
-                          <label>
-                            Event pattern
-                            <input
-                              aria-label="Event pattern"
-                              placeholder="PROBE_START_{trial}"
-                              value={settings.epoch.events}
-                              onChange={(e) =>
-                                epoch({ events: e.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            Epoch label
-                            <input
-                              aria-label="Epoch label"
-                              value={settings.epoch.label}
-                              onChange={(e) => epoch({ label: e.target.value })}
-                            />
-                          </label>
-                          <div className="paired-fields">
-                            <label>
-                              Start (s)
-                              <input
-                                type="number"
-                                step="any"
-                                aria-label="Epoch start"
-                                value={settings.epoch.limits?.[0] ?? -1}
-                                onChange={(e) =>
-                                  epoch({
-                                    limits: [
-                                      Number(e.target.value),
-                                      settings.epoch!.limits?.[1] ?? 2,
-                                    ],
-                                  })
-                                }
-                              />
-                            </label>
-                            <label>
-                              End (s)
-                              <input
-                                type="number"
-                                step="any"
-                                aria-label="Epoch end"
-                                value={settings.epoch.limits?.[1] ?? 2}
-                                onChange={(e) =>
-                                  epoch({
-                                    limits: [
-                                      settings.epoch!.limits?.[0] ?? -1,
-                                      Number(e.target.value),
-                                    ],
-                                  })
-                                }
-                              />
-                            </label>
-                          </div>
-                          <label className="check-label">
-                            <input
-                              type="checkbox"
-                              checked={settings.epoch.baseline}
-                              onChange={(e) =>
-                                epoch({
-                                  baseline: e.target.checked,
-                                  baseline_type: "sub",
-                                  baseline_period: [-1, 0],
-                                })
-                              }
-                            />{" "}
-                            Baseline correction
-                          </label>
-                          {settings.epoch.baseline && (
-                            <>
-                              <label>
-                                Method
-                                <select
-                                  value={settings.epoch.baseline_type}
-                                  onChange={(e) =>
-                                    epoch({ baseline_type: e.target.value })
-                                  }
-                                >
-                                  <option value="sub">Subtract baseline</option>
-                                  <option value="div">
-                                    Divide by baseline
-                                  </option>
-                                </select>
-                              </label>
-                              <div className="paired-fields">
-                                <label>
-                                  Baseline start (s)
-                                  <input
-                                    type="number"
-                                    step="any"
-                                    value={
-                                      settings.epoch.baseline_period?.[0] ?? -1
-                                    }
-                                    onChange={(e) =>
-                                      epoch({
-                                        baseline_period: [
-                                          Number(e.target.value),
-                                          settings.epoch!
-                                            .baseline_period?.[1] ?? 0,
-                                        ],
-                                      })
-                                    }
-                                  />
-                                </label>
-                                <label>
-                                  Baseline end (s)
-                                  <input
-                                    type="number"
-                                    step="any"
-                                    value={
-                                      settings.epoch.baseline_period?.[1] ?? 0
-                                    }
-                                    onChange={(e) =>
-                                      epoch({
-                                        baseline_period: [
-                                          settings.epoch!
-                                            .baseline_period?.[0] ?? -1,
-                                          Number(e.target.value),
-                                        ],
-                                      })
-                                    }
-                                  />
-                                </label>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      )}
-                      <div className="output-options">
-                        <span>Save to this project</span>
-                        <div>
-                          <Check size={14} /> BIDS CSV files and RDS result
-                        </div>
-                        <label className="check-label">
-                          <input
-                            type="checkbox"
-                            checked={settings.report}
-                            onChange={(e) =>
-                              setSettings((s) => ({
-                                ...s,
-                                report: e.target.checked,
-                              }))
-                            }
-                          />{" "}
-                          HTML diagnostic report
-                        </label>
-                        <label className="check-label">
-                          <input
-                            type="checkbox"
-                            checked={settings.database}
-                            onChange={(e) =>
-                              setSettings((s) => ({
-                                ...s,
-                                database: e.target.checked,
-                              }))
-                            }
-                          />{" "}
-                          DuckDB database
-                        </label>
-                      </div>
-                    </fieldset>
-                    <div className="run-actions">
-                      {running ? (
-                        <button
-                          className="button"
-                          disabled={pipeline.active?.phase === "publishing"}
-                          onClick={() =>
-                            void act(async () =>
-                              onPipeline(await window.eyeris.cancelPipeline()),
-                            )
-                          }
-                        >
-                          <Square size={14} /> Cancel processing
-                        </button>
-                      ) : (
-                        <button
-                          className="button primary"
-                          disabled={
-                            busy ||
-                            !!importing ||
-                            !selected.length ||
-                            (!!settings.epoch && !settings.epoch.events.trim())
-                          }
-                          onClick={() =>
-                            void act(async () => {
-                              onPipeline(
-                                await window.eyeris.startPipeline(
-                                  selected.map((r) => r.id),
-                                  settings,
-                                ),
-                              );
-                              if (!checked.includes(recording))
-                                setRecording(selected[0].id);
-                              setShowLog(true);
-                            })
-                          }
-                        >
-                          <Play size={15} />{" "}
-                          {selected.length > 1
-                            ? `Run pipeline on ${selected.length} recordings`
-                            : "Run pipeline"}
-                        </button>
+                        </>
                       )}
                     </div>
-                    {!running && (
-                      <p className="run-note">
-                        {!selected.length
-                          ? "Select the recordings to process."
-                          : partial.length
-                            ? `${partial.join(" ")} Its report and database will include only the selected runs.`
-                            : selected.length > 1
-                              ? "Selected recordings are processed in one job. Each session report and database covers all of its runs."
-                              : ""}
-                      </p>
-                    )}
-                    {running && (
-                      <div className="run-progress">
-                        <LoaderCircle size={15} className="spin" />{" "}
-                        {active.recordings.length > 1 &&
-                          `${active.recordings.indexOf(active.current) + 1} of ${active.recordings.length} · ${bidsName(named(active.current)!)} · `}
-                        {active.phase === "starting"
-                          ? "Starting R…"
-                          : `Running ${active.phase}…`}
-                      </div>
-                    )}
-                    {latest && !running && (
-                      <div className="run-result">
-                        <strong className={`job-status ${latest.status}`}>
-                          {latest.status === "completed"
-                            ? "Processing complete"
-                            : latest.status}
-                        </strong>
-                        {latest.recordings.length > 1 && (
-                          <p>
-                            {latest.recordings.length} recordings in this job:{" "}
-                            {latest.recordings
-                              .map((id) => named(id))
-                              .filter(Boolean)
-                              .map((r) => bidsName(r!))
-                              .join(", ")}
-                          </p>
-                        )}
-                        {latest.error && (
-                          <p role="alert">{latest.error.slice(-1500)}</p>
-                        )}
-                        {latest.status === "completed" && (
-                          <>
-                            <p>
-                              {JSON.parse(latest.outputs).length
-                                ? "BIDS output is available in the project’s bids folder."
-                                : "This run’s BIDS output is saved separately to preserve earlier results."}
-                            </p>
-                            <button
-                              className="button"
-                              onClick={() =>
-                                void act(() =>
-                                  window.eyeris.showProjectFiles(
-                                    "run",
-                                    latest.id,
-                                  ),
-                                )
-                              }
-                            >
-                              Show run output
-                            </button>
-                            {latest.config.epoch && (
-                              <button
-                                className="button primary"
-                                onClick={() => onReview(subject)}
-                              >
-                                Review epochs
-                              </button>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                    {!!jobs.length && (
-                      <details className="run-history">
-                        <summary>Processing history ({jobs.length})</summary>
-                        {jobs.map((j) => (
-                          <div key={j.id}>
-                            <span>
-                              {new Date(j.started_at).toLocaleString()} ·{" "}
-                              {j.status}
-                              {j.recordings.length > 1 &&
-                                ` · ${j.recordings.length} recordings`}
-                            </span>
-                            <button
-                              onClick={() =>
-                                void act(() =>
-                                  window.eyeris.showProjectFiles("run", j.id),
-                                )
-                              }
-                            >
-                              Files
-                            </button>
-                            <button
-                              disabled={running}
-                              onClick={() =>
-                                setSettings(structuredClone(j.config))
-                              }
-                            >
-                              Reuse settings
-                            </button>
-                          </div>
-                        ))}
-                      </details>
-                    )}
-                  </section>
-                </div>
+                  )}
+                  {!!jobs.length && (
+                    <details className="run-history">
+                      <summary>Processing history ({jobs.length})</summary>
+                      {jobs.map((j) => (
+                        <div key={j.id}>
+                          <span>
+                            {new Date(j.started_at).toLocaleString()} ·{" "}
+                            {j.status}
+                            {j.recordings.length > 1 &&
+                              ` · ${j.recordings.length} recordings`}
+                          </span>
+                          <button
+                            onClick={() =>
+                              void act(() =>
+                                window.eyeris.showProjectFiles("run", j.id),
+                              )
+                            }
+                          >
+                            Files
+                          </button>
+                          <button
+                            onClick={() =>
+                              setSettings(structuredClone(j.config))
+                            }
+                          >
+                            Reuse settings
+                          </button>
+                        </div>
+                      ))}
+                    </details>
+                  )}
+                </PipelineSettingsPanel>
               )}
               {(latest || running) && (
                 <section className="processing-log">

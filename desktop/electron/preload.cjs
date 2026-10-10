@@ -28,6 +28,8 @@ contextBridge.exposeInMainWorld(
       "importBids",
       "cancelImport",
       "startPipeline",
+      "queuePipeline",
+      "saveSettings",
       "cancelPipeline",
       "pipelineLog",
       "showProjectFiles",

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FolderOpen, Plus, ArrowRight, X } from "lucide-react";
-import type { Summary, PipelineState } from "./types";
+import type { Summary, PipelineState, PipelineSettings } from "./types";
+import { defaults } from "./PipelineSettingsPanel";
 import { ReviewWorkspace } from "./ReviewWorkspace";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 export function App() {
@@ -10,10 +11,18 @@ export function App() {
     subjects: [],
     recordings: [],
     jobs: [],
-    active: null,
+    running: [],
+    queued: [],
+    batch: [],
+    settings: null,
     importing: null,
     lastImport: null,
   });
+  // Pipeline settings belong to the project and apply to every subject.
+  const [settings, setSettings] = useState<PipelineSettings>(
+    structuredClone(defaults),
+  );
+  const loadedSettings = useRef<PipelineSettings | null>(null);
   const [reviewer, setReviewer] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
   const [screen, setScreen] = useState<"subjects" | "review">("subjects");
@@ -67,6 +76,10 @@ export function App() {
       if (r) {
         const state = await window.eyeris.projectState();
         setPipeline(state.pipeline);
+        loadedSettings.current = structuredClone(
+          state.pipeline.settings ?? defaults,
+        );
+        setSettings(loadedSettings.current);
         setProject(r);
         setRecent(r.directory);
         setScreen("subjects");
@@ -77,15 +90,35 @@ export function App() {
       setBusy(false);
     }
   }
+  // Save edits shortly after they are made, and before the project closes.
+  const unsaved = useRef<PipelineSettings | null>(null);
+  async function saveSettings() {
+    const pending = unsaved.current;
+    unsaved.current = null;
+    if (pending) setPipeline(await window.eyeris.saveSettings(pending));
+  }
+  useEffect(() => {
+    if (!project || settings === loadedSettings.current) return;
+    unsaved.current = settings;
+    const timer = setTimeout(
+      () => void saveSettings().catch((e) => setError(String(e))),
+      400,
+    );
+    return () => clearTimeout(timer);
+  }, [settings]);
   async function close() {
     try {
+      await saveSettings();
       await window.eyeris.closeProject();
       setProject(null);
       setPipeline({
         subjects: [],
         recordings: [],
         jobs: [],
-        active: null,
+        running: [],
+        queued: [],
+        batch: [],
+        settings: null,
         importing: null,
         lastImport: null,
       });
@@ -182,6 +215,8 @@ export function App() {
         <ProjectWorkspace
           project={project}
           pipeline={pipeline}
+          settings={settings}
+          setSettings={setSettings}
           onPipeline={setPipeline}
           onReview={(participant = "") => {
             setReviewParticipant(participant);
