@@ -502,6 +502,11 @@ declare global {
 }
 export function stageName(stage: string) {
   if (stage === "final") return "Final available stage";
+  // A baseline-corrected stage ends in its baseline's events, such as
+  // pupil_..._sub_bline_PROBE_START_trial, and then _z when standardized.
+  const baseline = /_(sub|div)_bline(_|$)/.exec(stage);
+  if (baseline)
+    return `Baseline ${baseline[1] === "sub" ? "subtracted" : "divided"}${stage.endsWith("_z") ? ", z-scored" : ""}`;
   const suffix =
     stage
       .replace(/^pupil_/, "")
@@ -526,4 +531,40 @@ export function stageName(stage: string) {
       } as Record<string, string>
     )[suffix] || suffix
   );
+}
+// The pupil_* stages eyeris stores in epochs processed with these settings,
+// named as eyeris names them, so rules can be measured at a stage before any
+// epochs exist. Each step appends its suffix to the stage before it, except
+// that binning replaces the stage it bins and the low-pass filter is skipped
+// on data that was not interpolated. A baseline-corrected segment adds the
+// corrected signal, from before standardizing, and its z-scores.
+export function plannedStages(settings: PipelineSettings) {
+  const on = (step: string) => !!settings.glassbox[step];
+  let latest = "pupil_raw";
+  const stages = [latest];
+  for (const [step, suffix] of [
+    ["deblink", "deblink"],
+    ["detransient", "detransient"],
+    ["interpolate", "interpolate"],
+    ["lpfilt", "lpfilt"],
+    ["downsample", "downsample"],
+    ["bin", "bin"],
+    ["detrend", "detrend"],
+    ["zscore", "z"],
+  ]) {
+    if (!on(step) || (step === "lpfilt" && !on("interpolate"))) continue;
+    if (step === "bin") stages.pop();
+    latest = `${latest}_${suffix}`;
+    stages.push(latest);
+  }
+  for (const epoch of epochsOf(settings)) {
+    if (!epoch.baseline) continue;
+    const events = (epoch.baseline_events || epoch.events)
+      .replace(/[*{}]/g, "")
+      .replace(/[^a-zA-Z0-9_]/g, "_");
+    const corrected = `${latest.replace(/_z/g, "")}_${epoch.baseline_type || "sub"}_bline_${events}`;
+    stages.push(corrected);
+    if (on("zscore")) stages.push(`${corrected}_z`);
+  }
+  return [...new Set(stages)];
 }

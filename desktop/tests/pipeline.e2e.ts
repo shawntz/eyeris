@@ -74,6 +74,42 @@ test("splash → subject → ASC runs → glassbox and BIDS → epoch review", a
       page.getByRole("textbox", { name: "Event pattern", exact: true }),
     ).toHaveValue("PROBE_START_{trial}");
     await expect(suggestions).toHaveValue("");
+    // Before any epochs exist, the automatic rules can be measured at the
+    // stages these settings will store.
+    const stageOptions = page
+      .getByRole("combobox", { name: "Missing data stage" })
+      .locator("option");
+    const planned = () =>
+      stageOptions.evaluateAll((options) =>
+        options
+          .map((o) => (o as HTMLOptionElement).value)
+          .filter((v) => v !== "final"),
+      );
+    const stages = await planned();
+    expect(stages).toEqual([
+      "pupil_raw",
+      "pupil_raw_deblink",
+      "pupil_raw_deblink_detransient",
+      "pupil_raw_deblink_detransient_interpolate",
+      "pupil_raw_deblink_detransient_interpolate_lpfilt",
+      "pupil_raw_deblink_detransient_interpolate_lpfilt_z",
+    ]);
+    // A baseline adds the corrected signal and its z-scores.
+    const baseline = page.getByRole("checkbox", {
+      name: "Baseline correction",
+      exact: true,
+    });
+    await baseline.check();
+    await expect(stageOptions).toHaveCount(stages.length + 3);
+    expect((await planned()).slice(-2)).toEqual([
+      "pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_PROBE_START_trial",
+      "pupil_raw_deblink_detransient_interpolate_lpfilt_sub_bline_PROBE_START_trial_z",
+    ]);
+    await expect(stageOptions.last()).toHaveText(
+      /^Baseline subtracted, z-scored · /,
+    );
+    await baseline.uncheck();
+    await expect(stageOptions).toHaveCount(stages.length + 1);
     // The HTML report is optional and off unless chosen.
     const report = page.getByRole("checkbox", {
       name: "HTML diagnostic report",
@@ -92,6 +128,8 @@ test("splash → subject → ASC runs → glassbox and BIDS → epoch review", a
     expect(state.pipeline.jobs[0].recordings).toHaveLength(2);
     expect(state.project.runs).toEqual(["01", "02"]);
     expect(state.project.counts.total).toBeGreaterThan(0);
+    // The stages offered before processing are the ones it stored.
+    expect([...state.project.stages].sort()).toEqual([...stages].sort());
     expect(
       JSON.parse(state.pipeline.jobs[0].outputs).some((p: string) =>
         p.endsWith(".html"),

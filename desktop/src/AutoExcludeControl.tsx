@@ -7,10 +7,13 @@ import { stageName, type Summary } from "./types";
 export function AutoExcludeControl({
   project,
   onProject,
+  planned = [],
   disabled = false,
 }: {
   project: Summary;
   onProject: (project: Summary) => void;
+  // Stages the pipeline settings will store, before any epochs have them.
+  planned?: string[];
   disabled?: boolean;
 }) {
   const saved = project.autoExclude;
@@ -50,7 +53,8 @@ export function AutoExcludeControl({
       setSaving(false);
     }
   }
-  // Each rule is measured at its own stage.
+  // Each rule is measured at its own stage, one the pipeline will store or
+  // stored epochs already have.
   const stageSelect = (
     label: string,
     key: "stage" | "edgeStage" | "keepStage",
@@ -65,7 +69,7 @@ export function AutoExcludeControl({
         onChange={(e) => void save({ [key]: e.target.value })}
       >
         <option value="final">Final available stage</option>
-        {[...new Set([...project.stages, rule[key]])]
+        {[...new Set([...planned, ...project.stages, rule[key]])]
           .filter((s) => s !== "final")
           .map((s) => (
             <option key={s} value={s}>

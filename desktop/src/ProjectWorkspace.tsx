@@ -33,6 +33,7 @@ import {
   normalizeSettings,
   eyeSummary,
   eyeProblem,
+  plannedStages,
 } from "./types";
 import { PipelineSettingsPanel } from "./PipelineSettingsPanel";
 import { BatchProcessing } from "./BatchProcessing";
@@ -169,7 +170,11 @@ export function ProjectWorkspace({
         .catch(() => {});
   }, [latest?.id, latest?.status, running]);
   const exclusion = (
-    <AutoExcludeControl project={project} onProject={onProject} />
+    <AutoExcludeControl
+      project={project}
+      onProject={onProject}
+      planned={plannedStages(settings)}
+    />
   );
   async function act(fn: () => Promise<void>) {
     if (busy) return;
