@@ -858,14 +858,16 @@ main {
 .eye-field .field-error {
   color: #9a3119;
 }
+/* Sized and placed like the input beside it (label > input). */
 .eye-fixed {
   display: block;
-  padding: 9px 12px;
+  margin-top: 6px;
+  padding: 8px 9px;
   border: 1px solid #ddd;
   border-radius: 4px;
   background: #f0f0f0;
   color: #333;
-  font-size: 13px;
+  line-height: normal;
 }
 .link-button.inline {
   display: inline;
