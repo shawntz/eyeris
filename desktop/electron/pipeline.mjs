@@ -19,7 +19,7 @@ import { availableParallelism, totalmem } from "node:os";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { isAppleDouble, scanBids } from "./bids.mjs";
-import { inferPatterns, summarizeMessages } from "./events.mjs";
+import { inferPatterns, summarizeMessages, summaryVersion } from "./events.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
@@ -393,7 +393,9 @@ export class Pipeline {
           "SELECT summary FROM recording_messages WHERE recording_id=? AND file=?",
         )
         .get(r.id, r.file);
-      if (cached) read.push(JSON.parse(cached.summary));
+      const summary = cached && JSON.parse(cached.summary);
+      // Summaries from earlier versions lack what inference now uses.
+      if (summary?.version === summaryVersion) read.push(summary.shapes);
       else this.readMessages(r);
     }
     return {
@@ -412,9 +414,9 @@ export class Pipeline {
       const db = this.project.db;
       while (this.messageQueue.length && !this.disposed) {
         const r = this.messageQueue[0];
-        let summary = {};
+        const summary = { version: summaryVersion, shapes: {} };
         try {
-          summary = await summarizeMessages(
+          summary.shapes = await summarizeMessages(
             path.join(this.project.directory, r.file),
           );
         } catch {

@@ -114,13 +114,21 @@ does not automatically run any processing.
    recordings' own event messages: the app reads the `MSG` lines that eyeris
    would see (those inside a recording block, leaving out EyeLink's
    configuration and calibration messages) from up to eight of the selected
-   recordings, spread across subjects. Numbers that change from message to
-   message become placeholders (`TRIALID 1`, `TRIALID 2`: `TRIALID {trial}`),
-   numbers that never change stay as they are, and messages that differ only in
-   their last word are grouped (`STIM face`, `STIM house`: `STIM {stim}`). Each
-   suggestion shows how many messages it matches and an example; picking one
-   fills in the field, which can still be edited. Messages are read once per
-   file and remembered in the project.
+   recordings, spread across subjects. Messages are compared word by word. A
+   word that changes from message to message becomes a placeholder: a number
+   becomes `{trial}` when nothing else varies (`TRIALID 1`, `TRIALID 2`:
+   `TRIALID {trial}`), a stimulus file name becomes `{stim}` with its extension
+   (`FIX_POSTTRIG 71.jpg`, `FIX_POSTTRIG 260.jpg`: `FIX_POSTTRIG {stim}`, whose
+   `stim` column then holds `71.jpg`), and digits inside a word stay in place
+   (`PROBE_START_{trial}`). Numbers that never change stay as they are, events
+   whose names differ only by a digit stay apart (`RTCLR1_S {stim}` and
+   `RTCLR2_S {stim}`), and messages that differ in one word after the first are
+   grouped (`STIM face`, `STIM house`: `STIM {stim}`). Suggestions never leave
+   characters such as `.` or `(` outside a placeholder, since eyeris reads the
+   rest of a pattern as a regular expression. They are listed in the order the
+   events first occur, each with how many messages it matches and an example;
+   picking one fills in the field, which can still be edited. Messages are read
+   once per file and remembered in the project.
 5. Optionally select HTML reports (off by default) and/or a DuckDB database,
    check the recordings to process, then run the pipeline. It calls
    `eyeris::glassbox()`, optional `eyeris::epoch()`, and `eyeris::bidsify()`

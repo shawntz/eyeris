@@ -63,28 +63,37 @@ test("messages are read as eyelinker reads them, across chunks and line endings"
   assert.equal(summary["STIM face"].example, "STIM face");
 });
 
-test("event patterns name what varies and keep what does not", () => {
-  const shape = (texts) => {
-    const summary = {};
-    for (const text of texts) {
-      const key = text.replace(/\d+/g, "#");
-      const entry = (summary[key] ??= { count: 0, values: [], example: text });
-      entry.count += 1;
-      (text.match(/\d+/g) ?? []).forEach((v, i) => {
-        const values = (entry.values[i] ??= []);
-        if (!values.includes(v)) values.push(v);
-      });
-    }
-    return summary;
-  };
+// A minimal EyeLink ASC recording of the given messages, one per sample.
+async function recording(dir, name, messages) {
+  const lines = [
+    "** CONVERTED FROM test.edf",
+    "START\t1000 \tRIGHT\tSAMPLES\tEVENTS",
+    "SAMPLES\tGAZE\tRIGHT\tRATE\t1000.00\tTRACKING\tCR\tFILTER\t2",
+  ];
+  messages.forEach((text, i) =>
+    lines.push(
+      `MSG\t${1001 + i} ${text}`,
+      `${1001 + i}\t512.0\t384.0\t1200.0\t...`,
+    ),
+  );
+  lines.push(`END\t${1001 + messages.length} \tSAMPLES\tEVENTS`);
+  const file = path.join(dir, name);
+  await writeFile(file, lines.join("\n") + "\n");
+  return summarizeMessages(file);
+}
+
+test("event patterns name what varies and keep what does not", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-infer-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
   const trials = [1, 2, 3];
-  const first = shape([
+  const first = await recording(dir, "first.asc", [
     ...trials.map((n) => `TRIALID ${n}`),
     ...trials.map((n) => `PROBE_START_${n}`),
     ...trials.map((n) => `BLOCK_${n % 2}_TRIAL_${n}`),
-    ...["face", "house", "car"].map((s) => `STIM ${s}`),
+    ...["face", "house", "car", "face", "house", "car"].map((s) => `STIM ${s}`),
     ...trials.map(() => "TRIAL_RESULT 1"),
     ...trials.map((n) => `RESP (${n})`),
+    ...trials.map((n) => `ONSET ${n}.png left`),
     "MARK.A",
     "MARK.A",
     "{weird}",
@@ -99,21 +108,106 @@ test("event patterns name what varies and keep what does not", () => {
     "BLOCK_{block_value}_TRIAL_{trial}",
     "STIM {stim}",
     "TRIAL_RESULT 1",
+    // The whole word varies, parentheses and all, so eyeris matches it.
+    "RESP {trial}",
+    // A file name is a stimulus, extension and all.
+    "ONSET {stim} left",
     "MARK.A",
   ])
     assert.ok(patterns.includes(expected), expected);
   // Not matched literally by eyeris, or seen only once.
   for (const excluded of ["RESP ({trial})", "{weird}", "EXP_START"])
     assert.ok(!patterns.includes(excluded), excluded);
+  // A few grouped words are also offered one by one.
+  for (const word of ["face", "house", "car"])
+    assert.ok(patterns.includes(`STIM ${word}`), word);
   // A value constant in each recording but different between them varies.
-  const second = shape(trials.map(() => "TRIAL_RESULT 0"));
+  const second = await recording(
+    dir,
+    "second.asc",
+    trials.map(() => "TRIAL_RESULT 0"),
+  );
   const merged = inferPatterns([first, second]);
   const result = merged.find((p) => p.pattern === "TRIAL_RESULT {trial}");
   assert.deepEqual(
     { count: result.count, recordings: result.recordings },
     { count: 6, recordings: 2 },
   );
-  assert.equal(merged[0].count >= merged.at(-1).count, true);
+  // Many different words are offered only as their group.
+  const many = await recording(
+    dir,
+    "many.asc",
+    Array.from({ length: 10 }, (_, i) => `IMAGE ${"abcdefghij"[i]}x`),
+  );
+  const images = inferPatterns([many]).map((p) => p.pattern);
+  assert.deepEqual(images, ["IMAGE {image}"]);
+});
+
+test("a run's events are suggested in order, with stimulus files as placeholders", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-run-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  // Shaped like a real run: each trial's events name its stimulus file, some
+  // events happen only in some trials, and event names differ by a digit.
+  const summaries = [];
+  for (const [run, stims] of [
+    [1, [260, 187, 310, 227, 71]],
+    [2, [120, 33, 260, 9, 187]],
+  ]) {
+    const messages = [];
+    stims.forEach((n, i) => {
+      const stim = `${n}.jpg`;
+      messages.push(
+        `TRIALID ${(run - 1) * 5 + i + 79}`,
+        `FIX_PRESTIM ${stim}`,
+        `RTCLR1_S ${stim}`,
+        `RTCLR1_E ${stim}`,
+      );
+      if (i % 2 === 0) messages.push(`RTCLR2_S ${stim}`, `RTCLR2_E ${stim}`);
+      if (i % 3) messages.push(`TRIG_S ${stim}`, `TRIG_E ${stim}`);
+      else messages.push(`DUDTRIG ${stim}`);
+      messages.push(
+        `FIX_POSTTRIG ${stim}`,
+        `PROBE_S ${stim}`,
+        `PROBE_E ${stim}`,
+        `TRIAL_RESULT ${stim}`,
+      );
+    });
+    messages.push("end_run");
+    summaries.push(await recording(dir, `run-${run}.asc`, messages));
+  }
+  assert.deepEqual(
+    inferPatterns(summaries).map((p) => [p.pattern, p.count]),
+    [
+      ["TRIALID {trial}", 10],
+      ["FIX_PRESTIM {stim}", 10],
+      ["RTCLR1_S {stim}", 10],
+      ["RTCLR1_E {stim}", 10],
+      ["RTCLR2_S {stim}", 6],
+      ["RTCLR2_E {stim}", 6],
+      ["DUDTRIG {stim}", 4],
+      ["FIX_POSTTRIG {stim}", 10],
+      ["PROBE_S {stim}", 10],
+      ["PROBE_E {stim}", 10],
+      ["TRIAL_RESULT {stim}", 10],
+      ["TRIG_S {stim}", 6],
+      ["TRIG_E {stim}", 6],
+      ["end_run", 2],
+    ],
+  );
+  const probe = inferPatterns(summaries).find(
+    (p) => p.pattern === "FIX_POSTTRIG {stim}",
+  );
+  assert.equal(probe.example, "FIX_POSTTRIG 260.jpg");
+  // Numbered event names, beyond a handful, are a placeholder instead.
+  const numbered = await recording(
+    dir,
+    "numbered.asc",
+    Array.from({ length: 20 }, (_, i) => `TRIAL${i + 1} START`),
+  );
+  assert.deepEqual(
+    inferPatterns([numbered]).map((p) => p.pattern),
+    ["TRIAL{trial} START"],
+  );
 });
 
 test("patterns come from a sample of recordings across subjects, read once", async (t) => {
@@ -177,4 +271,23 @@ test("patterns come from a sample of recordings across subjects, read once", asy
   assert.equal(pipeline.eventPatterns(ids).pending, 1);
   await pipeline.readingMessages;
   assert.equal(pipeline.eventPatterns([]).total, 0);
+  // Summaries cached by earlier versions are read again.
+  const second = pipeline.snapshot().recordings[1];
+  project.db
+    .prepare("UPDATE recording_messages SET summary=? WHERE recording_id=?")
+    .run(
+      JSON.stringify({ "PROBE_START_#": { count: 5, values: [["1"]] } }),
+      second.id,
+    );
+  assert.equal(pipeline.eventPatterns(ids).pending, 1);
+  await pipeline.readingMessages;
+  assert.equal(pipeline.eventPatterns(ids).pending, 0);
+  assert.equal(
+    JSON.parse(
+      project.db
+        .prepare("SELECT summary FROM recording_messages WHERE recording_id=?")
+        .get(second.id).summary,
+    ).version,
+    2,
+  );
 });
