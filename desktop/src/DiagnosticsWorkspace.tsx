@@ -17,6 +17,8 @@ import {
   type Average,
   type Behavior,
   type DiagnosticGroup,
+  type DiagnosticsActivity,
+  type DiagnosticsProgress,
   type Include,
   type Split,
   type SplitRequest,
@@ -36,6 +38,48 @@ const palette = [
 ];
 
 const number = (n: number) => n.toLocaleString();
+// What a long average or link is doing, with a bar when its size is known.
+function ProgressLine({
+  progress,
+  compact = false,
+}: {
+  progress: DiagnosticsProgress | null;
+  compact?: boolean;
+}) {
+  if (!progress) return null;
+  const { kind, done, total, epochs } = progress;
+  const text =
+    kind === "link"
+      ? total
+        ? `Reading behavioral files: ${number(done)} of ${number(total)}`
+        : "Finding behavioral files…"
+      : kind === "fields"
+        ? `Reading epoch fields: ${number(done)} of ${number(total)} runs`
+        : !total
+          ? "Selecting epochs…"
+          : compact
+            ? `${number(done)} of ${number(total)} runs read`
+            : `Averaging ${number(epochs ?? 0)} epochs: ${number(done)} of ${number(total)} runs read`;
+  return (
+    <span className={`diagnostics-progress${compact ? " compact" : ""}`}>
+      <span>{text}</span>
+      {!!total && !compact && (
+        <span
+          className="progress-track"
+          role="progressbar"
+          aria-label={
+            kind === "link" ? "Linking progress" : "Averaging progress"
+          }
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={done}
+        >
+          <span style={{ width: `${(100 * done) / total}%` }} />
+        </span>
+      )}
+    </span>
+  );
+}
 export const groupKey = (e: {
   source_id: string;
   label: string;
@@ -100,6 +144,9 @@ export function DiagnosticsWorkspace({
   const [behavior, setBehavior] = useState<Behavior | null>(null);
   const [split, setSplit] = useState<Split | null>(null);
   const [linking, setLinking] = useState(false);
+  const [activity, setActivity] = useState<DiagnosticsActivity>({});
+  // Reading epoch fields comes first when an average needs them.
+  const progress = activity.fields ?? activity.average ?? null;
   const grouped = !!splitBy || scope !== "run";
   const [from, column] = splitBy
     ? (splitBy.split(/:(.*)/s) as ["epoch" | "behavior", string])
@@ -188,6 +235,25 @@ export function DiagnosticsWorkspace({
     project.counts.keep,
     project.counts.exclude,
   ]);
+  // Long averages and links report how far they are.
+  useEffect(() => {
+    if (!loading && !linking) {
+      setActivity({});
+      return;
+    }
+    let alive = true;
+    const poll = () =>
+      window.eyeris
+        .diagnosticsProgress()
+        .then((p) => alive && setActivity(p))
+        .catch(() => {});
+    void poll();
+    const timer = setInterval(poll, 300);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
+  }, [loading, linking]);
   async function linkBehavior() {
     setLinking(true);
     try {
@@ -445,6 +511,9 @@ export function DiagnosticsWorkspace({
                   >
                     {linking ? "Linking…" : "Link behavioral data…"}
                   </button>
+                  {linking && activity.link && (
+                    <ProgressLine progress={activity.link} />
+                  )}
                 </div>
               </div>
               <section className="signal-panel diagnostics-panel">
@@ -465,7 +534,12 @@ export function DiagnosticsWorkspace({
                         ? stageName(average.stage)
                         : "…"}
                   </span>
-                  {loading && <LoaderCircle size={14} className="spin" />}
+                  {loading && (
+                    <span className="plot-loading">
+                      <ProgressLine progress={progress} compact />
+                      <LoaderCircle size={14} className="spin" />
+                    </span>
+                  )}
                 </div>
                 {grouped && split?.time && split.series.length ? (
                   <AveragePlot
@@ -501,7 +575,11 @@ export function DiagnosticsWorkspace({
                     {loading ? (
                       <>
                         <LoaderCircle className="spin" size={24} />
-                        <span>Averaging epochs…</span>
+                        {progress ? (
+                          <ProgressLine progress={progress} />
+                        ) : (
+                          <span>Averaging epochs…</span>
+                        )}
                       </>
                     ) : (
                       <>

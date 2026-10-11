@@ -286,6 +286,16 @@ than one row, or without a value for the split column are left out and counted
 below the plot. Linked behavioral data is stored in the project; linking again
 replaces it.
 
+Pooling every subject reads each run's processed result once: up to four runs at
+a time in separate R processes, with the count of runs read shown under the
+plot. Each epoch's trace on the averaging grid is then kept while the project is
+open (about 256 MB at most, dropping the least recently used), so splitting the
+same epochs by another column, or including different epochs, recalculates in a
+moment without reading the runs again; another stage reads them once more.
+Averages run beside the app's other work, so the window, review and **Link
+behavioral data…** stay usable, and choosing other options while one is running
+replaces it. Linking shows how many behavioral files it has read.
+
 **Automatic exclusion** excludes epochs missing more than a chosen percentage of
 samples, measured at the final stage or at any stored stage (for example the raw
 signal, before interpolation fills gaps). Set it under **Automatic exclusion** in

@@ -121,6 +121,20 @@ export interface SplitRequest {
   by: { from: "epoch" | "behavior"; column: string } | null;
   join: { epoch: string; behavior: string } | null;
 }
+// What a running average, behavioral link or field backfill has done: runs
+// (sources) or files.
+export interface DiagnosticsProgress {
+  kind: "average" | "link" | "fields";
+  done: number;
+  total: number;
+  // Epochs being averaged.
+  epochs?: number;
+}
+export interface DiagnosticsActivity {
+  average?: DiagnosticsProgress;
+  link?: DiagnosticsProgress;
+  fields?: DiagnosticsProgress;
+}
 export interface Split {
   epochs: number;
   total: number;
@@ -445,6 +459,7 @@ interface API {
   linkBehavior(): Promise<Behavior | null>;
   epochFields(): Promise<string[]>;
   split(request: SplitRequest): Promise<Split>;
+  diagnosticsProgress(): Promise<DiagnosticsActivity>;
   average(selection: {
     key: string;
     stage: string;
