@@ -85,6 +85,50 @@ test("epochs missing too much data are excluded automatically with the reason", 
     await expect(
       page.getByText(/1 epoch excluded automatically/),
     ).toBeVisible();
+    // Missing data at either end: the kept epoch's raw signal starts with a
+    // gap too, but a reviewer's decision still stands.
+    await page
+      .getByRole("checkbox", {
+        name: "Automatically exclude epochs missing data at the start or end",
+      })
+      .check();
+    await expect(
+      page.getByText("The first or last sample missing", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/1 epoch excluded automatically/),
+    ).toBeVisible();
+    const edge = page.getByRole("spinbutton", { name: "Edge window" });
+    await edge.fill("900");
+    await edge.press("Enter");
+    // Within 900 ms of the start, the epoch with only a mid-epoch gap (from
+    // 833 ms) is excluded as well.
+    await expect(
+      page.getByText(/2 epochs excluded automatically/),
+    ).toBeVisible();
+    await expect(page.locator(".auto-exclude-panel > summary")).toHaveText(
+      "Automatic exclusion · more than 25% missing or missing data within 900 ms of either end in pupil_raw · 2 excluded",
+    );
+    // The epoch only the new rule excludes: the second REPEATED_EVENT.
+    await page
+      .locator(".epoch-row")
+      .filter({ hasText: "auto" })
+      .filter({ hasText: "REPEATED_EVENT" })
+      .click();
+    await expect(page.locator(".signal-heading p")).toContainText(
+      "REPEATED_EVENT",
+    );
+    await expect(
+      page.getByRole("combobox", { name: "Exclusion reason" }),
+    ).toHaveValue("Missing data at the start or end");
+    await expect(
+      page.getByRole("textbox", { name: "Review note" }),
+    ).toHaveValue(
+      "pupil_raw is missing data within 900 ms of the start of the epoch",
+    );
+    await captureScreenshot(page, {
+      path: "test-results/auto-exclude-edges.png",
+    });
     expect(errors).toEqual([]);
   } finally {
     await app.close();

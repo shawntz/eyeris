@@ -31,6 +31,7 @@ import { groupKey } from "./DiagnosticsWorkspace";
 import {
   stageName,
   AUTO_REVIEWER,
+  type AutoExclude,
   type Epoch,
   type Summary,
   type Trace,
@@ -67,6 +68,26 @@ function StatusIcon({ status }: { status: Status }) {
   );
 }
 
+// Reasons a reviewer can give, including those of the automatic rules; a saved
+// reason is "<reason>: <note>".
+const exclusionReasons = [
+  "Signal artifact",
+  "Excessive missing data",
+  "Missing data at the start or end",
+  "Blink contamination",
+  "Baseline issue",
+  "Other",
+];
+// The automatic exclusion rules in a few words, for the panel's summary.
+function autoRules(rule: AutoExclude) {
+  const rules = [
+    rule.enabled && `more than ${rule.threshold}% missing`,
+    rule.edges &&
+      `missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of` : "at"} either end`,
+  ].filter(Boolean);
+  if (!rules.length) return "off";
+  return `${rules.join(" or ")} in ${rule.stage === "final" ? "the final stage" : rule.stage}`;
+}
 export function ReviewWorkspace({
   initialProject,
   reviewer: initialReviewer,
@@ -216,14 +237,7 @@ export function ReviewWorkspace({
   }, [selected?.id]);
   useEffect(() => {
     const saved = selected?.reason || "";
-    const reasons = [
-      "Signal artifact",
-      "Excessive missing data",
-      "Blink contamination",
-      "Baseline issue",
-      "Other",
-    ];
-    const previous = reasons.find(
+    const previous = exclusionReasons.find(
       (r) => saved === r || saved.startsWith(r + ": "),
     );
     if (selected?.status === "exclude" && previous) {
@@ -724,10 +738,9 @@ export function ReviewWorkspace({
               </div>
               <details className="auto-exclude-panel">
                 <summary>
-                  Automatic exclusion ·{" "}
-                  {project.autoExclude.enabled
-                    ? `more than ${project.autoExclude.threshold}% missing in ${project.autoExclude.stage === "final" ? "the final stage" : project.autoExclude.stage} · ${number(project.autoExcluded)} excluded`
-                    : "off"}
+                  Automatic exclusion · {autoRules(project.autoExclude)}
+                  {(project.autoExclude.enabled || project.autoExclude.edges) &&
+                    ` · ${number(project.autoExcluded)} excluded`}
                 </summary>
                 <AutoExcludeControl
                   project={project}
@@ -1135,11 +1148,9 @@ export function ReviewWorkspace({
                           value={reason}
                           onChange={(e) => setReason(e.target.value)}
                         >
-                          <option>Signal artifact</option>
-                          <option>Excessive missing data</option>
-                          <option>Blink contamination</option>
-                          <option>Baseline issue</option>
-                          <option>Other</option>
+                          {exclusionReasons.map((r) => (
+                            <option key={r}>{r}</option>
+                          ))}
                         </select>
                       </label>
                       <label>

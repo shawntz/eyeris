@@ -23,7 +23,16 @@ const schemaVersion = "2";
 // Automatic exclusions are recorded under this reviewer name. They apply only
 // to epochs no person has decided on, and never change a person's decision.
 export const AUTO_REVIEWER = "eyeris auto-exclude";
-const autoDefaults = { enabled: false, threshold: 25, stage: "final" };
+// Exclude epochs missing more than `threshold` percent of their samples, and
+// (with `edges`) those missing data within `edgeWindow` ms of either end, both
+// measured at `stage`.
+const autoDefaults = {
+  enabled: false,
+  threshold: 25,
+  stage: "final",
+  edges: false,
+  edgeWindow: 0,
+};
 const digest = (text) => createHash("sha256").update(text).digest("hex");
 async function fileHash(file) {
   const hash = createHash("sha256");
@@ -341,7 +350,7 @@ export class Project {
     const saved = this.db
       .prepare("SELECT value FROM metadata WHERE key='auto_exclude'")
       .get();
-    return saved ? JSON.parse(saved.value) : { ...autoDefaults };
+    return { ...autoDefaults, ...(saved && JSON.parse(saved.value)) };
   }
   async setAutoExclude(rule) {
     if (
@@ -356,13 +365,26 @@ export class Project {
       throw new Error(
         "Enter a missing-data threshold from 0 to less than 100 percent.",
       );
+    const edges = rule.edges ?? false;
+    const edgeWindow = rule.edgeWindow ?? 0;
+    if (
+      typeof edges !== "boolean" ||
+      typeof edgeWindow !== "number" ||
+      !(edgeWindow >= 0 && edgeWindow <= 60000)
+    )
+      throw new Error(
+        "Enter how close to the start or end, from 0 to 60,000 ms.",
+      );
     const value = {
       enabled: rule.enabled,
       threshold: rule.threshold,
       stage: rule.stage,
+      edges,
+      edgeWindow,
     };
     if (value.enabled && value.stage !== "final")
       await this.backfillMeta("stageMissing", "missing");
+    if (value.edges) await this.backfillMeta("stageEdges", "edges");
     this.db
       .prepare(
         "INSERT INTO metadata VALUES ('auto_exclude', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
@@ -402,9 +424,9 @@ export class Project {
     }
   }
 
-  // Apply the missing-data rule to every epoch without a person's decision, in
-  // one source or the whole project. Epochs that no longer exceed the threshold
-  // return to unreviewed. Each change is recorded in the audit history.
+  // Apply the missing-data rules to every epoch without a person's decision, in
+  // one source or the whole project. Epochs the rules no longer exclude return
+  // to unreviewed. Each change is recorded in the audit history.
   applyAutoExclude(sourceId) {
     const rule = this.autoExclude();
     const rows = this.db
@@ -426,24 +448,47 @@ export class Project {
           ? null
           : (meta.stageMissing?.[stage] ??
             (stage === meta.finalStage ? row.missing : null));
-        const after =
-          rule.enabled && fraction !== null && fraction * 100 > rule.threshold
+        const reasons = [];
+        if (
+          rule.enabled &&
+          fraction !== null &&
+          fraction * 100 > rule.threshold
+        )
+          reasons.push(
+            `Excessive missing data: ${(fraction * 100).toFixed(1)}% of samples missing in ${stage}, above the ${rule.threshold}% automatic exclusion threshold`,
+          );
+        // Seconds from the start to the first missing sample, and from the
+        // last missing sample to the end.
+        const [start, end] =
+          (meta.stages.includes(stage) && meta.stageEdges?.[stage]) || [];
+        const near = (gap) =>
+          gap !== null &&
+          gap !== undefined &&
+          gap * 1000 <= rule.edgeWindow + 1e-6;
+        const ends = [near(start) && "start", near(end) && "end"].filter(
+          Boolean,
+        );
+        if (rule.edges && ends.length)
+          reasons.push(
+            `Missing data at the start or end: ${stage} is missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of the` : "at the"} ${ends.join(" and ")} of the epoch`,
+          );
+        const after = reasons.length
+          ? {
+              status: "exclude",
+              reason: reasons.join("; "),
+              reviewer: AUTO_REVIEWER,
+              stage,
+              updated_at: now,
+            }
+          : row.reviewer === AUTO_REVIEWER
             ? {
-                status: "exclude",
-                reason: `Excessive missing data: ${(fraction * 100).toFixed(1)}% of samples missing in ${stage}, above the ${rule.threshold}% automatic exclusion threshold`,
-                reviewer: AUTO_REVIEWER,
-                stage,
+                status: "unreviewed",
+                reason: "",
+                reviewer: "",
+                stage: "",
                 updated_at: now,
               }
-            : row.reviewer === AUTO_REVIEWER
-              ? {
-                  status: "unreviewed",
-                  reason: "",
-                  reviewer: "",
-                  stage: "",
-                  updated_at: now,
-                }
-              : null;
+            : null;
         if (after?.status === "exclude") excluded += 1;
         if (
           !after ||
