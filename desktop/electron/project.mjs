@@ -11,6 +11,8 @@ import {
   stat,
 } from "node:fs/promises";
 import { parseTsv, scanBehavior } from "./bids.mjs";
+import { RWorkerPool } from "./r-worker.mjs";
+import { availableParallelism } from "node:os";
 import path from "node:path";
 import packageMetadata from "../package.json" with { type: "json" };
 
@@ -123,6 +125,13 @@ export class Project {
     this.directory = directory;
     this.worker = worker;
     this.verified = new Set();
+    // Diagnostics read many sources: in parallel R workers (started when first
+    // needed), keeping each epoch's trace on the averaging grid so a new
+    // grouping of the same epochs needs no reading. `progress` holds what the
+    // running average, link and field backfill have done, for the window.
+    this.traceCache = new Map();
+    this.traceBytes = 0;
+    this.progress = {};
     this.db = new DatabaseSync(path.join(directory, "review.sqlite"));
     if (exists) {
       let schema;
@@ -195,6 +204,7 @@ export class Project {
     });
   }
   close() {
+    this.pool?.close();
     this.db.close();
   }
   transaction(fn) {
@@ -364,18 +374,22 @@ export class Project {
   // Epochs indexed by earlier versions lack some per-epoch values, such as
   // every stage's missing fraction or the epoch fields. Compute them from each
   // source with the named worker method and store them.
-  async backfillMeta(property, method) {
+  async backfillMeta(property, method, progress = {}) {
     const rows = this.db
       .prepare(
         `SELECT id, source_id, meta FROM epochs WHERE json_type(meta, '$.${property}') IS NULL ORDER BY source_id`,
       )
       .all();
-    for (const [source, epochs] of Map.groupBy(rows, (r) => r.source_id)) {
+    const sources = [...Map.groupBy(rows, (r) => r.source_id)];
+    Object.assign(progress, { done: 0, total: sources.length });
+    const pool = this.diagnosticsPool();
+    for (const [source, epochs] of sources) {
       const metas = epochs.map((e) => JSON.parse(e.meta));
-      const values = await this.worker.request(method, {
+      const values = await pool.request(method, {
         path: await this.sourcePath(source),
         epochs: metas,
       });
+      progress.done += 1;
       const update = this.db.prepare("UPDATE epochs SET meta=? WHERE id=?");
       this.transaction(() =>
         epochs.forEach((e, i) =>
@@ -743,14 +757,36 @@ export class Project {
   // Link the behavioral tables of a BIDS dataset, replacing earlier ones, so
   // epochs can be joined to trial-level behavior.
   async linkBehavior(root) {
-    const files = await scanBehavior(root);
-    if (!files.length)
-      throw new Error(
-        "No behavioral .tsv files were found in sub-*/beh or sub-*/ses-*/beh folders.",
-      );
-    const tables = [];
-    for (const f of files)
-      tables.push({ ...f, ...parseTsv(await readFile(f.file, "utf8")) });
+    const progress = { kind: "link", done: 0, total: 0 };
+    this.progress.link = progress;
+    try {
+      const files = await scanBehavior(root);
+      if (!files.length)
+        throw new Error(
+          "No behavioral .tsv files were found in sub-*/beh or sub-*/ses-*/beh folders.",
+        );
+      // Read a few files at a time, which helps most on network drives.
+      progress.total = files.length;
+      const tables = new Array(files.length);
+      let next = 0;
+      const read = async () => {
+        while (next < files.length) {
+          const i = next++;
+          tables[i] = {
+            ...files[i],
+            ...parseTsv(await readFile(files[i].file, "utf8")),
+          };
+          progress.done += 1;
+        }
+      };
+      await Promise.all(Array.from({ length: 8 }, read));
+      this.saveBehavior(root, tables);
+    } finally {
+      if (this.progress.link === progress) delete this.progress.link;
+    }
+    return this.behavior();
+  }
+  saveBehavior(root, tables) {
     this.transaction(() => {
       this.db.exec("DELETE FROM behavior");
       const insert = this.db.prepare(
@@ -774,7 +810,6 @@ export class Project {
         )
         .run(root);
     });
-    return this.behavior();
   }
   behavior() {
     return {
@@ -792,8 +827,90 @@ export class Project {
         .map((r) => r.key),
     };
   }
+  // Fields of epochs indexed before they were stored, read once and shared by
+  // concurrent callers.
+  ensureFields() {
+    if (!this.fieldsReady) {
+      const progress = { kind: "fields", done: 0, total: 0 };
+      this.progress.fields = progress;
+      this.fieldsReady = this.backfillMeta(
+        "fields",
+        "fields",
+        progress,
+      ).finally(() => {
+        this.fieldsReady = null;
+        if (this.progress.fields === progress) delete this.progress.fields;
+      });
+    }
+    return this.fieldsReady;
+  }
+  diagnosticsPool() {
+    this.pool ??= new RWorkerPool(
+      Math.min(4, Math.max(1, availableParallelism() - 1)),
+    );
+    return this.pool;
+  }
+  diagnosticsProgress() {
+    return structuredClone(this.progress);
+  }
+  // Each epoch's values of a stage on the grid, from the cache or read from
+  // their sources in parallel. Stops before reading another source once
+  // `current()` is false, when a newer average has started.
+  async epochTraces(epochs, stage, grid, current, progress) {
+    const result = new Map();
+    const pending = [];
+    const bySource = Map.groupBy(epochs, (e) => e.source_id);
+    for (const [source, list] of bySource) {
+      const key = `${source}|${stage}|${grid.length}|${grid.at(-1)}`;
+      const cached = this.traceCache.get(key);
+      if (cached) {
+        // Most recently used last.
+        this.traceCache.delete(key);
+        this.traceCache.set(key, cached);
+      }
+      const missing = [];
+      for (const e of list)
+        if (cached?.has(e.id)) result.set(e.id, cached.get(e.id));
+        else missing.push(e);
+      if (missing.length) pending.push({ source, key, missing });
+    }
+    progress.total = bySource.size;
+    progress.done = bySource.size - pending.length;
+    const pool = this.diagnosticsPool();
+    let next = 0;
+    const read = async () => {
+      while (next < pending.length) {
+        if (!current()) throw new Error("A newer average replaced this one.");
+        const { source, key, missing } = pending[next++];
+        const values = await pool.request("traces", {
+          path: await this.sourcePath(source),
+          epochs: missing.map((e) => e.meta),
+          stage,
+          grid,
+        });
+        const entry = this.traceCache.get(key) ?? new Map();
+        this.traceCache.delete(key);
+        missing.forEach((e, i) => {
+          const y = Float64Array.from(values[i], (v) => v ?? NaN);
+          if (!entry.has(e.id)) this.traceBytes += y.byteLength;
+          entry.set(e.id, y);
+          result.set(e.id, y);
+        });
+        this.traceCache.set(key, entry);
+        // Keep about 256 MB of traces, dropping the least recently used.
+        for (const [old, traces] of this.traceCache) {
+          if (this.traceBytes <= 256e6 || old === key) break;
+          for (const y of traces.values()) this.traceBytes -= y.byteLength;
+          this.traceCache.delete(old);
+        }
+        progress.done += 1;
+      }
+    };
+    await Promise.all(Array.from({ length: pool.size }, read));
+    return result;
+  }
   async epochFields() {
-    await this.backfillMeta("fields", "fields");
+    await this.ensureFields();
     return this.db
       .prepare(
         "SELECT DISTINCT j.key FROM epochs e, json_each(e.meta, '$.fields') j ORDER BY j.key",
@@ -842,7 +959,25 @@ export class Project {
       throw new Error(
         "Choose the epoch field and behavioral column that identify each trial.",
       );
-    if (by || join) await this.backfillMeta("fields", "fields");
+    // Only the newest average runs on; an older one stops at its next source.
+    const token = (this.splitToken = Symbol());
+    const current = () => this.splitToken === token;
+    if (by || join) await this.ensureFields();
+    if (!current()) throw new Error("A newer average replaced this one.");
+    const progress = { kind: "average", done: 0, total: 0, epochs: 0 };
+    this.progress.average = progress;
+    try {
+      return await this.pooled(
+        { where, statuses, stage, by, join },
+        current,
+        progress,
+      );
+    } finally {
+      if (this.progress.average === progress) delete this.progress.average;
+    }
+  }
+  // The selected epochs, grouped and pooled for split().
+  async pooled({ where, statuses, stage, by, join }, current, progress) {
     const rows = this.db
       .prepare(
         `SELECT * FROM epochs WHERE ${where[0]} AND status IN (${statuses.map(() => "?").join(",")})
@@ -850,40 +985,38 @@ export class Project {
       )
       .all(...where[1], ...statuses)
       .map((row) => this.deserialize(row));
-    const behavior = Map.groupBy(
-      by?.from === "behavior"
-        ? this.db
-            .prepare("SELECT * FROM behavior")
-            .all()
-            .map((r) => ({ ...r, data: JSON.parse(r.data) }))
-        : [],
-      (b) => b.participant,
-    );
-    // Identifiers match as text, or as numbers (so 7 matches 7.0).
-    const same = (a, b) =>
-      a === b ||
-      (a !== undefined &&
-        b !== undefined &&
-        a.trim() !== "" &&
-        b.trim() !== "" &&
-        Number.isFinite(Number(a)) &&
-        Number(a) === Number(b));
+    // Identifiers match as text, or as numbers (so 7 matches 7.0): behavioral
+    // rows are indexed by subject and identifier in that form.
+    const identifier = (v) =>
+      v === undefined
+        ? undefined
+        : v.trim() !== "" && Number.isFinite(Number(v))
+          ? `n${Number(v)}`
+          : `s${v}`;
+    const behavior = new Map();
+    if (by?.from === "behavior")
+      for (const r of this.db.prepare("SELECT * FROM behavior").all()) {
+        const data = JSON.parse(r.data);
+        const id = identifier(data[join.behavior]);
+        if (id === undefined) continue;
+        const key = `${r.participant}\u0000${id}`;
+        behavior.set(key, [...(behavior.get(key) ?? []), { ...r, data }]);
+      }
     const counts = { unmatched: 0, ambiguous: 0, missing: 0 };
     const assigned = [];
     for (const e of rows) {
       let value = "All epochs";
       if (by?.from === "epoch") value = e.meta.fields?.[by.column];
       else if (by) {
-        const id = e.meta.fields?.[join.epoch];
+        const id = identifier(e.meta.fields?.[join.epoch]);
         const matches =
           id === undefined
             ? []
-            : (behavior.get(e.participant) ?? []).filter(
+            : (behavior.get(`${e.participant}\u0000${id}`) ?? []).filter(
                 (b) =>
                   (!b.session || b.session === e.session) &&
                   (!b.task || b.task === e.task) &&
-                  (!b.run || b.run === e.run) &&
-                  same(b.data[join.behavior], id),
+                  (!b.run || b.run === e.run),
               );
         if (matches.length !== 1) {
           counts[matches.length ? "ambiguous" : "unmatched"] += 1;
@@ -915,33 +1048,31 @@ export class Project {
       { length: points },
       (_, i) => (first.duration * i) / (points - 1),
     );
-    // Each source's moments are combined with Chan's parallel update.
+    progress.epochs = assigned.length;
+    const traces = await this.epochTraces(
+      assigned.map((a) => a.epoch),
+      resolved,
+      grid,
+      current,
+      progress,
+    );
+    if (!current()) throw new Error("A newer average replaced this one.");
+    // Each group's mean and sum of squared deviations, one epoch at a time
+    // (Welford), at every point of the grid.
     const mean = labels.map(() => new Float64Array(points));
     const m2 = labels.map(() => new Float64Array(points));
     const n = labels.map(() => new Float64Array(points));
-    for (const [id, group] of Map.groupBy(assigned, (a) => a.epoch.source_id)) {
-      const result = await this.worker.request("moments", {
-        path: await this.sourcePath(id),
-        epochs: group.map((a) => ({
-          ...a.epoch.meta,
-          group: labels.indexOf(a.value) + 1,
-        })),
-        stage: resolved,
-        grid,
-        groups: labels.length,
-      });
-      labels.forEach((_, g) => {
-        for (let i = 0; i < points; i++) {
-          const nb = result.n[g][i];
-          if (!nb) continue;
-          const na = n[g][i];
-          const total = na + nb;
-          const delta = result.mean[g][i] - mean[g][i];
-          mean[g][i] += (delta * nb) / total;
-          m2[g][i] += result.m2[g][i] + (delta * delta * na * nb) / total;
-          n[g][i] = total;
-        }
-      });
+    const index = new Map(labels.map((label, g) => [label, g]));
+    for (const a of assigned) {
+      const g = index.get(a.value);
+      const y = traces.get(a.epoch.id);
+      for (let i = 0; i < points; i++) {
+        if (Number.isNaN(y[i])) continue;
+        n[g][i] += 1;
+        const delta = y[i] - mean[g][i];
+        mean[g][i] += delta / n[g][i];
+        m2[g][i] += delta * (y[i] - mean[g][i]);
+      }
     }
     const limits = first.limits;
     const offset =

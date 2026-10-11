@@ -146,6 +146,27 @@ review_group_moments <- function(x, epochs, stage, grid, groups) {
   list(mean = columns(means), m2 = columns(m2), n = columns(counts))
 }
 
+# Each epoch's values of one stage on a time grid (seconds from the epoch's
+# start), using the nearest sample as review_group_moments() does, and NA where
+# the value is missing or the epoch is shorter than the grid. The app caches
+# these to average epochs in any grouping without reading the source again.
+review_traces <- function(x, epochs, stage, grid) {
+  grid <- unlist(grid)
+  objects <- review_objects(x)
+  lapply(epochs, function(e) {
+    df <- objects[[e$eye]][[e$label]][[e$block]]
+    if (is.null(df) || e$start < 1 || e$end > nrow(df)) stop("Epoch locator is no longer valid.")
+    if (!stage %in% names(df)) stop("An epoch does not contain the selected stage.")
+    rows <- seq.int(e$start, e$end)
+    t <- df$timebin[rows]
+    t <- t - t[1]
+    nearest <- round(stats::approx(t, seq_along(t), grid, rule = 2, ties = "ordered")$y)
+    y <- df[[stage]][rows][nearest]
+    y[!is.finite(y) | grid > max(t)] <- NA_real_
+    y
+  })
+}
+
 review_frame <- function(x, epoch) {
   df <- review_objects(x)[[epoch$eye]][[epoch$label]][[epoch$block]]
   if (is.null(df) || epoch$start < 1 || epoch$end > nrow(df)) stop("Epoch locator is no longer valid.")

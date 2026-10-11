@@ -18,6 +18,15 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const worker = new RWorker();
 let window, project, demoChild, pipeline, updates;
 let queue = Promise.resolve();
+// Diagnostics can take minutes over many subjects. They only read the project
+// (filling in epoch fields once), so they run beside the queue: other requests,
+// such as linking behavioral data, and their own progress still answer.
+const alongsideQueue = new Set([
+  "average",
+  "split",
+  "epochFields",
+  "diagnosticsProgress",
+]);
 app.setName("eyeris");
 if (process.env.EYERIS_TEST_USER_DATA)
   app.setPath("userData", process.env.EYERIS_TEST_USER_DATA);
@@ -310,6 +319,7 @@ const methods = {
   behavior: () => requireProject().behavior(),
   epochFields: () => requireProject().epochFields(),
   split: (request) => requireProject().split(request),
+  diagnosticsProgress: () => requireProject().diagnosticsProgress(),
   async linkBehavior() {
     requireProject();
     const { root, bidsRoot } = project.behavior();
@@ -377,11 +387,13 @@ app.whenReady().then(async () => {
         event.senderFrame.url !== pageURL
       )
         throw new Error("Unknown review window.");
-      const result = queue.then(() => {
+      const run = () => {
         if (updates.state.status === "installing" && method !== "updateState")
           throw new Error("The app is restarting to install an update.");
         return fn(...args);
-      });
+      };
+      if (alongsideQueue.has(method)) return run();
+      const result = queue.then(run);
       queue = result.catch(() => {});
       return result;
     });
