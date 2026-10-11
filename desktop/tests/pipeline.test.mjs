@@ -664,7 +664,7 @@ test(
 );
 
 test(
-  "recorded eyes are read with eyeris::load_asc so only real choices are offered",
+  "recorded eyes are read in the background so only real choices are offered",
   { timeout: 240000 },
   async (t) => {
     const dir = await mkdtemp(path.join(tmpdir(), "eyeris-eyes-"));
@@ -702,40 +702,47 @@ test(
     const unreadable = path.join(dir, "unreadable.asc");
     await writeFile(unreadable, "not an EyeLink recording");
     pipeline.addSubject("001");
-    for (const file of [mono, binocular, unreadable]) {
-      const state = await pipeline.addRecording(
-        { subject: "001", session: "01", task: "memory" },
-        file,
-      );
-      assert.ok(state.detecting, "the check starts in the background");
-    }
-    let state = await checked();
-    const byRun = Object.fromEntries(state.recordings.map((r) => [r.run, r]));
-    assert.equal(byRun["01"].eyes, "right");
-    assert.equal(byRun["02"].eyes, "both");
-    assert.equal(byRun["03"].eyes, "unknown");
-    assert.notEqual(byRun["03"].eyes_error, "");
-    // If R cannot start, recordings are marked unknown instead of waiting.
-    const previous = process.env.EYERIS_RSCRIPT;
-    process.env.EYERIS_RSCRIPT = path.join(dir, "missing-Rscript");
-    try {
-      state = pipeline.recheckEyes();
-      assert.equal(state.recordings.find((r) => r.run === "03").eyes_file, "");
-      state = await checked();
-    } finally {
-      if (previous === undefined) delete process.env.EYERIS_RSCRIPT;
-      else process.env.EYERIS_RSCRIPT = previous;
-    }
-    assert.match(
-      state.recordings.find((r) => r.run === "03").eyes_error,
-      /stopped before this recording/,
+    let state = await pipeline.addRecording(
+      { subject: "001", session: "01", task: "memory" },
+      unreadable,
     );
+    assert.ok(state.detecting, "the check starts in the background");
+    // More recordings than are read at a time, added together.
+    const files = [mono, binocular, mono, binocular, mono, mono];
+    for (const [i, file] of files.entries())
+      await copyFile(file, path.join(dir, `recording-${i + 1}.asc`));
+    state = await pipeline.addRecording(
+      { subject: "001", session: "01", task: "memory" },
+      files.map((_, i) => path.join(dir, `recording-${i + 1}.asc`)),
+    );
+    assert.ok(state.detecting);
+    state = await checked();
+    assert.equal(state.detecting, null);
+    assert.deepEqual(
+      state.recordings.map((r) => r.eyes),
+      ["unknown", "right", "both", "right", "both", "right", "right"],
+    );
+    const byRun = Object.fromEntries(state.recordings.map((r) => [r.run, r]));
+    assert.equal(
+      byRun["01"].eyes_error,
+      "No EyeLink SAMPLES or EVENTS line was found.",
+    );
+    assert.ok(
+      state.recordings.every((r) => r.eyes === "unknown" || !r.eyes_error),
+    );
+    // Checking again reads a recording whose file was restored.
+    await copyFile(binocular, path.join(project.directory, byRun["01"].file));
+    state = pipeline.recheckEyes();
+    assert.equal(state.recordings.find((r) => r.run === "01").eyes_file, "");
+    state = await checked();
+    assert.equal(state.recordings.find((r) => r.run === "01").eyes, "both");
+    assert.equal(state.recordings.find((r) => r.run === "01").eyes_error, "");
     // Checks are kept with the project and not repeated when it is reopened.
     pipeline.dispose();
     pipeline = new Pipeline(project, { parallel: 1, detectEyes: true });
     assert.equal(pipeline.snapshot().detecting, null);
     // Each job records the eyes of its recordings.
-    await pipeline.start(byRun["01"].id, {
+    await pipeline.start(byRun["02"].id, {
       glassbox: { load_asc: { block: "auto", binocular_mode: "average" } },
       epochs: [],
       report: false,

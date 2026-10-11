@@ -16,6 +16,7 @@ import {
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { availableParallelism, totalmem } from "node:os";
+import { recordedEyes } from "./eyes.mjs";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { isAppleDouble, scanBids } from "./bids.mjs";
@@ -128,8 +129,8 @@ export class Pipeline {
       CREATE TABLE IF NOT EXISTS job_recordings(job_id TEXT NOT NULL REFERENCES jobs(id), recording_id TEXT NOT NULL REFERENCES recordings(id), PRIMARY KEY(job_id, recording_id));`);
     this.migrate();
     // Which eyes each recording has: "left", "right" or "both", or "unknown"
-    // with the reason when eyeris could not read it. eyes_file is the file
-    // that was checked, so a replaced file is checked again.
+    // with the reason when they could not be read. eyes_file is the file that
+    // was checked, so a replaced file is checked again.
     const columns = project.db
       .prepare("SELECT name FROM pragma_table_info('recordings')")
       .all()
@@ -154,8 +155,8 @@ export class Pipeline {
     this.autoDetect = detectEyes;
     if (detectEyes) this.detectEyes();
   }
-  // Check again the recordings eyeris could not read, such as after R failed
-  // to start or a file was restored.
+  // Check again the recordings whose eyes could not be read, such as after a
+  // file was restored.
   recheckEyes() {
     this.project.db
       .prepare("UPDATE recordings SET eyes_file='' WHERE eyes='unknown'")
@@ -163,8 +164,8 @@ export class Pipeline {
     this.detectEyes();
     return this.snapshot();
   }
-  // Check which eyes each new or changed recording has by loading it with
-  // eyeris::load_asc() in one background R process, one recording at a time.
+  // Check which eyes each new or changed recording has, a few recordings at a
+  // time, by reading the line eyeris::load_asc() takes them from.
   detectEyes() {
     if (this.disposed) return;
     if (this.detecting) {
@@ -178,70 +179,34 @@ export class Pipeline {
       )
       .all();
     if (!pending.length) return;
-    const detecting = { total: pending.length, done: 0, again: false };
+    const detecting = {
+      total: pending.length,
+      done: 0,
+      again: false,
+      stop: new AbortController(),
+    };
     this.detecting = detecting;
-    const child = spawn(
-      resolveRscript(),
-      ["--vanilla", path.join(rDirectory(), "detect-eyes.R")],
-      {
-        env: rEnvironment(),
-        stdio: ["pipe", "pipe", "pipe"],
-        windowsHide: true,
-      },
-    );
-    detecting.child = child;
     const record = db.prepare(
       "UPDATE recordings SET eyes=?, eyes_error=?, eyes_file=? WHERE id=? AND file=?",
     );
-    let stdout = "";
-    let log = "";
-    child.stdout.on("data", (data) => {
-      stdout += data;
-      const lines = stdout.split("\n");
-      stdout = lines.pop();
-      for (const line of lines)
-        if (line.startsWith("@@EYES@@") && !this.disposed) {
-          try {
-            const result = JSON.parse(line.slice(8));
-            const file = pending.find((r) => r.id === result.id)?.file;
-            record.run(result.eyes, result.error ?? "", file, result.id, file);
-            detecting.done += 1;
-          } catch {}
-        }
-    });
-    child.stderr.on("data", (data) => (log = (log + data).slice(-2000)));
-    child.on("error", (error) => (log = error.message));
-    child.on("close", () => {
+    const next = pending.values();
+    const check = async () => {
+      for (const r of next) {
+        const result = await recordedEyes(
+          path.join(this.project.directory, r.file),
+          { signal: detecting.stop.signal },
+        );
+        if (this.disposed) return;
+        // The recording may have been removed or replaced while it was read.
+        record.run(result.eyes, result.error ?? "", r.file, r.id, r.file);
+        detecting.done += 1;
+      }
+    };
+    void Promise.all(Array.from({ length: 4 }, check)).then(() => {
       if (this.disposed) return;
-      // Recordings the process never reached are marked unknown rather than
-      // left waiting, for example when R cannot start.
-      for (const r of pending)
-        if (
-          db
-            .prepare(
-              "SELECT 1 FROM recordings WHERE id=? AND eyes_file IS NOT file",
-            )
-            .get(r.id)
-        )
-          record.run(
-            "unknown",
-            `The eye check stopped before this recording. ${log}`.trim(),
-            r.file,
-            r.id,
-            r.file,
-          );
       this.detecting = null;
       if (detecting.again) this.detectEyes();
     });
-    child.stdin.on("error", () => {});
-    child.stdin.end(
-      JSON.stringify(
-        pending.map((r) => ({
-          id: r.id,
-          path: path.join(this.project.directory, r.file),
-        })),
-      ),
-    );
   }
   // Projects created before run numbers allowed one ASC per subject, session and
   // task. SQLite cannot change a UNIQUE constraint in place, so rebuild the
@@ -352,10 +317,11 @@ export class Pipeline {
       .run(value);
     return this.snapshot();
   }
-  // Called when the app quits: unfinished jobs are recorded as interrupted.
+  // Called when the project closes or the app quits: background checks stop
+  // and unfinished jobs are recorded as interrupted.
   dispose() {
     this.disposed = true;
-    this.detecting?.child.kill();
+    this.detecting?.stop.abort();
     this.queue = [];
     this.cancelImport();
     for (const active of this.running.values()) {

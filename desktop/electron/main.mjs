@@ -52,6 +52,8 @@ async function activate(directory, create) {
       "Wait for processing or importing to finish, or cancel it, before switching projects.",
     );
   const next = await Project.open(directory, worker, create);
+  // Stop the closing project's background checks before its database closes.
+  pipeline?.dispose();
   project?.close();
   project = next;
   pipeline = new Pipeline(project, { detectEyes: true });
@@ -98,6 +100,7 @@ const methods = {
       throw new Error(
         "Wait for processing or importing to finish, or cancel it, before closing the project.",
       );
+    pipeline?.dispose();
     project?.close();
     project = null;
     pipeline = null;

@@ -280,8 +280,8 @@ export function PipelineSettingsPanel({
                   )}
                   {!!eyes?.pending && (
                     <small>
-                      Reading {eyes.pending} recording{plural(eyes.pending)}{" "}
-                      with eyeris to check which eyes were recorded…
+                      Reading {eyes.pending} recording{plural(eyes.pending)} to
+                      check which eyes were recorded…
                     </small>
                   )}
                   {!!eyes?.unknown.length && (
