@@ -23,16 +23,19 @@ const schemaVersion = "2";
 // Automatic exclusions are recorded under this reviewer name. They apply only
 // to epochs no person has decided on, and never change a person's decision.
 export const AUTO_REVIEWER = "eyeris auto-exclude";
-// Exclude epochs missing more than `threshold` percent of their samples, and
-// (with `edges`) those missing data within `edgeWindow` ms of either end, both
-// measured at `stage`.
+// Exclude epochs missing more than `threshold` percent of their samples at
+// `stage`, and (with `edges`) those missing data within `edgeWindow` ms of
+// either end at `edgeStage`.
 const autoDefaults = {
   enabled: false,
   threshold: 25,
   stage: "final",
   edges: false,
   edgeWindow: 0,
+  edgeStage: "final",
 };
+const stageName = (stage) =>
+  typeof stage === "string" && stage.length > 0 && stage.length <= 200;
 const digest = (text) => createHash("sha256").update(text).digest("hex");
 async function fileHash(file) {
   const hash = createHash("sha256");
@@ -350,7 +353,13 @@ export class Project {
     const saved = this.db
       .prepare("SELECT value FROM metadata WHERE key='auto_exclude'")
       .get();
-    return { ...autoDefaults, ...(saved && JSON.parse(saved.value)) };
+    const rule = saved ? JSON.parse(saved.value) : {};
+    // A rule saved before each rule had its own stage measured at one.
+    return {
+      ...autoDefaults,
+      edgeStage: rule.stage ?? autoDefaults.edgeStage,
+      ...rule,
+    };
   }
   async setAutoExclude(rule) {
     if (
@@ -358,15 +367,16 @@ export class Project {
       typeof rule.enabled !== "boolean" ||
       typeof rule.threshold !== "number" ||
       !(rule.threshold >= 0 && rule.threshold < 100) ||
-      typeof rule.stage !== "string" ||
-      !rule.stage ||
-      rule.stage.length > 200
+      !stageName(rule.stage)
     )
       throw new Error(
         "Enter a missing-data threshold from 0 to less than 100 percent.",
       );
     const edges = rule.edges ?? false;
     const edgeWindow = rule.edgeWindow ?? 0;
+    const edgeStage = rule.edgeStage ?? rule.stage;
+    if (!stageName(edgeStage))
+      throw new Error("Choose the stage to look for missing data at.");
     if (
       typeof edges !== "boolean" ||
       typeof edgeWindow !== "number" ||
@@ -381,6 +391,7 @@ export class Project {
       stage: rule.stage,
       edges,
       edgeWindow,
+      edgeStage,
     };
     if (value.enabled && value.stage !== "final")
       await this.backfillMeta("stageMissing", "missing");
@@ -443,24 +454,34 @@ export class Project {
     this.transaction(() => {
       for (const row of rows) {
         const meta = JSON.parse(row.meta);
-        const stage = rule.stage === "final" ? meta.finalStage : rule.stage;
+        const at = (s) => (s === "final" ? meta.finalStage : s);
+        const stage = at(rule.stage);
         const fraction = !meta.stages.includes(stage)
           ? null
           : (meta.stageMissing?.[stage] ??
             (stage === meta.finalStage ? row.missing : null));
+        // Each reason, with the stage it was measured at.
         const reasons = [];
+        const measured = [];
+        const exclude = (reason, at) => {
+          reasons.push(reason);
+          measured.push(at);
+        };
         if (
           rule.enabled &&
           fraction !== null &&
           fraction * 100 > rule.threshold
         )
-          reasons.push(
+          exclude(
             `Excessive missing data: ${(fraction * 100).toFixed(1)}% of samples missing in ${stage}, above the ${rule.threshold}% automatic exclusion threshold`,
+            stage,
           );
         // Seconds from the start to the first missing sample, and from the
-        // last missing sample to the end.
+        // last missing sample to the end, at the start and end rule's stage.
+        const edgeStage = at(rule.edgeStage);
         const [start, end] =
-          (meta.stages.includes(stage) && meta.stageEdges?.[stage]) || [];
+          (meta.stages.includes(edgeStage) && meta.stageEdges?.[edgeStage]) ||
+          [];
         const near = (gap) =>
           gap !== null &&
           gap !== undefined &&
@@ -469,15 +490,16 @@ export class Project {
           Boolean,
         );
         if (rule.edges && ends.length)
-          reasons.push(
-            `Missing data at the start or end: ${stage} is missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of the` : "at the"} ${ends.join(" and ")} of the epoch`,
+          exclude(
+            `Missing data at the start or end: ${edgeStage} is missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of the` : "at the"} ${ends.join(" and ")} of the epoch`,
+            edgeStage,
           );
         const after = reasons.length
           ? {
               status: "exclude",
               reason: reasons.join("; "),
               reviewer: AUTO_REVIEWER,
-              stage,
+              stage: measured[0],
               updated_at: now,
             }
           : row.reviewer === AUTO_REVIEWER

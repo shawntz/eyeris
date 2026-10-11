@@ -30,6 +30,7 @@ export function AutoExcludeControl({
     saved.stage,
     saved.edges,
     saved.edgeWindow,
+    saved.edgeStage,
   ]);
   async function save(change: Partial<typeof rule>) {
     const next = { ...rule, ...change };
@@ -47,8 +48,30 @@ export function AutoExcludeControl({
       setSaving(false);
     }
   }
-  const stages = [...new Set([...project.stages, rule.stage])].filter(
-    (s) => s !== "final",
+  // Each rule is measured at its own stage.
+  const stageSelect = (
+    label: string,
+    key: "stage" | "edgeStage",
+    on: boolean,
+  ) => (
+    <label>
+      Measured at
+      <select
+        aria-label={label}
+        value={rule[key]}
+        disabled={disabled || saving || !on}
+        onChange={(e) => void save({ [key]: e.target.value })}
+      >
+        <option value="final">Final available stage</option>
+        {[...new Set([...project.stages, rule[key]])]
+          .filter((s) => s !== "final")
+          .map((s) => (
+            <option key={s} value={s}>
+              {stageName(s)} · {s.replace(/^pupil_/, "")}
+            </option>
+          ))}
+      </select>
+    </label>
   );
   return (
     <div className="auto-exclude">
@@ -84,22 +107,7 @@ export function AutoExcludeControl({
               }}
             />
           </label>
-          <label>
-            Measured at
-            <select
-              aria-label="Missing data stage"
-              value={rule.stage}
-              disabled={disabled || saving || !(rule.enabled || rule.edges)}
-              onChange={(e) => void save({ stage: e.target.value })}
-            >
-              <option value="final">Final available stage</option>
-              {stages.map((s) => (
-                <option key={s} value={s}>
-                  {stageName(s)} · {s.replace(/^pupil_/, "")}
-                </option>
-              ))}
-            </select>
-          </label>
+          {stageSelect("Missing data stage", "stage", rule.enabled)}
         </div>
       </div>
       <div className="auto-rule">
@@ -134,6 +142,7 @@ export function AutoExcludeControl({
               }}
             />
           </label>
+          {stageSelect("Start and end stage", "edgeStage", rule.edges)}
           <small className="edge-note">
             {Number(edgeWindow) > 0
               ? `Any sample missing in the first or last ${edgeWindow} ms.`

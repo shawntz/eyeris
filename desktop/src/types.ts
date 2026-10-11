@@ -77,6 +77,7 @@ export interface AutoExclude {
   // Also exclude epochs missing data within edgeWindow ms of either end.
   edges: boolean;
   edgeWindow: number;
+  edgeStage: string;
 }
 export const AUTO_REVIEWER = "eyeris auto-exclude";
 // A run of epochs that share a time axis: one block, label and eye of a source.

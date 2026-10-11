@@ -80,13 +80,13 @@ const exclusionReasons = [
 ];
 // The automatic exclusion rules in a few words, for the panel's summary.
 function autoRules(rule: AutoExclude) {
+  const at = (stage: string) => (stage === "final" ? "the final stage" : stage);
   const rules = [
-    rule.enabled && `more than ${rule.threshold}% missing`,
+    rule.enabled && `more than ${rule.threshold}% missing in ${at(rule.stage)}`,
     rule.edges &&
-      `missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of` : "at"} either end`,
+      `missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of` : "at"} either end in ${at(rule.edgeStage)}`,
   ].filter(Boolean);
-  if (!rules.length) return "off";
-  return `${rules.join(" or ")} in ${rule.stage === "final" ? "the final stage" : rule.stage}`;
+  return rules.length ? rules.join(" or ") : "off";
 }
 export function ReviewWorkspace({
   initialProject,

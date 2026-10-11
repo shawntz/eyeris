@@ -92,6 +92,9 @@ test("epochs missing too much data are excluded automatically with the reason", 
         name: "Automatically exclude epochs missing data at the start or end",
       })
       .check();
+    await page
+      .getByRole("combobox", { name: "Start and end stage" })
+      .selectOption("pupil_raw");
     await expect(
       page.getByText("The first or last sample missing", { exact: false }),
     ).toBeVisible();
@@ -107,7 +110,7 @@ test("epochs missing too much data are excluded automatically with the reason", 
       page.getByText(/2 epochs excluded automatically/),
     ).toBeVisible();
     await expect(page.locator(".auto-exclude-panel > summary")).toHaveText(
-      "Automatic exclusion · more than 25% missing or missing data within 900 ms of either end in pupil_raw · 2 excluded",
+      "Automatic exclusion · more than 25% missing in pupil_raw or missing data within 900 ms of either end in pupil_raw · 2 excluded",
     );
     // The epoch only the new rule excludes: the second REPEATED_EVENT.
     await page

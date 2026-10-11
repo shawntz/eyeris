@@ -324,15 +324,16 @@ versions are recomputed from their source the first time a non-final stage is
 chosen.
 
 A second rule excludes epochs missing data at their **start or end**, measured
-at the same stage: with **Within (ms) of either end** at 0, an epoch whose first
-or last sample is missing (such as one that starts or ends during a blink); with
-a window such as 100 ms, any epoch with a missing sample in its first or last
-100 ms. Its reason is `Missing data at the start or end: pupil_raw is missing
-data within 100 ms of the start of the epoch` (or of the end, or of both), and
-an epoch both rules exclude gives both reasons. Where missing data comes nearest
-each end is stored for every stage when epochs are indexed, and recomputed from
-the source for epochs indexed by earlier versions when the rule is first turned
-on.
+at a stage of its own (for example after deblinking, while the percentage rule
+looks at the raw signal): with **Within (ms) of either end** at 0, an epoch
+whose first or last sample is missing (such as one that starts or ends during a
+blink); with a window such as 100 ms, any epoch with a missing sample in its
+first or last 100 ms. Its reason is `Missing data at the start or end:
+pupil_raw_deblink is missing data within 100 ms of the start of the epoch` (or
+of the end, or of both), and an epoch both rules exclude gives both reasons; the
+decision records the stage of the first. Where missing data comes nearest each
+end is stored for every stage when epochs are indexed, and recomputed from the
+source for epochs indexed by earlier versions when the rule is first turned on.
 
 Decisions apply to an individual epoch across all stored stages, not other epoch
 labels or the other eye. Epoch identities combine a source SHA-256 with eye,

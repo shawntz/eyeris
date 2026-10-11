@@ -337,6 +337,14 @@ test("epochs missing too much data are excluded automatically, with the reason",
     path.join(dir, "sub-005_task-memory.rds"),
   );
   assert.equal(imported.autoExcluded, 0, "the rule is off by default");
+  assert.deepEqual(project.autoExclude(), {
+    enabled: false,
+    threshold: 25,
+    stage: "final",
+    edges: false,
+    edgeWindow: 0,
+    edgeStage: "final",
+  });
   const [partial, clean, mostly] = project.list().rows;
   assert.ok(
     Math.abs(partial.meta.stageMissing.pupil_raw - 3700 / 12000) < 1e-12,
@@ -373,6 +381,7 @@ test("epochs missing too much data are excluded automatically, with the reason",
     stage: "pupil_raw",
     edges: false,
     edgeWindow: 0,
+    edgeStage: "pupil_raw",
   });
   let excluded = byId(partial.id);
   assert.equal(excluded.status, "exclude");
@@ -480,6 +489,7 @@ test("epochs missing too much data are excluded automatically, with the reason",
     stage: "pupil_raw",
     edges: false,
     edgeWindow: 0,
+    edgeStage: "pupil_raw",
   });
   assert.ok(
     manifest.decisions.some(
@@ -519,6 +529,7 @@ test("epochs missing data at their start or end are excluded automatically", asy
     stage: "final",
     edges: true,
     edgeWindow: 0,
+    edgeStage: "final",
   };
   const reasons = () =>
     Object.fromEntries(
@@ -549,11 +560,34 @@ test("epochs missing data at their start or end are excluded automatically", asy
       "Missing data at the start or end: pupil_raw_lpfilt is missing data within 900 ms of the start and end of the epoch",
   });
   assert.equal(summary.autoExcluded, 3);
+  // Each rule is measured at its own stage: here 30.8% is missing in the raw
+  // signal, and the start is missing in both stages.
+  await project.setAutoExclude({
+    ...rule,
+    enabled: true,
+    stage: "pupil_raw",
+    edgeStage: "pupil_raw_lpfilt",
+  });
+  assert.equal(
+    reasons()[partial.id],
+    "Excessive missing data: 30.8% of samples missing in pupil_raw, above the 25% automatic exclusion threshold; Missing data at the start or end: pupil_raw_lpfilt is missing data at the start of the epoch",
+  );
+  assert.equal(
+    project.list().rows.find((e) => e.id === partial.id).stage,
+    "pupil_raw",
+  );
+  // Only the start and end rule: its stage is the decision's.
+  await project.setAutoExclude({ ...rule, edgeStage: "pupil_raw_lpfilt" });
+  assert.equal(
+    project.list().rows.find((e) => e.id === mostly.id).stage,
+    "pupil_raw_lpfilt",
+  );
   // Both rules give both reasons, measured at the chosen stage.
   await project.setAutoExclude({
     ...rule,
     enabled: true,
     stage: "pupil_raw",
+    edgeStage: "pupil_raw",
   });
   assert.equal(
     reasons()[partial.id],
