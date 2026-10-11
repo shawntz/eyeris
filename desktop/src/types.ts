@@ -230,7 +230,7 @@ export interface Recording {
   run: string;
   name: string;
   file: string;
-  // "left", "right" or "both" as read by eyeris::load_asc(), or "unknown".
+  // "left", "right" or "both", as eyeris::load_asc() reads them, or "unknown".
   eyes: string;
   eyes_error: string;
   // The file that was checked; differs from file until the check finishes.
