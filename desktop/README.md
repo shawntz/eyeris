@@ -308,7 +308,7 @@ replaces it. Linking shows how many behavioral files it has read.
 
 **Automatic exclusion** excludes epochs missing more than a chosen percentage of
 samples, measured at the final stage or at any stored stage (for example the raw
-signal, before interpolation fills gaps). Set it under **Automatic exclusion** in
+signal, before interpolation fills gaps). Set it under **Automatic decisions** in
 review, or with the epoch options before processing. The rule applies to every
 epoch no reviewer has decided on: when it is changed, and to new epochs as they
 are indexed. Epochs that no longer exceed the threshold return to unreviewed.
@@ -334,6 +334,19 @@ of the end, or of both), and an epoch both rules exclude gives both reasons; the
 decision records the stage of the first. Where missing data comes nearest each
 end is stored for every stage when epochs are indexed, and recomputed from the
 source for epochs indexed by earlier versions when the rule is first turned on.
+
+A third rule **keeps** epochs with no missing data, at a stage of its own, so
+only epochs with gaps are left to review: for example, keep epochs complete in
+the raw signal while excluding those missing data near either end after
+deblinking. Each is kept with the reviewer `eyeris auto-keep` and the reason
+`Complete data: no samples missing in pupil_raw`; like the exclusion rules, it
+applies only to epochs no reviewer has decided on, returns its epochs to
+unreviewed when turned off, and is counted in `summary.csv`
+(`kept_automatically`, beside `excluded_automatically`). When the rules look at
+different stages they can disagree, and exclusion wins: an epoch complete in the
+raw signal but missing data at an edge after deblinking is excluded. Measured at
+the final stage, where interpolation has filled most gaps, the rule keeps far
+more epochs than in the raw signal.
 
 Decisions apply to an individual epoch across all stored stages, not other epoch
 labels or the other eye. Epoch identities combine a source SHA-256 with eye,

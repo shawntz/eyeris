@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { Project, AUTO_REVIEWER } from "../electron/project.mjs";
+import { Project, AUTO_REVIEWER, AUTO_KEEPER } from "../electron/project.mjs";
 import { RWorker } from "../electron/r-worker.mjs";
 import packageMetadata from "../package.json" with { type: "json" };
 
@@ -344,6 +344,8 @@ test("epochs missing too much data are excluded automatically, with the reason",
     edges: false,
     edgeWindow: 0,
     edgeStage: "final",
+    keepComplete: false,
+    keepStage: "final",
   });
   const [partial, clean, mostly] = project.list().rows;
   assert.ok(
@@ -382,6 +384,8 @@ test("epochs missing too much data are excluded automatically, with the reason",
     edges: false,
     edgeWindow: 0,
     edgeStage: "pupil_raw",
+    keepComplete: false,
+    keepStage: "final",
   });
   let excluded = byId(partial.id);
   assert.equal(excluded.status, "exclude");
@@ -490,6 +494,8 @@ test("epochs missing too much data are excluded automatically, with the reason",
     edges: false,
     edgeWindow: 0,
     edgeStage: "pupil_raw",
+    keepComplete: false,
+    keepStage: "final",
   });
   assert.ok(
     manifest.decisions.some(
@@ -530,6 +536,8 @@ test("epochs missing data at their start or end are excluded automatically", asy
     edges: true,
     edgeWindow: 0,
     edgeStage: "final",
+    keepComplete: false,
+    keepStage: "final",
   };
   const reasons = () =>
     Object.fromEntries(
@@ -623,6 +631,118 @@ test("epochs missing data at their start or end are excluded automatically", asy
   // Turning the rule off returns its epochs to unreviewed.
   summary = await project.setAutoExclude({ ...rule, edges: false });
   assert.equal(summary.autoExcluded, 0);
+});
+
+test("epochs with no missing data are kept automatically", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-keep-test-"));
+  const worker = new RWorker();
+  const project = await Project.open(path.join(dir, "k.eyeris"), worker, true);
+  t.after(async () => {
+    project.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  // A subject whose second epoch has no missing data at the final stage.
+  execFileSync(resolveRscript(), [
+    "-e",
+    "a <- commandArgs(TRUE); z <- readRDS(a[1]); f <- z$epoch_probe$block_1$pupil_raw_lpfilt; f[12001:24000][is.na(f[12001:24000])] <- 4000; z$epoch_probe$block_1$pupil_raw_lpfilt <- f; saveRDS(z, a[2])",
+    path.join(dir, "sub-005_task-memory.rds"),
+    path.join(dir, "sub-007_task-memory.rds"),
+  ]);
+  await project.importFile(path.join(dir, "sub-007_task-memory.rds"));
+  const [partial, complete, mostly] = project.list().rows;
+  assert.equal(complete.meta.stageMissing.pupil_raw_lpfilt, 0);
+  const rule = {
+    enabled: true,
+    threshold: 25,
+    stage: "final",
+    edges: false,
+    edgeWindow: 0,
+    edgeStage: "final",
+    keepComplete: true,
+    keepStage: "final",
+  };
+  const byId = (id) => project.list().rows.find((e) => e.id === id);
+  let summary = await project.setAutoExclude(rule);
+  assert.deepEqual(summary.autoExclude, rule);
+  assert.deepEqual([summary.autoKept, summary.autoExcluded], [1, 1]);
+  const kept = byId(complete.id);
+  assert.deepEqual(
+    [kept.status, kept.reviewer, kept.stage, kept.reason],
+    [
+      "keep",
+      AUTO_KEEPER,
+      "pupil_raw_lpfilt",
+      "Complete data: no samples missing in pupil_raw_lpfilt",
+    ],
+  );
+  // 60% missing is excluded; 5.8% is neither excluded nor complete.
+  assert.equal(byId(mostly.id).status, "exclude");
+  assert.equal(byId(partial.id).status, "unreviewed");
+  // Kept at its own stage: in the raw signal the epoch has a gap.
+  summary = await project.setAutoExclude({ ...rule, keepStage: "pupil_raw" });
+  assert.equal(summary.autoKept, 0);
+  assert.equal(byId(complete.id).status, "unreviewed");
+  // Complete after filtering but with raw data missing 833 ms in, it is
+  // excluded by a start and end rule measured at the raw signal.
+  summary = await project.setAutoExclude({
+    ...rule,
+    edges: true,
+    edgeWindow: 900,
+    edgeStage: "pupil_raw",
+  });
+  assert.equal(summary.autoKept, 0);
+  assert.deepEqual(
+    [byId(complete.id).status, byId(complete.id).stage],
+    ["exclude", "pupil_raw"],
+  );
+  summary = await project.setAutoExclude(rule);
+  assert.equal(summary.autoKept, 1);
+  // Its name is reserved, and undo applies only to reviewers' decisions.
+  assert.throws(
+    () =>
+      project.decision({
+        id: partial.id,
+        status: "keep",
+        stage: "final",
+        reviewer: AUTO_KEEPER,
+        reason: "",
+      }),
+    /reserved for automatic decisions/,
+  );
+  assert.equal(project.undo(), null);
+  // A reviewer's decision stands.
+  project.decision({
+    id: complete.id,
+    status: "exclude",
+    stage: "final",
+    reviewer: "Tester",
+    reason: "Signal artifact",
+  });
+  summary = await project.setAutoExclude(rule);
+  assert.equal(summary.autoKept, 0);
+  assert.equal(byId(complete.id).status, "exclude");
+  assert.equal(project.undo().id, complete.id);
+  // New epochs are checked as they are imported.
+  const imported = await project.importFile(
+    path.join(dir, "sub-002_task-memory.rds"),
+  );
+  assert.deepEqual([imported.autoKept, imported.autoExcluded], [0, 0]);
+  // Turning the rule off returns its epochs to unreviewed.
+  summary = await project.setAutoExclude({ ...rule, keepComplete: false });
+  assert.equal(summary.autoKept, 0);
+  assert.equal(byId(complete.id).status, "unreviewed");
+  // Exported, with the automatic keeps counted.
+  await project.setAutoExclude(rule);
+  const result = await project.export(path.join(dir, "exports"));
+  const rows = (
+    await readFile(path.join(result.directory, "summary.csv"), "utf8")
+  )
+    .replaceAll('"', "")
+    .split("\n");
+  assert.match(rows[0], /excluded_automatically,kept_automatically$/);
+  assert.ok(rows.includes("007,,memory,01,3,1,1,1,1,1"), JSON.stringify(rows));
 });
 
 test("review resumes where it was left and exports every subject at once", async (t) => {
@@ -739,9 +859,9 @@ test("review resumes where it was left and exports every subject at once", async
       .trim()
       .split("\n"),
     [
-      '"participant","session","task","run","epochs","kept","excluded","unreviewed","excluded_automatically"',
-      '"001","","memory","01","6","5","1","0","0"',
-      '"005","","memory","01","3","3","0","0","0"',
+      '"participant","session","task","run","epochs","kept","excluded","unreviewed","excluded_automatically","kept_automatically"',
+      '"001","","memory","01","6","5","1","0","0","0"',
+      '"005","","memory","01","3","3","0","0","0","0"',
     ],
   );
   const decisions = (

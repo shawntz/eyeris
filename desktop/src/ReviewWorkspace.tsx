@@ -31,6 +31,7 @@ import { groupKey } from "./DiagnosticsWorkspace";
 import {
   stageName,
   AUTO_REVIEWER,
+  AUTO_KEEPER,
   type AutoExclude,
   type Epoch,
   type Summary,
@@ -78,15 +79,19 @@ const exclusionReasons = [
   "Baseline issue",
   "Other",
 ];
-// The automatic exclusion rules in a few words, for the panel's summary.
+// The automatic rules in a few words, for the panel's summary.
 function autoRules(rule: AutoExclude) {
   const at = (stage: string) => (stage === "final" ? "the final stage" : stage);
-  const rules = [
+  const exclude = [
     rule.enabled && `more than ${rule.threshold}% missing in ${at(rule.stage)}`,
     rule.edges &&
       `missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of` : "at"} either end in ${at(rule.edgeStage)}`,
   ].filter(Boolean);
-  return rules.length ? rules.join(" or ") : "off";
+  const rules = [
+    exclude.length && `exclude ${exclude.join(" or ")}`,
+    rule.keepComplete && `keep epochs complete in ${at(rule.keepStage)}`,
+  ].filter(Boolean);
+  return rules.length ? rules.join("; ") : "off";
 }
 export function ReviewWorkspace({
   initialProject,
@@ -304,8 +309,9 @@ export function ReviewWorkspace({
         (n, r) => n + (r.autoExcluded || 0),
         0,
       );
+      const kept = result.results.reduce((n, r) => n + (r.autoKept || 0), 0);
       setNotice(
-        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
+        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${kept ? ` ${number(kept)} with no missing data kept automatically.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
       );
     });
   }
@@ -738,9 +744,11 @@ export function ReviewWorkspace({
               </div>
               <details className="auto-exclude-panel">
                 <summary>
-                  Automatic exclusion · {autoRules(project.autoExclude)}
+                  Automatic decisions · {autoRules(project.autoExclude)}
                   {(project.autoExclude.enabled || project.autoExclude.edges) &&
                     ` · ${number(project.autoExcluded)} excluded`}
+                  {project.autoExclude.keepComplete &&
+                    ` · ${number(project.autoKept)} kept`}
                 </summary>
                 <AutoExcludeControl
                   project={project}
@@ -929,7 +937,9 @@ export function ReviewWorkspace({
                             {e.run ? `Run ${e.run}` : e.block} ·{" "}
                             {e.label.replace("epoch_", "")}
                             {e.eye !== "main" ? ` · ${e.eye}` : ""}
-                            {e.reviewer === AUTO_REVIEWER && " · auto"}
+                            {(e.reviewer === AUTO_REVIEWER ||
+                              e.reviewer === AUTO_KEEPER) &&
+                              " · auto"}
                           </small>
                         </span>
                         <ChevronRight size={14} />

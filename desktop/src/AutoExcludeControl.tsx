@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { stageName, type Summary } from "./types";
 
 // The project's rules for excluding epochs with too much missing data, or with
-// missing data at their start or end. They apply to every epoch without a
-// person's decision, now and on import.
+// missing data at their start or end, and for keeping epochs with none. They
+// apply to every epoch without a person's decision, now and on import.
 export function AutoExcludeControl({
   project,
   onProject,
@@ -31,6 +31,8 @@ export function AutoExcludeControl({
     saved.edges,
     saved.edgeWindow,
     saved.edgeStage,
+    saved.keepComplete,
+    saved.keepStage,
   ]);
   async function save(change: Partial<typeof rule>) {
     const next = { ...rule, ...change };
@@ -51,10 +53,10 @@ export function AutoExcludeControl({
   // Each rule is measured at its own stage.
   const stageSelect = (
     label: string,
-    key: "stage" | "edgeStage",
+    key: "stage" | "edgeStage" | "keepStage",
     on: boolean,
   ) => (
-    <label>
+    <label className="stage-field">
       Measured at
       <select
         aria-label={label}
@@ -150,9 +152,26 @@ export function AutoExcludeControl({
           </small>
         </div>
       </div>
+      <div className="auto-rule">
+        <label className="check-label">
+          <input
+            type="checkbox"
+            checked={rule.keepComplete}
+            disabled={disabled || saving}
+            onChange={(e) => void save({ keepComplete: e.target.checked })}
+          />{" "}
+          Automatically keep epochs with no missing data
+        </label>
+        <div className="paired-fields keep-fields">
+          {stageSelect("Complete data stage", "keepStage", rule.keepComplete)}
+        </div>
+      </div>
       <small>
         {saved.enabled || saved.edges
           ? `${project.autoExcluded.toLocaleString()} epoch${project.autoExcluded === 1 ? "" : "s"} excluded automatically. `
+          : ""}
+        {saved.keepComplete
+          ? `${project.autoKept.toLocaleString()} epoch${project.autoKept === 1 ? "" : "s"} with no missing data kept automatically. `
           : ""}
         Applies to epochs no one has reviewed, including epochs added later. A
         reviewer's decision is never changed.

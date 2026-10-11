@@ -50,6 +50,7 @@ export interface Summary {
   stages: string[];
   autoExclude: AutoExclude;
   autoExcluded: number;
+  autoKept: number;
   // Review progress for each participant.
   progress: {
     participant: string;
@@ -78,8 +79,12 @@ export interface AutoExclude {
   edges: boolean;
   edgeWindow: number;
   edgeStage: string;
+  // Keep epochs with no missing data at keepStage.
+  keepComplete: boolean;
+  keepStage: string;
 }
 export const AUTO_REVIEWER = "eyeris auto-exclude";
+export const AUTO_KEEPER = "eyeris auto-keep";
 // A run of epochs that share a time axis: one block, label and eye of a source.
 export interface DiagnosticGroup {
   key: string;
@@ -452,6 +457,7 @@ interface API {
       file: string;
       count?: number;
       autoExcluded?: number;
+      autoKept?: number;
       duplicate?: boolean;
       error?: string;
     }[];

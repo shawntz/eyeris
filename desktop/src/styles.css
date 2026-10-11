@@ -1261,6 +1261,13 @@ main {
 .auto-exclude-panel .auto-rule .check-label {
   flex: 0 0 390px;
 }
+.auto-exclude-panel .paired-fields label.stage-field {
+  flex: 0 0 230px;
+}
+/* Its stage lines up with the other rules' stages, past their first field. */
+.auto-exclude-panel .keep-fields {
+  padding-left: 132px;
+}
 .auto-exclude-panel .paired-fields .edge-window {
   flex: 0 0 190px;
 }

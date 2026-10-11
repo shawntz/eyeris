@@ -23,9 +23,14 @@ const schemaVersion = "2";
 // Automatic exclusions are recorded under this reviewer name. They apply only
 // to epochs no person has decided on, and never change a person's decision.
 export const AUTO_REVIEWER = "eyeris auto-exclude";
+// Epochs kept by the rule for epochs with no missing data.
+export const AUTO_KEEPER = "eyeris auto-keep";
+const automatic = (reviewer) =>
+  reviewer === AUTO_REVIEWER || reviewer === AUTO_KEEPER;
 // Exclude epochs missing more than `threshold` percent of their samples at
 // `stage`, and (with `edges`) those missing data within `edgeWindow` ms of
-// either end at `edgeStage`.
+// either end at `edgeStage`; keep (with `keepComplete`) those missing none at
+// `keepStage`.
 const autoDefaults = {
   enabled: false,
   threshold: 25,
@@ -33,6 +38,8 @@ const autoDefaults = {
   edges: false,
   edgeWindow: 0,
   edgeStage: "final",
+  keepComplete: false,
+  keepStage: "final",
 };
 const stageName = (stage) =>
   typeof stage === "string" && stage.length > 0 && stage.length <= 200;
@@ -283,6 +290,9 @@ export class Project {
       autoExcluded: this.db
         .prepare("SELECT COUNT(*) AS n FROM epochs WHERE reviewer=?")
         .get(AUTO_REVIEWER).n,
+      autoKept: this.db
+        .prepare("SELECT COUNT(*) AS n FROM epochs WHERE reviewer=?")
+        .get(AUTO_KEEPER).n,
       canUndo: !!this.db
         .prepare(
           "SELECT 1 FROM actions WHERE kind='decision' AND undone=0 LIMIT 1",
@@ -343,7 +353,7 @@ export class Project {
       return {
         duplicate: false,
         count: epochs.length,
-        autoExcluded: this.applyAutoExclude(id),
+        ...this.applyAutoExclude(id),
       };
     } finally {
       await rm(temporary, { force: true });
@@ -377,6 +387,10 @@ export class Project {
     const edgeStage = rule.edgeStage ?? rule.stage;
     if (!stageName(edgeStage))
       throw new Error("Choose the stage to look for missing data at.");
+    const keepComplete = rule.keepComplete ?? false;
+    const keepStage = rule.keepStage ?? autoDefaults.keepStage;
+    if (typeof keepComplete !== "boolean" || !stageName(keepStage))
+      throw new Error("Choose whether and where to keep complete epochs.");
     if (
       typeof edges !== "boolean" ||
       typeof edgeWindow !== "number" ||
@@ -392,8 +406,13 @@ export class Project {
       edges,
       edgeWindow,
       edgeStage,
+      keepComplete,
+      keepStage,
     };
-    if (value.enabled && value.stage !== "final")
+    if (
+      (value.enabled && value.stage !== "final") ||
+      (value.keepComplete && value.keepStage !== "final")
+    )
       await this.backfillMeta("stageMissing", "missing");
     if (value.edges) await this.backfillMeta("stageEdges", "edges");
     this.db
@@ -436,30 +455,35 @@ export class Project {
   }
 
   // Apply the missing-data rules to every epoch without a person's decision, in
-  // one source or the whole project. Epochs the rules no longer exclude return
-  // to unreviewed. Each change is recorded in the audit history.
+  // one source or the whole project. Epochs the rules no longer exclude or keep
+  // return to unreviewed. Each change is recorded in the audit history. Returns
+  // how many epochs the rules exclude and keep.
   applyAutoExclude(sourceId) {
     const rule = this.autoExclude();
     const rows = this.db
       .prepare(
-        `SELECT * FROM epochs WHERE reviewer IN ('', ?)${sourceId ? " AND source_id=?" : ""}`,
+        `SELECT * FROM epochs WHERE reviewer IN ('', ?, ?)${sourceId ? " AND source_id=?" : ""}`,
       )
-      .all(AUTO_REVIEWER, ...(sourceId ? [sourceId] : []));
+      .all(AUTO_REVIEWER, AUTO_KEEPER, ...(sourceId ? [sourceId] : []));
     const now = new Date().toISOString();
     const fields = ["status", "reason", "reviewer", "stage", "updated_at"];
     const record = this.db.prepare(
       "INSERT INTO actions (epoch_id, kind, before_json, after_json, at) VALUES (?, 'auto', ?, ?, ?)",
     );
     let excluded = 0;
+    let kept = 0;
     this.transaction(() => {
       for (const row of rows) {
         const meta = JSON.parse(row.meta);
         const at = (s) => (s === "final" ? meta.finalStage : s);
+        // The fraction of samples missing at a stage, when known.
+        const missingAt = (s) =>
+          !meta.stages.includes(s)
+            ? null
+            : (meta.stageMissing?.[s] ??
+              (s === meta.finalStage ? row.missing : null));
         const stage = at(rule.stage);
-        const fraction = !meta.stages.includes(stage)
-          ? null
-          : (meta.stageMissing?.[stage] ??
-            (stage === meta.finalStage ? row.missing : null));
+        const fraction = missingAt(stage);
         // Each reason, with the stage it was measured at.
         const reasons = [];
         const measured = [];
@@ -494,24 +518,36 @@ export class Project {
             `Missing data at the start or end: ${edgeStage} is missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of the` : "at the"} ${ends.join(" and ")} of the epoch`,
             edgeStage,
           );
-        const after = reasons.length
-          ? {
-              status: "exclude",
-              reason: reasons.join("; "),
-              reviewer: AUTO_REVIEWER,
-              stage: measured[0],
-              updated_at: now,
-            }
-          : row.reviewer === AUTO_REVIEWER
-            ? {
-                status: "unreviewed",
-                reason: "",
-                reviewer: "",
-                stage: "",
-                updated_at: now,
-              }
-            : null;
+        // Exclusion first: an epoch complete at one stage can still have gaps
+        // at another stage's ends.
+        const keepStage = at(rule.keepStage);
+        let after = null;
+        if (reasons.length)
+          after = {
+            status: "exclude",
+            reason: reasons.join("; "),
+            reviewer: AUTO_REVIEWER,
+            stage: measured[0],
+            updated_at: now,
+          };
+        else if (rule.keepComplete && missingAt(keepStage) === 0)
+          after = {
+            status: "keep",
+            reason: `Complete data: no samples missing in ${keepStage}`,
+            reviewer: AUTO_KEEPER,
+            stage: keepStage,
+            updated_at: now,
+          };
+        else if (automatic(row.reviewer))
+          after = {
+            status: "unreviewed",
+            reason: "",
+            reviewer: "",
+            stage: "",
+            updated_at: now,
+          };
         if (after?.status === "exclude") excluded += 1;
+        if (after?.status === "keep") kept += 1;
         if (
           !after ||
           (row.status === after.status && row.reason === after.reason)
@@ -522,7 +558,7 @@ export class Project {
         record.run(row.id, JSON.stringify(before), JSON.stringify(after), now);
       }
     });
-    return excluded;
+    return { autoExcluded: excluded, autoKept: kept };
   }
   query(filters = {}) {
     const where = [];
@@ -695,9 +731,9 @@ export class Project {
       input.reviewer.length > 200
     )
       throw new Error("Enter a reviewer name.");
-    if (input.reviewer.trim() === AUTO_REVIEWER)
+    if (automatic(input.reviewer.trim()))
       throw new Error(
-        "That reviewer name is reserved for automatic exclusions.",
+        "That reviewer name is reserved for automatic decisions.",
       );
     if (typeof input.reason !== "string" || input.reason.length > 2000)
       throw new Error("The note is too long.");
@@ -1199,7 +1235,8 @@ export class Project {
         application: `${packageMetadata.name}/${packageMetadata.version}`,
         policy:
           "Only explicitly kept epochs are retained. Unreviewed epochs are exported separately. All stored stages and original samples are preserved.",
-        // Exclusions made by this rule have the reviewer "eyeris auto-exclude".
+        // Decisions made by these rules have the reviewer "eyeris auto-exclude"
+        // or "eyeris auto-keep".
         autoExclude: this.autoExclude(),
         sources,
         decisions: rows.map(({ meta, ...row }) => ({
@@ -1258,6 +1295,7 @@ export class Project {
             "excluded",
             "unreviewed",
             "excluded_automatically",
+            "kept_automatically",
           ],
           ...[...groups]
             .sort(([a], [b]) =>
@@ -1270,6 +1308,7 @@ export class Project {
               group.filter((r) => r.status === "exclude").length,
               group.filter((r) => r.status === "unreviewed").length,
               group.filter((r) => r.reviewer === AUTO_REVIEWER).length,
+              group.filter((r) => r.reviewer === AUTO_KEEPER).length,
             ]),
         ]),
       );
