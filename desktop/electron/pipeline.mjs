@@ -16,11 +16,11 @@ import {
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { availableParallelism, totalmem } from "node:os";
+import { recordedEyes } from "./eyes.mjs";
 import { rDirectory, rEnvironment } from "./runtime.mjs";
 import { runWithWindowsRecovery } from "./processing-recovery.mjs";
 import { isAppleDouble, scanBids } from "./bids.mjs";
 import { inferPatterns, summarizeMessages } from "./events.mjs";
-import { recordedEyes } from "./eyes.mjs";
 
 const entity = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9]{1,64}$/.test(value);
