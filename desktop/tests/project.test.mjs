@@ -700,6 +700,87 @@ test("run diagnostics average a run's epochs and keep each trace", async (t) => 
   );
 });
 
+test("averages report progress, reuse what they read, and give way to newer ones", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "eyeris-average-test-"));
+  const worker = new RWorker();
+  const project = await Project.open(path.join(dir, "a.eyeris"), worker, true);
+  t.after(async () => {
+    project.close();
+    worker.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  for (const name of ["sub-001_task-memory.rds", "sub-002_task-memory.rds"])
+    await project.importFile(path.join(dir, name));
+  const key = project
+    .diagnosticGroups()
+    .find((g) => g.participant === "001").key;
+  const request = {
+    key,
+    scope: "all",
+    stage: "pupil_raw",
+    include: "all",
+    by: null,
+    join: null,
+  };
+  // Progress counts the runs (sources) read for the epochs being averaged.
+  const running = project.split(request);
+  assert.deepEqual(project.diagnosticsProgress(), {
+    average: { kind: "average", done: 0, total: 2, epochs: 6 },
+  });
+  const all = await running;
+  assert.deepEqual(project.diagnosticsProgress(), {});
+  assert.deepEqual(
+    all.series.map((s) => [s.label, s.n]),
+    [["All epochs", 6]],
+  );
+  // Another grouping of the same epochs and stage reads nothing again.
+  const pool = project.diagnosticsPool();
+  const read = pool.request.bind(pool);
+  let reads = 0;
+  pool.request = (...args) => {
+    reads += 1;
+    return read(...args);
+  };
+  const regrouped = await project.split({
+    ...request,
+    by: { from: "epoch", column: "matched_event" },
+  });
+  assert.equal(reads, 0);
+  assert.equal(
+    regrouped.series.reduce((n, s) => n + s.n, 0),
+    6,
+  );
+  // Pooling the groups again gives the overall mean.
+  const pooled = regrouped.series.reduce((sum, s) => sum + s.mean[0] * s.n, 0);
+  assert.ok(Math.abs(pooled / 6 - all.series[0].mean[0]) < 1e-9);
+  // A newer average replaces one still running; the older one stops.
+  const older = project.split({ ...request, stage: "final" });
+  const newer = project.split({ ...request, stage: "final", include: "kept" });
+  await assert.rejects(older, /newer average replaced/);
+  assert.equal((await newer).epochs, 0);
+  assert.ok(reads > 0);
+  assert.deepEqual(project.diagnosticsProgress(), {});
+  // Linking reports the behavioral files read.
+  const bids = path.join(dir, "dataset");
+  for (const subject of ["001", "002"]) {
+    const file = path.join(
+      bids,
+      `sub-${subject}`,
+      "beh",
+      `sub-${subject}_task-memory_beh.tsv`,
+    );
+    await mkdir(path.dirname(file), { recursive: true });
+    await writeFile(file, "trial\taccuracy\n7\t1\n8\t0\n");
+  }
+  const linking = project.linkBehavior(bids);
+  assert.deepEqual(project.diagnosticsProgress(), {
+    link: { kind: "link", done: 0, total: 0 },
+  });
+  assert.equal((await linking).files, 2);
+  assert.deepEqual(project.diagnosticsProgress(), {});
+});
+
 test("epochs split by event fields or by joined behavioral data", async (t) => {
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-split-test-"));
   const worker = new RWorker();

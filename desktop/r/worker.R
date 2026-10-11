@@ -32,6 +32,7 @@ repeat {
       average = review_average(get_object(p$path), p$epochs, p$stage, p$points),
       fields = review_epoch_fields(get_object(p$path), p$epochs),
       moments = review_group_moments(get_object(p$path), p$epochs, p$stage, p$grid, p$groups),
+      traces = review_traces(get_object(p$path), p$epochs, p$stage, p$grid),
       export = review_export_source(get_object(p$path), p$epochs, p$destination),
       stop("Unknown worker method.")
     )

@@ -83,3 +83,27 @@ export class RWorker {
     this.child?.kill();
   }
 }
+
+// Several R workers for work that reads many sources, such as averaging every
+// subject's epochs. Each request goes to the worker with the fewest pending, and
+// each worker starts only when it is first needed.
+export class RWorkerPool {
+  constructor(size) {
+    this.workers = Array.from(
+      { length: Math.max(1, size) },
+      () => new RWorker(),
+    );
+  }
+  get size() {
+    return this.workers.length;
+  }
+  request(method, params) {
+    const worker = this.workers.reduce((a, b) =>
+      b.pending.size < a.pending.size ? b : a,
+    );
+    return worker.request(method, params);
+  }
+  close() {
+    for (const worker of this.workers) worker.close();
+  }
+}

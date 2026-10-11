@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld(
       "behavior",
       "epochFields",
       "split",
+      "diagnosticsProgress",
       "linkBehavior",
       "diagnosticGroups",
       "average",
