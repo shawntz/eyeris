@@ -55,6 +55,7 @@ review_index <- function(x) {
           # Missing samples per stored stage, for automatic exclusion rules.
           stage_missing <- lapply(stages, function(s) mean(!is.finite(df[[s]][a:b])))
           names(stage_missing) <- stages
+          stage_edges <- review_stage_edges(df[a:b, c("timebin", stages), drop = FALSE], stages)
           out[[length(out) + 1L]] <- list(
             key = paste(eye, label, block, a, b, sep = "/"), eye = eye,
             label = label, block = block, start = a, end = b, ordinal = i,
@@ -62,7 +63,8 @@ review_index <- function(x) {
             event = value(c("matched_event", "start_matched_event", "start_msg", "text_unique"), paste("Epoch", i)),
             stages = unname(as.list(stages)), finalStage = final,
             samples = b - a + 1L, duration = df$timebin[b] - df$timebin[a],
-            missing = mean(!is.finite(ys)), stageMissing = stage_missing, blocks = blocks,
+            missing = mean(!is.finite(ys)), stageMissing = stage_missing,
+            stageEdges = stage_edges, blocks = blocks,
             fields = review_fields(df, a, b, field_columns),
             limits = object[[label]]$info[[block]]$epoch_limits
           )
@@ -83,6 +85,27 @@ review_missing <- function(x, epochs) {
     names(out) <- stages
     out
   })
+}
+
+# Where missing data comes nearest each end of an epoch, per stage: seconds from
+# the epoch's first sample to its first missing sample, and from its last
+# missing sample to its last sample (both 0 when an end sample is missing, both
+# NA when nothing is missing), for the rule excluding epochs missing data at
+# their start or end.
+review_stage_edges <- function(df, stages) {
+  t <- df$timebin
+  out <- lapply(stages, function(s) {
+    missing <- which(!is.finite(df[[s]]))
+    if (!length(missing)) return(c(NA_real_, NA_real_))
+    c(t[missing[1]] - t[1], t[length(t)] - t[missing[length(missing)]])
+  })
+  names(out) <- stages
+  out
+}
+
+# Recompute the edges of missing data for epochs indexed before they were stored.
+review_edges <- function(x, epochs) {
+  lapply(epochs, function(epoch) review_stage_edges(review_frame(x, epoch), unlist(epoch$stages)))
 }
 
 # Average epochs on a shared time grid, for run diagnostics. Each epoch is

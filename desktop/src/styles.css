@@ -1215,6 +1215,16 @@ main {
   font-size: 11px;
   line-height: 1.5;
 }
+.auto-exclude .edge-note {
+  flex: 1;
+  align-self: flex-end;
+  padding-bottom: 8px;
+}
+.auto-rule {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .auto-exclude-error {
   color: #9a3119;
   font-size: 11px;
@@ -1239,6 +1249,30 @@ main {
 }
 .auto-exclude-panel .auto-exclude .check-label {
   padding-bottom: 8px;
+}
+/* Each rule on its own row: its switch, then its fields. */
+.auto-exclude-panel .auto-rule {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px 18px;
+  flex-basis: 100%;
+}
+.auto-exclude-panel .auto-rule .check-label {
+  flex: 0 0 390px;
+}
+.auto-exclude-panel .paired-fields label.stage-field {
+  flex: 0 0 230px;
+}
+/* Its stage lines up with the other rules' stages, past their first field. */
+.auto-exclude-panel .keep-fields {
+  padding-left: 132px;
+}
+.auto-exclude-panel .paired-fields .edge-window {
+  flex: 0 0 190px;
+}
+.auto-exclude-panel .auto-exclude .edge-note {
+  flex-basis: auto;
 }
 .auto-exclude-panel .paired-fields label:first-child {
   flex: 0 0 120px;

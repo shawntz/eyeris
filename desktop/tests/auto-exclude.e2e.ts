@@ -11,6 +11,14 @@ test("epochs missing too much data are excluded automatically with the reason", 
   const root = process.cwd();
   const dir = await mkdtemp(path.join(tmpdir(), "eyeris-ui-auto-"));
   execFileSync(resolveRscript(), [path.join(root, "tests/fixture.R"), dir]);
+  // The fixture's sub-005, with no missing data at the final stage in its
+  // second epoch (its raw signal still has a gap).
+  execFileSync(resolveRscript(), [
+    "-e",
+    "a <- commandArgs(TRUE); z <- readRDS(a[1]); f <- z$epoch_probe$block_1$pupil_raw_lpfilt; f[12001:24000][is.na(f[12001:24000])] <- 4000; z$epoch_probe$block_1$pupil_raw_lpfilt <- f; saveRDS(z, a[2])",
+    path.join(dir, "sub-005_task-memory.rds"),
+    path.join(dir, "sub-007_task-memory.rds"),
+  ]);
   const env = {
     ...process.env,
     EYERIS_TEST_USER_DATA: path.join(dir, "app-data"),
@@ -38,11 +46,11 @@ test("epochs missing too much data are excluded automatically with the reason", 
           filePaths: [file],
         });
       },
-      path.join(dir, "sub-005_task-memory.rds"),
+      path.join(dir, "sub-007_task-memory.rds"),
     );
     await page.getByRole("button", { name: "Import processed RDS" }).click();
     await expect(page.locator(".epoch-row")).toHaveCount(3);
-    await page.getByText(/Automatic exclusion · off/).click();
+    await page.getByText(/Automatic decisions · off/).click();
     await page
       .getByRole("checkbox", {
         name: "Automatically exclude epochs with missing data",
@@ -85,6 +93,83 @@ test("epochs missing too much data are excluded automatically with the reason", 
     await expect(
       page.getByText(/1 epoch excluded automatically/),
     ).toBeVisible();
+    // Missing data at either end: the kept epoch's raw signal starts with a
+    // gap too, but a reviewer's decision still stands.
+    await page
+      .getByRole("checkbox", {
+        name: "Automatically exclude epochs missing data at the start or end",
+      })
+      .check();
+    await page
+      .getByRole("combobox", { name: "Start and end stage" })
+      .selectOption("pupil_raw");
+    await expect(
+      page.getByText("The first or last sample missing", { exact: false }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/1 epoch excluded automatically/),
+    ).toBeVisible();
+    const edge = page.getByRole("spinbutton", { name: "Edge window" });
+    await edge.fill("900");
+    await edge.press("Enter");
+    // Within 900 ms of the start, the epoch with only a mid-epoch gap (from
+    // 833 ms) is excluded as well.
+    await expect(
+      page.getByText(/2 epochs excluded automatically/),
+    ).toBeVisible();
+    await expect(page.locator(".auto-exclude-panel > summary")).toHaveText(
+      "Automatic decisions · exclude more than 25% missing in pupil_raw or missing data within 900 ms of either end in pupil_raw · 2 excluded",
+    );
+    // The epoch only the new rule excludes: the second REPEATED_EVENT.
+    await page
+      .locator(".epoch-row")
+      .filter({ hasText: "auto" })
+      .filter({ hasText: "REPEATED_EVENT" })
+      .click();
+    await expect(page.locator(".signal-heading p")).toContainText(
+      "REPEATED_EVENT",
+    );
+    await expect(
+      page.getByRole("combobox", { name: "Exclusion reason" }),
+    ).toHaveValue("Missing data at the start or end");
+    await expect(
+      page.getByRole("textbox", { name: "Review note" }),
+    ).toHaveValue(
+      "pupil_raw is missing data within 900 ms of the start of the epoch",
+    );
+    await captureScreenshot(page, {
+      path: "test-results/auto-exclude-edges.png",
+    });
+    // Keep epochs with no missing data at their own stage: after filtering,
+    // the second epoch. With gaps near either end looked for after filtering
+    // too, nothing excludes it.
+    await page
+      .getByRole("combobox", { name: "Start and end stage" })
+      .selectOption("final");
+    await page
+      .getByRole("checkbox", {
+        name: "Automatically keep epochs with no missing data",
+      })
+      .check();
+    await expect(
+      page.getByRole("combobox", { name: "Complete data stage" }),
+    ).toHaveValue("final");
+    await expect(
+      page.getByText(/1 epoch with no missing data kept automatically/),
+    ).toBeVisible();
+    await expect(page.locator(".auto-exclude-panel > summary")).toHaveText(
+      "Automatic decisions · exclude more than 25% missing in pupil_raw or missing data within 900 ms of either end in the final stage; keep epochs complete in the final stage · 1 excluded · 1 kept",
+    );
+    const kept = page
+      .locator(".epoch-row")
+      .filter({ hasText: "auto" })
+      .filter({ has: page.locator(".epoch-status.keep") });
+    await expect(kept).toHaveCount(1);
+    await kept.click();
+    await expect(
+      page.getByRole("textbox", { name: "Review note" }),
+    ).toHaveValue("Complete data: no samples missing in pupil_raw_lpfilt");
+    await captureScreenshot(page, { path: "test-results/auto-keep.png" });
     expect(errors).toEqual([]);
   } finally {
     await app.close();

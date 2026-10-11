@@ -31,6 +31,8 @@ import { groupKey } from "./DiagnosticsWorkspace";
 import {
   stageName,
   AUTO_REVIEWER,
+  AUTO_KEEPER,
+  type AutoExclude,
   type Epoch,
   type Summary,
   type Trace,
@@ -67,6 +69,30 @@ function StatusIcon({ status }: { status: Status }) {
   );
 }
 
+// Reasons a reviewer can give, including those of the automatic rules; a saved
+// reason is "<reason>: <note>".
+const exclusionReasons = [
+  "Signal artifact",
+  "Excessive missing data",
+  "Missing data at the start or end",
+  "Blink contamination",
+  "Baseline issue",
+  "Other",
+];
+// The automatic rules in a few words, for the panel's summary.
+function autoRules(rule: AutoExclude) {
+  const at = (stage: string) => (stage === "final" ? "the final stage" : stage);
+  const exclude = [
+    rule.enabled && `more than ${rule.threshold}% missing in ${at(rule.stage)}`,
+    rule.edges &&
+      `missing data ${rule.edgeWindow ? `within ${rule.edgeWindow} ms of` : "at"} either end in ${at(rule.edgeStage)}`,
+  ].filter(Boolean);
+  const rules = [
+    exclude.length && `exclude ${exclude.join(" or ")}`,
+    rule.keepComplete && `keep epochs complete in ${at(rule.keepStage)}`,
+  ].filter(Boolean);
+  return rules.length ? rules.join("; ") : "off";
+}
 export function ReviewWorkspace({
   initialProject,
   reviewer: initialReviewer,
@@ -216,14 +242,7 @@ export function ReviewWorkspace({
   }, [selected?.id]);
   useEffect(() => {
     const saved = selected?.reason || "";
-    const reasons = [
-      "Signal artifact",
-      "Excessive missing data",
-      "Blink contamination",
-      "Baseline issue",
-      "Other",
-    ];
-    const previous = reasons.find(
+    const previous = exclusionReasons.find(
       (r) => saved === r || saved.startsWith(r + ": "),
     );
     if (selected?.status === "exclude" && previous) {
@@ -290,8 +309,9 @@ export function ReviewWorkspace({
         (n, r) => n + (r.autoExcluded || 0),
         0,
       );
+      const kept = result.results.reduce((n, r) => n + (r.autoKept || 0), 0);
       setNotice(
-        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
+        `${number(count)} epochs imported.${auto ? ` ${number(auto)} excluded automatically for missing data.` : ""}${kept ? ` ${number(kept)} with no missing data kept automatically.` : ""}${result.results.some((r) => r.duplicate) ? " Already-imported sources were skipped." : ""}`,
       );
     });
   }
@@ -724,10 +744,11 @@ export function ReviewWorkspace({
               </div>
               <details className="auto-exclude-panel">
                 <summary>
-                  Automatic exclusion ·{" "}
-                  {project.autoExclude.enabled
-                    ? `more than ${project.autoExclude.threshold}% missing in ${project.autoExclude.stage === "final" ? "the final stage" : project.autoExclude.stage} · ${number(project.autoExcluded)} excluded`
-                    : "off"}
+                  Automatic decisions · {autoRules(project.autoExclude)}
+                  {(project.autoExclude.enabled || project.autoExclude.edges) &&
+                    ` · ${number(project.autoExcluded)} excluded`}
+                  {project.autoExclude.keepComplete &&
+                    ` · ${number(project.autoKept)} kept`}
                 </summary>
                 <AutoExcludeControl
                   project={project}
@@ -916,7 +937,9 @@ export function ReviewWorkspace({
                             {e.run ? `Run ${e.run}` : e.block} ·{" "}
                             {e.label.replace("epoch_", "")}
                             {e.eye !== "main" ? ` · ${e.eye}` : ""}
-                            {e.reviewer === AUTO_REVIEWER && " · auto"}
+                            {(e.reviewer === AUTO_REVIEWER ||
+                              e.reviewer === AUTO_KEEPER) &&
+                              " · auto"}
                           </small>
                         </span>
                         <ChevronRight size={14} />
@@ -1135,11 +1158,9 @@ export function ReviewWorkspace({
                           value={reason}
                           onChange={(e) => setReason(e.target.value)}
                         >
-                          <option>Signal artifact</option>
-                          <option>Excessive missing data</option>
-                          <option>Blink contamination</option>
-                          <option>Baseline issue</option>
-                          <option>Other</option>
+                          {exclusionReasons.map((r) => (
+                            <option key={r}>{r}</option>
+                          ))}
                         </select>
                       </label>
                       <label>
