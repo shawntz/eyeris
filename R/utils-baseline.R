@@ -202,9 +202,7 @@ resolve_block_latest <- function(latest, block_name) {
     } else if (length(latest) == 1) {
       latest <- latest[[1]]
     } else {
-      log_error(
-        "Could not find a `latest` pointer for block '{block_name}'."
-      )
+      log_error("Could not find a `latest` pointer for block '{block_name}'.")
     }
   }
 

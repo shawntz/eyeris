@@ -46,9 +46,7 @@ test_that("resolve_block_latest() returns a single pointer per block", {
 })
 
 test_that("epoch(baseline = TRUE) works on multi-block recordings", {
-  x <- make_multiblock_sim(3) |>
-    deblink() |>
-    zscore()
+  x <- make_multiblock_sim(3) |> deblink() |> zscore()
 
   expect_length(x$latest, 3)
 
