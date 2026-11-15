@@ -179,3 +179,32 @@ compute_baseline <- function(
     n_baseline_epochs = n_baseline_epochs
   )
 }
+
+#' Resolve the `latest` pointer for a single block
+#'
+#' On multi-block recordings the `latest` pointer of an `eyeris` object is a
+#' named list with one column name per block (e.g., `block_1`, `block_2`, ...).
+#' Block-level helpers such as [compute_baseline()] need a single column name,
+#' so this returns the pointer for the requested block.
+#'
+#' @param latest The `latest` pointer from an `eyeris` object (a character
+#' string or a named list of character strings, one per block)
+#' @param block_name The name of the block (e.g., `"block_1"`)
+#'
+#' @return A single character string naming the latest pupil column for
+#' `block_name`
+#'
+#' @keywords internal
+resolve_block_latest <- function(latest, block_name) {
+  if (is.list(latest)) {
+    if (!is.null(names(latest)) && block_name %in% names(latest)) {
+      latest <- latest[[block_name]]
+    } else if (length(latest) == 1) {
+      latest <- latest[[1]]
+    } else {
+      log_error("Could not find a `latest` pointer for block '{block_name}'.")
+    }
+  }
+
+  as.character(latest)[1]
+}
