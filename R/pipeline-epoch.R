@@ -594,6 +594,11 @@ epoch_and_baseline_block <- function(
   block_data <- x$timeseries[[block_name]]
   block_events <- x$events[[block_name]]
 
+  # resolve this block's `latest` pointer: on multi-block recordings
+  # `x$latest` is a named list (one entry per block), but the baseline helpers
+  # below (and the z-score check further down) expect a single column name
+  x$latest <- resolve_block_latest(x$latest, block_name)
+
   dt <- data.table::as.data.table(block_data)
 
   if (!"time_orig" %in% names(dt)) {
