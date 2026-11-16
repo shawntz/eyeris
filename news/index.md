@@ -1,5 +1,7 @@
 # Changelog
 
+## eyeris 3.3.0.9000 (development version)
+
 ## eyeris 3.3.0 “Lumpy Space Princess” ![Lumpy Space Princess](https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png)
 
 CRAN release: 2026-07-31

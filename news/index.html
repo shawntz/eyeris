@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">eyeris</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,6 +84,9 @@
       <small>Source: <a href="https://github.com/shawntz/eyeris/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.3.0.9000" id="eyeris-3309000-development-version">eyeris 3.3.0.9000 (development version)<a class="anchor" aria-label="anchor" href="#eyeris-3309000-development-version"></a></h2>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.3.0" id="eyeris-330-lumpy-space-princess-lumpy-space-princess">eyeris 3.3.0 “Lumpy Space Princess” <img src="https://raw.githubusercontent.com/shawntz/eyeris/refs/heads/dev/inst/figures/adventure-time/lsp.png" width="50" alt="Lumpy Space Princess"><a class="anchor" aria-label="anchor" href="#eyeris-330-lumpy-space-princess-lumpy-space-princess"></a></h2><p class="text-muted">CRAN release: 2026-07-31</p>
 <p>This minor release changes how missing pupil data is handled, broadens the range of eye trackers <code>eyeris</code> can ingest, and refreshes every diagnostic figure. The headline <strong>breaking change</strong> is that <code><a href="../reference/interpolate.html">interpolate()</a></code> no longer interpolates across arbitrarily long gaps: stretches of consecutive missing samples longer than the new <code>max_gap_ms</code> limit (default <code>250</code> ms, following Kret &amp; Sjak-Shie, 2018) are now left as <code>NA</code>, and the downstream steps that cannot operate on missing data (<code><a href="../reference/lpfilt.html">lpfilt()</a></code>, <code><a href="../reference/downsample.html">downsample()</a></code>, <code><a href="../reference/bin.html">bin()</a></code>, <code><a href="../reference/detrend.html">detrend()</a></code>) now work <em>around</em> those gaps and restore them, rather than being skipped. New features include <code><a href="../reference/load_generic.html">load_generic()</a></code>, a tracker-agnostic loader that lets non-EyeLink data enter the pipeline (with <code><a href="../reference/glassbox.html">glassbox()</a></code> now accepting a pre-loaded <code>eyeris</code> object); a sampling-uniformity guardrail plus an automatic <code><a href="../reference/resample.html">resample()</a></code> step for hardware that silently <em>drops</em> samples instead of zero-filling them; spline detrending via <code>detrend(method = "spline")</code>; and <code><a href="../reference/simulate_eyeris.html">simulate_eyeris()</a></code>/<code><a href="../reference/sim_params.html">sim_params()</a></code> for generating seeded, synthetic, pipeline-compatible pupil data with known ground truth. Bug fixes restore the fitted detrend coefficients on the <code><a href="../reference/glassbox.html">glassbox()</a></code> output, repair per-run epoch CSV writing in <code><a href="../reference/bidsify.html">bidsify()</a></code> for both multi-run objects and <code>run_num</code> overrides, and resolve a multi-block crash on R &gt;= 4.2. Under the hood, all diagnostic plotting migrated from base graphics to <a href="https://reaborn.org" class="external-link"><code>reaborn</code></a>/<code>ggplot2</code>.</p>
